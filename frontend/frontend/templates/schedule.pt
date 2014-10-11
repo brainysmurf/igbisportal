@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="${request.locale_name}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="pyramid web application">
+    <meta name="author" content="Pylons Project">
+    <link rel="shortcut icon" href="${request.static_url('frontend:static/pyramid-16x16.png')}">
+
+    <title>Information Directory using DataTables</title>
+
+    <!-- Bootstrap core CSS -->
+    <!-- <link href="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- -->
+
+    <!-- Stuff for DataTables -->
+    <link rel="stylesheet" type="text/css" href="${request.static_url('frontend:static/dataTables.css')}">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+    <!-- -->
+
+    <!-- Custom styles for this scaffold 
+    <link href="${request.static_url('frontend:static/theme.css')}" rel="stylesheet">
+    <!-- -->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+
+
+
+  <body style="margin: 0px 50px 0px 50px;font-family:'Open Sans', sans-serif;font-size:10pt;">
+
+
+    <h1>Schedule</h1>
+    <h3>Data from both ManageBac API (class information) and scrapy (class periods)</h3>
+    <h3>(Proving that we can get pretty much ANY data out of ManageBac)</h3>    
+    <h4>&nbsp;</h4>
+
+  <table id="example" class="compact stripe order-column" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>First Name</th>
+                <th>Email</th>
+                <th>Day</th>
+                <th>Period</th>
+                <th>Grade</th>
+                <th>Class</th>
+            </tr>
+        </thead>
+ 
+        <tfoot>
+            <tr>
+                <th>Student</th>
+                <th>First Name</th>
+                <th>Email</th>
+                <th>Day</th>
+                <th>Period</th>        
+                <th>Grade</th>
+                <th>Class</th>
+            </tr>
+        </tfoot>
+    </table>
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="//oss.maxcdn.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <!-- DataTables stuff -->
+    <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        var table = $('#example').DataTable( {
+            ajax: '/schedule_data',
+            "deferRender": true,
+            "lengthMenu": [[50, 100, -1], [50, 100, "Show all"]],
+            "order": [[ 3, "asc" ], [4, "asc"]],
+            "autoWidth": false,
+            columnDefs: [
+            {
+                targets: 0,
+                width: "200px",
+            },
+            {
+                targets: [1, 2],
+                width: "200px",
+            },
+            {
+                "render": function (data, type, row) {
+                    return row[1] + ' ' + data;
+                },
+                targets: 0
+            },
+            {
+                "visible": false, "targets": [1, 5]
+            }
+            ]
+        });
+
+    });
+    </script>
+  </body>
+</html>

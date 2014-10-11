@@ -8,10 +8,18 @@ from .models import (
     MyModel,
     )
 
+from db import Database
+
 import redis
 import json
 
+import requests
+
 r = redis.Redis('localhost')
+PREFIX = 'igbis2014'
+url = 'https://{}.managebac.com/api/{{}}'.format(PREFIX)
+
+api_token = 'a473e92458548d66c06fe83f69831fd5'
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
 def auditlog(request):
@@ -33,17 +41,51 @@ def my_view(request):
         return Response(conn_err_msg, content_type='text/plain', status_int=500)
     return {'one': one, 'project': 'frontend'}
 
-@view_config(route_name='poll', renderer='json')
-def poll(request):
-    return {'success':True}
+# @view_config(route_name='poll', renderer='json')
+# def poll(request):
+#     return {'success':True}
 
-@view_config(route_name='test_polling', renderer='templates/polling.pt')
-def test_polling(request):
-    return {'project':'frontend'}
+# @view_config(route_name='test_polling', renderer='templates/polling.pt')
+# def test_polling(request):
+#     return {'project':'frontend'}
 
-@view_config(route_name='test_polling', renderer='templates/polling.pt')
-def user_info(request):
-    return(api_key='a473e92458548d66c06fe83f69831fd5')
+# @view_config(route_name='test_polling', renderer='templates/polling.pt')
+# def user_info(request):
+#     return(api_key='a473e92458548d66c06fe83f69831fd5')
+
+
+@view_config(route_name='grade_course', renderer='templates/grade_course.pt')
+def grade_course(request):
+    grade = request.params.get('grade')
+    return dict(api_key='a473e92458548d66c06fe83f69831fd5')
+
+@view_config(route_name='grade_course_data', renderer='json')
+def grade_course_info(request):
+
+    data = {"data":[]}
+
+    db = Database()
+    for item in db.grade_course_info():
+        data["data"].append(item)
+
+    return data
+
+@view_config(route_name='schedule', renderer='templates/schedule.pt')
+def schedule(request):
+    return dict(api_key='a473e92458548d66c06fe83f69831fd5')
+
+@view_config(route_name='schedule_data', renderer='json')
+def schedule_data(request):
+
+    data = {"data":[]}
+
+    db = Database()
+    for item in db.get_timetable_info():
+        data["data"].append(item)
+
+    return data
+
+
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

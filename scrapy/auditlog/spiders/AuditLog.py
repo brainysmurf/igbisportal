@@ -1,9 +1,7 @@
 import scrapy
-from auditlog.spiders.Login import Login
-from auditlog.items import AuditLogItem
-import datetime
+from auditlog.spiders.Login import OpenApplyLogin
 
-class AuditLog(Login):
+class AuditLog(OpenApplyLogin):
     DATE_PARSE = "%d %b %Y at %I:%M %p"
     name = "AuditLog"
     path = '/admin/audit?page={}'

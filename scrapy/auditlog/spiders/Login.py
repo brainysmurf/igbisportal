@@ -1,6 +1,6 @@
 import scrapy   
 from scrapy.http.cookies import CookieJar
-from auditlog.settings import OPEN_APPLY_URL, OPEN_APPLY_LOGIN
+from auditlog.settings import OPEN_APPLY_URL, OPEN_APPLY_LOGIN, MANAGEBAC_LOGIN, MANAGEBAC_URL
 import re
 
 FIRSTCAP_RE = re.compile('(.)([A-Z][a-z]+)')
@@ -20,25 +20,19 @@ class Login(scrapy.Spider):
     * Routes to method with same name as class converted from CamelCase to camel_case
     """
     name = "Login"
-    allowed_domains = [OPEN_APPLY_URL]
-    start_urls = [
-        OPEN_APPLY_LOGIN
-    ]
+    #allowed_domains = [OPEN_APPLY_URL]
+    #start_urls = [
+    #    OPEN_APPLY_LOGIN
+    #]
 
     def warning(self, log):
         scrapy.log.msg(log, level=scrapy.log.WARNING)
 
-    def path_to_url(self, path):
-        return OPEN_APPLY_URL + path
-
     def parse(self, response):
-        self.cookieJar = response.meta.setdefault('cookie_jar', CookieJar())
-        self.cookieJar.extract_cookies(response, response.request)
-
         self.warning("Logging in!")
         login_request = scrapy.FormRequest.from_response(
             response,
-            formdata={'user[email]': 'adam.morris@igbis.edu.my', 'user[password]': 'M0kalB3t'},
+            formdata={'login': 'adam.morris@igbis.edu.my', 'password': 'M0kalB3t'},
             callback=self.after_login,
             dont_filter=True  # because it's the same form
         )
@@ -57,3 +51,20 @@ class Login(scrapy.Spider):
             return method()
         else:
             self.warning("No method {} defined for class {}.".format(name_to_dispatch, self.__class__.__name__))
+
+class OpenApplyLogin(Login):
+    name = "OpenApplyLogin"
+    allowed_domains = [OPEN_APPLY_URL]
+    start_urls = [OPEN_APPLY_LOGIN]
+
+    def path_to_url(self, path):
+        return OPEN_APPLY_URL + path
+
+
+class ManageBacLogin(Login):
+    name = "ManageBacLogin"
+    allowed_domains = [MANAGEBAC_LOGIN]
+    start_urls = [MANAGEBAC_URL]
+
+    def path_to_url(self, path):
+        return MANAGEBAC_URL + path

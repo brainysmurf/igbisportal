@@ -10,3 +10,6 @@ class AuditLogItem(OrderedItem):
     applicant = scrapy.Field()
     action = scrapy.Field()
 
+class ClassPeriodItem(scrapy.Item):
+    course = scrapy.Field()
+    periods = scrapy.Field()
