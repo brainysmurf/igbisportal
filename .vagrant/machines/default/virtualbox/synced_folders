@@ -1,1 +1,0 @@
-{"virtualbox":{"/home/vagrant/openapply":{"owner":"vagrant","group":"vagrant","guestpath":"/home/vagrant/openapply","hostpath":"/Users/adammorris/src/openapply","disabled":false},"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/adammorris/src/openapply","disabled":false}}}
