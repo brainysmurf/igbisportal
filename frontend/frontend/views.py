@@ -1,3 +1,7 @@
+"""
+Defines the frontend behaviour
+"""
+
 from pyramid.response import Response
 from pyramid.view import view_config
 
@@ -41,22 +45,13 @@ def my_view(request):
         return Response(conn_err_msg, content_type='text/plain', status_int=500)
     return {'one': one, 'project': 'frontend'}
 
-# @view_config(route_name='poll', renderer='json')
-# def poll(request):
-#     return {'success':True}
-
-# @view_config(route_name='test_polling', renderer='templates/polling.pt')
-# def test_polling(request):
-#     return {'project':'frontend'}
-
-# @view_config(route_name='test_polling', renderer='templates/polling.pt')
-# def user_info(request):
-#     return(api_key='a473e92458548d66c06fe83f69831fd5')
-
-
 @view_config(route_name='grade_course', renderer='templates/grade_course.pt')
 def grade_course(request):
     grade = request.params.get('grade')
+    if not grade:
+        return dict()
+    d = {}
+    
     return dict(api_key='a473e92458548d66c06fe83f69831fd5')
 
 @view_config(route_name='grade_course_data', renderer='json')

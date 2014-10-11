@@ -1,3 +1,7 @@
+"""
+Debugging utilty for me to figure out stuff
+"""
+
 from db import Database, DBSession
 
 db = Database()
