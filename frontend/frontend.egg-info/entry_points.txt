@@ -1,5 +1,0 @@
-      [paste.app_factory]
-      main = frontend:main
-      [console_scripts]
-      initialize_frontend_db = frontend.scripts.initializedb:main
-      
