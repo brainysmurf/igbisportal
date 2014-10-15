@@ -1,2 +1,6 @@
 *.pyc
 db/api/jsons/*
+.python-version
+settings.ini
+.vagrant
+*.egg-info
