@@ -4,7 +4,7 @@ There are tools out there that will define this automatically, but I don't have 
 So instead I wrote it out by hand
 
 This is based on the API that ManageBac gives, I have found that the API in OpenApply is actually different
-for example national_id ≠ password_number
+for example national_id not = password_number
 
 So I guess we'll have to figure that out if we choose to go to production quality
 """
@@ -20,7 +20,7 @@ from sqlalchemy.orm import relationship, backref
 """
 Klunky, but lets me debug quickly
 """
-PREFIX = '1_'
+PREFIX = 'a_'
 USERS = "{}users".format(PREFIX)
 STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)

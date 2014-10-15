@@ -1,0 +1,46 @@
+; Make a copy of this file and call it 'settings.ini'
+; And then change settings accordingly below
+;
+;
+[DEFAULTS]
+; Anything in this section has to be Boolean
+nothing: True
+;
+;
+[MANAGEBAC]
+; Contains settings pertaining to ManageBac
+;
+; This should be school's sub-domain name
+mb_prefix: faria
+; This should be your school's private API code
+mb_api_token: secret
+;
+;
+[DATABASE]
+; Contains settings pertaining to the (local?) database store
+;
+; Hostname for the local database
+db_host: localhost
+;
+; The name of the database
+db_name: name
+;
+; The role
+db_user: user
+;
+; The role's password
+db_password: secret
+;
+; The prefix of every table, if desired
+db_prefix: none
+;
+;
+[DIRECTORIES]
+; Where will all the logging go, ensure vagrant has write access
+path_to_logging: /var/log/igbisportal
+;
+[LOGGING]
+; Contains settings pertaining to logging
+;
+; This is the log level, 'warn' is normal, 'debug' would be (pretty much) everything
+log_level: warn

@@ -12,7 +12,7 @@ from contextlib import contextmanager
 engine =  create_engine(
     # 'postgresql://{db_username}:{db_password}@{db_host}/{db_name}'.\
     #     format(**ns.declared_kwargs),
-    'postgresql://portal:portal@localhost/portal',
+    'postgresql://igbisportaluser:igbisportaluser@localhost/igbisportal',
         max_overflow=0, pool_size=100, echo=False)
 session_maker = sessionmaker(
     bind=engine,
