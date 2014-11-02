@@ -1,0 +1,42 @@
+{
+    "members": [
+        {
+            "last_name": "Kwong", 
+            "national_id": null, 
+            "class_year": 9, 
+            "id": 10872064, 
+            "city": "Bandar Sri Damansara", 
+            "mobile_phone_number": "", 
+            "student_id": "20190004", 
+            "zipcode": "52200", 
+            "state": "Kuala Lumpur", 
+            "program": "IB MYP", 
+            "type": "Students", 
+            "email": "pakheiryan.kwong019@igbis.edu.my", 
+            "phone_number": "01114322567", 
+            "parents_ids": [
+                10872065, 
+                10872066
+            ], 
+            "nationality2": null, 
+            "nationality3": null, 
+            "nationality1": "Hong kong", 
+            "first_name": "Pak Hei Ryan", 
+            "nationality4": null, 
+            "birthday": "1999-12-11", 
+            "attendance_start_date": "2014-08-18", 
+            "openapply_parent_id": null, 
+            "nickname": "Ryan", 
+            "openapply_student_id": null, 
+            "language": "en", 
+            "gender": "Male", 
+            "language3": null, 
+            "language2": null, 
+            "language1": null, 
+            "street_address_ii": "No. 3, Jalan PJU 9/1, Damansara Avenue", 
+            "language4": null, 
+            "country": "MY", 
+            "street_address": "A-7-03A, Azalea Residence"
+        }
+    ]
+}

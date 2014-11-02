@@ -1,12 +1,17 @@
 from distutils.core import setup
 setup(
     name = "IGBIS Portal",
-    packages = ['db'],
-    version = "1.0",
+    #packages = ['db'],
+    version = "1.5",
     description = "A front end to all the front ends",
     author = "Adam Morris",
     author_email = "amorris@mistermorris.com",
     keywords = [],
+    packages=['cli', 'portal', 'gns'],
+    entry_points='''
+        [console_scripts]
+        portal=cli.main:main
+    ''',
     install_requires = ['sqlalchemy', 'scrapy',
     'pyramid',
     'pyramid_chameleon',
@@ -17,8 +22,13 @@ setup(
     'zope.sqlalchemy',
     'waitress',
     'requests',
-    'psycopg2'
+    'psycopg2',
+    'click'
 ],
+    # also requires?
+    #'scrapyd', 'lxml', 'w3lib', 'cssselect', 'pysqlite'
+
+
     # classifiers = [
     #     "Programming Language :: Python",
     #     "Programming Language :: Python :: 3",

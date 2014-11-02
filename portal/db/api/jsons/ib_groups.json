@@ -1,0 +1,109 @@
+{
+    "ib_groups": [
+        {
+            "grade": "Grade 12", 
+            "program": "diploma", 
+            "name": "IB DP Class of 2015 (Grade 12)", 
+            "uniq_id": null, 
+            "id": 10268383
+        }, 
+        {
+            "grade": "Grade 11", 
+            "program": "diploma", 
+            "name": "IB DP Class of 2016 (Grade 11)", 
+            "uniq_id": null, 
+            "id": 10228846
+        }, 
+        {
+            "grade": "Grade 10", 
+            "program": "myp", 
+            "name": "IB MYP Class of 2015 (Grade 10)", 
+            "uniq_id": null, 
+            "id": 10229224
+        }, 
+        {
+            "grade": "Grade 9", 
+            "program": "myp", 
+            "name": "IB MYP Class of 2016 (Grade 9)", 
+            "uniq_id": null, 
+            "id": 10229223
+        }, 
+        {
+            "grade": "Grade 8", 
+            "program": "myp", 
+            "name": "IB MYP Class of 2017 (Grade 8)", 
+            "uniq_id": null, 
+            "id": 10229222
+        }, 
+        {
+            "grade": "Grade 7", 
+            "program": "myp", 
+            "name": "IB MYP Class of 2018 (Grade 7)", 
+            "uniq_id": null, 
+            "id": 10229221
+        }, 
+        {
+            "grade": "Grade 6", 
+            "program": "myp", 
+            "name": "IB MYP Class of 2019 (Grade 6)", 
+            "uniq_id": null, 
+            "id": 10228845
+        }, 
+        {
+            "grade": "Grade 5", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade 5 (Grade 5)", 
+            "uniq_id": null, 
+            "id": 10238966
+        }, 
+        {
+            "grade": "Grade 4", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade 4 (Grade 4)", 
+            "uniq_id": null, 
+            "id": 10238964
+        }, 
+        {
+            "grade": "Grade 3", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade 3 (Grade 3)", 
+            "uniq_id": null, 
+            "id": 10225797
+        }, 
+        {
+            "grade": "Grade 2", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade 2 (Grade 2)", 
+            "uniq_id": null, 
+            "id": 10228844
+        }, 
+        {
+            "grade": "Grade 1", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade 1 (Grade 1)", 
+            "uniq_id": null, 
+            "id": 10231756
+        }, 
+        {
+            "grade": "Kindergarten", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade 0 (Kindergarten)", 
+            "uniq_id": null, 
+            "id": 10238960
+        }, 
+        {
+            "grade": "Early Years 2", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade -1 (Early Years 2)", 
+            "uniq_id": null, 
+            "id": 10238956
+        }, 
+        {
+            "grade": "Early Years 1", 
+            "program": "pyp", 
+            "name": "System PYP IB Group Grade -2 (Early Years 1)", 
+            "uniq_id": null, 
+            "id": 10238954
+        }
+    ]
+}

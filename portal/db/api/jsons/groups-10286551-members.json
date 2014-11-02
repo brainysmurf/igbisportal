@@ -1,0 +1,42 @@
+{
+    "members": [
+        {
+            "last_name": "Ngo", 
+            "national_id": null, 
+            "class_year": 9, 
+            "id": 10839766, 
+            "city": "Sungai Buloh", 
+            "mobile_phone_number": "", 
+            "student_id": "20190005", 
+            "zipcode": "47000", 
+            "state": "Selangor", 
+            "program": "IB MYP", 
+            "type": "Students", 
+            "email": "tingjie.ngo019@igbis.edu.my", 
+            "phone_number": "0361503159", 
+            "parents_ids": [
+                10834673, 
+                10834672
+            ], 
+            "nationality2": null, 
+            "nationality3": null, 
+            "nationality1": "Malaysia", 
+            "first_name": "Ting Jie", 
+            "nationality4": null, 
+            "birthday": "2001-03-13", 
+            "attendance_start_date": "2014-08-18", 
+            "openapply_parent_id": null, 
+            "nickname": "Ting Jie", 
+            "openapply_student_id": null, 
+            "language": "en", 
+            "gender": "Male", 
+            "language3": null, 
+            "language2": null, 
+            "language1": null, 
+            "street_address_ii": "Valencia", 
+            "language4": null, 
+            "country": "MY", 
+            "street_address": "52, Elitis Dahina "
+        }
+    ]
+}

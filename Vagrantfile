@@ -68,6 +68,7 @@ SCRIPT
   config.vm.network "private_network", ip: "192.168.70.10"
   config.vm.hostname = "igbisportal.vagrant"
   config.vm.network :forwarded_port, guest: 5432, host: 5000
+  config.vm.network :forwarded_port, guest: 6543, host: 8888
 
   # Makes it accessible locally at igbisportal.vagrant (modifies the hosts file)
   config.hostsupdater.aliases = ["igbisportal.vagrant"]

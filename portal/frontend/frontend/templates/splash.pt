@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html tal:define="role request.GET.get('role', 'student')" tal:define="static_url request.static_url('frontend:static/')">
+<head>
+  <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
+  <title>${title}</title>
+  <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
+</head>
+<body>
+<div id="wrapper">
+    <div id="contentwrap">
+      <img src="${static_url}header.png" width="1100px" />
+
+      <div class="tabs_holder">
+       <ul>
+        <li tal:attributes="class 'tab_selected' if role=='student' else ''"><a href="#students">Students</a></li>
+        <li tal:attributes="class 'tab_selected' if role=='teacher' else ''"><a href="#teachers">Teachers</a></li>
+        <li tal:attributes="class 'tab_selected' if role=='parent' else ''"><a href="#parents">Parents</a></li>
+        <li tal:attributes="class 'tab_selected' if role=='admin' else ''"><a href="#staff">Staff</a></li>
+       </ul>
+       <div class="content_holder">
+        <div id="students" style="padding:0px;margin:0px;">
+          <div id="content">
+           <p>
+            <div class="button">
+              <a href="https://igbis.managebac.com">
+                  <div><i class="fa fa-fire fa-5x"></i></div>
+                  <br />ManageBac
+              </a>
+            </div>
+            <div class="button">
+              <a href="https://gmail.com">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Email
+              </a>
+            </div>
+            <div class="button">
+              <a href="https://drive.google.com">
+                  <div><i class="fa fa-files-o fa-5x"></i></div>
+                  <br />Google Drive
+              </a>
+            </div>
+            <div class="button">
+              <a href="https://igbis.follettdestiny.com">
+                  <div><i class="fa fa-university fa-5x"></i></div>
+                  <br />Library
+              </a>
+            </div>
+
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+
+           </p>
+         </div>
+
+          <div id="content">
+           <p>
+            <div class="button">
+                  <div><i class="fa fa-fire fa-5x"></i></div>
+                  <br />ManageBac
+            </div>
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+
+           </p>
+         </div>
+
+         </div>
+
+        <div id="teachers">
+           <p>
+            <div class="button">
+              <a href="https://igbis.managebac.com">
+                  <div><i class="fa fa-fire fa-5x"></i></div>
+                  <br />ManageBac
+              </a>
+            </div>
+            <div class="button">
+              <a href="https://gmail.com">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Email
+              </a>
+            </div>
+            <div class="button">
+              <a href="https://drive.google.com">
+                  <div><i class="fa fa-files-o fa-5x"></i></div>
+                  <br />Google Drive
+              </a>
+            </div>
+            <div class="button">
+              <a href="https://igbis.follettdestiny.com">
+                  <div><i class="fa fa-university fa-5x"></i></div>
+                  <br />Library
+              </a>
+            </div>
+
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+
+            <div class="button">
+                  <div><i class="fa fa-envelope fa-5x"></i></div>
+                  <br />Google Email
+            </div>
+          </p>
+        </div>
+
+        <div id="parents">
+         Some content tab 3
+        </div>
+
+        <div id="staff">
+         Some content tab 4
+        </div>
+
+       </div><!-- /.content_holder -->
+      </div><!-- /.tabs_holder -->
+    </div>
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js"></script>
+<script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
+<script type="text/javascript">
+  $('.tabs_holder').skinableTabs({
+    skin: 'skin5',
+    position: 'top',
+    persist_tab: '1'
+  });
+</script>
+
+
+
+
+</body>
+</html>
