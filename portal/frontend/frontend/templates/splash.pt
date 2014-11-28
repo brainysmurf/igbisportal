@@ -22,152 +22,54 @@
         <div id="students" style="padding:0px;margin:0px;">
           <div id="content">
            <p>
-            <div class="button">
-              <a href="https://igbis.managebac.com">
-                  <div><i class="fa fa-fire fa-5x"></i></div>
-                  <br />ManageBac
+            <div tal:repeat="item student_buttons" class="button">
+              <a href="${item.url}">
+                  <div><i class="fa fa-${item.icon} fa-5x"></i></div>
+                  <br />${item.name}
               </a>
             </div>
-            <div class="button">
-              <a href="https://gmail.com">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Email
-              </a>
-            </div>
-            <div class="button">
-              <a href="https://drive.google.com">
-                  <div><i class="fa fa-files-o fa-5x"></i></div>
-                  <br />Google Drive
-              </a>
-            </div>
-            <div class="button">
-              <a href="https://igbis.follettdestiny.com">
-                  <div><i class="fa fa-university fa-5x"></i></div>
-                  <br />Library
-              </a>
-            </div>
-
-            <div class="button">
-              <a href="https://www.google.com/calendar/">
-                  <div><i class="fa fa-calendar fa-5x"></i></div>
-                  <br />Calendar
-              </a>
-            </div>
-
-<!--             <div class="button">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Google Email
-            </div>
- 
-           </p>
-         </div> -->
-
-<!--           <div id="content">
-           <p>
-            <div class="button">
-                  <div><i class="fa fa-fire fa-5x"></i></div>
-                  <br />ManageBac
-            </div>
-            <div class="button">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Google Email
-            </div>
-            <div class="button">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Google Email
-            </div>
-            <div class="button">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Google Email
-            </div>
-
-            <div class="button">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Google Email
-            </div>
-
-            <div class="button">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Google Email
-            </div>
-            -->
            </p> 
          </div>  
 
-         </div> 
+        </div> 
 
-        <div id="teachers">
+        <div id="teachers" style="padding:0px;margin:0px;">
+          <div id="content">
            <p>
-            <div class="button">
-              <a href="https://igbis.managebac.com">
-                  <div><i class="fa fa-fire fa-5x"></i></div>
-                  <br />ManageBac
+            <div tal:repeat="item teacher_buttons" class="button">
+              <a href="${item.url}">
+                  <div><i class="fa fa-${item.icon} fa-5x"></i></div>
+                  <br />${item.name}
               </a>
             </div>
-            <div class="button">
-              <a href="https://gmail.com">
-                  <div><i class="fa fa-envelope fa-5x"></i></div>
-                  <br />Email
-              </a>
-            </div>
-            <div class="button">
-              <a href="https://drive.google.com">
-                  <div><i class="fa fa-files-o fa-5x"></i></div>
-                  <br />Google Drive
-              </a>
-            </div>
-            <div class="button">
-              <a href="https://igbis.follettdestiny.com">
-                  <div><i class="fa fa-university fa-5x"></i></div>
-                  <br />Library
-              </a>
-            </div>
-
-            <div class="button">
-              <a href="https://www.google.com/calendar">
-                  <div><i class="fa fa-calendar fa-5x"></i></div>
-                  <br />Calendar
-              </a>
-            </div>
-
-            <div class="button">
-              <a href="https://igbis.intersis.com">
-                  <div><i class="fa fa-info-circle fa-5x"></i></div>
-                  <br />InterSIS
-              </a>
-            </div>
-            
-            <div class="button">
-              <a href="http://occ.ibo.org/ibis/occ/guest/home.cfm">
-                  <div><i class="fa fa-gear fa-5x"></i></div>
-                  <br />OCC
-              </a>
-            </div>
-
-            <div class="button">
-              <a href="https://geoffreyderry.youcanbook.me/">
-                  <div><i class="fa fa-thumb-tack fa-5x"></i></div>
-                  <br />Book Geoff!
-              </a>
-            </div>
-
-            <div class="button">
-              <a href="http://rodmus.igbis.local/">
-                  <div><i class="fa fa-question-circle fa-5x"></i></div>
-                  <br />Help Desk
-              </a>
-            </div>
-
-
           </p>
+         </div>
         </div>
 
-        <div id="parents">
-         Some content tab 3
+        <div id="parents" style="padding:0px;margin:0px;">
+         <div id="content">
+         <p>
+          <div class="button">
+            <a href="#">
+              <div><i class="fa fa-question-circle fa-5x"></i></div>
+              <br />To Do
+            </a>
+          </div>
+         </p>
+        </div>
         </div>
 
-        <div id="staff">
-         Some content tab 4
+        <div id="staff" style="padding:0px;margin:0px;">
+        <div id="content">
+         <p>
+          <div class="button">
+            <a href="#">
+              <div><i class="fa fa-question-circle fa-5x"></i></div>
+              <br />To Do
+            </a>
+          </div>
+         </p>
+        </div>
         </div>
 
        </div><!-- /.content_holder -->

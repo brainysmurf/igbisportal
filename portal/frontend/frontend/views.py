@@ -15,6 +15,8 @@ import json
 
 import requests
 
+from collections import namedtuple
+
 PREFIX = 'igbis2014'
 url = 'https://{}.managebac.com/api/{{}}'.format(PREFIX)
 
@@ -48,6 +50,8 @@ def grade_course(request):
             statement = session.query(Courses).filter(Courses.grade == grade)
             items = statement.all()
         return dict(rows=items)
+
+
 
     with DBSession() as session:
         statement = session.query(Courses).\
@@ -103,11 +107,40 @@ def students_ind(request):
 
     return dict(title="Student View", item=student)
 
+button = namedtuple('button', ['name', 'url', 'icon'])
+stndrdbttns = [
+    button(name="ManageBac", url="https://igbis.managebac.com", icon="fire"),
+    button(name="Email", url="https://gmail.com", icon="envelope"),
+    button(name="Google Drive", url="https://drive.google.com", icon="files-o"),
+    button(name="Library", url="https://igbis.follettdestiny.com", icon="university"),
+    button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar"),
+]
 
 @view_config(route_name='splash', renderer='templates/splash.pt')
 def splash(request):
     role = request.GET.get('role', 'student')
-    return dict(role=role, title="Splash")
+    student_buttons = stndrdbttns[:]
+    student_buttons.extend([
+            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="video-camera"),
+            button(name="YouTube", url="http://youtube.com", icon="youtube")
+            ]
+        )
+    teacher_buttons = stndrdbttns[:]
+    teacher_buttons.extend([
+            button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle"),
+            button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear"),
+            button(name="Book Geoff", url="https://geoffreyderry.youcanbook.me/", icon="thumb-tack"),
+            button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="question-circle"),
+            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="video-camera"),
+            button(name="YouTube", url="http://youtube.com", icon="youtube")
+            ]
+        )
+    return dict(
+        role=role, 
+        title="Splash",
+        student_buttons = student_buttons,
+        teacher_buttons = teacher_buttons
+    )
 
 @view_config(route_name='reports', renderer='templates/report_list.pt')
 def reports(request):
@@ -142,4 +175,3 @@ might be caused by one of the following things:
 After you fix the problem, please restart the Pyramid application to
 try it again.
 """
-
