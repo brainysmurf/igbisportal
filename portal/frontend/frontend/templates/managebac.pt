@@ -1,0 +1,1105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+<!--[if IE]><![endif]-->
+<title>${title}
+</title>
+<link href="/stylesheets/cache/cache-fb94f1044a14082cdb9a79c0d234c71c548aef8a/application.css?1414050420" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/fontello.css?1388217715" media="screen" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+<link href='/stylesheets/ie_only.css' media='all' rel='stylesheet' type='text/css' />
+<![endif]-->
+<script src="/javascripts/cache/cache-fb94f1044a14082cdb9a79c0d234c71c548aef8a/application.js?1414050420" type="text/javascript"></script>
+<!--[if gt IE 7]>
+<script src="/javascripts/ie_tweaks.js?1388217713" type="text/javascript"></script>
+<![endif]-->
+
+<script type="text/javascript">
+//<![CDATA[
+window._token = 'icIOTJwpr2MTURlYKL7isldcnM0qh6ZhDNyKISzf3oA='
+//]]>
+</script>
+</head>
+<body class='page-users-home'>
+<script type='text/javascript'>
+  //<![CDATA[
+    (function($){
+      $(document).ready(function(){
+        $dropdown = $('.dropdown-toggle')
+        $dropdown.dropdown()
+      });
+    })(window.jQuery);
+  //]]>
+</script>
+
+<div id='pagewrapper'>
+
+
+
+<div id='mailbox-container'></div>
+<div id='headerwrapper'>
+<div class='clearfix' id='header'>
+<div class='header-links'>
+<div class='section'>
+<span class='user-avatar'><div class='img-shadow avatar tiny'><a href="/account"><img alt="Adam_morris_original_tiny" src="https://igbis.managebac.com/secure/6647e349737ae7a414c6b8512a1bc08b/1414999344/photos/1563/0789/Adam_Morris_original_tiny.jpg" /></a></div></span>
+<a href="/account" class="user-name-10792616">Adam Morris</a>
+<span class='pipe'>&ensp;</span>
+<a href="#" onclick="Mailbox.show(); return false;"><i class="icon-envelope"></i></a>
+<span class='pipe'>&ensp;</span>
+<i class='icon-signout'></i>
+<a href="https://igbis.managebac.com/logout">Logout</a>
+</div>
+</div>
+
+<h1>
+<a href="https://igbis.managebac.com/">IGB International School</a>
+</h1>
+</div>
+<div id='menu'>
+<ul class='clearfix'>
+<li class='first'>
+<a href="/blog"><span class='i sprite-menu_blog_white' ></span>
+<span id='new-blog-entries-count'>
+1
+</span>
+Blog
+</a></li>
+<li class='selected '>
+<a href="/home"><span class='i sprite-menu_dashboard_white' ></span>
+Dashboard
+</a></li>
+<li>
+<a href="/profile"><span class='i sprite-menu_profile_white' ></span>
+Profile
+</a></li>
+<li>
+<a href="/groups/cas"><span class='i sprite-menu_ib_white' ></span>
+IB Manager<span class='caret'></span>
+</a><div class='drop_menu' style='display:none; margin-top:0px'>
+<div class='inner'>
+<p><a href="/groups/10268383/cas_roster">IB DP Class of 2015 (Grade 12)</a></p>
+<p><a href="/groups/10228846/cas_roster">IB DP Class of 2016 (Grade 11)</a></p>
+<p><a href="/groups/10229224/cas_roster">IB MYP Class of 2015 (Grade 10)</a></p>
+<p><a href="/groups/10229223/cas_roster">IB MYP Class of 2016 (Grade 9)</a></p>
+<p><a href="/groups/10229222/cas_roster">IB MYP Class of 2017 (Grade 8)</a></p>
+<p><a href="/groups/10229221/cas_roster">IB MYP Class of 2018 (Grade 7)</a></p>
+<p><a href="/groups/10228845/cas_roster">IB MYP Class of 2019 (Grade 6)</a></p>
+</div>
+</div>
+</li>
+<li>
+<a href="/users/10792616/classes"><span class='i sprite-menu_classes_white' ></span>
+Classes<span class='caret'></span>
+</a><div class='drop_menu' style='display:none; margin-top:0px'>
+<div class='inner'>
+<p>
+<a href="/classes/10251561"><span class='ib tar nowrap' style='width: 45px'>
+<span class='program-label myp'>IB MYP</span>
+</span>
+English Language Acquisition Phases 5, 6 (Grade 10) 1
+</a></p>
+<p>
+<a href="/classes/10251541"><span class='ib tar nowrap' style='width: 45px'>
+<span class='program-label myp'>IB MYP</span>
+</span>
+English Language Acquisition Phases 5, 6 (Grade 9) 1
+</a></p>
+<p>
+<a href="/classes/10286540"><span class='ib tar nowrap' style='width: 45px'>
+<span class='program-label myp'>IB MYP</span>
+</span>
+English Language Acquisition Phases 1, 2 (Grade 8) 1
+</a></p>
+<p>
+<a href="/classes/10251525"><span class='ib tar nowrap' style='width: 45px'>
+<span class='program-label myp'>IB MYP</span>
+</span>
+English Language Acquisition Phases 3, 4 (Grade 8) 1
+</a></p>
+<p>
+<a href="/classes/10251509"><span class='ib tar nowrap' style='width: 45px'>
+<span class='program-label myp'>IB MYP</span>
+</span>
+English Language Acquisition Phases 3, 4 (Grade 7) 1
+</a></p>
+<p>
+<a href="/classes/10286539"><span class='ib tar nowrap' style='width: 45px'>
+<span class='program-label myp'>IB MYP</span>
+</span>
+English Language Acquisition Phases 1, 2 (Grade 7) 1
+</a></p>
+<p>
+<a href="/classes/10251493"><span class='ib tar nowrap' style='width: 45px'>
+<span class='program-label myp'>IB MYP</span>
+</span>
+English Language Acquisition Phases 3, 4 (Grade 6) 1
+</a></p>
+</div>
+</div>
+</li>
+<li class='last'>
+<a href="/users/10792616/groups"><span class='i sprite-menu_groups_white' ></span>Groups</a>
+</li>
+<!-- if parent end -->
+<li class='last right'>
+<a href="/help" class="help-link" target="_blank"><span class='i sprite-menu_help_white' ></span>
+Help
+</a></li>
+<li class='right'>
+<a href="#"><span class='i sprite-menu_program_white' ></span>
+DP<span class='caret'></span>
+</a><div class='drop_menu narrow' style='display: none'>
+<div class='inner'>
+<p><a href="/pyp/dashboard">PYP</a></p>
+<p><a href="/home?current_program=myp">MYP</a></p>
+<p><a href="/home?current_program=dp" class="selected">DP</a></p>
+</div>
+</div>
+</li>
+
+<li class='right '>
+<a href="/admin/settings/general"><span class='i sprite-menu_settings_white' ></span>
+Settings<span class='caret'></span>
+</a><div class='drop_menu' style='display:none; margin-top:0px'>
+<div class='inner'>
+<p><a href="/admin/settings/general">General</a></p>
+<p><a href="/admin/settings/diploma/years">Diploma</a></p>
+<p><a href="/admin/settings/myp/years">Middle Years</a></p>
+<p><a href="/admin/settings/pyp/years">Primary Years</a></p>
+<p><a href="/admin/settings/non_ib/terms">Non-IB</a></p>
+<div class='menu-divider'></div>
+<p><a href="/admin/reports">Reports</a></p>
+<p><a href="/admin/settings/guides/cas">Guides</a></p>
+<p><a href="/admin/reports/attendance/attendance_default_route">Attendance</a></p>
+<p><a href="/admin/settings/billing">Billing</a></p>
+<p><a href="/admin/settings/turn-it-in">Integrations</a></p>
+</div>
+</div>
+</li>
+<li class='right '>
+<a href="/admin/users?group=students"><span class='i sprite-menu_users_white' ></span>
+Users
+</a></li>
+</ul>
+</div>
+</div>
+
+
+
+
+
+
+
+
+<div id="tabs">
+  <ul>
+<li class='first selected'>
+<a href="/home">Calendar</a>
+</li>
+<li>
+<a href="/dashboard/cas_activities/progress">CAS<span class='caret'></span></a>
+<div class='drop_menu drop_menuie' style='margin-top: 30px !important; display:none'>
+<div class='inner'>
+<p><a href="/dashboard/cas_activities/progress"><img align="absmiddle" alt="Hourglass" src="/images/icons/mini/hourglass.png?1388217712" /> Progress</a></p>
+<p><a href="/dashboard/cas_activities"><img alt="Tick" src="/images/icons/mini/tick.png?1388217712" /> Approvals</a></p>
+<p><a href="/supervisor_approvals"><img alt="Edit" src="/images/icons/mini/edit.gif?1388217712" /> Reviews</a></p>
+</div>
+</div>
+</li>
+<li>
+<a href="/dashboard/projects">Project</a>
+</li>
+<li>
+<a href="/dashboard/projects?type=ee">EE</a>
+</li>
+<li>
+<a href="/dashboard/attendance">Homeroom</a>
+</li>
+<li>
+<a href="/dashboard/wsc/myp">Curriculum</a>
+</li>
+</ul>
+
+</div>
+<!--[if lte IE 7]><style type="text/CSS">.drop_menuie{margin-left: -47px !important;}</style><![endif]-->
+
+<div id='content'>
+<div id='main'>
+<div id='left-column'>
+
+<div id='left'>
+<div class="header " id="page-header"><span style='float: right'>
+<span class='i sprite-calendar_add' ></span>
+<a href="/users/10792616/events/new">Add event</a>
+<span class='pipe'>&ensp;</span>
+<span class='i sprite-calendar' ></span>
+<a href="/users/10792616/calendar">Full calendar</a>
+</span>
+<h3>Welcome Adam!</h3></div>
+<div class='contentarea' id='search_results' style='display:none'>
+<div class='fr'>
+<span class='i sprite-cancel' ></span>
+<a href="#" onclick="$('user_name').value=''; $('search_results').hide(); if($('blank_slate')!=null){$('blank_slate').show();}; return false;">Close</a>
+</div>
+<h2 style='margin-top:0.5em;'>
+Search Results
+</h2>
+<div id='search_results_records'></div>
+</div>
+<div class='contentarea'>
+<h2>Next 2 Weeks</h2>
+<div id='twoweeks'>
+<table class="calendar"><thead><tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr></thead><tbody><tr><td class="day today"><div class="day">Today</div></td><td class="day"><div class="day">3</div><ul>
+<li event_id='12218048' style='font-size: 12px; background-color: #91181B; color: #fff'>
+<span class='event-time'> 9AM</span>
+<a href="/classes/10251541/events/12218048">Two paragraphs, compare and contrast</a><span class='info-icon-with-hover event-with-tip ' hint="&lt;div class=&#39;event-hint&#39;&gt;
+&lt;h3 style=&#39;padding-top: 0; margin-top: 0; font-size: &#39;&gt;
+&lt;a href=&quot;/classes/10251541/events/12218048&quot;&gt;Two paragraphs, compare and contrast&lt;/a&gt;
+&lt;/h3&gt;
+&lt;label style=&#39;margin-bottom: 2px&#39;&gt;
+ 9:00am on November  3
+&lt;/label&gt;
+&lt;div class=&#39;desc&#39;&gt;
+Please write two paragraphs that discuss the similarities between Sherlock the TV series and the book, and another paragraph of differences. To make it easier for you, the first paragraph can be only similarities, and the second paragraph, only differences. To make it harder, talk about both similarities and differences. Please type and submit to ManageBac.
+&lt;/div&gt;
+&lt;div class=&#39;group&#39;&gt;
+&lt;a href=&quot;/classes/10251541&quot;&gt;&lt;span class=&#39;program-label myp&#39;&gt;IB MYP&lt;/span&gt;English Language Acquisition Phases 5, 6 (Grade 9) 1&lt;/a&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+"></span>
+</li>
+</ul>
+</td><td class="day"><div class="day">4</div></td><td class="day"><div class="day">5</div></td><td class="day"><div class="day">6</div></td><td class="day"><div class="day">7</div></td><td class="day"><div class="day">8</div></td></tr><tr><td class="day"><div class="day">9</div></td><td class="day"><div class="day">10</div></td><td class="day"><div class="day">11</div></td><td class="day"><div class="day">12</div></td><td class="day"><div class="day">13</div></td><td class="day"><div class="day">14</div></td><td class="day"><div class="day">15</div></td></tr></tbody></table></div>
+
+<h2>Upcoming Events or Deadlines</h2>
+<div class='agenda'>
+<table class='nohborder deeppadding wide' style='margin-bottom:1em'>
+<tbody class='data'>
+<tr>
+<td class='tar' style='padding:0; border:0' width='90px'>
+<span class='indicator' style='background-color: #91181B; color: #fff'>
+Deadline
+</span>
+</td>
+<td class='tar' width='15%'>
+<span class='time' style='color:#c00; font-weight:bold;'>
+Due
+ 9am
+</span>
+</td>
+<td>
+<a href="/classes/10251541/events/12218048">Two paragraphs, compare and contrast</a>
+<span class='info-icon-with-hover event-with-tip' hint="&lt;div class=&#39;event-hint&#39;&gt;
+&lt;h3 style=&#39;padding-top: 0; margin-top: 0; font-size: &#39;&gt;
+&lt;a href=&quot;/classes/10251541/events/12218048&quot;&gt;Two paragraphs, compare and contrast&lt;/a&gt;
+&lt;/h3&gt;
+&lt;label style=&#39;margin-bottom: 2px&#39;&gt;
+ 9:00am on November  3
+&lt;/label&gt;
+&lt;div class=&#39;desc&#39;&gt;
+Please write two paragraphs that discuss the similarities between Sherlock the TV series and the book, and another paragraph of differences. To make it easier for you, the first paragraph can be only similarities, and the second paragraph, only differences. To make it harder, talk about both similarities and differences. Please type and submit to ManageBac.
+&lt;/div&gt;
+&lt;div class=&#39;group&#39;&gt;
+&lt;a href=&quot;/classes/10251541&quot;&gt;&lt;span class=&#39;program-label myp&#39;&gt;IB MYP&lt;/span&gt;English Language Acquisition Phases 5, 6 (Grade 9) 1&lt;/a&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+"></span>
+</td>
+<td class='tar' style='color:#777'>
+Monday, 1 day away
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+
+
+<h2>Latest Activity</h2>
+<div class='recent-activity'>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10251493' id='expand_link_10251493' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10251493' id='collapse_link_10251493'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+IB MYP English Language Acquisition Phases 3, 4 (Grade 6) 1
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10251493'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#FFAD3A">Test</span></td>
+<td>
+The Dragon Rock Comprehension
+<span class='info-icon-with-hover' data-hint-url='/classes/10251493/events/12049048/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#2175C6">Prose</span></td>
+<td>
+Write a short story
+<span class='info-icon-with-hover' data-hint-url='/classes/10251493/events/12049095/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 29, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10251509' id='expand_link_10251509' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10251509' id='collapse_link_10251509'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+IB MYP English Language Acquisition Phases 3, 4 (Grade 7) 1
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10251509'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+Write what you remember about "The Cup in the Forest"
+<span class='info-icon-with-hover' data-hint-url='/classes/10251509/events/12212369/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#339933">Event</span></td>
+<td>
+Introduction to Blogs
+<span class='info-icon-with-hover' data-hint-url='/classes/10251509/events/12064270/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct  1, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#528C00">Project</span></td>
+<td>
+Plot sequence and identifying main events
+<span class='info-icon-with-hover' data-hint-url='/classes/10251509/events/12057891/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#339933">Event</span></td>
+<td>
+2nd, 3rd, 4th, and 5th paragraph of essay
+<span class='info-icon-with-hover' data-hint-url='/classes/10251509/events/12048372/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 29, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#2175C6">Task</span></td>
+<td>
+Short essay: The best story we read or watched
+<span class='info-icon-with-hover' data-hint-url='/classes/10251509/events/11906323/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 24, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10251525' id='expand_link_10251525' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10251525' id='collapse_link_10251525'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+IB MYP English Language Acquisition Phases 3, 4 (Grade 8) 1
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10251525'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#339933">Event</span></td>
+<td>
+Introduction to Blogs
+<span class='info-icon-with-hover' data-hint-url='/classes/10251525/events/12064274/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct  1, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#2175C6">Prose</span></td>
+<td>
+Essay on a short story
+<span class='info-icon-with-hover' data-hint-url='/classes/10251525/events/12057644/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#528C00">Project</span></td>
+<td>
+Sequence of Events for Odysseus
+<span class='info-icon-with-hover' data-hint-url='/classes/10251525/events/12057636/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#FFAD3A">Test</span></td>
+<td>
+Reading comprehension
+<span class='info-icon-with-hover' data-hint-url='/classes/10251525/events/11861329/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#528C00">Project</span></td>
+<td>
+Interview with classmate on IGBIS' Activity Program
+<span class='info-icon-with-hover' data-hint-url='/classes/10251525/events/11860819/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10251541' id='expand_link_10251541' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10251541' id='collapse_link_10251541'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+IB MYP English Language Acquisition Phases 5, 6 (Grade 9) 1
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10251541'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+Two paragraphs, compare and contrast
+<span class='info-icon-with-hover' data-hint-url='/classes/10251541/events/12218048/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct 31, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+Research & Present Another Sherlock Adaptation
+<span class='info-icon-with-hover' data-hint-url='/classes/10251541/events/12192546/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct 27, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#339933">Event</span></td>
+<td>
+Introduction to Blogs
+<span class='info-icon-with-hover' data-hint-url='/classes/10251541/events/12064280/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct  1, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#33C">Paper</span></td>
+<td>
+Newscast with George
+<span class='info-icon-with-hover' data-hint-url='/classes/10251541/events/11964003/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 29, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#2175C6">Essay</span></td>
+<td>
+Funky dialogue with George
+<span class='info-icon-with-hover' data-hint-url='/classes/10251541/events/11952129/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 29, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10251561' id='expand_link_10251561' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10251561' id='collapse_link_10251561'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+IB MYP English Language Acquisition Phases 5, 6 (Grade 10) 1
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10251561'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+Revise your blog post
+<span class='info-icon-with-hover' data-hint-url='/classes/10251561/events/12212689/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+Start Starter Blog Post
+<span class='info-icon-with-hover' data-hint-url='/classes/10251561/events/12198524/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct 28, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+Dragon Rock Homework
+<span class='info-icon-with-hover' data-hint-url='/classes/10251561/events/12140928/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct 17, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#339933">Event</span></td>
+<td>
+Introduction to Blogs
+<span class='info-icon-with-hover' data-hint-url='/classes/10251561/events/12064288/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct  1, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#2175C6">Task</span></td>
+<td>
+Formally written article
+<span class='info-icon-with-hover' data-hint-url='/classes/10251561/events/12013110/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 23, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10266654' id='expand_link_10266654' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10266654' id='collapse_link_10266654'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+Secondary School Teachers
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10266654'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Wandering desks and chairs
+</td>
+<td class='author'>Megan Settle</td>
+<td>Sep 10, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Wandering desks and chairs
+</td>
+<td class='author'>Lennox Meldrum</td>
+<td>Sep 10, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Student welfare/ Assembly Wednesday 10.9.2014
+</td>
+<td class='author'>Peter Fowles</td>
+<td>Sep  8, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Brainpop
+</td>
+<td class='author'>Geoffrey Derry</td>
+<td>Sep  2, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Optional Google Sites session on Wednesday
+</td>
+<td class='author'>Geoffrey Derry</td>
+<td>Aug 26, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10286539' id='expand_link_10286539' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10286539' id='collapse_link_10286539'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+IB MYP English Language Acquisition Phases 1, 2 (Grade 7) 1
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10286539'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+In your notebooks, write one paragraph and about 100 words of what you remember from the story.
+<span class='info-icon-with-hover' data-hint-url='/classes/10286539/events/12212368/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#339933">Event</span></td>
+<td>
+Introduction to Blogs
+<span class='info-icon-with-hover' data-hint-url='/classes/10286539/events/12064267/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct  1, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#528C00">Project</span></td>
+<td>
+Plot sequence and identifying main events
+<span class='info-icon-with-hover' data-hint-url='/classes/10286539/events/12057890/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#91181B">Deadline</span></td>
+<td>
+Second paragraph of essay
+<span class='info-icon-with-hover' data-hint-url='/classes/10286539/events/12048376/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 29, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#2175C6">Task</span></td>
+<td>
+Short essay: The best story we read or watched
+<span class='info-icon-with-hover' data-hint-url='/classes/10286539/events/11906322/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 24, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10286540' id='expand_link_10286540' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10286540' id='collapse_link_10286540'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+IB MYP English Language Acquisition Phases 1, 2 (Grade 8) 1
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10286540'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#339933">Event</span></td>
+<td>
+Introduction to Blogs
+<span class='info-icon-with-hover' data-hint-url='/classes/10286540/events/12064278/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Oct  1, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#FFAD3A">Test</span></td>
+<td>
+Reading comprehension
+<span class='info-icon-with-hover' data-hint-url='/classes/10286540/events/11861319/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#FF4744">Oral</span></td>
+<td>
+Story Presentation
+<span class='info-icon-with-hover' data-hint-url='/classes/10286540/events/12057586/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#2175C6">Task</span></td>
+<td>
+Re-telling a story
+<span class='info-icon-with-hover' data-hint-url='/classes/10286540/events/12057553/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="color: #fff; background:#528C00">Project</span></td>
+<td>
+Interview with classmate on IGBIS' Activity Program
+<span class='info-icon-with-hover' data-hint-url='/classes/10286540/events/11860818/hint.js'></span>
+</td>
+<td class='author'>Adam Morris</td>
+<td>Sep 30, 2014</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<div class='fr'>
+<div class='expand-link' group_id='10284324' id='expand_link_10284324' style='display: none'>
+<i class='icon-plus' ></i>
+<a href="#" onclick="; return false;"> Expand</a>
+</div>
+<div class='collapse-link' group_id='10284324' id='collapse_link_10284324'>
+<i class='icon-minus' ></i>
+<a href="#" onclick="; return false;">Collapse</a>
+</div>
+</div>
+All Secondary School students
+</h4>
+<table class='wide nohborder deeppadding' id='latest_activity_list_10284324'>
+<tbody class='data'>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Psychology Video
+</td>
+<td class='author'>Stephanie Seehaus</td>
+<td>Oct 29, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+G6-8 Camp Photos
+</td>
+<td class='author'>Phil Clark</td>
+<td>Oct 29, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Parent-Student-Teacher conferences
+</td>
+<td class='author'>Lennox Meldrum</td>
+<td>Oct 28, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+Parent-Student-Teacher conferences
+</td>
+<td class='author'>Angela (Angela) Chua</td>
+<td>Oct 27, 2014</td>
+</tr>
+<tr>
+<td><span class="indicator" style="background: #F0AD2A">Message</span></td>
+<td>
+AISM Inter-School Triathlon - Sunday 9th November 2014
+</td>
+<td class='author'>Jasmine Brawn</td>
+<td>Oct 27, 2014</td>
+</tr>
+</tbody>
+</table>
+</div>
+<script type='text/javascript'>
+  //<![CDATA[
+    jQuery(function($) {
+      $(".expand-link").click(function(e) {
+        $(this).closest(".fr").find(".collapse-link").show();
+        var groupID = $(this).attr('group_id');
+        $('#latest_activity_list_' + groupID).show();
+        $(this).hide();
+      });
+      $(".collapse-link").click(function(e) {
+        $(this).closest(".fr").find(".expand-link").show();
+        var groupID = $(this).attr('group_id');
+        $('#latest_activity_list_' + groupID).hide();
+        $(this).hide();
+      });
+    
+      $.each($('.recent-activity .info-icon-with-hover'), function(i, elem) {
+        $(elem).qtip({
+          hide: {
+            fixed: true
+          },
+          beforeRender: function(api) {
+            console.log(api)
+          },
+          position: 'top left',
+          style: {
+            classes: 'ui-tooltip-tipsy ui-tooltip-shadow'
+          },
+          content: {
+            text: '<div class="nowrap"><img src="/images/spinner.gif" style="display: inline; vertical-align: middle"></img>&nbsp;Loading...&nbsp;&nbsp;&nbsp;&nbsp;</div>',
+            ajax: {
+              url: $(elem).data('hint-url')
+            }
+          }
+        });
+      });
+    });
+  //]]>
+</script>
+
+</div>
+</div>
+<div id='right-column'>
+<div id='right'>
+<div class='school-logo-wrapper' style='margin: 0'>
+<div class='school-logo'><img alt="Screen_shot_2013-12-16_at_1" src="/logos/10006193/Screen_Shot_2013-12-16_at_1.37.52_PM.png?1387172299" /></div>
+</div>
+<br />
+<div class='simple_form nomargin'>
+<table class='noborders nopadding wide'>
+<tr>
+<td>
+<div class='string nomargin'>
+<input class="string" id="user_name" name="user_name" onkeyup="setTimeout('search_by_name()', 1000)" placeholder="Search by student name" style="width: 100%" type="search" value="" />
+</div>
+</td>
+<td class='tac vac' style='width: 24px'><img src='/images/spinner.gif' style='vertical-align:middle; display:none' id='live_search_spinner' class='spinner'> </td>
+</tr>
+</table>
+</div>
+<script type='text/javascript'>
+  //<![CDATA[
+    var new_name = $('user_name').value;
+    var old_name = new_name;
+    //
+    function search_by_name(){
+      new_name = $('user_name').value;
+      if(new_name==old_name){
+        return true;
+      }
+      else{
+        old_name = new_name;
+      }
+      if($('user_name').value.length>=3){
+        new Ajax.Request('/live_user_search', {asynchronous:true, evalScripts:true, parameters: {
+            name: new_name,
+            authenticity_token: 'icIOTJwpr2MTURlYKL7isldcnM0qh6ZhDNyKISzf3oA='
+          },
+          onCreate: function() {
+            $("live_search_spinner").show();
+          }
+        })
+      }
+    }
+  //]]>
+</script>
+
+
+<h2 style='padding-left: 5px'>
+<a class="expandable_switch" data-target="my-classes" href="#" onclick="; return false;" style="text-decoration: none">My Classes</a>
+</h2>
+<ul id='my-classes' style='font-size: 12px; line-height: 170%; display: none'>
+<li>
+<span class='i sprite-language_b' ></span>
+<a href="/classes/10251493">English Language Acquisition Phases 3, 4 (Grade 6) 1</a>
+</li>
+<li>
+<span class='i sprite-language_b' ></span>
+<a href="/classes/10251509">English Language Acquisition Phases 3, 4 (Grade 7) 1</a>
+</li>
+<li>
+<span class='i sprite-language_b' ></span>
+<a href="/classes/10251525">English Language Acquisition Phases 3, 4 (Grade 8) 1</a>
+</li>
+<li>
+<span class='i sprite-language_b' ></span>
+<a href="/classes/10251541">English Language Acquisition Phases 5, 6 (Grade 9) 1</a>
+</li>
+<li>
+<span class='i sprite-language_b' ></span>
+<a href="/classes/10251561">English Language Acquisition Phases 5, 6 (Grade 10) 1</a>
+</li>
+<li>
+<span class='i sprite-language_b' ></span>
+<a href="/classes/10286539">English Language Acquisition Phases 1, 2 (Grade 7) 1</a>
+</li>
+<li>
+<span class='i sprite-language_b' ></span>
+<a href="/classes/10286540">English Language Acquisition Phases 1, 2 (Grade 8) 1</a>
+</li>
+</ul>
+<h2 style='padding-left: 5px'>
+<a class="expandable_switch" data-target="my-groups" href="#" onclick="; return false;" style="text-decoration: none">My Groups</a>
+</h2>
+<ul class='list' id='my-groups' style='display: none'>
+<li>
+<a href="/groups/10284324/overview">All Secondary School students</a>
+</li>
+<li>
+<a href="/groups/10266654/overview">Secondary School Teachers</a>
+</li>
+</ul>
+
+<h2><span class='i sprite-toolbox' ></span> QuickStart Guides</h2>
+<p style='margin: 10px 0px 5px 5px'>
+<a class="expandable_switch" data-target="setup" href="#" onclick="; return false;">Setup</a>
+</p>
+<ul class='list' id='setup' style='display: none; margin: 0px 0px 5px 10px'>
+<li><a href="/pdfs/guides_2014/Setup - Calendar.pdf" target="_blank">Calendar</a></li>
+<li><a href="/pdfs/guides_2014/Setup - Creating Classes.pdf" target="_blank">Creating Classes</a></li>
+<li><a href="/pdfs/guides_2014/Setup - Importing Users.pdf" target="_blank">Importing Users</a></li>
+<li><a href="/pdfs/guides_2014/Setup - Settings.pdf" target="_blank">Settings</a></li>
+</ul>
+<p style='margin: 10px 0px 5px 5px'>
+<a class="expandable_switch" data-target="diploma" href="#" onclick="; return false;">Diploma</a>
+</p>
+<ul class='list' id='diploma' style='display: none; margin: 0px 0px 5px 10px'>
+<li><a href="/pdfs/guides_2014/DP - Coordinator - CAS.pdf" target="_blank">Coordinator: CAS</a></li>
+<li><a href="/pdfs/guides_2014/DP - Coordinator - EE.pdf" target="_blank">Coordinator: EE</a></li>
+<li><a href="/pdfs/guides_2014/DP - Coordinator - ToK.pdf" target="_blank">Coordinator: ToK</a></li>
+<li><a href="/pdfs/guides_2014/DP - Coordinator - IBIS.pdf" target="_blank">Coordinator: IBIS</a></li>
+<li><a href="/pdfs/guides_2014/DP - Coordinator - Reports.pdf" target="_blank">Coordinator: Reports for Diploma</a></li>
+<li><a href="/pdfs/guides_2014/DP - Teacher - Unit Plans.pdf" target="_blank">Teacher: Unit Planning</a></li>
+<li><a href="/pdfs/guides_2014/DP - Teacher - Classroom Management.pdf" target="_blank">Teacher: Classroom Management</a></li>
+<li><a href="/pdfs/guides_2014/DP - Teacher - Groups 1 and 2.pdf" target="_blank">Teacher: Groups 1 & 2</a></li>
+<li><a href="/pdfs/guides_2014/DP - Teacher - Group 4.pdf" target="_blank">Teacher: Group 4</a></li>
+<li><a href="/pdfs/guides_2014/DP - Teacher - Gradebook.pdf" target="_blank">Teacher: Gradebook</a></li>
+</ul>
+<p style='margin: 10px 0px 5px 5px'>
+<a class="expandable_switch" data-target="middle_years" href="#" onclick="; return false;">Middle Years</a>
+</p>
+<ul class='list' id='middle_years' style='display: none; margin: 0px 0px 5px 10px'>
+<li><a href="/pdfs/guides_2014/MYP - Next Chapter.pdf" target="_blank">Next Chapter Transition</a></li>
+<li><a href="/pdfs/guides_2014/MYP - Coordinator - Service and Action.pdf" target="_blank">Coordinator: Service</a></li>
+<li><a href="/pdfs/guides_2014/MYP - Coordinator - Reports.pdf" target="_blank">Coordinator: Reports for MYP</a></li>
+<li><a href="/pdfs/guides_2014/MYP - Teacher - Unit Planning.pdf" target="_blank">Teacher: Unit Planning</a></li>
+<li><a href="/pdfs/guides_2014/MYP - Teacher - Classroom Management.pdf" target="_blank">Teacher: Classroom Management</a></li>
+<li><a href="/pdfs/guides_2014/MYP - Teacher - Gradebook.pdf" target="_blank">Teacher: Gradebook</a></li>
+</ul>
+<p style='margin: 10px 0px 5px 5px'>
+<a class="expandable_switch" data-target="primary_years" href="#" onclick="; return false;">Primary Years</a>
+</p>
+<ul class='list' id='primary_years' style='display: none; margin: 0px 0px 5px 10px'>
+<li><a href="/pdfs/guides_2014/PYP - Coordinator - Reports.pdf" target="_blank">Coordinator: Reports for PYP</a></li>
+<li><a href="/pdfs/guides_2014/PYP - Teacher - Unit Plans.pdf" target="_blank">Teacher: Unit Planning</a></li>
+<li><a href="/pdfs/guides_2014/PYP - Teacher - Classroom Management.pdf" target="_blank">Teacher: Classroom Management</a></li>
+<li><a href="/pdfs/guides_2014/PYP - Teacher - Gradebook.pdf" target="_blank">Teacher: Gradebook</a></li>
+</ul>
+<p style='margin: 10px 0px 5px 5px'>
+<a class="expandable_switch" data-target="attendance" href="#" onclick="; return false;">Attendance</a>
+</p>
+<ul class='list' id='attendance' style='display: none; margin: 0px 0px 5px 10px'>
+<li><a href="/pdfs/guides_2014/Attendance - Admin.pdf" target="_blank">Administrator</a></li>
+<li><a href="/pdfs/guides_2014/Attendance - Teacher.pdf" target="_blank">Teacher</a></li>
+</ul>
+
+
+</div>
+</div>
+</div>
+</div>
+<div id='clearfooter' style='display: block; height: 50px;'></div>
+</div>
+<div class='short' id='footer'>
+<div class='fr'>
+<span class='i sprite-table_go' ></span>
+<a href="/blog/yearstart">New Academic Year Checklist</a>
+<span class='pipe'>&ensp;</span>
+<span class='i sprite-toolbox' ></span>
+<a href="/users/welcome">Quick Start Checklist</a>
+<span class='pipe'>&ensp;</span>
+<span class='i sprite-help_icon' ></span>
+<a href="/help/support_request" target="_blank">Support Request</a>
+</div>
+<div>
+Copyright © 2006 – 2014 IGB International School.
+<a href='http://www.managebac.com/'>ManageBac</a>
+</div>
+</div>
+<!-- pagewrapper -->
+<script type="text/javascript">
+//<![CDATA[
+new PeriodicalExecuter(function() {new Ajax.Request('https://igbis.managebac.com/auto_logout?check_refresh=true', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('icIOTJwpr2MTURlYKL7isldcnM0qh6ZhDNyKISzf3oA=')})}, 3300)
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+new PeriodicalExecuter(function() {new Ajax.Request('https://igbis.managebac.com/auto_logout', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('icIOTJwpr2MTURlYKL7isldcnM0qh6ZhDNyKISzf3oA=')})}, 3600)
+//]]>
+</script>
+<div id='auto_logout' style='display:none'>
+<div class='pu-announcement' id='facebox_content' style='width: 420px'>
+<h2>
+Logout Reminder
+</h2>
+<div class='body'>
+<p>
+You will be automatically logged out in 5 minutes due to inactivity.
+</p>
+</div>
+<div class='footer'></div>
+<p class='tac' id='buttons'>
+<span class='app-button ' ><span class='t'><a href="#" onclick="new Ajax.Request('https://igbis.managebac.com/stay_logged_in', {asynchronous:true, evalScripts:true, onComplete:function(request){$('auto_logout').hide(); $('facebox_content').select('p.spinner')[0].hide(); $('facebox_content').select('p#buttons')[0].show(); }, onLoading:function(request){$('facebox_content').select('p.spinner')[0].show(); $('facebox_content').select('p#buttons')[0].hide(); }, parameters:'authenticity_token=' + encodeURIComponent('icIOTJwpr2MTURlYKL7isldcnM0qh6ZhDNyKISzf3oA=')}); return false;">Stay Logged in</a></span></span>
+or <span class='app-button ' ><span class='t'><a href="#" onclick="$('auto_logout').hide(); window.location='/logout'; return false;">Logout</a></span></span>
+</p>
+<p class='spinner tac' style='display:none; padding-top: 1em'><img alt="Spinner" src="/images/spinner.gif?1388217712" /></p>
+</div>
+</div>
+
+      <script type="text/javascript">
+        var uvOptions = {};
+        (function() {
+        var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+        uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/BPVzDqeXVQdr1Wy98170dg.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+        })();
+      </script>
+    
+<script type="text/javascript">if (!NREUMQ.f) { NREUMQ.f=function() {
+NREUMQ.push(["load",new Date().getTime()]);
+var e=document.createElement("script");
+e.type="text/javascript";
+e.src=(("http:"===document.location.protocol)?"http:":"https:") + "//" +
+  "js-agent.newrelic.com/nr-100.js";
+document.body.appendChild(e);
+if(NREUMQ.a)NREUMQ.a();
+};
+NREUMQ.a=window.onload;window.onload=NREUMQ.f;
+};
+NREUMQ.push(["nrfj","beacon-3.newrelic.com","9e9c7ea876",746283,"IlZdREEKWltSEx1DQwRLQB9bCltS",0,205,new Date().getTime(),"","","","",""]);</script></body>
+</html>

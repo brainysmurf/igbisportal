@@ -45,9 +45,14 @@ def grade_course(request):
     grade = request.params.get('grade')
     if not grade:
         with DBSession() as session:
-            statement = session.query(Courses).filter(Courses.grade == grade)
+            statement = session.query(Courses).\
+                options(joinedload('students')).\
+                options(joinedload('teachers')).\
+                options(joinedload('timetables'))
+
             items = statement.all()
-        return dict(rows=items)
+
+        return dict(title="Grades", rows=items)
 
     with DBSession() as session:
         statement = session.query(Courses).\
@@ -109,12 +114,26 @@ def splash(request):
     role = request.GET.get('role', 'student')
     return dict(role=role, title="Splash")
 
+@view_config(route_name='reports_ind', renderer='templates/report_ind.pt')
+def reports_ind(request):
+    m = request.matchdict
+    student_id = m.get('id')
+
+    with DBSession() as session:
+        statement = session.query(ReportComments).join(Students, Students.id == ReportComments.student_id).\
+            options(joinedload(ReportComments.atl_comments)).\
+            options(joinedload(ReportComments.course)).\
+        filter(Students.id == student_id)
+        reports = statement.all()
+
+    return dict(
+            title="This person's reports",
+            reports=reports
+        )
+
+
 @view_config(route_name='reports', renderer='templates/report_list.pt')
 def reports(request):
-
-    m = request.matchdict
-    report_id = m.get('id')
-    kind = m.get('kind')
 
     db = Database()
 

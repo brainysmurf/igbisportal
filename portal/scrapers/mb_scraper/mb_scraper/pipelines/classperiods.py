@@ -7,7 +7,7 @@ class ClassPeriodsPipeline(PostgresPipeline):
 
     def open_spider(self, spider):
         super(ClassPeriodsPipeline, self).open_spider(spider)
-        self.key = getattr(spider, 'path').format(spider.class_id, spider.program)
+        #self.key = getattr(spider, 'path').format(spider.class_id, spider.program)
 
     def database_ismember(self, key, item):
         return False  # todo, make this work

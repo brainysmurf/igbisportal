@@ -30,7 +30,9 @@ def main(global_config, **settings):
     config.add_route('grade_course', '/grade_course')
     config.add_route('grade_course_data', '/grade_course_data')
 
-    config.add_route('reports', '/reports/{id}/{kind}')
+    config.add_route('reports', '/reports')
+    config.add_route('reports_ind', '/reports/{id}')
+    config.add_route('reports_ind_nice', '/reports/{id}/nice')
 
     config.add_route('students', '/students')
     config.add_route('students_ind', '/students/{id}')

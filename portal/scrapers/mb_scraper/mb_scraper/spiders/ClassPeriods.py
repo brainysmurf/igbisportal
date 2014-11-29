@@ -131,7 +131,9 @@ class ClassReports(ClassLevelManageBac):
 
             alt_marks = response.xpath("//span[@id='atl_marks_for_user_{}']".format(student_id))
 
-            assert(len(alt_marks) == 1)
+            if len(alt_marks) != 1:
+                continue
+
             alt_marks = alt_marks[0]
 
             atl_comments = []
@@ -139,7 +141,10 @@ class ClassReports(ClassLevelManageBac):
                 name = skill.xpath('text()').extract()[0].strip('\n')
                 # Get the value of the selected dropdown option list of ATLs
                 selection = skill.xpath("select/option[@selected='selected']/@value").extract()
-                assert(len(selection) == 1)
+                #assert(len(selection) == 1)   #FIXME: What do I do if there isn't a selection, or more than one?
+                if len(selection) != 1:
+                    continue
+
                 selection = selection[0]
                 atl_comments.append(dict(name=name.title(), selection=selection.upper()))
 

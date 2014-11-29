@@ -1,0 +1,25 @@
+<metal:main use-macro="load: main.pt">
+
+<!--   <div metal:fill-slot="tabs_bar">
+    <ul><li><a href="/">Home</a></li><li><a href="/students">Students</a></li></ul>
+  </div>
+ -->
+
+ <div metal:fill-slot="additional-css">
+  <link rel="stylesheet" type="text/css" href="${static_url}css/atl.css" />
+ </div>
+
+  <div metal:fill-slot="content">
+      <div tal:repeat="report reports">
+      	<p>${report.course.name}</p>
+      	<table class="CSSTableGenerator">
+      		<tr><td>ATL Skill</td><td>BE</td><td>ME</td><td>AE</td><td>EE</td></tr>
+         <span tal:repeat="comment report.atl_comments">
+         	<tr><td>${comment.label}</td><td style="text-align: center;" tal:repeat="this_one ['BE', 'AE', 'ME', 'EE']"><i class="fa ${'fa-check-circle' if comment.selection==this_one else 'fa-circle-thin'}"></i></td>
+         </span>
+   	    </table>
+    		<p>${report.text}</p>
+      </div>
+  </div>
+
+</metal:main>
