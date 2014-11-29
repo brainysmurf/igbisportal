@@ -12,7 +12,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # The base box to use
-  config.vm.box = "chef/ubuntu-14.04"
+  #config.vm.box = "chef/ubuntu-14.04"
+  config.vm.box = "ubuntu/trusty64"
 
   # Provisioning script
   # adds stuff missing from the base box
