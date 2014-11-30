@@ -5,6 +5,7 @@
   <title>${title}</title>
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
+  <link rel="stylesheet" type="text/css" href="http://code.jboxcdn.com/0.3.2/jBox.css" />
 </head>
 <body>
 <div id="wrapper">
@@ -28,6 +29,12 @@
                   <br />${item.name}
               </a>
             </div>
+
+            <div id="mb_db" class="button">
+                  <div><i class="fa fa-university fa-5x"></i></div>
+                  <br />Britannica
+            </div>
+
            </p> 
          </div>  
 
@@ -77,7 +84,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+<script type="text/javascript" src="${static_url}js/jQuery-contextMenu/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js"></script>
 <script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
 <script type="text/javascript">
@@ -87,5 +94,35 @@
     persist_tab: '1'
   });
 </script>
+
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
+<script type="text/javascript">
+
+$('#mb_db').jBox('Tooltip', {
+    position: {
+        x: 'left',
+        y: 'top'
+    },
+    outside: 'x',
+    title: "Areas within Britannica:",
+    closeOnMouseleave:true,
+    content: '<p><a href="http://school.eb.com.au/levels/primary">Primary</a></p><p><a href="http://school.eb.com.au/levels/middle">Middle</a></p><p><a href="http://school.eb.com.au/levels/high">High</a></p>'
+});
+
+new jBox('Notice', {
+    content: 'It provides a drop-down menu for further navigation',
+});
+
+new jBox('Notice', {
+    content: 'Check out the "Britannica" link in Students section.',
+
+});
+
+
+
+</script>
+
+
 </body>
 </html>
