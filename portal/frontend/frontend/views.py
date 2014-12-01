@@ -126,7 +126,14 @@ stndrdbttns = [
             menu_item(display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee")
         ],
         }),
-    button(name="Email", url="https://gmail.com", icon="envelope", context_menu=None),
+    button(name="Email", url="https://gmail.com", icon="envelope", 
+        context_menu={
+        'items': [
+            menu_item(display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
+            menu_separator(),
+            menu_item(display="Hint: Make compose full screen as default'", url="http://www.cnet.com/how-to/set-gmails-compose-window-to-full-screen-by-default/")
+        ]
+        }),
     button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
         context_menu={
         'items': [
@@ -161,7 +168,14 @@ def splash(request):
         )
     teacher_buttons = stndrdbttns[:]
     teacher_buttons.extend([
-            button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", context_menu=None),
+            button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
+            context_menu={
+            'items': [
+                menu_item(display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
+                menu_item(display='Messaging', url="https://igbis.intersis.com/messaging"),
+                menu_item(display='Attendance', url="https://igbis.intersis.com/attendance/students"),
+            ],
+        }),
             button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu=None),
             button(name="Book Geoff", url="https://geoffreyderry.youcanbook.me/", icon="thumb-tack", context_menu=None),
             button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="question-circle", context_menu=None),

@@ -52,6 +52,14 @@
 
 <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
 
+<script type="text/javascript">    
+    new jBox('Notice', {
+        content: 'Try mousing-over some of the icons in the "Teachers" section',
+        color: 'red'
+    });
+</script>
+
+
 <tal:block tal:repeat="key buttons" tal:condition="buttons">
   <tal:block tal:define="global another_counter 0" tal:repeat="button buttons[key]">
   <tal:block tal:define="global another_counter another_counter+1">
@@ -89,15 +97,6 @@
   </tal:block>
 </tal:block>
 
-<script type="text/javascript">
-    
-    new jBox('Notice', {
-        content: 'Try mousing-over some of the icons in the teacher's section',
-        color: 'red'
-    });
-
-
-</script>
 
 </body>
 </html>
