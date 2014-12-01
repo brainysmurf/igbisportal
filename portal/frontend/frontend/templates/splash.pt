@@ -19,16 +19,19 @@
         <li tal:attributes="class 'tab_selected' if role=='parent' else ''"><a href="#parents">Parents</a></li>
         <li tal:attributes="class 'tab_selected' if role=='admin' else ''"><a href="#staff">Staff</a></li>
        </ul>
-       <div class="content_holder">
+       <div tal:define="global counter 0" class="content_holder">
         <div id="students" style="padding:0px;margin:0px;">
+
           <div id="content">
            <p>
-            <div tal:repeat="item student_buttons" class="button">
-              <a href="${item.url}">
+            <tal:block tal:repeat="item student_buttons" tal:condition="student_buttons">
+            <div id="button_${counter}" class="button">
+              <a tal:define="global counter counter+1" href="${item.url}">
                   <div><i class="fa fa-${item.icon} fa-5x"></i></div>
-                  <br />${item.name}
+                  <br />${item.name} ${counter}
               </a>
             </div>
+            </tal:block>
 
             <div id="mb_db" class="button">
                   <div><i class="fa fa-university fa-5x"></i></div>
@@ -43,12 +46,14 @@
         <div id="teachers" style="padding:0px;margin:0px;">
           <div id="content">
            <p>
-            <div tal:repeat="item teacher_buttons" class="button">
-              <a href="${item.url}">
+            <tal:block tal:repeat="item teacher_buttons">
+            <div id="button_${counter}" class="button">
+              <a tal:define="global counter counter+1" href="${item.url}">
                   <div><i class="fa fa-${item.icon} fa-5x"></i></div>
-                  <br />${item.name}
+                  <br />${item.name} ${counter}
               </a>
             </div>
+            </tal:block>
           </p>
          </div>
         </div>
@@ -78,10 +83,12 @@
          </p>
         </div>
         </div>
-
+        The count is: ${counter}
        </div><!-- /.content_holder -->
       </div><!-- /.tabs_holder -->
     </div>
+
+
 </div>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
