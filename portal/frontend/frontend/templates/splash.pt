@@ -11,79 +11,27 @@
 <div id="wrapper">
     <div id="contentwrap">
       <img src="${static_url}header.png" width="1100px" />
-
       <div class="tabs_holder">
        <ul>
-        <li tal:attributes="class 'tab_selected' if role=='student' else ''"><a href="#students">Students</a></li>
-        <li tal:attributes="class 'tab_selected' if role=='teacher' else ''"><a href="#teachers">Teachers</a></li>
-        <li tal:attributes="class 'tab_selected' if role=='parent' else ''"><a href="#parents">Parents</a></li>
-        <li tal:attributes="class 'tab_selected' if role=='admin' else ''"><a href="#staff">Staff</a></li>
+        <li tal:repeat="key buttons" tal:attributes="class 'tab_selected' if role=='${key}' else ''">
+          <a href="#${key}">${key}</a>
+        </li>
        </ul>
-       <div tal:define="global counter 0" class="content_holder">
-        <div id="students" style="padding:0px;margin:0px;">
-
+       <div tal:define="global counter 0" tal:repeat="key buttons" tal:condition="buttons" class="content_holder">
+        <div id="${key}" style="padding:0px;margin:0px;">
           <div id="content">
            <p>
-            <tal:block tal:repeat="item student_buttons" tal:condition="student_buttons">
-            <div id="button_${counter}" class="button">
-              <a tal:define="global counter counter+1" href="${item.url}">
-                  <div><i class="fa fa-${item.icon} fa-5x"></i></div>
-                  <br />${item.name} ${counter}
-              </a>
-            </div>
+            <tal:block tal:define="items buttons[key]" tal:repeat="button items">
+              <div tal:define="global counter counter+1"  id="button_${counter}" class="button">
+                <a href="${button.url}">
+                    <div><i class="fa fa-${button.icon} fa-5x"></i></div>
+                    <br />${button.name}
+                </a>
+              </div>
             </tal:block>
-
-            <div id="mb_db" class="button">
-                  <div><i class="fa fa-university fa-5x"></i></div>
-                  <br />Britannica
-            </div>
-
            </p> 
          </div>  
-
         </div> 
-
-        <div id="teachers" style="padding:0px;margin:0px;">
-          <div id="content">
-           <p>
-            <tal:block tal:repeat="item teacher_buttons">
-            <div id="button_${counter}" class="button">
-              <a tal:define="global counter counter+1" href="${item.url}">
-                  <div><i class="fa fa-${item.icon} fa-5x"></i></div>
-                  <br />${item.name} ${counter}
-              </a>
-            </div>
-            </tal:block>
-          </p>
-         </div>
-        </div>
-
-        <div id="parents" style="padding:0px;margin:0px;">
-         <div id="content">
-         <p>
-          <div class="button">
-            <a href="#">
-              <div><i class="fa fa-question-circle fa-5x"></i></div>
-              <br />To Do
-            </a>
-          </div>
-         </p>
-        </div>
-        </div>
-
-        <div id="staff" style="padding:0px;margin:0px;">
-        <div id="content">
-         <p>
-          <div class="button">
-            <a href="#">
-              <div><i class="fa fa-question-circle fa-5x"></i></div>
-              <br />To Do
-            </a>
-          </div>
-         </p>
-        </div>
-        </div>
-        The count is: ${counter}
        </div><!-- /.content_holder -->
       </div><!-- /.tabs_holder -->
     </div>
@@ -102,32 +50,52 @@
   });
 </script>
 
-<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
-<script type="text/javascript">
 
-$('#mb_db').jBox('Tooltip', {
-    position: {
-        x: 'left',
-        y: 'top'
-    },
-    outside: 'x',
-    title: "Areas within Britannica:",
-    closeOnMouseleave:true,
-    content: '<p><a href="http://school.eb.com.au/levels/primary">Primary</a></p><p><a href="http://school.eb.com.au/levels/middle">Middle</a></p><p><a href="http://school.eb.com.au/levels/high">High</a></p>'
-});
+<tal:block tal:repeat="key buttons" tal:condition="buttons">
+  <tal:block tal:define="global another_counter 0" tal:repeat="button buttons[key]">
+  <tal:block tal:define="global another_counter another_counter+1">
+  <tal:block tal:condition="button.context_menu">
 
-new jBox('Notice', {
-    content: 'It provides a drop-down menu for further navigation',
-});
+    <ul style="display:none" id="submenus_for_${another_counter}">
+      <li style="padding:5px;" tal:repeat="menu_item button.context_menu.get('items')">
+        <tal:block tal:condition="menu_item.url">
+          <a href="${menu_item.url}">${menu_item.display}</a>
+        </tal:block>
+        <tal:block tal:condition="not menu_item.url">
+          <hr />
+        </tal:block>
+      </li>
+    </ul>
 
-new jBox('Notice', {
-    content: 'Check out the "Britannica" link in the Students section.',
 
-});
+    <script type="text/javascript">
 
-</script>
+    $('#button_${another_counter}').jBox('Tooltip', {
+        position: {
+            x: 'left',
+            y: 'top'
+        },
+        outside: 'x',
+        title: "Areas within ${button.name}:",
+        closeOnMouseleave:true,
+        content: $('#submenus_for_${another_counter}')
+    });
 
+    new jBox('Notice', {
+        content: 'It provides a drop-down menu for further navigation',
+    });
+
+    new jBox('Notice', {
+        content: 'Check out the "Britannica" link in the Students section.',
+
+    });
+    </script>
+
+  </tal:block>
+  </tal:block>
+  </tal:block>
+</tal:block>
 
 </body>
 </html>

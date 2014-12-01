@@ -15,7 +15,7 @@ import json
 
 import requests
 
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 PREFIX = 'igbis2014'
 url = 'https://{}.managebac.com/api/{{}}'.format(PREFIX)
@@ -113,18 +113,40 @@ def students_ind(request):
     return dict(title="Student View", item=student)
 
 button = namedtuple('button', ['name', 'url', 'icon', 'context_menu'])
+
 menu_item = namedtuple('menu_item', ['display', 'url'])
+menu_separator = lambda : {'url':None}
+
 stndrdbttns = [
     button(name="ManageBac", url="https://igbis.managebac.com", icon="fire",
-        context_menu=[
-                menu_item(display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
-                menu_item(display="Calendar", url="https://igbis.managebac.com/home"),
-                menu_item(display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee")
-            ]
-        ),
+        context_menu={
+        'items': [   
+            menu_item(display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
+            menu_item(display="Calendar", url="https://igbis.managebac.com/home"),
+            menu_item(display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee")
+        ],
+        }),
     button(name="Email", url="https://gmail.com", icon="envelope", context_menu=None),
-    button(name="Google Drive", url="https://drive.google.com", icon="files-o", context_menu=None),
-    button(name="Library", url="https://igbis.follettdestiny.com", icon="university", context_menu=None),
+    button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
+        context_menu={
+        'items': [
+            menu_item(display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
+            menu_item(display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
+            menu_item(display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
+            menu_separator(),
+            menu_item(display="User defined?", url="#")
+        ]
+        }),
+    button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
+        context_menu={
+        'items': [
+            menu_item(display="Catalog", url="http://blah"),
+            menu_separator(),
+            menu_item(display='Elementary Britannica', url="http://boo"),
+            menu_item(display='Middle Britannica', url="http://boo"),
+            menu_item(display='High Britannica', url="http://boo")
+        ],
+        }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
 ]
 
@@ -147,11 +169,13 @@ def splash(request):
             button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
             ]
         )
+    buttons = OrderedDict()
+    buttons['Students'] = student_buttons
+    buttons['Teachers'] = teacher_buttons
     return dict(
         role=role, 
-        title="Splash",
-        student_buttons = student_buttons,
-        teacher_buttons = teacher_buttons
+        title="[IGBIS] Splash",
+        buttons = buttons,
     )
 
 @view_config(route_name='reports_ind', renderer='templates/report_ind.pt')
