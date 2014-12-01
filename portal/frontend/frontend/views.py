@@ -176,6 +176,13 @@ def splash(request):
                 menu_item(display='Attendance', url="https://igbis.intersis.com/attendance/students"),
             ],
         }),
+            button(name="Secondary Principal", icon="trophy", url="", 
+            context_menu={
+            'items': [
+                menu_item(display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
+                menu_item(display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
+            ],
+        }),
             button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu=None),
             button(name="Book Geoff", url="https://geoffreyderry.youcanbook.me/", icon="thumb-tack", context_menu=None),
             button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="question-circle", context_menu=None),
