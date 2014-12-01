@@ -82,20 +82,22 @@
         content: $('#submenus_for_${another_counter}')
     });
 
-    new jBox('Notice', {
-        content: 'It provides a drop-down menu for further navigation',
-    });
-
-    new jBox('Notice', {
-        content: 'Check out the "Britannica" link in the Students section.',
-
-    });
     </script>
 
   </tal:block>
   </tal:block>
   </tal:block>
 </tal:block>
+
+<script type="text/javascript">
+    
+    new jBox('Notice', {
+        content: 'Try mousing-over some of the icons in the teacher's section',
+        color: 'red'
+    });
+
+
+</script>
 
 </body>
 </html>

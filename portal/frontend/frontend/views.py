@@ -170,8 +170,8 @@ def splash(request):
             ]
         )
     buttons = OrderedDict()
-    buttons['Students'] = student_buttons
     buttons['Teachers'] = teacher_buttons
+    buttons['Students'] = student_buttons
     return dict(
         role=role, 
         title="[IGBIS] Splash",
