@@ -142,9 +142,9 @@ stndrdbttns = [
         'items': [
             menu_item(display="Catalog", url="http://blah"),
             menu_separator(),
-            menu_item(display='Elementary Britannica', url="http://boo"),
-            menu_item(display='Middle Britannica', url="http://boo"),
-            menu_item(display='High Britannica', url="http://boo")
+            menu_item(display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
+            menu_item(display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
+            menu_item(display='High Britannica', url="http://school.eb.com.au/levels/high")
         ],
         }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
