@@ -14,6 +14,13 @@
       <div class="tabs_holder">
 
  
+      <!-- This is the change icon size -->
+       <form id="icon_size_form">
+        <input type="radio" name="icon_size" id="larger_icons" value="+1" checked>Larger Icons
+        <input type="radio" name="icon_size" id="smaller_icons" value="-1">Smaller Icons
+
+       </form>
+
       <!-- This is the tabs -->
        <ul>
         <li tal:repeat="key buttons" tal:attributes="class 'tab_selected' if role=='${key}' else ''">
@@ -21,12 +28,6 @@
         </li>
        </ul>
 
-      <!-- This is the change icon size -->
-       <form id="icon_size_form">
-        <input type="radio" name="icon_size" id="larger_icons" value="+1" checked>Larger Icons
-        <input type="radio" name="icon_size" id="smaller_icons" value="-1">Smaller Icons
-
-       </form>
 
        <div tal:define="global counter 0" tal:repeat="key buttons" tal:condition="buttons" class="content_holder">
         <div id="${key}" style="padding:0px;margin:0px;">
