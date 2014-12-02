@@ -70,19 +70,19 @@ p {
     display:inline-block;
     color:#E21F1D;
     font-family:Trebuchet MS;
-    font-size:18px;
+    font-size:14px;
     font-weight:bold;
     font-style:normal;
     height:100px;
-    width:120px;
+    width:140px;
     line-height:25px;
     text-decoration:none;
     text-align:center;
     text-shadow:1px 1px 0px #ffffff;
     padding-top:10px;
-    margin-left: 70px;
-    margin-right:50px;
-    margin-bottom:70px;
+    margin-left: 30px;
+    margin-right:20px;
+    margin-bottom:50px;
 }
 .button:hover {
     background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
@@ -94,6 +94,20 @@ p {
 .button:active {
     position:relative;
     top:1px;
+}
+
+.smaller {
+    font-size:10px;    
+    line-height:25px;
+    padding-top:10px;
+    padding-bottom:10px;
+    height:70px;
+    width:100px;
+
+    margin-left: 20px;
+    margin-right:10px;
+    margin-bottom:20px;
+
 }
 
 /*.skin5.top .tabs_header {
