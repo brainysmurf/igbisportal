@@ -46,7 +46,7 @@
 }
 
  .skin5.top .tab_header_item.tab_selected a {
-	color: #E21F1D;
+	color: #D22018;
 }
 
  .skin5.top .tab_header_item.first_tab {
@@ -80,6 +80,12 @@
 .content_holder_inner {
 	overflow: hidden; position: relative; padding: 10px 0px;
 	background-color: #FFF;
-
 }
 
+.jBox-content>ul>li>a:visited {
+	color: #303030;
+}
+
+.jBox-content>ul>li>a  {
+	color: #303030;
+}

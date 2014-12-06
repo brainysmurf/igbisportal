@@ -7,16 +7,16 @@ body {
     font-size: 13px;
     color:#333;
     background: #fff url(../static/back.gif) repeat top left;    
-/*    background:#E21F1D;*/
+/*    background:#D22018;*/
 }
 
 a:visited {
-    color: #E21F1D;
+    color: #D22018;
 }
 
 a {
     text-decoration: none;
-    color: #E21F1D;
+    color: #D22018;
 }
 
 
@@ -68,7 +68,7 @@ p {
     text-indent:0;
     border:1px solid #dcdcdc;
     display:inline-block;
-    color:#E21F1D;
+    color:#D22018;
     font-family:Trebuchet MS;
     font-size:14px;
     font-weight:bold;
@@ -187,4 +187,39 @@ p {
     color: #777;
 }
 
+.jBox-container {    
+    background: #eee;
+}
+
+.jBox-pointer:after {
+    background: #eee;
+}
+
+ul>li>a {
+    display: block;
+    padding:5px;
+}
+
+.jBox-title>div>a {
+    display: block;
+    padding:5px;
+    border-bottom: 1px solid #C8C8C8;
+}
+
+ul>li>a:hover {
+    background-color:#E8E8E8;
+}
+
+hr { 
+    padding:5px;
+
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #FFF;
+} 
 

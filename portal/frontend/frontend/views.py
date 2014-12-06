@@ -114,44 +114,41 @@ def students_ind(request):
 
 button = namedtuple('button', ['name', 'url', 'icon', 'context_menu'])
 
-menu_item = namedtuple('menu_item', ['display', 'url'])
+menu_item = namedtuple('menu_item', ['display', 'url', 'icon'])
 menu_separator = lambda : {'url':None}
 
 stndrdbttns = [
     button(name="ManageBac", url="https://igbis.managebac.com", icon="fire",
         context_menu={
         'items': [   
-            menu_item(display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
-            menu_item(display="Calendar", url="https://igbis.managebac.com/home"),
-            menu_item(display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee")
+            menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
+            menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
+            menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee")
         ],
         }),
     button(name="Email", url="https://gmail.com", icon="envelope", 
         context_menu={
         'items': [
-            menu_item(display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
-            menu_separator(),
-            menu_item(display="Hint: Make compose full screen as default'", url="http://www.cnet.com/how-to/set-gmails-compose-window-to-full-screen-by-default/")
+            menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
+            menu_item(icon="external-link", display="Hint: Make compose full screen as default'", url="http://www.cnet.com/how-to/set-gmails-compose-window-to-full-screen-by-default/")
         ]
         }),
     button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
         context_menu={
         'items': [
-            menu_item(display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
-            menu_item(display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
-            menu_item(display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
-            menu_separator(),
-            menu_item(display="User defined?", url="#")
+            menu_item(icon="", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
+            menu_item(icon="", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
+            menu_item(icon="", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
+            menu_item(icon="question-circle", display="User defined?", url="#")
         ]
         }),
     button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
         context_menu={
         'items': [
-            menu_item(display="Catalog", url="http://blah"),
-            menu_separator(),
-            menu_item(display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
-            menu_item(display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
-            menu_item(display='High Britannica', url="http://school.eb.com.au/levels/high")
+            menu_item(icon="search", display="Catalog", url="http://blah"),
+            menu_item(icon="", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
+            menu_item(icon="", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
+            menu_item(icon="", display='High Britannica', url="http://school.eb.com.au/levels/high")
         ],
         }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
@@ -162,7 +159,7 @@ def splash(request):
     role = request.GET.get('role', 'student')
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
-            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="video-camera", context_menu=None),
+            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
             button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
             ]
         )
@@ -171,22 +168,22 @@ def splash(request):
             button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
             context_menu={
             'items': [
-                menu_item(display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
-                menu_item(display='Messaging', url="https://igbis.intersis.com/messaging"),
-                menu_item(display='Attendance', url="https://igbis.intersis.com/attendance/students"),
+                menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
+                menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
+                menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
             ],
         }),
             button(name="Secondary Principal", icon="trophy", url="", 
             context_menu={
             'items': [
-                menu_item(display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
-                menu_item(display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
+                menu_item(icon="warning", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
+                menu_item(icon="pencil", display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
             ],
         }),
             button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu=None),
             button(name="Book Geoff", url="https://geoffreyderry.youcanbook.me/", icon="thumb-tack", context_menu=None),
             button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="question-circle", context_menu=None),
-            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="video-camera", context_menu=None),
+            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
             button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
             ]
         )

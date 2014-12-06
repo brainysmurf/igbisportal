@@ -3,9 +3,9 @@
 <head>
   <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
   <title>${title}</title>
+  <link rel="stylesheet" type="text/css" href="http://code.jboxcdn.com/0.3.2/jBox.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
-  <link rel="stylesheet" type="text/css" href="http://code.jboxcdn.com/0.3.2/jBox.css" />
 </head>
 <body>
 <div id="wrapper">
@@ -92,9 +92,9 @@ $("input[name=icon_size]:radio").change(function () {
   <tal:block tal:condition="button.context_menu">
 
     <ul style="display:none" id="submenus_for_${another_counter}">
-      <li style="padding:5px;" tal:repeat="menu_item button.context_menu.get('items')">
+      <li tal:repeat="menu_item button.context_menu.get('items')">
         <tal:block tal:condition="menu_item.url">
-          <a href="${menu_item.url}">${menu_item.display}</a>
+          <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
         </tal:block>
         <tal:block tal:condition="not menu_item.url">
           <hr />
@@ -107,11 +107,10 @@ $("input[name=icon_size]:radio").change(function () {
 
     $('#button_${another_counter}').jBox('Tooltip', {
         position: {
-            x: 'left',
-            y: 'top'
+            y: 'top',
         },
         outside: 'x',
-        title: "Areas within ${button.name}:",
+        title: '<a href="${button.url}"><i class="fa fa-${button.icon} fa-fw"></i>&nbsp;${button.name}</a>',
         closeOnMouseleave:true,
         content: $('#submenus_for_${another_counter}')
     });
