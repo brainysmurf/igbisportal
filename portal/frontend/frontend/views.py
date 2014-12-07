@@ -136,9 +136,9 @@ stndrdbttns = [
     button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
         context_menu={
         'items': [
-            menu_item(icon="", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
-            menu_item(icon="", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
-            menu_item(icon="", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
+            menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
+            menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
+            menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
             menu_item(icon="question-circle", display="User defined?", url="#")
         ]
         }),
@@ -146,9 +146,9 @@ stndrdbttns = [
         context_menu={
         'items': [
             menu_item(icon="search", display="Catalog", url="http://blah"),
-            menu_item(icon="", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
-            menu_item(icon="", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
-            menu_item(icon="", display='High Britannica', url="http://school.eb.com.au/levels/high")
+            menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
+            menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
+            menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high")
         ],
         }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
@@ -165,6 +165,7 @@ def splash(request):
         )
     teacher_buttons = stndrdbttns[:]
     teacher_buttons.extend([
+            button(name="Hapara Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
             button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
             context_menu={
             'items': [
@@ -182,8 +183,13 @@ def splash(request):
         }),
             button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu=None),
             button(name="Book Geoff", url="https://geoffreyderry.youcanbook.me/", icon="thumb-tack", context_menu=None),
-            button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="question-circle", context_menu=None),
-            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
+            button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
+            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", 
+            context_menu={
+            'items': [
+                menu_item(icon="external-link-square", display="Make sharable link", url="/brainpop"),
+            ]
+            }),
             button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
             ]
         )
