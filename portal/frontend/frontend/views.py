@@ -126,11 +126,10 @@ stndrdbttns = [
             menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee")
         ],
         }),
-    button(name="Email", url="https://gmail.com", icon="envelope", 
+    button(name="Gmail", url="https://gmail.com", icon="envelope", 
         context_menu={
         'items': [
-            menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
-            menu_item(icon="external-link", display="Hint: Make compose full screen as default'", url="http://www.cnet.com/how-to/set-gmails-compose-window-to-full-screen-by-default/")
+            menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new")
         ]
         }),
     button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
@@ -139,13 +138,15 @@ stndrdbttns = [
             menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
             menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
             menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
-            menu_item(icon="question-circle", display="User defined?", url="#")
+            menu_separator(),
+            menu_item(icon="question-circle", display="What else?", url="#")
         ]
         }),
     button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
         context_menu={
         'items': [
             menu_item(icon="search", display="Catalog", url="http://blah"),
+            menu_separator(),
             menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
             menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
             menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high")
