@@ -80,7 +80,7 @@ $("input[name=icon_size]:radio").change(function () {
 
 <script type="text/javascript">    
     new jBox('Notice', {
-        content: 'Try mousing-over some of the icons in the "Teachers" section',
+        content: 'Now the pop-ups look way better!',
         color: 'red'
     });
 </script>
@@ -121,7 +121,6 @@ $("input[name=icon_size]:radio").change(function () {
   </tal:block>
   </tal:block>
 </tal:block>
-hi
 
 </body>
 </html>
