@@ -13,7 +13,7 @@
 <!--       <img src="${static_url}header.png" width="1100px" /> -->
           <div id="content">
 
-          <br /><span style="padding:10px">From here, you can...</span>
+          <br /><span style="padding:10px">For the "Hour of Code", you can...</span>
 
        <div tal:define="global counter 0" tal:repeat="key buttons" tal:condition="buttons" class="content_holder">
         <div id="${key}" style="padding:0px;margin:0px;">
