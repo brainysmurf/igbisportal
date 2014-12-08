@@ -231,9 +231,15 @@ def hourofcode(request):
                 context_menu={
                 'items': [
                     menu_item(icon="dot-circle-o", display='Fiddle with a Website', url="http://jsfiddle.net/xpatm05k/"),
-                    menu_item(icon="dot-circle-o", display="Learn to Code a Website", url="http://www.codecademy.com/en/tracks/web"),
-                    menu_separator(),
                     menu_item(icon="dot-circle-o", display='Fiddle with Tic Tac Toe', url="http://jsfiddle.net/rtoal/5wKfF/"),
+                ]
+                }
+            ),
+            button(name="Learn More", url="#", icon="question-circle",
+                context_menu={
+                'items': [
+                    menu_item(icon="dot-circle-o", display='Introduction to Computer Science', url="http://www.brainpop.com/technology/computerscience/computerprogramming?user=igbisbrainpop&password=2014igbis"),
+                    menu_item(icon="dot-circle-o", display="Learn to Code a Website", url="http://www.codecademy.com/en/tracks/web"),
                 ]
                 }
             ),
