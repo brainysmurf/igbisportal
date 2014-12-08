@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html tal:define="role request.GET.get('role', 'student')" tal:define="static_url request.static_url('frontend:static/')">
+<head>
+  <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
+  <title>${title}</title>
+  <link rel="stylesheet" type="text/css" href="http://code.jboxcdn.com/0.3.2/jBox.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
+</head>
+<body>
+<div id="wrapper">
+    <div id="contentwrap">
+<!--       <img src="${static_url}header.png" width="1100px" /> -->
+          <div id="content">
+
+          <br /><span style="padding:10px">From here, you can...</span>
+
+       <div tal:define="global counter 0" tal:repeat="key buttons" tal:condition="buttons" class="content_holder">
+        <div id="${key}" style="padding:0px;margin:0px;">
+           <p>
+            <tal:block tal:define="items buttons[key]" tal:repeat="button items">
+              <div tal:define="global counter counter+1"  id="button_${counter}" class="button">
+                <a href="${button.url}">
+                    <div><i class="fa fa-${button.icon} fa-5x"></i></div>
+                    ${button.name}
+                </a>
+              </div>
+            </tal:block>
+           </p> 
+         </div>  
+       </div><!-- /.content_holder -->
+      </div><!-- /.tabs_holder -->
+    </div>
+
+
+</div>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
+<script type="text/javascript">
+  $('.tabs_holder').skinableTabs({
+    skin: 'skin5',
+    position: 'top',
+    persist_tab: '1'
+  });
+</script>
+
+<script type="text/javascript">
+$("input[name=icon_size]:radio").change(function () {
+      if ( $(this).val() == '+1' ) {
+      
+        $(".button").toggleClass('smaller');
+
+      } else if ( $(this).val() == '-1' ) {
+
+        $(".button").toggleClass('smaller');
+
+      }
+    })
+</script>
+
+<script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
+
+<!-- <script type="text/javascript">    
+    new jBox('Notice', {
+        content: 'Now the pop-ups look way better!',
+        color: 'red'
+    });
+</script>
+ -->
+
+<tal:block tal:repeat="key buttons" tal:condition="buttons">
+  <tal:block tal:define="global another_counter 0" tal:repeat="button buttons[key]">
+  <tal:block tal:define="global another_counter another_counter+1">
+  <tal:block tal:condition="button.context_menu">
+
+    <ul style="display:none" id="submenus_for_${another_counter}">
+      <li tal:repeat="menu_item button.context_menu.get('items')">
+        <tal:block tal:condition="menu_item.url">
+          <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
+        </tal:block>
+        <tal:block tal:condition="not menu_item.url">
+          <hr />
+        </tal:block>
+      </li>
+    </ul>
+
+
+    <script type="text/javascript">
+
+    $('#button_${another_counter}').jBox('Tooltip', {
+        position: {
+            y: 'top',
+        },
+        outside: 'x',
+        title: '<a href="${button.url}"><i class="fa fa-${button.icon} fa-fw"></i>&nbsp;${button.name}</a>',
+        closeOnMouseleave:true,
+        content: $('#submenus_for_${another_counter}')
+    });
+
+    </script>
+
+  </tal:block>
+  </tal:block>
+  </tal:block>
+</tal:block>
+
+</body>
+</html>
