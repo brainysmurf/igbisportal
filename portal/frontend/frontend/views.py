@@ -209,16 +209,17 @@ def hourofcode(request):
     student_buttons = []
     teacher_buttons = []
     teacher_buttons.extend([
-            button(name="Code a Game", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="gamepad", 
+            button(name="Program a Game", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="gamepad", 
                 context_menu={
                 'items': [
                     menu_item(icon="dot-circle-o", display="Angry Birds", url="http://studio.code.org/s/course2/stage/3/puzzle/1"),
                     menu_item(icon="dot-circle-o", display='Plants vs Zombies', url="http://studio.code.org/s/course3/stage/2/puzzle/1"),
+                    menu_separator(),
                     menu_item(icon="dot-circle-o", display='More! More!', url="http://studio.code.org/"),
                 ]
                 }
             ),
-            button(name="Design a World", url="#", icon="globe",
+            button(name="Design a World", url="#", icon="codepen",
                 context_menu={
                 'items': [
                     menu_item(icon="dot-circle-o", display='Scratch Starter Projects', url="http://scratch.mit.edu/starter_projects/"),
@@ -226,11 +227,13 @@ def hourofcode(request):
                 ]
                 }
             ),
-            button(name="Design a Website", url="#", icon="code",
+            button(name="Fiddle with Code", url="#", icon="code",
                 context_menu={
                 'items': [
                     menu_item(icon="dot-circle-o", display='Fiddle with a Website', url="http://jsfiddle.net/xpatm05k/"),
                     menu_item(icon="dot-circle-o", display="Learn to Code a Website", url="http://www.codecademy.com/en/tracks/web"),
+                    menu_separator(),
+                    menu_item(icon="dot-circle-o", display='Fiddle with Tic Tac Toe', url="http://jsfiddle.net/rtoal/5wKfF/"),
                 ]
                 }
             ),
