@@ -4,11 +4,14 @@ TODO: Course IDs are longs, do they need to be? They print on the terminal that 
 """
 
 import scrapy
+import gns
 from portal.scrapers.shared.spiders import ManageBacLogin
 from portal.scrapers.mb_scraper.mb_scraper.items import ClassPeriodItem, ClassReportItem
+from portal.scrapers.mb_scraper.mb_scraper.items import PrimaryReportItem, PrimaryReportStrandItem, PrimaryReportOutcomeItem, PrimaryReportSectionItem
 from portal.db import Database, DBSession
 import datetime, re
 from collections import defaultdict
+from scrapy.exceptions import CloseSpider
 
 class ClassLevelManageBac(ManageBacLogin):
     """
@@ -20,13 +23,21 @@ class ClassLevelManageBac(ManageBacLogin):
         self.db.DBSession = DBSession
         if not self.class_id:
             rows = self.db.get_rows_in_table('course')
-            self.all_course_ids = [s.id for s in rows()]
+            self.all_course_ids = [s.id for s in rows]
             self.next()
         else:
             self.all_course_ids = None
             self.current_course_id = None
 
         super(ClassLevelManageBac, self).__init__(*args, **kwargs)
+        self.init()
+
+    def init(self):
+        """
+        __init__ is often overridden without super call for these series of classes, so need this init function
+        for common code 
+        """
+        self.manually_do_terms = True  # If this goes to false, can delete this entire method
 
     def next(self):
         if self.class_id:
@@ -60,18 +71,13 @@ class ClassReports(ClassLevelManageBac):
             with DBSession() as session:
                 statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{}%'.format(self.program.upper())))
                 self.all_course_ids = [s[0] for s in statement.all()]
-                print(self.all_course_ids)
             self.next()
         else:
             self.all_course_ids = None
             self.current_course_id = None
-        self.manually_do_terms = True  # If this goes to false, can delete this entire method
+        self.init()
 
-    def parse_items(self, response):
-        # First let's detect the term we're on and make sure that's in the database too
-        # TODO: Far better would be to go through the settings pages and scrape it that way, but we can use this method for now
-        # Because we're doing this manually, let's directly interface with the database here; don't yield
-
+    def determine_current_term(self, response):
         current_term_id = None # if remove the below block, you'll still need to derive this
         if self.manually_do_terms:
             for term_item in response.xpath("//select[@id='term']//option"):
@@ -105,6 +111,212 @@ class ClassReports(ClassLevelManageBac):
                                 end_date=None
                             )
                         session.add(term)
+        return current_term_id
+
+    def class_reports(self):
+        request = scrapy.Request(
+            url=self.path_to_url(), 
+            callback=self.parse_items,
+            errback=self.error_parsing,
+            dont_filter=True
+            )
+        self.next()
+        return request
+
+class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
+    name = "PYPClassReports"
+    program = 'pyp'
+    path = '/classes/{}/{}-gradebook/tasks/term_grades'
+
+    def pyp_class_reports(self):
+        if self.class_id or self.current_course_id:
+            request = scrapy.Request(
+                url=self.path_to_url(), 
+                callback=self.parse_items,
+                errback=self.error_parsing,
+                dont_filter=True
+                )
+            self.next()
+            return request
+        return None
+
+    def parse_items(self, response):
+        """
+        Cycle through each PYP class
+        """
+
+        # Dispatch to parse_subject per each subject on right side
+        # Code this first because this will actually be deferred until last
+        for subject_url in response.xpath("//ul[@class='small_right_tabs']/li/a/@href").extract():
+            request = scrapy.Request(
+                url=gns.settings.mb_url + subject_url,
+                callback=self.parse_subject,
+                errback=self.error_parsing,
+                dont_filter=True
+                )
+            yield request
+
+
+        # Dispatch to parse_student per each student on left side
+        for student_url in response.xpath("//li[@class='selected own-pyp-class']/ul/li/a/@href").extract():
+            request = scrapy.Request(
+                url=gns.settings.mb_url + student_url,
+                callback=self.parse_student,
+                errback=self.error_parsing,
+                dont_filter=True
+                )
+            yield request
+
+
+        if self.current_course_id:
+            # Goes on to the next class
+            method = getattr(self, 'class_reports_{}'.format(self.program.lower()))
+            yield method()
+
+    def parse_student(self, response):
+        """
+        Sets up the database with PrimaryReport objects
+        This is called first, before subject, so parse_subject we can guarantee there is already a Primary Report Item
+        """
+        current_term_id = self.determine_current_term(response)
+
+        student_id = response.xpath("//input[@id='pyp_final_grade_user_id']/@value")[0].extract() or None
+        if student_id is None:
+            print("NO STUDENT ID??")
+
+        teacher_id = response.xpath("//div[@class='span2']/div/a/@href").extract()[0].split('/')[-1]
+
+        homeroom_comment = response.xpath('//textarea') or None
+        if homeroom_comment is None:
+            print("NO HOMEROOM COMMENT???")
+
+        homeroom_comment = homeroom_comment[0]
+        homeroom_comment = homeroom_comment.xpath('./text()').extract() or ""
+        if homeroom_comment:
+            homeroom_comment = homeroom_comment[0]
+
+        item = PrimaryReportItem()
+        item['homeroom_comment'] = homeroom_comment
+        item['student_id'] = student_id
+        item['course_id'] = self.class_id
+        item['teacher_id'] = teacher_id
+        item['term_id'] = current_term_id
+
+        yield item
+
+
+    def parse_subject(self, response):
+        """
+        Collects the existing PrimaryReport objects and adds data to them
+        """
+        current_term_id = self.determine_current_term(response)
+        subject_id = re.search('\?subject=(\d+)', response.url).group(1)
+
+        subject_name = response.xpath("//h2[@class='vac']")[0].xpath('./text()').extract()
+        subject_name = "".join([l.strip('\n') for l in subject_name if l.strip('\n')])
+
+        for student in response.xpath("//td[@class='student-assessment']"):
+            student_id = student.xpath('./div/@id').extract()[0].split('_')[-1]
+
+            # First we have to set up and get the report section (subject) in the database
+            item = PrimaryReportSectionItem()
+            comment = response.xpath("//div[@id='user_comments_{}']".format(student_id))
+            comment = comment.xpath('./textarea/text()').extract()
+            comment = comment[0] if comment else ""
+            item['student_id'] = student_id
+            item['course_id'] = self.class_id
+            item['term_id'] = current_term_id
+
+            item['subject_id'] = subject_id
+            item['subject_name'] = subject_name
+            item['comment'] = comment
+
+            yield item
+
+            for student_strand in response.xpath("//div[@id='user_strand_marks_{}']".format(student_id)):
+                which = 1
+                for strand in student_strand.xpath('./table/tbody/tr'):
+                    strand_label = strand.xpath('./td[1]/text()').extract()[0]
+                    value = strand.xpath("./td[2]/select/option[@selected='selected']/text()").extract()
+                    strand_value = value[0] if value else ""
+ 
+                    item = PrimaryReportStrandItem()
+                    item['student_id'] = student_id
+                    item['course_id'] = self.class_id
+                    item['term_id'] = current_term_id
+                    item['subject_id'] = subject_id
+                    item['which'] = which
+
+                    item['strand_label'] = strand_label
+                    item['strand_text'] = strand_value
+
+                    if strand_label:
+                        yield item
+                    which += 1
+
+            for student_outcome in response.xpath("//div[@id='user_learning_outcomes_marks_{}']".format(student_id)):
+                which = 1
+                for outcome in student_outcome.xpath('./table/tbody/tr'):
+                    outcome_label = outcome.xpath('./td[1]/text()').extract()[0]
+                    value = outcome.xpath("./td[2]/select/option[@selected='selected']/text()").extract()
+                    outcome_value = value[0] if value else ""
+
+                    item = PrimaryReportOutcomeItem()
+                    item['student_id'] = student_id
+                    item['course_id'] = self.class_id
+                    item['term_id'] = current_term_id
+                    item['subject_id'] = subject_id
+                    item['which'] = which
+
+                    item['outcome_label'] = outcome_label
+                    item['outcome_text'] = outcome_value
+
+                    if outcome_label:
+                        yield item
+                    which += 1
+
+            # Written before sections were used, can probably delete:
+
+
+            # for this_comment in response.xpath("//div[@id='user_comments_{}']".format(student_id)):
+            #     text = this_comment.xpath('./textarea/text()').extract()
+            #     comment_value = text[0] if text else ""
+
+            #     item = PrimaryReportCommentItem()
+            #     item['student_id'] = student_id
+            #     item['course_id'] = self.class_id
+            #     item['term_id'] = current_term_id
+
+            #     item['comment_text'] = comment_value
+
+            #     yield item
+
+            # if student_id == '10856636':
+            #     from IPython import embed
+            #     embed()
+
+
+class ClassReportsMYP(ClassReports):
+    name = "ClassReportsMYP"
+    program = 'myp'
+    path = '/classes/{}/{}-gradebook/tasks/term-grades'
+
+    def class_reports_myp(self):
+        request = scrapy.Request(
+            url=self.path_to_url(), 
+            callback=self.parse_items,
+            errback=self.error_parsing,
+            dont_filter=True
+            )
+        self.next()
+        return request
+
+    def parse_items(self, response):
+        # First let's detect the term we're on and make sure that's in the database too
+        # TODO: Far better would be to go through the settings pages and scrape it that way, but we can use this method for now
+        # Because we're doing this manually, let's directly interface with the database here; don't yield
+
+        current_term_id = self.determine_current_term(response)
 
         # Okay, so now let's find every textarea here and process them
 
@@ -154,50 +366,6 @@ class ClassReports(ClassLevelManageBac):
         if self.current_course_id:
             method = getattr(self, 'class_reports_{}'.format(self.program.lower()))
             yield method()
-
-
-    def class_reports(self):
-        request = scrapy.Request(
-            url=self.path_to_url(), 
-            callback=self.parse_items,
-            errback=self.error_parsing,
-            dont_filter=True
-            )
-        self.next()
-        return request
-
-class ClassReportsPYP(ClassReports):
-    #name = "ClassReportsPYP"
-    program = 'pyp'
-    path = '/classes/{}/{}-gradebook/tasks/term-grades'
-
-    def class_reports_pyp(self):
-        if self.class_id or self.current_course_id:
-            request = scrapy.Request(
-                url=self.path_to_url(), 
-                callback=self.parse_items,
-                errback=self.error_parsing,
-                dont_filter=True
-                )
-            self.next()
-            return request
-        return None
-
-
-class ClassReportsMYP(ClassReports):
-    name = "ClassReportsMYP"
-    program = 'myp'
-    path = '/classes/{}/{}-gradebook/tasks/term-grades'
-
-    def class_reports_myp(self):
-        request = scrapy.Request(
-            url=self.path_to_url(), 
-            callback=self.parse_items,
-            errback=self.error_parsing,
-            dont_filter=True
-            )
-        self.next()
-        return request
 
 class ClassReportsDP(ClassReports):
     #name = "ClassReportsDP"

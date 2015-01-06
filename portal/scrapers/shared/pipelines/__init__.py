@@ -51,7 +51,7 @@ class AbstractPipeline(object):
 
                 exists = self.database_ismember(self.key, item)
                 if not exists:
-                    self.spider.warning("Adding to database")
+                    self.spider.warning("{} is adding to database".format(self.__class__.__name__))
                     self.database_add(self.key, item)
                     return item
                 else:

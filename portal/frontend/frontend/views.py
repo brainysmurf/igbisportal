@@ -24,6 +24,7 @@ api_token = 'a473e92458548d66c06fe83f69831fd5'
 
 Students = db.table_string_to_class('student')
 ReportComments = db.table_string_to_class('report_comments')
+PrimaryReport = db.table_string_to_class('primary_report')
 Courses = db.table_string_to_class('course')
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
@@ -221,6 +222,7 @@ def reports_ind(request):
         )
 
 
+
 @view_config(route_name='reports', renderer='templates/report_list.pt')
 def reports(request):
 
@@ -234,6 +236,27 @@ def reports(request):
         student_list=students_with_report,
         title="List of students with reports"
         )
+
+@view_config(route_name='student_pyp_report', renderer='templates/student_pyp_report.pt')
+def pyp_reports(request):
+    m = request.matchdict
+    student_id = m.get('id')
+    term_id = 27807  # m.get('term_id')
+
+    with DBSession() as session:
+        report = session.query(PrimaryReport).\
+            options(joinedload('sections')).\
+            options(joinedload('sections.learning_outcomes')).\
+            options(joinedload('sections.strands')).\
+            options(joinedload('teacher')).\
+            filter_by(term_id=term_id, student_id=student_id).one()
+        student = session.query(Students).filter_by(id=student_id).one()
+
+        return dict(
+            title="Student Report",
+            report= report,
+            student=student
+            )
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

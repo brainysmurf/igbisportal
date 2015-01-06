@@ -1,6 +1,9 @@
 from portal.db import Database, DBSession  
 
 from portal.scrapers.shared.pipelines import PostgresPipeline
+from portal.scrapers.mb_scraper.mb_scraper.items import PrimaryReportItem, PrimaryReportSupplementItem, PrimaryReportSectionItem, PrimaryReportStrandItem, PrimaryReportOutcomeItem
+
+from sqlalchemy.orm.exc import NoResultFound
 
 class ClassReportsPipeline(PostgresPipeline):
     BLANK_TOLERANCE = 100
@@ -33,3 +36,110 @@ class ClassReportsPipeline(PostgresPipeline):
 
                 # okay, now that both records are all good, make the relationship link
                 report_comment.atl_comments.append(alt_comment)
+
+
+class PYPClassReportsPipline(PostgresPipeline):
+    """
+
+    """
+    BLANK_TOLERANCE = 100   # Could use this for different things
+
+    def allow_this_spider(self, spider):
+        return spider.name.startswith('PYPClassReports')
+
+    def database_add(self, key, item):
+        PrimaryReport = self.database.table_string_to_class('Primary_Report')
+        PrimaryReportSection = self.database.table_string_to_class('Primary_Report_Section')
+        PrimaryReportStrand = self.database.table_string_to_class('Primary_Report_Strand')
+        PrimaryReportLo = self.database.table_string_to_class('Primary_Report_Lo')
+
+        if issubclass(item.__class__, PrimaryReportItem):
+            term_id = int(item.get('term_id'))
+            course_id = int(item.get('course_id'))
+            student_id = int(item.get('student_id'))
+            with DBSession() as session:
+                try:
+                    exists = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
+                    if exists:
+                        exists.homeroom_comment = item['homeroom_comment']
+                except NoResultFound:
+                    primary_report = PrimaryReport(
+                            course_id = course_id,
+                            term_id = term_id,
+                            homeroom_comment = item['homeroom_comment'],
+                            teacher_id = int(item['teacher_id']) if not item['teacher_id'] is None else None,  # When this becomes an int, change it to an int...
+                            student_id = student_id
+                        )
+                    session.add(primary_report)
+
+        elif issubclass(item.__class__, PrimaryReportSectionItem):
+            term_id = int(item.get('term_id'))
+            course_id = int(item.get('course_id'))
+            student_id = int(item.get('student_id'))
+            subject_id = int(item.get('subject_id'))
+
+            # Just make sure it's already set up
+            with DBSession() as session:
+                primary_report = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
+                try:
+                    exists = session.query(PrimaryReportSection).filter_by(primary_report_id=primary_report.id, subject_id=subject_id).one()
+                    exists.comment = item['comment']
+                    exists.name = item.get('name', '')
+                except NoResultFound:
+                    # Shouldn't there be a teacher in here somewhere?
+                    primary_report_section = PrimaryReportSection(
+                            primary_report_id = primary_report.id,
+                            subject_id = subject_id,
+                            comment = item['comment'],
+                            name = item.get('subject_name', ''),
+                        )
+                    session.add(primary_report_section)
+
+        elif issubclass(item.__class__, PrimaryReportSupplementItem):
+            # First get the id of the primary report, for convenience
+            term_id = int(item.get('term_id'))
+            course_id = int(item.get('course_id'))
+            student_id = int(item.get('student_id'))
+            subject_id = int(item.get('subject_id'))
+            which = item.get('which')
+
+            with DBSession() as session:
+                # Primary report should already be in the database
+                primary_report = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
+                primary_report_section = session.query(PrimaryReportSection).filter_by(primary_report_id=primary_report.id, subject_id=subject_id).one()
+
+                primary_report_id = primary_report.id
+                primary_report_section_id = primary_report_section.id
+
+            if issubclass(item.__class__, PrimaryReportStrandItem):
+                with DBSession() as session:
+                    try:
+                        exists = session.query(PrimaryReportStrand).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
+                        exists.label = item['strand_label']
+                        exists.selection = item['strand_text']
+                    except NoResultFound:
+                        primary_report_strand = PrimaryReportStrand(
+                                primary_report_section_id = primary_report_section_id,
+                                label = item['strand_label'],
+                                selection = item['strand_text'],
+                                which = item['which']
+                            )
+                        session.add(primary_report_strand)
+
+            elif issubclass(item.__class__, PrimaryReportOutcomeItem):
+                with DBSession() as session:
+                    try:
+                        exists = session.query(PrimaryReportLo).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
+                        exists.label = item['outcome_label']
+                        exists.selection = item['outcome_text']
+                    except NoResultFound:
+                        primary_report_outcome = PrimaryReportLo(
+                                primary_report_section_id = primary_report_section_id,
+                                label = item['outcome_label'],
+                                selection = item['outcome_text'],
+                                which = item['which']
+                            )
+
+                        session.add(primary_report_outcome)
+
+

@@ -38,6 +38,8 @@ def main(global_config, **settings):
     config.add_route('students_ind', '/students/{id}')
     config.add_route('student_report', '/students/{id}/reports')
 
+    config.add_route('student_pyp_report', '/students/{id}/pyp_report')
+
     config.add_route('splash', '/splash')
 
 
