@@ -204,6 +204,58 @@ def splash(request):
         buttons = buttons,
     )
 
+@view_config(route_name='hourofcode', renderer='templates/hourofcode.pt')
+def hourofcode(request):
+    role = request.GET.get('role', 'student')
+    student_buttons = []
+    teacher_buttons = []
+    teacher_buttons.extend([
+            button(name="Program a Game", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="gamepad", 
+                context_menu={
+                'items': [
+                    menu_item(icon="dot-circle-o", display="Angry Birds", url="http://studio.code.org/s/course2/stage/3/puzzle/1"),
+                    menu_item(icon="dot-circle-o", display='Plants vs Zombies', url="http://studio.code.org/s/course3/stage/2/puzzle/1"),
+                    menu_separator(),
+                    menu_item(icon="dot-circle-o", display='More! More!', url="http://studio.code.org/"),
+                ]
+                }
+            ),
+            button(name="Design a World", url="#", icon="codepen",
+                context_menu={
+                'items': [
+                    menu_item(icon="dot-circle-o", display='Scratch Starter Projects', url="http://scratch.mit.edu/starter_projects/"),
+                    menu_item(icon="dot-circle-o", display="Start with Stratch Online", url="http://scratch.mit.edu/projects/editor/?tip_bar=getStarted"),
+                ]
+                }
+            ),
+            button(name="Fiddle with Code", url="#", icon="code",
+                context_menu={
+                'items': [
+                    menu_item(icon="dot-circle-o", display='Fiddle with a Website', url="http://jsfiddle.net/xpatm05k/"),
+                    menu_item(icon="dot-circle-o", display='Fiddle with Tic Tac Toe', url="http://jsfiddle.net/rtoal/5wKfF/"),
+                ]
+                }
+            ),
+            button(name="Learn More", url="#", icon="question-circle",
+                context_menu={
+                'items': [
+                    menu_item(icon="dot-circle-o", display='Introduction to Computer Science', url="http://www.brainpop.com/technology/computerscience/computerprogramming?user=igbisbrainpop&password=2014igbis"),
+                    menu_item(icon="dot-circle-o", display="Learn to Code a Website", url="http://www.codecademy.com/en/tracks/web"),
+                ]
+                }
+            ),
+            ]
+        )
+    buttons = OrderedDict()
+    buttons['Teachers'] = teacher_buttons
+    buttons['Students'] = student_buttons
+    return dict(
+        role=role, 
+        title="[IGBIS] Hour of Code",
+        buttons = buttons,
+    )
+
+
 @view_config(route_name='reports_ind', renderer='templates/report_ind.pt')
 def reports_ind(request):
     m = request.matchdict
