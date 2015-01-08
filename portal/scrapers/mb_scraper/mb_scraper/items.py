@@ -55,5 +55,6 @@ class PrimaryReportStrandItem(PrimaryReportSupplementItem):
     strand_text = scrapy.Field()
 
 class PrimaryReportOutcomeItem(PrimaryReportSupplementItem):
+    heading = scrapy.Field()
     outcome_label = scrapy.Field()
     outcome_text = scrapy.Field()   

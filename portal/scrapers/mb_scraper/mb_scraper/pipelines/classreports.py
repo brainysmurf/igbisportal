@@ -84,7 +84,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                 try:
                     exists = session.query(PrimaryReportSection).filter_by(primary_report_id=primary_report.id, subject_id=subject_id).one()
                     exists.comment = item['comment']
-                    exists.name = item.get('name', '')
+                    exists.name = item.get('subject_name', '')
                 except NoResultFound:
                     # Shouldn't there be a teacher in here somewhere?
                     primary_report_section = PrimaryReportSection(
@@ -130,11 +130,13 @@ class PYPClassReportsPipline(PostgresPipeline):
                 with DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportLo).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
+                        exists.heading = item['heading']
                         exists.label = item['outcome_label']
                         exists.selection = item['outcome_text']
                     except NoResultFound:
                         primary_report_outcome = PrimaryReportLo(
                                 primary_report_section_id = primary_report_section_id,
+                                heading = item['heading'],
                                 label = item['outcome_label'],
                                 selection = item['outcome_text'],
                                 which = item['which']

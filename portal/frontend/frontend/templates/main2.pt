@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" tal:define="role request.GET.get('role', 'student')" tal:define="static_url request.static_url('frontend:static/')">
+<head>
+  <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="${static_url}bootstrap/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="${static_url}css/pyp_reports.css">
+  <title>${title}</title>
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+<div metal:define-slot="additional-css"></div>
+</head>
+<body>
+<div id="wrapper">
+    <div id="contentwrap">
+      <!-- <img src="${static_url}header.png" width="1100px" /> -->
+      <div class="tabs_holder">
+        <div metal:define-slot="tabs_bar"></div>
+      </div>
+	  <div class="content_holder">
+	  	<div class="content">
+	    	<p>
+  	   		<div metal:define-slot="content"></div>
+	   		</p>
+		  </div>
+	  </div>
+    </div>
+</div>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js"></script>
+<div metal:define-slot="additional_js"></div>
+</body>
+</html>

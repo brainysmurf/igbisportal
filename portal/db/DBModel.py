@@ -37,6 +37,11 @@ TERMS = "{}terms".format(PREFIX)
 REPORTCOMMENTS = "{}report_comments".format(PREFIX)
 ATLCOMMENTS = "{}atl_comments".format(PREFIX)
 REPORTATLASSOC = "{}report_atl_association".format(PREFIX)
+PRIMARYREPORT = "{}primary_report".format(PREFIX)
+PRIMARYREPORTSECTION = "{}primary_report_section".format(PREFIX)
+PRIMARYREPORTSTRAND = "{}primary_report_strand".format(PREFIX)
+PRIMARYREPORTLO = "{}primary_report_lo".format(PREFIX)
+PRIMARYREPORTSECTIONTEACHERASSOC = "{}primary_report_section_teacher_association".format(PREFIX)
 
 class User(object):
 	"""
@@ -275,4 +280,74 @@ class AtlComments(Base):
 	id = Column(BigInteger, primary_key=True)
 	label = Column(Enum('Collaboration', 'Communication', 'Organization', 'Affective', 'Reflection', 'Information Literacy', 'Media Literacy', 'Critical Thinking', 'Creative Thinking', 'Transfer' , name='alt_skills'))
 	selection = Column(Enum('EE', 'ME', 'AE', 'BE', name = 'selection'))
+
+
+
+
+class PrimaryReport(Base):
+	__tablename__ = PRIMARYREPORT
+
+	id = Column(BigInteger, primary_key=True)   # TODO Use Composite Key?
+
+	course_id = Column(BigInteger, ForeignKey(COURSES+'.id'))
+	course = relationship('Course', uselist=False)
+	term_id = Column(BigInteger, ForeignKey(TERMS+'.id'))
+	term = relationship('Terms', uselist=False)
+	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
+	student = relationship('Student', backref="pyp_reports", uselist=False)  # userlist makes it just one
+
+	# One to one? One to many? Who knows.
+	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
+	teacher = relationship('Advisor')
+	sections = relationship('PrimaryReportSection')
+
+	homeroom_comment = Column(String(2000), nullable=True, server_default=None)
+
+	#section = relationship('PrimaryReportSection')
+
+primary_report_section_teacher_association = Table(PRIMARYREPORTSECTIONTEACHERASSOC, Base.metadata,
+	Column('primary_report_section_id', BigInteger, ForeignKey(PRIMARYREPORTSECTION+'.id')),
+	Column('teacher_id', BigInteger, ForeignKey(ADVISORS+'.id'))
+	)
+
+class PrimaryReportSection(Base):
+	__tablename__ = PRIMARYREPORTSECTION
+
+	id = Column(BigInteger, primary_key=True)   # TODO Use Composite Key?
+
+	primary_report_id = Column(ForeignKey(PRIMARYREPORT + '.id'))
+	subject_id = Column(BigInteger)
+
+	name = Column(String(500), nullable=True, server_default=None)
+	comment = Column(String(2000), nullable=True, server_default=None)
+	
+	teachers = relationship('Advisor', secondary=primary_report_section_teacher_association)
+	strands = relationship('PrimaryReportStrand')
+	learning_outcomes = relationship('PrimaryReportLo')
+
+
+class PrimaryReportStrand(Base):
+	__tablename__ = PRIMARYREPORTSTRAND
+	id = Column(BigInteger, primary_key=True)
+	primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
+	which = Column(Integer, nullable=True, server_default=None)
+
+	label = Column(String(1000), nullable=True, server_default=None)
+	selection = Column(String(4), nullable=True, server_default=None)
+	#selection = Column(Enum('', 'W', 'S', 'I', 'E', name = 'selection'))
+
+class PrimaryReportLo(Base):
+	__tablename__ = PRIMARYREPORTLO
+	id = Column(BigInteger, primary_key=True)
+	primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
+	which = Column(Integer, nullable=True, server_default=None)
+
+	heading = Column(String(1000), nullable=True, server_default=None)	
+	label = Column(String(1000), nullable=True, server_default=None)
+	selection = Column(String(4), nullable=True, server_default=None)
+	#selection = Column(Enum('', 'O', 'G', 'N', name = 'selection'))
+
+
+
+
 

@@ -142,8 +142,9 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
     def parse_items(self, response):
         """
-        Cycle through each PYP class
+        Cycle through each PYP subject
         """
+
 
         # Dispatch to parse_subject per each subject on right side
         # Code this first because this will actually be deferred until last
@@ -168,10 +169,27 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
             yield request
 
 
+        # First get the information about teacher assignments
+        # assign_teachers_url = '/classes/{}/teachers'.format(self.class_id)
+        # request = scrapy.Request(
+        #     url=gns.settings.mb_url + assign_teachers_url,
+        #     callback=self.parse_teacher_assignments,
+        #     errback=self.error_parsing,
+        #     dont_filter=True
+        #     )
+        # yield request
+
+
         if self.current_course_id:
             # Goes on to the next class
             method = getattr(self, 'class_reports_{}'.format(self.program.lower()))
             yield method()
+
+    # def parse_teacher_assignments(self, response):
+    #     from IPython import embed
+    #     embed()
+    #     exit()
+
 
     def parse_student(self, response):
         """
@@ -256,24 +274,38 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
             for student_outcome in response.xpath("//div[@id='user_learning_outcomes_marks_{}']".format(student_id)):
                 which = 1
-                for outcome in student_outcome.xpath('./table/tbody/tr'):
-                    outcome_label = outcome.xpath('./td[1]/text()').extract()[0]
-                    value = outcome.xpath("./td[2]/select/option[@selected='selected']/text()").extract()
-                    outcome_value = value[0] if value else ""
+                for outcome in student_outcome.xpath('./table'):
 
-                    item = PrimaryReportOutcomeItem()
-                    item['student_id'] = student_id
-                    item['course_id'] = self.class_id
-                    item['term_id'] = current_term_id
-                    item['subject_id'] = subject_id
-                    item['which'] = which
+                    # For this, we have to inspect the headers to see 
 
-                    item['outcome_label'] = outcome_label
-                    item['outcome_text'] = outcome_value
+                    for section_num in range(len(outcome.xpath('./thead'))):
 
-                    if outcome_label:
-                        yield item
-                    which += 1
+                        strand_heading = outcome.xpath('./thead/tr/th/strong/text()').extract()[section_num * 2]
+                        outcome_body = outcome.xpath('./tbody')[section_num]
+
+                        for outcome_content in outcome_body.xpath('./tr'):
+
+                            cells = outcome_content.xpath('./td')
+                            if len(cells) == 2:
+                                outcome_label = cells[0].xpath('./text()').extract()[0]
+                                value = cells[1].xpath("./select/option[@selected='selected']/text()").extract()
+
+                                outcome_value = value[0] if value else ""
+
+                                item = PrimaryReportOutcomeItem()
+                                item['student_id'] = student_id
+                                item['course_id'] = self.class_id
+                                item['term_id'] = current_term_id
+                                item['subject_id'] = subject_id
+                                item['heading'] = strand_heading
+                                item['which'] = which
+
+                                item['outcome_label'] = outcome_label
+                                item['outcome_text'] = outcome_value
+
+                                if outcome_label.strip('\n'):
+                                    yield item
+                                which += 1
 
             # Written before sections were used, can probably delete:
 
