@@ -5,9 +5,14 @@
   </div>
  -->
 
+ <div metal:fill-slot="additional-css">
+  <link rel="stylesheet" type="text/css" href="${static_url}css/atl.css" />
+ </div>
+
+
+
   <div metal:fill-slot="content">
-    <p tal:repeat="item items">
-       <h4><a href="/students/${item.id}">${str(item)}</a></h4>
-    </p>
-  </div>
+Nope
+</div>
+
 </metal:main>

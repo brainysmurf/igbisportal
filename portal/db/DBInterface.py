@@ -38,7 +38,10 @@ class Database:
         @table should be a string
         @returns Database class that can be used in queries
         """
-        ret = getattr(DBModel, table.title().replace('_', ' ').replace(' ', ''))
+        try:
+            ret = getattr(DBModel, table.title().replace('_', ' ').replace(' ', ''))
+        except AttributeError:
+            ret = getattr(DBModel, table.replace('_', ' ').replace(' ', ''))
         return ret
 
     def wrap_no_result(self, f, *args, **kwargs):

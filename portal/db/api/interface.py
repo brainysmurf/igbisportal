@@ -135,9 +135,12 @@ class APIDownloader(object):
 				fileexists = os.path.isfile(file_path)
 				if not fileexists:
 					self.default_logger('Downloading {}'.format(this_filename))
-					r = requests.get(self.url.format(uri=this_url), params=dict(
+					try:
+						r = requests.get(self.url.format(uri=this_url), params=dict(
 						auth_token=self.api_token
 						))
+					except requests.exceptions.SSLError:
+						continue
 					try:
 						json_info = r.json()
 					except ValueError:

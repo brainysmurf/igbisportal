@@ -58,3 +58,7 @@ class PrimaryReportOutcomeItem(PrimaryReportSupplementItem):
     heading = scrapy.Field()
     outcome_label = scrapy.Field()
     outcome_text = scrapy.Field()   
+
+class TeacherAssignmentItem(scrapy.Item):
+    teacher_id = scrapy.Field()
+    subject_id = scrapy.Field()

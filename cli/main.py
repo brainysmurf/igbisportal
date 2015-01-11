@@ -19,23 +19,24 @@ def main(ctx, verbose):
     ctx.obj = Object()
     ctx.obj.verbose = verbose
 
-def dl(lazy, verbose):
+def dl(lazy=False, verbose=False):
     from portal.db.api.interface import APIDownloader
-    go = APIDownloader(lazy=lazy, verbose=obj.verbose)    
+    go = APIDownloader(lazy=lazy, verbose=verbose)    
 
 def db_setup(lazy, verbose):
     from portal.db.interface import DatabaseSetterUpper
-    go = DatabaseSetterUpper(lazy=lazy, verbose=obj.verbose)
+    go = DatabaseSetterUpper(lazy=lazy, verbose=verbose)
 
 @main.command()
-@click.option('--lazy/--not_lazy', default=False, help='default is not_lazy')
+@click.option('--download/--dontdownload', default=True, help='default is not_lazy')
+@click.option('--setupdb/--dontsetupdb', default=True, help='default is not_lazy')
 @click.pass_obj
-def first_launch(obj, lazy):
+def first_launch(obj, download, setupdb):
     """
     Downloads initial data from ManageBac APIs and via scraping
-    """ 
-    dl(lazy, obj.verbose)
-    db_setup(lazy, obj.verbose)
+    """
+    dl(lazy=not download, verbose=obj.verbose)
+    db_setup(lazy=not setupdb, verbose=obj.verbose)
 
 
 @main.group()

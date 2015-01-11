@@ -39,7 +39,7 @@ body {
 .table {
 	margin-right:140px;
 	border-collapse: separate;
-	border-spacing: 5px;
+	border-spacing: 1px;
 }
 
 .table-header-rotated th.row-header{
@@ -116,13 +116,26 @@ body {
 	padding: 8px;
 }
 
+h1 {
+  border-bottom: 4px solid #C0C0C0;
+  padding-bottom:5px;
+}
+
 h2 {
 	text-align: left;
 	padding: 8px;
 }
 
-.effort > td {
+/*.effort > td {
+  border-top: 10px solid #FFF;
+}
+*/
+.effort > td:first-child {
   background-color: #C0C0C0;
+}
+
+.effort > td:not(:first-child) {
+  border: 1px solid #FFF;
 }
 
 .report_comment {

@@ -9,23 +9,29 @@
   <link rel="stylesheet" type="text/css" href="${static_url}css/atl.css" />
  </div>
 
- <?python def get_effort(): 
-
- ?>
-
   <div metal:fill-slot="content">
       <tal:block tal:define="subject_rank {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}">
 
-    	<h1>${student.last_name}, ${student.first_name}</h1>
-      <h2>Homeroom Comment (${report.teacher})</h2>
-  		<div class="report_comment">${report.homeroom_comment}</div>
+      <h1>IGB International School: Summary of Achievement<br />
+      Second Term, Academic Year 2014/15</h1>
 
-      <p tal:repeat="section sorted(report.sections, key=lambda x: subject_rank.get(x.name.lower(), 1000))">
+      <table class="table table-header-rotated">
+        <tr>
+          <td style="width:100%;"><strong>Student Name:</strong> ${student.first_name} ${student.last_name}</td>
+        </tr>
+          <td style="width:100%;"><strong>Grade:</strong> _</td>
+        <tr>
+          <td style="width:100%;"><strong>Homeroom Teacher:</strong> ${report.teacher}</td>
+        </tr>
+      </table>
+
+
+      <p tal:repeat="section report.sections">
 
         <table class="table table-header-rotated">
           <thead>
             <tr>
-              <th><h2>${section.name} Attainment</h2></th>
+              <th><h2>${section.name.title()} Attainment</h2></th>
               <th class="rotate-45"><div><span>Working twoards expectations (W)</span></div></th>
               <!-- <th style="background:#3366FF;;">S</th>
               <th style="background:#3366FF;;">I</th> -->
@@ -35,41 +41,33 @@
             </tr>
           </thead>
           <tbody>
-            <tal:block tal:define="old_heading ''">
-              <tal:block tal:repeat="outcome sorted(section.learning_outcomes, key=lambda x: x.which)">
-                <tr class="effort" tal:condition="outcome.heading != old_heading">
-                  <?python effort = "<initial>" ?>
-                  <tal:block tal:condition="subject_rank.get(section.name.lower()) in [0, 1]">
-                    <?python effort = [s.selection for s in section.strands if s.label == outcome.heading]  ?>
-                    <?python effort = effort[0] if len(effort) == 1 else (effort[0] if len(set(effort))==1 else "<>") ?>
-                  </tal:block>
-                  <tal:block tal:condition="not subject_rank.get(section.name.lower()) in [0, 1]">
-                    <?python effort = [s.selection for s in section.strands if s.selection] ?>
-                    <?python effort = effort[0] if len(set(effort)) == 1 else "<>" ?>
-                  </tal:block>
-                  <?python effort = {'G': "Good", 'N': "Needs Improvement", 'O': "Outstanding"}.get(effort, "<cannot determine>") ?>
-                  <td><strong>${outcome.heading.title()}</strong> <span style="float:right"><em>Effort: ${effort}</em></span></td><td colspan="4"></td>
-                </tr>
-                <?python old_heading = outcome.heading ?>
-                <tr tal:condition="outcome.label">
-                  <td>${outcome.label}</td>
-                  <!-- <td tal:repeat="output ['W', 'S', 'I', 'E']" tal:attributes="style 'text-align:center;;background-color:#8DC1F4;;' if output in ['W', 'E'] else 'text-align:center;;background-color:#3366FF;;'"> -->
-                  <td style="text-align:center;" tal:repeat="output ['W', 'S', 'I', 'E']">
-                    <i tal:attributes="class 'fa fa-check' if outcome.selection == output else ''"></i>
-                  </td>
-                </tr>
-              </tal:block>
+            <tal:block tal:repeat="outcome section.learning_outcomes">
+              <tr class="effort" tal:condition="hasattr(outcome, 'effort')">
+                <td><strong>${section.name}: ${outcome.heading.title()}</strong> 
+                  <span style="float:right"><em>Effort: ${outcome.effort}</em></span></td><td colspan="4">
+                </td>
+              </tr>
+              <tr tal:condition="outcome.label">
+                <td>${outcome.label.capitalize()}</td>
+                <!-- <td tal:repeat="output ['W', 'S', 'I', 'E']" tal:attributes="style 'text-align:center;;background-color:#8DC1F4;;' if output in ['W', 'E'] else 'text-align:center;;background-color:#3366FF;;'"> -->
+                <td style="text-align:center;" tal:repeat="output ['W', 'S', 'I', 'E']">
+                  <i tal:attributes="class 'fa fa-check' if outcome.selection == output else ''"></i>
+                </td>
+              </tr>
             </tal:block>
           </tbody>
         </table>
 
 
-        <h2>${section.name} Comment</h2>
+        <h2>${section.name.title()} Comment</h2>
         <div class="report_comment">
           ${section.comment}
         </div>
 
       </p>
+
+      <div class="report_comment">${report.homeroom_comment}</div>
+
 
       </tal:block>
 </div>

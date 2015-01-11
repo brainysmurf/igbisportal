@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Defines the frontend behaviour
 """
@@ -5,17 +7,23 @@ Defines the frontend behaviour
 from pyramid.response import Response
 from pyramid.view import view_config
 
+from pyramid.httpexceptions import HTTPFound
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import joinedload, joinedload_all
 
 from portal.db import Database, DBSession
 db = Database()
 
-import json
+import json, re
 
 import requests
 
 from collections import namedtuple, OrderedDict
+
+class ReportIncomplete(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
 PREFIX = 'igbis2014'
 url = 'https://{}.managebac.com/api/{{}}'.format(PREFIX)
@@ -94,11 +102,34 @@ def schedule_data(request):
 @view_config(route_name='students', renderer='templates/students.pt')
 def students(request):
 
+    params = request.params
+
+    if not params:
+        with DBSession() as session:
+            statement = session.query(Students)
+            students = statement.all()
+
+        return dict(title="All Students", items=students)
+
+    else:
+        with DBSession() as session:
+            statement = session.query(Students).filter_by(**params)
+            students = statement.all()            
+
+        return dict(title="Filtered Students", items=students)
+
+@view_config(route_name='students_program_list', renderer='templates/students.pt')
+def students_program_filter(request):
+    m = request.matchdict
+    program = m.get('program').lower()
+    program_string = dict(pyp='IB PYP', dp="IB DP", myp="IB MYP")
+
     with DBSession() as session:
-        statement = session.query(Students)
+        statement = session.query(Students).filter_by(program=program_string.get(program))
         students = statement.all()
 
     return dict(title="All Students", items=students)
+
 
 @view_config(route_name='students_ind', renderer='templates/student.pt')
 def students_ind(request):
@@ -289,26 +320,80 @@ def reports(request):
         title="List of students with reports"
         )
 
+@view_config(context=ReportIncomplete)
+def report_incomplete(request):
+    response = Response()
+    response.status_int = 500
+    return response
+
 @view_config(route_name='student_pyp_report', renderer='templates/student_pyp_report.pt')
 def pyp_reports(request):
     m = request.matchdict
     student_id = m.get('id')
+    internal_check = request.params.get('internal_check')
     term_id = 27807  # m.get('term_id')
 
     with DBSession() as session:
-        report = session.query(PrimaryReport).\
-            options(joinedload('sections')).\
-            options(joinedload('sections.learning_outcomes')).\
-            options(joinedload('sections.strands')).\
-            options(joinedload('teacher')).\
-            filter_by(term_id=term_id, student_id=student_id).one()
-        student = session.query(Students).filter_by(id=student_id).one()
+        try:
+            report = session.query(PrimaryReport).\
+                options(joinedload('sections')).\
+                options(joinedload('sections.learning_outcomes')).\
+                options(joinedload('sections.strands')).\
+                options(joinedload('teacher')).\
+                filter_by(term_id=term_id, student_id=student_id).one()
+            student = session.query(Students).filter_by(id=student_id).one()
+        except NoResultFound:
+            raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
+ 
+    subject_rank = {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}
+    report.sections = sorted(report.sections, key=lambda x: subject_rank.get(x.name.lower(), 1000))
 
-        return dict(
-            title="Student Report",
-            report= report,
-            student=student
-            )
+    for section in report.sections:
+
+        section.learning_outcomes = sorted(section.learning_outcomes, key=lambda x: x.which)
+
+        # Standardize the headings
+        en_dash = u'\u2013'
+        for outcome in section.learning_outcomes:
+            outcome.heading = outcome.heading.replace(en_dash, '-')
+            match = re.match('(.*)-', outcome.heading)
+            if match:
+                outcome.heading = match.group(1).strip()
+
+        # Evaluates and adds data to items
+        old_heading = None
+        for outcome in section.learning_outcomes:
+
+            if outcome.heading != old_heading:
+                # Mark that indicates we need to evaluate
+
+                if subject_rank.get(section.name.lower()) in [0, 1, 7]:
+                    # Determine the effort assigned by the teacher for this
+                    effort = [s.selection for s in section.strands if s.label.startswith(outcome.heading)]
+                    effort = effort[0] if len(effort) == 1 else (effort[0] if len(set(effort))==1 else "<?>")
+                else:
+                    effort = [s.selection for s in section.strands if s.selection]
+                    effort = effort[0] if len(set(effort)) == 1 else str(effort)
+                outcome.effort = {'G': "Good", 'N': "Needs Improvement", 'O': "Outstanding"}.get(effort, None)
+
+                if not outcome.effort and internal_check:
+                    # Raise a problem here
+                    raise ReportIncomplete('something')
+
+            old_heading = outcome.heading
+
+            if not outcome.selection and internal_check:
+                raise ReportIncomplete('something')
+
+    return dict(
+        title="Student Report",
+        report= report,
+        student=student
+        )
+
+@view_config(route_name="student_pyp_report_no", renderer='templates/student_pyp_report_no.pt')
+def pyp_reports_no(request):
+    return dict(title="No Such report")
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

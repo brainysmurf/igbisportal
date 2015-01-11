@@ -6,7 +6,7 @@ import re, json, glob
 
 class DatabaseSetterUpper(object):
 
-	def __init__(self, lazy=True):
+	def __init__(self, lazy=True, verbose=False):
 		self.database = Database()
 		settings.setup_verbosity(self)
 		if not lazy:
@@ -26,14 +26,15 @@ class DatabaseSetterUpper(object):
 			with open(gns('{settings.path_to_jsons}/{section}.json')) as _f:
 				this_json = json.load(_f)
 
+			_map = dict(Classes="Course", Students="Student", Advisors="Advisor", Parents="Parent")
+
 			with DBSession() as session:
 				for item in this_json[gns.section]:
 					_type = item.get('type', None)
-					if _type == "Classes":
-						_type = "Course"
+					_type = _map.get(_type, _type)
 					if not _type:
 						if gns.section == 'ib_groups':
-							_type = "IBGroup"
+							_type = "IB_Group"
 						else:
 							_type = 'Course' if item.get('class_type') else None
 					if not _type:
@@ -134,5 +135,65 @@ class DatabaseSetterUpper(object):
 					except NoResultFound:
 						continue
 					student.classes.append(course)  # add the course/students relation stuff
+
+		self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
+
+		with DBSession() as session:
+			adam = Teacher(
+				id = 10792616,
+				first_name= "Adam",
+				last_name = "Morris",
+				type= "Advisors",
+				gender="Male",
+				email="adam.morris@igbis.edu.my"
+				)
+
+
+			geoff = Teacher(
+				id = 10792598,
+				first_name="Geoff",
+				last_name ="Derry",
+				email="geoffrey.derry@igbis.edu.my",
+				type="Advisor"
+				)
+
+			matt = Teacher(
+				id=10792614,
+				first_name="Matthew",
+				last_name="Marshall",
+				email="Matthew.Marshall@igbis.edu.my",
+				type="Advisor"
+				)
+
+			phil = Teacher(
+				id=10792596,
+				first_name="Phil",
+				last_name="Clark",
+				email="Phil.Clark@igbis.edu.my",
+				type="Advisor"
+				)
+
+			simon = Teacher(
+				id = 10792615,
+				first_name="Simon",
+				last_name= "Millward",
+				email="Simon.Millward@igbis.edu.my",
+				type="Advisor"
+				)
+
+			lennox = Teacher(
+				id = 10754285,
+				first_name="Lennox",
+				last_name="Meldrum",
+				email="lennox.meldrum@igbis.edu.my",
+				type="Advisor"
+				)
+
+			session.add(adam)
+			session.add(geoff)
+			session.add(matt)
+			session.add(phil)
+			session.add(simon)
+			session.add(lennox)
 
 		self.default_logger("Done!")

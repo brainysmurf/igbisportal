@@ -5,6 +5,25 @@ from portal.scrapers.mb_scraper.mb_scraper.items import PrimaryReportItem, Prima
 
 from sqlalchemy.orm.exc import NoResultFound
 
+class PYPTeacherAssignments(PostgresPipeline):
+    BLANK_TOLERANCE = 1
+
+    def database_add(self, key, item):
+        TeacherAssign = self.database.table_string_to_class('Primary_Teacher_Assignments')
+        subject_id = int(item['subject_id'])
+        teacher_id = int(item['teacher_id'])
+
+        with DBSession() as session:
+            try:
+                exists = session.query(TeacherAssign).filter_by(subject_id=subject_id, teacher_id=teacher_id).one()
+                # If it's already there, nothing to add or modify or update...
+            except NoResultFound:            
+                teacher_assign = TeacherAssign(
+                        teacher_id = teacher_id,
+                        subject_id = subject_id
+                    )
+                session.add(teacher_assign)
+
 class ClassReportsPipeline(PostgresPipeline):
     BLANK_TOLERANCE = 100
 

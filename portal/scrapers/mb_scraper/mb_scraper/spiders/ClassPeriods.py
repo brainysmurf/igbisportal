@@ -3,34 +3,58 @@
 TODO: Course IDs are longs, do they need to be? They print on the terminal that can cause confusion to developers
 """
 
-import scrapy
-import gns
-from portal.scrapers.shared.spiders import ManageBacLogin
-from portal.scrapers.mb_scraper.mb_scraper.items import ClassPeriodItem, ClassReportItem
-from portal.scrapers.mb_scraper.mb_scraper.items import PrimaryReportItem, PrimaryReportStrandItem, PrimaryReportOutcomeItem, PrimaryReportSectionItem
-from portal.db import Database, DBSession
+from portal.scrapers.shared.spiders import \
+    ManageBacLogin
+from portal.scrapers.mb_scraper.mb_scraper.items import \
+    ClassPeriodItem, ClassReportItem
+from portal.scrapers.mb_scraper.mb_scraper.items import \
+    PrimaryReportItem, PrimaryReportStrandItem, \
+    PrimaryReportOutcomeItem, PrimaryReportSectionItem, \
+    TeacherAssignmentItem
+from portal.db import \
+    Database, DBSession
+
 import datetime, re
 from collections import defaultdict
 from scrapy.exceptions import CloseSpider
+import scrapy
+import gns
+
 
 class ClassLevelManageBac(ManageBacLogin):
     """
     Retrieves class IDs and cycles through all of them
     """
-    def __init__(self, class_id=None, *args, **kwargs):
-        self.class_id = class_id
+    def __init__(self, *args, **kwargs):
         self.db = Database()
         self.db.DBSession = DBSession
-        if not self.class_id:
+
+        class_id = kwargs.get('class_id')
+
+        if not class_id:
             rows = self.db.get_rows_in_table('course')
-            self.all_course_ids = [s.id for s in rows]
-            self.next()
+            self.all_course_ids = self._initial_query()
         else:
-            self.all_course_ids = None
-            self.current_course_id = None
+            rows = self.db.get_rows_in_table('course', id=class_id)
+            if rows:
+                self.all_course_ids = [class_id]
+            else:
+                print("Cannot find class with that id")
+                exit()
 
         super(ClassLevelManageBac, self).__init__(*args, **kwargs)
         self.init()
+
+    def _initial_query(self):
+        """
+        Override me
+        """ 
+        rows = self.db.get_rows_in_table('course')
+        return [s.id for s in rows]
+
+    @property
+    def class_id(self):
+        return self.current_course_id
 
     def init(self):
         """
@@ -40,19 +64,13 @@ class ClassLevelManageBac(ManageBacLogin):
         self.manually_do_terms = True  # If this goes to false, can delete this entire method
 
     def next(self):
-        if self.class_id:
-            pass
+        if self.all_course_ids:
+            self.current_course_id = self.all_course_ids.pop(0)
         else:
-            if self.all_course_ids:
-                self.current_course_id = self.all_course_ids.pop(0)
-            else:
-                self.current_course_id = None
+            self.current_course_id = None
 
     def path_to_url(self, class_id=None):
-        if self.current_course_id:
-            return super(ClassLevelManageBac, self).path_to_url(self.path.format(self.current_course_id, self.program))
-        else:
-            return super(ClassLevelManageBac, self).path_to_url(self.path.format(self.class_id, self.program))
+        return super(ClassLevelManageBac, self).path_to_url(self.path.format(self.class_id, self.program))
 
     def error_parsing(self, response):
         self.warning("OOOOOOHHHHHH NOOOOOOOOO")
@@ -62,20 +80,11 @@ class ClassReports(ClassLevelManageBac):
     program = '#'  # myp, dp, or pyp
     path = '/classes/{}/{}-gradebook/tasks/term-grades'
 
-    def __init__(self, class_id=None, **kwargs):
-        self.class_id = class_id
-        self.db = Database()
-        if not self.class_id:
-            self.db.DBSession = DBSession
-            Course = self.db.table_string_to_class('Course')
-            with DBSession() as session:
-                statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{}%'.format(self.program.upper())))
-                self.all_course_ids = [s[0] for s in statement.all()]
-            self.next()
-        else:
-            self.all_course_ids = None
-            self.current_course_id = None
-        self.init()
+    def _initial_query(self):
+        Course = self.db.table_string_to_class('Course')
+        with DBSession() as session:
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{}%'.format(self.program.upper())))
+            return [s.id for s in statement.all()]
 
     def determine_current_term(self, response):
         current_term_id = None # if remove the below block, you'll still need to derive this
@@ -114,14 +123,59 @@ class ClassReports(ClassLevelManageBac):
         return current_term_id
 
     def class_reports(self):
-        request = scrapy.Request(
-            url=self.path_to_url(), 
-            callback=self.parse_items,
-            errback=self.error_parsing,
-            dont_filter=True
-            )
+        """
+        Provides the mechanism to loop through courses, called at spider start-up and as a callback in parse_items when ready to move on to next
+        """
         self.next()
-        return request
+        if self.current_course_id:
+            request = scrapy.Request(
+                url=self.path_to_url(), 
+                callback=self.parse_items,
+                errback=self.error_parsing,
+                dont_filter=True
+                )
+            return request
+        else:
+            return None
+
+class PYPTeacherSubjectAssignments(ClassReports):
+    name = "PYPTeacherAssignments"
+    program = 'pyp'
+    path = '/classes/{}/teachers'
+    
+    def pyp_teacher_subject_assignments(self):
+        return self.class_reports()
+
+    def parse_items(self, response):
+
+        # Loop through the 0_user_id and 1_user_id available there
+        for _id in response.xpath("//select[contains(@id, 'user_id')]/@id").re('.*_user_id'):
+
+            row = response.xpath("//select[@id='{}']".format(_id))
+
+            teacher_subject = row.xpath("../..//td//select//option[@selected='selected']")
+            teacher = None
+            subject = None
+            checked = None
+            if len(teacher_subject) == 2:
+                teacher, subject = teacher_subject
+                checked = row.xpath("../..//td//div/input[@checked='checked']")
+
+            if teacher and subject and checked:
+                teacher_id = teacher.xpath('@value').extract()[0]
+                subject_id = subject.xpath('@value').extract()[0]
+                if checked.xpath('@value').extract()[0] == '1':
+                    item = TeacherAssignmentItem()
+                    item['teacher_id'] = teacher_id
+                    item['subject_id'] = subject_id 
+                    yield item
+
+    def path_to_url(self):
+        """
+        This class doesn't have to specify the program... having the class id is enough
+        """
+        return super(ClassLevelManageBac, self).path_to_url(self.path.format(self.class_id))
+
 
 class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
     name = "PYPClassReports"
@@ -129,22 +183,12 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
     path = '/classes/{}/{}-gradebook/tasks/term_grades'
 
     def pyp_class_reports(self):
-        if self.class_id or self.current_course_id:
-            request = scrapy.Request(
-                url=self.path_to_url(), 
-                callback=self.parse_items,
-                errback=self.error_parsing,
-                dont_filter=True
-                )
-            self.next()
-            return request
-        return None
+        return self.class_reports()
 
     def parse_items(self, response):
         """
         Cycle through each PYP subject
         """
-
 
         # Dispatch to parse_subject per each subject on right side
         # Code this first because this will actually be deferred until last
@@ -180,10 +224,9 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         # yield request
 
 
-        if self.current_course_id:
-            # Goes on to the next class
-            method = getattr(self, 'class_reports_{}'.format(self.program.lower()))
-            yield method()
+        # Goes on to the next class
+        method = getattr(self, 'class_reports_{}'.format(self.program.lower()))
+        yield method()
 
     # def parse_teacher_assignments(self, response):
     #     from IPython import embed

@@ -20,7 +20,7 @@ from sqlalchemy.orm import relationship, backref
 """
 Klunky, but lets me debug quickly
 """
-PREFIX = 'ddd_'
+PREFIX = 'zzzz_'
 USERS = "{}users".format(PREFIX)
 STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)
@@ -42,6 +42,7 @@ PRIMARYREPORTSECTION = "{}primary_report_section".format(PREFIX)
 PRIMARYREPORTSTRAND = "{}primary_report_strand".format(PREFIX)
 PRIMARYREPORTLO = "{}primary_report_lo".format(PREFIX)
 PRIMARYREPORTSECTIONTEACHERASSOC = "{}primary_report_section_teacher_association".format(PREFIX)
+PYPTEACHERASSIGNMENTS = "{}primary_teacher_assign".format(PREFIX)
 
 class User(object):
 	"""
@@ -183,6 +184,7 @@ class Advisor(Base, User):
 	national_id = Column(String(255), nullable=True, server_default=None)
 	classes = relationship('Course', secondary=Assignment, backref='teachers')
 
+	email = Column(String(255), nullable=True, server_default=None)
 
 class Course(Base):
 	"""
@@ -347,7 +349,10 @@ class PrimaryReportLo(Base):
 	selection = Column(String(4), nullable=True, server_default=None)
 	#selection = Column(Enum('', 'O', 'G', 'N', name = 'selection'))
 
-
-
+class PrimaryTeacherAssignments(Base):
+	__tablename__ = PYPTEACHERASSIGNMENTS
+	id = Column(BigInteger, primary_key=True)
+	teacher_id = Column(ForeignKey(ADVISORS + '.id'))
+	subject_id = Column(BigInteger, nullable=True, server_default=None)
 
 
