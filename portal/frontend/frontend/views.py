@@ -198,6 +198,14 @@ def splash(request):
         )
     teacher_buttons = stndrdbttns[:]
     teacher_buttons.extend([
+            button(name="Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", 
+            context_menu={
+            'items': [
+                menu_item(icon="rocket", display="Current Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/current-activities"),
+                menu_item(icon="plus-circle", display="Sign-up", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up"),
+                menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
+            ]
+        }),
             button(name="Hapara Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
             button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
             context_menu={
@@ -336,8 +344,10 @@ def pyp_reports(request):
     with DBSession() as session:
         try:
             report = session.query(PrimaryReport).\
+                options(joinedload('course')).\
                 options(joinedload('sections')).\
                 options(joinedload('sections.learning_outcomes')).\
+                options(joinedload('sections.teachers')).\
                 options(joinedload('sections.strands')).\
                 options(joinedload('teacher')).\
                 filter_by(term_id=term_id, student_id=student_id).one()

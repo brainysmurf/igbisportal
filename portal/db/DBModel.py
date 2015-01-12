@@ -354,5 +354,5 @@ class PrimaryTeacherAssignments(Base):
 	id = Column(BigInteger, primary_key=True)
 	teacher_id = Column(ForeignKey(ADVISORS + '.id'))
 	subject_id = Column(BigInteger, nullable=True, server_default=None)
-
+	class_id = Column(ForeignKey(COURSES + '.id'))
 

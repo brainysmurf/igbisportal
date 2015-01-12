@@ -143,7 +143,13 @@ class PYPTeacherSubjectAssignments(ClassReports):
     program = 'pyp'
     path = '/classes/{}/teachers'
     
-    def pyp_teacher_subject_assignments(self):
+    def _initial_query(self):
+        Course = self.db.table_string_to_class('Course')
+        with DBSession() as session:
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Grade%'.format(self.program.upper())))
+            return [s.id for s in statement.all()]
+
+    def pyp_teacher_subject_assignments(self):        
         return self.class_reports()
 
     def parse_items(self, response):
@@ -155,20 +161,25 @@ class PYPTeacherSubjectAssignments(ClassReports):
 
             teacher_subject = row.xpath("../..//td//select//option[@selected='selected']")
             teacher = None
-            subject = None
+            subjects = None
             checked = None
-            if len(teacher_subject) == 2:
-                teacher, subject = teacher_subject
+            if len(teacher_subject) >= 2:
                 checked = row.xpath("../..//td//div/input[@checked='checked']")
+                teacher = teacher_subject[0]
+                subjects = teacher_subject[1:]
 
-            if teacher and subject and checked:
+            if teacher and subjects and checked and checked.xpath('@value').extract()[0] == '1':
                 teacher_id = teacher.xpath('@value').extract()[0]
-                subject_id = subject.xpath('@value').extract()[0]
-                if checked.xpath('@value').extract()[0] == '1':
+                for subject in subjects:
+                    subject_id = subject.xpath('@value').extract()[0]
                     item = TeacherAssignmentItem()
                     item['teacher_id'] = teacher_id
                     item['subject_id'] = subject_id 
+                    item['class_id'] = self.class_id
                     yield item
+
+        # Goes on to the next class
+        yield self.class_reports()
 
     def path_to_url(self):
         """
@@ -197,7 +208,8 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                 url=gns.settings.mb_url + subject_url,
                 callback=self.parse_subject,
                 errback=self.error_parsing,
-                dont_filter=True
+                dont_filter=True,
+                meta=dict(class_id = self.class_id)
                 )
             yield request
 
@@ -208,30 +220,13 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                 url=gns.settings.mb_url + student_url,
                 callback=self.parse_student,
                 errback=self.error_parsing,
-                dont_filter=True
+                dont_filter=True,
+                meta=dict(class_id = self.class_id)
                 )
             yield request
 
-
-        # First get the information about teacher assignments
-        # assign_teachers_url = '/classes/{}/teachers'.format(self.class_id)
-        # request = scrapy.Request(
-        #     url=gns.settings.mb_url + assign_teachers_url,
-        #     callback=self.parse_teacher_assignments,
-        #     errback=self.error_parsing,
-        #     dont_filter=True
-        #     )
-        # yield request
-
-
         # Goes on to the next class
-        method = getattr(self, 'class_reports_{}'.format(self.program.lower()))
-        yield method()
-
-    # def parse_teacher_assignments(self, response):
-    #     from IPython import embed
-    #     embed()
-    #     exit()
+        yield self.class_reports()
 
 
     def parse_student(self, response):
@@ -259,7 +254,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         item = PrimaryReportItem()
         item['homeroom_comment'] = homeroom_comment
         item['student_id'] = student_id
-        item['course_id'] = self.class_id
+        item['course_id'] = response.meta.get('class_id')
         item['teacher_id'] = teacher_id
         item['term_id'] = current_term_id
 
@@ -276,6 +271,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         subject_name = response.xpath("//h2[@class='vac']")[0].xpath('./text()').extract()
         subject_name = "".join([l.strip('\n') for l in subject_name if l.strip('\n')])
 
+
         for student in response.xpath("//td[@class='student-assessment']"):
             student_id = student.xpath('./div/@id').extract()[0].split('_')[-1]
 
@@ -285,7 +281,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
             comment = comment.xpath('./textarea/text()').extract()
             comment = comment[0] if comment else ""
             item['student_id'] = student_id
-            item['course_id'] = self.class_id
+            item['course_id'] = response.meta.get('class_id')
             item['term_id'] = current_term_id
 
             item['subject_id'] = subject_id
@@ -293,6 +289,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
             item['comment'] = comment
 
             yield item
+
 
             for student_strand in response.xpath("//div[@id='user_strand_marks_{}']".format(student_id)):
                 which = 1
@@ -303,7 +300,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
  
                     item = PrimaryReportStrandItem()
                     item['student_id'] = student_id
-                    item['course_id'] = self.class_id
+                    item['course_id'] = response.meta.get('class_id')
                     item['term_id'] = current_term_id
                     item['subject_id'] = subject_id
                     item['which'] = which
@@ -337,7 +334,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
                                 item = PrimaryReportOutcomeItem()
                                 item['student_id'] = student_id
-                                item['course_id'] = self.class_id
+                                item['course_id'] = response.meta.get('class_id')
                                 item['term_id'] = current_term_id
                                 item['subject_id'] = subject_id
                                 item['heading'] = strand_heading
@@ -349,26 +346,6 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                                 if outcome_label.strip('\n'):
                                     yield item
                                 which += 1
-
-            # Written before sections were used, can probably delete:
-
-
-            # for this_comment in response.xpath("//div[@id='user_comments_{}']".format(student_id)):
-            #     text = this_comment.xpath('./textarea/text()').extract()
-            #     comment_value = text[0] if text else ""
-
-            #     item = PrimaryReportCommentItem()
-            #     item['student_id'] = student_id
-            #     item['course_id'] = self.class_id
-            #     item['term_id'] = current_term_id
-
-            #     item['comment_text'] = comment_value
-
-            #     yield item
-
-            # if student_id == '10856636':
-            #     from IPython import embed
-            #     embed()
 
 
 class ClassReportsMYP(ClassReports):

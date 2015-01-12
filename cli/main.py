@@ -68,8 +68,9 @@ def populate_database(obj, lazy):
 def scrape_all():
     from scrapy import cmdline
     from portal.settings import get
-    path = get('DIRECTORIES', 'path_to_scrapers', required=True)
     import os, gns
+
+    path = get('DIRECTORIES', 'path_to_scrapers', required=True)
 
     os.chdir(gns('{settings.path_to_scrapers}/mb_scraper'))
     cmdline.execute(['scrapy', 'crawl', 'ClassPeriods'])
@@ -90,3 +91,26 @@ def serve():
     """
     import subprocess
     subprocess.call(['pserve', '--reload', '/home/vagrant/igbisportal/development.ini'])
+
+@click.option('--class_id', default=None)
+@main.command()
+def pyp_reports(class_id):
+    """
+    Sets up things for pyp reporting system
+    """
+    from scrapy import cmdline
+    import os
+    from portal.settings import get
+    import gns
+    path = get('DIRECTORIES', 'path_to_scrapers', required=True)
+
+    os.chdir(gns('{settings.path_to_scrapers}/mb_scraper'))
+
+    if not class_id:
+        cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments'])
+        cmdline.execute(['scrapy', 'crawl', 'PYPClassReports'])
+    else:
+        cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments', '-a', 'class_id={}'.format(class_id)])
+        from IPython import embed
+        embed()
+        cmdline.execute(['scrapy', 'crawl', 'PYPClassReports', '-a', 'class_id={}'.format(class_id)])

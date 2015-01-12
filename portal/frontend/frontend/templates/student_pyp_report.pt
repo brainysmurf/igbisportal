@@ -13,25 +13,29 @@
       <tal:block tal:define="subject_rank {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}">
 
       <h1>IGB International School: Summary of Achievement<br />
-      Second Term, Academic Year 2014/15</h1>
+      <i>Second Term, Academic Year 2014/15</i></h1>
 
-      <table class="table table-header-rotated">
+      <table class="table table-student-info">
         <tr>
-          <td style="width:100%;"><strong>Student Name:</strong> ${student.first_name} ${student.last_name}</td>
+          <td><strong>Student Name:</strong></td>
+          <td>${student.first_name} ${student.last_name}</td>
         </tr>
-          <td style="width:100%;"><strong>Grade:</strong> _</td>
+          <td ><strong>Grade:</strong></td>
+          <td>${report.course.name}</td>
         <tr>
-          <td style="width:100%;"><strong>Homeroom Teacher:</strong> ${report.teacher}</td>
+          <td><strong>Homeroom Teacher:</strong></td>
+          <td>${report.teacher}</td>
         </tr>
       </table>
 
+    <br />
 
-      <p tal:repeat="section report.sections">
+      <div tal:repeat="section report.sections">
 
         <table class="table table-header-rotated">
           <thead>
             <tr>
-              <th><h2>${section.name.title()} Attainment</h2></th>
+              <th><h2>${section.name.title()} Attainment (${" & ".join([s.first_name + ' ' + s.last_name for s in section.teachers])})</h2></th>
               <th class="rotate-45"><div><span>Working twoards expectations (W)</span></div></th>
               <!-- <th style="background:#3366FF;;">S</th>
               <th style="background:#3366FF;;">I</th> -->
@@ -59,13 +63,14 @@
         </table>
 
 
-        <h2>${section.name.title()} Comment</h2>
+        <h2>${section.name.title()} Comment (${" & ".join([s.first_name + ' ' + s.last_name for s in section.teachers])})</h2>
         <div class="report_comment">
           ${section.comment}
         </div>
 
-      </p>
+      </div>
 
+      <h2>Overall Homeroom Comment (${report.teacher})</h2>
       <div class="report_comment">${report.homeroom_comment}</div>
 
 
