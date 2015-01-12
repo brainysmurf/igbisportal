@@ -5,3 +5,4 @@ settings.ini
 .vagrant
 *.egg-info
 .DS_Store
+/portal/db/api/jsons
