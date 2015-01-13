@@ -133,6 +133,7 @@ def students_program_filter(request):
 
 @view_config(route_name='students_ind', renderer='templates/student.pt')
 def students_ind(request):
+    return dict(title="Student View", item=None)
     m = request.matchdict
     student_id = m.get('id')
     if not student_id:
