@@ -165,7 +165,6 @@ class PYPClassReportsPipline(PostgresPipeline):
                     print("No Primary / PrimarySection?")
                     from IPython import embed
                     embed()
-                    exit()
                 primary_report_id = primary_report.id
                 primary_report_section_id = primary_report_section.id
 
