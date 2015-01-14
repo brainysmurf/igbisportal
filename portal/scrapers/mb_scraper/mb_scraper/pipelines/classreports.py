@@ -72,6 +72,29 @@ class PYPClassReportsPipline(PostgresPipeline):
     def allow_this_spider(self, spider):
         return spider.name.startswith('PYPClassReports')
 
+    def make_primary_report(term_id, course_id, student_id, teacher_id=None, homeroom_comment=""):
+        PrimaryReport = self.database.table_string_to_class('Primary_Report')
+
+        exists = None
+        with DBSession() as session:
+            try:
+                exists = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
+                if exists:
+                    exists.homeroom_comment = item['homeroom_comment']
+            except NoResultFound:
+                primary_report = PrimaryReport(
+                        course_id = course_id,
+                        term_id = term_id,
+                        homeroom_comment = homeroom_comment,
+                        teacher_id = teacher_id if not teacher_id is None else None,  # When this becomes an int, change it to an int...
+                        student_id = student_id
+                    )
+                session.add(primary_report)
+        if exists:
+            return exists
+        return session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
+
+
     def database_add(self, key, item):
         Teacher = self.database.table_string_to_class('Advisor')
         TeacherAssignments = self.database.table_string_to_class('Primary_Teacher_Assignments')
@@ -84,20 +107,7 @@ class PYPClassReportsPipline(PostgresPipeline):
             term_id = int(item.get('term_id'))
             course_id = int(item.get('course_id'))
             student_id = int(item.get('student_id'))
-            with DBSession() as session:
-                try:
-                    exists = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
-                    if exists:
-                        exists.homeroom_comment = item['homeroom_comment']
-                except NoResultFound:
-                    primary_report = PrimaryReport(
-                            course_id = course_id,
-                            term_id = term_id,
-                            homeroom_comment = item['homeroom_comment'],
-                            teacher_id = int(item['teacher_id']) if not item['teacher_id'] is None else None,  # When this becomes an int, change it to an int...
-                            student_id = student_id
-                        )
-                    session.add(primary_report)
+            make_primary_report(term_id, course_id, student_id, None, "")
 
         elif item.__class__ is PrimaryReportSectionItem:
             term_id = int(item.get('term_id'))
@@ -115,7 +125,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                     teachers.append( session.query(Teacher).filter_by(id=teacher.teacher_id).one() )
 
                 try:
-                    primary_report = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
+                    primary_report = make_primary_report(term_id, course_id, student_id)
                 except NoResultFound:
                     print("NO PRIMARY REPORT??")
                     from IPython import embed
