@@ -9,6 +9,8 @@ from portal.scrapers.mb_scraper.mb_scraper.items import \
 
 from sqlalchemy.orm.exc import NoResultFound
 
+from scrapy import log
+
 class PYPTeacherAssignments(PostgresPipeline):
     BLANK_TOLERANCE = 1
 
@@ -72,14 +74,16 @@ class PYPClassReportsPipline(PostgresPipeline):
     def allow_this_spider(self, spider):
         return spider.name.startswith('PYPClassReports')
 
-    def make_primary_report(self, term_id, course_id, student_id, teacher_id=None, homeroom_comment=""):
+    def make_primary_report(self, term_id, course_id, student_id, teacher_id=None, homeroom_comment=None):
         PrimaryReport = self.database.table_string_to_class('Primary_Report')
+        log.msg("{} {} {} {} {}".format(term_id, course_id, student_id, teacher_id, homeroom_comment, level=log.WARNING))
 
         exists = None
         with DBSession() as session:
             try:
                 exists = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
-                if exists and homeroom_comment:
+                log.msg("-----exists-----")
+                if exists and homeroom_comment is not None:
                     exists.homeroom_comment = homeroom_comment
                 return exists
             except NoResultFound:
@@ -90,6 +94,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                         teacher_id = teacher_id if not teacher_id is None else None,  # When this becomes an int, change it to an int...
                         student_id = student_id
                     )
+                log.msg("-----adding-----")
                 session.add(primary_report)
                 return primary_report
 
