@@ -1,4 +1,4 @@
-<metal:main use-macro="load: main2.pt">
+  <metal:main use-macro="load: main2.pt">
 
 <!--   <div metal:fill-slot="tabs_bar">
     <ul><li><a href="/">Home</a></li><li><a href="/students">Students</a></li></ul>
@@ -10,10 +10,22 @@
  </div>
 
   <div metal:fill-slot="content">
-      <tal:block tal:define="subject_rank {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}">
+      <!-- The front cover -->
 
-      <h1>IGB International School: Summary of Achievement<br />
-      <i>Second Term, Academic Year 2014/15</i></h1>
+    <div id="frontcover-heading">
+        <div id="frontcover-image">
+            <span id="frontcover-image2"><img class="image-header" src="${static_url}images/igbislogo.png" /></span>
+        </div>
+        <div id="frontcover-text">
+          <h1>Elementary School Programme</h1>
+          <h2>Kindergarten - Grade 5 Report</h2>
+          <h2>Semester One</h2>
+          <h2>February 2015</h2>
+        </div>
+    </div>
+
+    <br />
+          <h3>Student Information:</h3>
 
       <table class="table table-student-info">
         <tr>
@@ -28,6 +40,49 @@
         </tr>
       </table>
 
+      <hr />
+
+      <h1>Assessment Descriptors — Kindergarten to Grade 5</h1>
+      <h3>Performance Indicators for academic outcomes:</h3>
+
+      <table class="table table-student-info">
+        <tr>
+          <td><strong>Exceeding:</strong></td>
+          <td>This indicates the student is exceeding the stated outcomes.</td>
+        </tr>
+          <td><strong>Achieving:</strong></td>
+          <td>This indicates the student is acheiving the stated outcomes.</td>
+        <tr>
+          <td><strong>Developing:</strong></td>
+          <td>This indicates the student is developing the stated outcomes.</td>
+        </tr>
+        <tr>
+          <td><strong>Beginning:</strong></td>
+          <td>This indicates the student is beginning to exhibit the stated outcomes.</td>
+        </tr>
+      </table>
+
+      <h3>Display of Effort:</h3>
+      <table class="table table-student-info">
+        <tr>
+          <td><strong>Outstanding:</strong></td>
+          <td>This indicates the student's effor tis consistently outstanding.</td>
+        </tr>
+          <td><strong>Good:</strong></td>
+          <td>This indicates the student's effort is good.</td>
+        <tr>
+          <td><strong>Needs Improvement:</strong></td>
+          <td>This indicates the student's effort is limited and there is need for greater initiative.</td>
+        </tr>
+      </table>
+
+      <hr />
+
+      <!-- The actual report -->
+
+      <tal:block tal:define="subject_rank {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}">
+
+
     <br />
 
       <div tal:repeat="section report.sections">
@@ -35,8 +90,8 @@
         <table class="table table-header-rotated">
           <thead>
             <tr>
-              <th><h2>${section.name.title()} Attainment (${" & ".join([s.first_name + ' ' + s.last_name for s in section.teachers])})</h2></th>
-              <th class="rotate-45"><div><span>Working twoards expectations (W)</span></div></th>
+              <th><h3>${section.name.title()} Attainment (${" & ".join([s.first_name + ' ' + s.last_name for s in section.teachers])})</h3></th>
+              <th class="rotate-45"><div><span>Working towards expectations (W)</span></div></th>
               <!-- <th style="background:#3366FF;;">S</th>
               <th style="background:#3366FF;;">I</th> -->
               <th class="rotate-45"><div><span>Meeting expectations with support (S)</span></div></th>
@@ -63,7 +118,7 @@
         </table>
 
 
-        <h2>${section.name.title()} Comment (${" & ".join([s.first_name + ' ' + s.last_name for s in section.teachers])})</h2>
+        <h3>${section.name.title()} Comment (${" & ".join([s.first_name + ' ' + s.last_name for s in section.teachers])})</h3>
         <div class="report_comment">
           ${section.comment}
         </div>
