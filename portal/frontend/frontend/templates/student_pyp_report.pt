@@ -42,7 +42,7 @@
 
       <hr />
 
-      <h1>Assessment Descriptors — Kindergarten to Grade 5</h1>
+      <h2>Assessment Descriptors — Kindergarten to Grade 5</h2>
       <h3>Performance Indicators for academic outcomes:</h3>
 
       <table class="table table-student-info">
@@ -76,9 +76,13 @@
         </tr>
       </table>
 
+      <h3>Note:</h3>
+      Attainment marks in the grey-shaded area indicates that the student is at the age-appropriate level for that outcome in this grade.
       <hr />
 
       <!-- The actual report -->
+
+      <h2>Summary of Attainment</h2>
 
       <tal:block tal:define="subject_rank {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}">
 
