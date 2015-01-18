@@ -356,10 +356,17 @@ def pyp_reports(request):
         except NoResultFound:
             raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
  
-    subject_rank = {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}
+    subject_rank = {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'unit of inquiry 3':4, 'art':5, 'music':6, 'physical education':7, 'bahasa malaysia':8, 'chinese':9, 'host nation':10}
     report.sections = sorted(report.sections, key=lambda x: subject_rank.get(x.name.lower(), 1000))
 
     for section in report.sections:
+
+        # Determine pagination
+        subject_rank_num = subject_rank.get(section.name.lower())
+        if subject_rank_num in [0, 1, 3, 6, 8, 10]:  #TODO What about more than two inquiry units?
+            section.pagination = True
+        else:
+            section.pagination = False
 
         section.learning_outcomes = sorted(section.learning_outcomes, key=lambda x: x.which)
 
@@ -378,7 +385,7 @@ def pyp_reports(request):
             if outcome.heading != old_heading:
                 # Mark that indicates we need to evaluate
 
-                if subject_rank.get(section.name.lower()) in [0, 1, 7]:
+                if subject_rank_num in [0, 1, 7]:
                     # Determine the effort assigned by the teacher for this
                     effort = [s.selection for s in section.strands if s.label.startswith(outcome.heading)]
                     effort = effort[0] if len(effort) == 1 else (effort[0] if len(set(effort))==1 else "<?>")
@@ -397,7 +404,7 @@ def pyp_reports(request):
                 raise ReportIncomplete('something')
 
     return dict(
-        title="Student Report",
+        title="IGB International School (February 2015): Student Report for " + student.first_name + " " + student.last_name,
         report= report,
         student=student
         )

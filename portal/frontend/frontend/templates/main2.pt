@@ -3,7 +3,8 @@
 <head>
   <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="${static_url}bootstrap/css/bootstrap-theme.min.css">
-  <link rel="stylesheet" href="${static_url}css/pyp_reports.css">
+  <link rel="stylesheet" href="${static_url}css/pyp_reports.css" media="screen">
+  <link rel="stylesheet" href="${static_url}css/pyp_reports_pdf.css" media="print">
   <title>${title}</title>
   <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
 <div metal:define-slot="additional-css"></div>

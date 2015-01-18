@@ -42,23 +42,25 @@
 
       <hr />
 
-      <h2>Assessment Descriptors — Kindergarten to Grade 5</h2>
+      <h1>Assessment Descriptors — Kindergarten to Grade 5</h1>
       <h3>Performance Indicators for academic outcomes:</h3>
 
       <table class="table table-student-info">
         <tr>
-          <td><strong>Exceeding:</strong></td>
-          <td>This indicates the student is exceeding the stated outcomes.</td>
+          <td><strong>Beginning:</strong></td>
+          <td>This indicates the student is beginning to exhibit the stated outcomes.</td>
         </tr>
-          <td><strong>Achieving:</strong></td>
-          <td>This indicates the student is acheiving the stated outcomes.</td>
         <tr>
           <td><strong>Developing:</strong></td>
           <td>This indicates the student is developing the stated outcomes.</td>
         </tr>
         <tr>
-          <td><strong>Beginning:</strong></td>
-          <td>This indicates the student is beginning to exhibit the stated outcomes.</td>
+          <td><strong>Achieving:</strong></td>
+          <td>This indicates the student is acheiving the stated outcomes.</td>
+        </tr>
+        <tr>
+          <td><strong>Exceeding:</strong></td>
+          <td>This indicates the student is exceeding the stated outcomes.</td>
         </tr>
       </table>
 
@@ -82,7 +84,7 @@
 
       <!-- The actual report -->
 
-      <h2>Summary of Attainment</h2>
+      <h1>Summary of Attainment</h1>
 
       <tal:block tal:define="subject_rank {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'art':4, 'music':5, 'physical education':6, 'bahasa malaysia':7, 'chinese':8, 'host nation':9}">
 
@@ -95,12 +97,12 @@
           <thead>
             <tr>
               <th><h3>${section.name.title()} Attainment (${" & ".join([s.first_name + ' ' + s.last_name for s in section.teachers])})</h3></th>
-              <th class="rotate-45"><div><span>Working towards expectations (W)</span></div></th>
+              <th class="rotate-45"><div><span>Beginning</span></div></th>
               <!-- <th style="background:#3366FF;;">S</th>
               <th style="background:#3366FF;;">I</th> -->
-              <th class="rotate-45"><div><span>Meeting expectations with support (S)</span></div></th>
-              <th class="rotate-45"><div><span>Meeting expectations independently (I)</span></div></th>
-              <th class="rotate-45"><div><span>Exceeding expectations (E)</span></div></th>
+              <th class="rotate-45"><div><span>Developing</span></div></th>
+              <th class="rotate-45"><div><span>Achieving</span></div></th>
+              <th class="rotate-45"><div><span>Exceeding</span></div></th>
             </tr>
           </thead>
           <tbody>
@@ -126,6 +128,8 @@
         <div class="report_comment">
           ${section.comment}
         </div>
+
+        <hr tal:condition="section.pagination == True"/>
 
       </div>
 
