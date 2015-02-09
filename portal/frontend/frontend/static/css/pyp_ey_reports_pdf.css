@@ -1,0 +1,330 @@
+
+.pb_before { page-break-before:always !important; }
+.pb_after  { page-break-after:always !important; }
+.pbi_avoid { page-break-inside:avoid !important; }
+
+@media print {
+
+  body {
+    font-family: Lora;
+    font-size: 9pt;
+
+    -webkit-print-color-adjust: exact;
+  }
+
+  #frontcover-heading {
+      text-align: center;
+      padding: 2px;
+      position: relative;    
+  }
+
+  .header_no_display {
+    display:none;
+  }
+
+  #frontcover-image {
+      position: absolute;
+      padding: 2px;
+  }
+
+  #frontcover-text {
+      padding: 2px;
+      display: inline-block;
+  }
+
+  .image-header {
+    float: left;
+    width: 10%;
+    padding-top: 2em;
+    margin: 0px;
+  }
+
+
+  .table {
+    border-collapse: separate;
+    border-spacing: 1px;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+
+  .table-uoi-info {
+    margin-right:0px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px;    
+  }
+
+  .table-uoi-info td {
+    width: 3em;
+    border-top: 2px solid #C0C0C0;
+    border-left: 2px solid #C0C0C0; 
+    border-right: 2px solid #C0C0C0; 
+    border-bottom: 2px solid #C0C0C0;
+    vertical-align: middle;
+    text-align: left;
+    padding: 2px;
+  }
+
+  .table-uoi-info tr > td:first-child {
+    width: 2em;
+    text-align:left;
+    border-left: 0.2cm solid #C0C0C0;
+    background-color: #C0C0C0;
+    padding: 2px;
+  }
+
+  .table-uoi-info tr > td:nth-child(3) {
+    width: 2em;
+    text-align:left;
+    border-left: 0.2cm solid #C0C0C0;
+    background-color: #C0C0C0;
+    padding: 2px;
+  }
+
+  .table-header-rotated th.row-header{
+    width: auto;
+  }
+   
+  .table-header-rotated td {
+    width: 3em;
+    border-top: 2px solid #C0C0C0;
+    border-left: 2px solid #C0C0C0; 
+    border-right: 2px solid #C0C0C0; 
+    border-bottom: 2px solid #C0C0C0;
+    vertical-align: middle;
+    text-align: center;
+    padding: 2px;
+  }
+   
+  .table-student-info {
+    margin-right:0px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px;    
+  }
+
+  .table-student-info td {
+    width: 4em;
+    min-width: 4em;
+    border-top: 2px solid #C0C0C0;
+    border-left: 2px solid #C0C0C0; 
+    border-right: 2px solid #C0C0C0; 
+    border-bottom: 2px solid #C0C0C0;
+    vertical-align: middle;
+    text-align: center;
+    padding: 5px;
+  }
+
+  .table-student-info tr > td:first-child {
+    width: 13em;
+    text-align:left;
+    border-left: 0.2cm solid #C0C0C0;
+    background-color: #C0C0C0;
+  }
+
+  .table-student-info tr > td:not(:first-child) {
+    width: 80%;
+  }
+
+  .table-student-info tr > td:nth-child(2) {
+    text-align:left;
+  }
+
+  .table-ib-learners {
+    font-size: 7pt;
+    margin-right:0px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px;    
+  }
+
+  .table-ib-learners td {
+    width: 4em;
+    min-width: 4em;
+    border-top: 2px solid #C0C0C0;
+    border-left: 2px solid #C0C0C0; 
+    border-right: 2px solid #C0C0C0; 
+    border-bottom: 2px solid #C0C0C0;
+    vertical-align: middle;
+    text-align: center;
+    padding: 5px;
+  }
+
+  .table-ib-learners tr > td:first-child {
+    width: 13em;
+    text-align:left;
+    border-left: 0.2cm solid #C0C0C0;
+    background-color: #C0C0C0;
+  }
+
+  .table-ib-learners tr > td:not(:first-child) {
+    width: 80%;
+  }
+
+  .table-ib-learners tr > td:nth-child(2) {
+    text-align:left;
+  }
+
+
+
+  .table-header-rotated th.rotate-45 {
+    height: 10em;
+    max-height:10em;
+    min-height:10em;
+    width: 3em;
+    min-width: 3em;
+    max-width: 3em;
+    position: relative;
+    padding: 0;
+    font-size: 9pt;
+    line-height: 1;
+  }
+  
+  .table-header-rotated th.dont-rotate-45 {
+    height: 0em;
+    width: 3em;
+    min-width: 3em;
+    max-width: 3em;
+    position: relative;
+    padding: 0;
+    font-size: 9pt;
+    line-height: 1;
+  }
+
+  .table-header-rotated th:first-child {
+    vertical-align: bottom;
+  }
+
+  .table-header-rotated th.rotate-45 > div{
+    position: relative;
+    border: 2pt solid #C0C0C0;
+    top: 0px;
+    left: 5.5em; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
+    height: 100%;
+    -ms-transform:skew(-45deg,0deg);
+    -moz-transform:skew(-45deg,0deg);
+    -webkit-transform:skew(-45deg,0deg);
+    -o-transform:skew(-45deg,0deg);
+    transform:skew(-45deg,0deg);
+    overflow: hidden;
+  /*  border-left: 1px solid #C0C0C0;
+    border-right: 1px solid #C0C0C0;
+    border-top: 1px solid #C0C0C0; 
+    border-bottom: 1px solid #C0C0C0;
+  */  background: #C0C0C0;
+  font-size: 8pt;
+  }
+
+  .table-header-rotated th.rotate-45:nth-child(2) > div {
+      background-color: #fff;
+  }
+
+  .table-header-rotated th.rotate-45:nth-child(3) > div {
+      background-color: #C0C0C0;
+  }
+
+  .table-header-rotated th.rotate-45:nth-child(4) > div {
+      background-color: #C0C0C0;
+  }
+
+  .table-header-rotated th.rotate-45:nth-child(5) > div {
+      background-color: #fff;
+  }
+
+  .table-header-rotated th.rotate-45 span {
+    -ms-transform:skew(45deg,0deg) rotate(315deg);
+    -moz-transform:skew(45deg,0deg) rotate(315deg);
+    -webkit-transform:skew(45deg,0deg) rotate(315deg);
+    -o-transform:skew(45deg,0deg) rotate(315deg);
+    transform:skew(45deg,0deg) rotate(315deg);
+    position: absolute;
+    bottom: 55px; /* 40 cos(45) = 28 with an additional 2px margin*/
+    left: -55px; /*Because it looked good, but there is probably a mathematical link here as well*/
+    display: inline-block;
+    width: 140px; /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
+    text-align: left;
+    /*white-space: nowrap;*/
+  }
+
+  .table-header-rotated tr > td:first-child {
+    width: 90%;
+    font-size:9pt;
+    text-align:left;
+    border-left: 0.2cm solid #C0C0C0;
+    margin-right: 0.2cm;
+  }
+
+  .table-header-rotated tr > td:nth-child(3) {
+    background-color: #C0C0C0;
+  }
+
+  .table-header-rotated tr > td:nth-child(4) {
+    background-color: #C0C0C0;
+  }
+
+
+  .table-header-rotated tr > th:first-child {
+    text-align: left;
+    padding: 8px;
+  }
+
+  .noheight {
+    height: 0px;
+    min-height: 0px;
+    max-height: 0px;
+  }
+
+  hr {
+     border-style: solid;
+     border: 0px solid #fff; 
+     page-break-after: always;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 14pt;
+    margin: 0 0 0 0;
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 12pt;
+    margin: 0px 0px 8px 0px;
+  }
+
+  h3 {
+    margin: 0px 0px 7px 5px;
+  }
+
+  h4 {
+    margin: none;
+  }
+
+  /*.effort > td {
+    border-top: 10px solid #FFF;
+  }
+  */
+  .effort > td:first-child {
+    background-color: #C0C0C0;
+  }
+
+  .effort > td:not(:first-child) {
+    border: 1px solid #FFF;
+  }
+
+  .report_comment {
+    margin-right: 0px;
+    margin-bottom: 25px;
+    margin-top: 5px;  
+    padding: 1em;
+    border: 0.1cm solid #C0C0C0;
+    border-left: 0.2cm solid #C0C0C0;
+  }
+
+  i {
+    color: #404040;
+  }
+
+}
+

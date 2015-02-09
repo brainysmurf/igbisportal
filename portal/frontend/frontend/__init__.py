@@ -34,12 +34,19 @@ def main(global_config, **settings):
     config.add_route('reports_ind', '/reports/{id}')
     config.add_route('reports_ind_nice', '/reports/{id}/nice')
 
+    config.add_route('header-html', '/header-html')
+    config.add_route('footer-html', '/footer-html')
+
     config.add_route('students', '/students')
     config.add_route('students_ind', '/students/{id}')
     config.add_route('student_report', '/students/{id}/reports')
 
     config.add_route('student_pyp_report', '/students/{id}/pyp_report')
+    config.add_route('student_pyp_report_with_opt', '/students/{id}/pyp_report/*pdf')
     config.add_route('student_pyp_report_no', '/students/{id}/pyp_report_no')
+    config.add_route('student_pyp_ey_report', '/students/{id}/pyp_ey_report')
+    #config.add_route('student_pyp_ey_report_no', '/students/{id}/pyp_ey_report_no')
+
     config.add_route('students_program_list', '/students/program/{program}')
 
     config.add_route('splash', '/splash')

@@ -5,7 +5,7 @@
   <title>${title}</title>
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
 <div metal:define-slot="additional-css"></div>
 </head>
 <body>

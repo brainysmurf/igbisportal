@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
 from contextlib import contextmanager
+from sqlalchemy.sql.expression import text
 
 # ns = NS2()
 # ns.db_username = config['MOODLE'].get('db_username')
@@ -8,16 +10,6 @@ from contextlib import contextmanager
 # ns.db_password = config['MOODLE'].get('db_password')
 # ns.db_host = config['MOODLE'].get('db_host')
 # ns.db_name = config['MOODLE'].get('db_name')
-
-engine =  create_engine(
-    # 'postgresql://{db_username}:{db_password}@{db_host}/{db_name}'.\
-    #     format(**ns.declared_kwargs),
-    'postgresql://igbisportaluser:igbisportaluser@localhost/igbisportal',
-        max_overflow=0, pool_size=100, echo=False)
-session_maker = sessionmaker(
-    bind=engine,
-    expire_on_commit=False
-    )
 
 @contextmanager
 def DBSession():
@@ -32,9 +24,57 @@ def DBSession():
         session.close()
 
 from portal.db.DBInterface import Database
-from portal.db.DBModel import Student, Parent, Advisor
+from portal.db.DBModel import Student
 
-Student.metadata.create_all(engine)  # creates the database tables and things for us
+metadata = Student.metadata
+
+engine =  create_engine(
+    # 'postgresql://{db_username}:{db_password}@{db_host}/{db_name}'.\
+    #     format(**ns.declared_kwargs),
+    'postgresql://igbisportaluser:igbisportaluser@localhost/igbisportal',
+        max_overflow=0, pool_size=100, echo=False)
+
+execute = engine.execute
+
+session_maker = sessionmaker(
+    bind=engine,
+    expire_on_commit=False
+    )
+
+
+
+def get_table_list_from_db():
+    """
+    return a list of table names from the current
+    databases public schema
+    """
+    sql="select table_name from information_schema.tables "\
+        "where table_schema='public'"
+    return [name for (name, ) in execute(text(sql))]
+
+def get_seq_list_from_db():
+    """return a list of the sequence names from the current
+       databases public schema
+    """
+    sql="select sequence_name from information_schema.sequences "\
+        "where sequence_schema='public'"
+    return [name for (name, ) in execute(text(sql))]
+
+def drop_all_tables_and_sequences():
+    for table in get_table_list_from_db():
+        try:
+            execute(text("DROP TABLE %s CASCADE" % table))
+        except SQLAlchemyError, e:
+            print e
+
+    for seq in get_seq_list_from_db():
+        try:
+            execute(text("DROP SEQUENCE %s CASCADE" % table))
+        except SQLAlchemyError, e:
+            print e
+
+
+metadata.create_all(engine)  # creates the database tables and things for us
 # TODO: Move this to first_launch
 
 __all__ = [DBSession, Database]

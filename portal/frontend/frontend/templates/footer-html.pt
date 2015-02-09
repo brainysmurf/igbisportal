@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" tal:define="static_url request.static_url('frontend:static/')">
+<head>
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora" />
+  <style>
+    body {
+      font-family: Lora;
+      font-size: 9pt;
+    }
+
+    #right {
+        float: right;
+        text-align: right;
+        width: 15%;
+    }
+  </style>
+  <script>
+    function subst() {
+      var vars={};
+      var x=window.location.search.substring(1).split('&');
+      console.log(window.location);
+      for (var i in x) {var z=x[i].split('=',2);vars[z[0]] = unescape(z[1]);}
+      var x=['frompage','topage','page','webpage','section','subsection','subsubsection'];
+      for (var i in x) {
+        var y = document.getElementsByClassName(x[i]);
+        for (var j=0; j<y.length; ++j) y[j].textContent = vars[x[i]];
+      }
+    }
+  </script>
+
+</head>
+
+<body onload="subst()">
+
+      <em>
+        ${student.last_name}, ${student.first_name} 
+        <tal:block tal:condition="student.nickname"> (${student.nickname})</tal:block>
+        : ${report.course.name}
+      </em>
+
+      <div id="right">
+       <em>Page <span class="page"></span> of <span class="topage"></span></em>
+      </div>
+
+</body>
+</html>

@@ -1,7 +1,8 @@
 @media screen {
+
   body {
     background-color:#eee;
-    font-family: sans-serif;
+    font-family: Lora;
     font-size: 10pt;
     -webkit-print-color-adjust: exact;
   }
@@ -74,6 +75,39 @@
     border-spacing: 1px;    
   }
 
+  .table-uoi-info {
+    margin-right:140px;
+    border-collapse: separate;
+    border-spacing: 1px;    
+  }
+
+  .table-uoi-info td {
+    width: 3em;
+    border-top: 2px solid #C0C0C0;
+    border-left: 2px solid #C0C0C0; 
+    border-right: 2px solid #C0C0C0; 
+    border-bottom: 2px solid #C0C0C0;
+    vertical-align: middle;
+    text-align: left;
+    padding: 2px;
+  }
+
+  .table-uoi-info tr > td:first-child {
+    width: 3em;
+    text-align:left;
+    border-left: 0.2cm solid #C0C0C0;
+    background-color: #C0C0C0;
+    padding: 2px;
+  }
+
+  .table-uoi-info tr > td:nth-child(3) {
+    width: 3em;
+    text-align:left;
+    border-left: 0.2cm solid #C0C0C0;
+    background-color: #C0C0C0;
+    padding: 2px;
+  }
+
   .table-header-rotated th.row-header{
     width: auto;
   }
@@ -87,6 +121,7 @@
     vertical-align: middle;
     text-align: center;
     padding: 2px;
+    padding-top: 4px;
   }
    
   .table-student-info td {
@@ -102,7 +137,18 @@
 
 
   .table-header-rotated th.rotate-45 {
-    height: 3em;
+    height: 10em;
+    width: 3em;
+    min-width: 3em;
+    max-width: 3em;
+    position: relative;
+    padding: 0;
+    font-size: 9pt;
+    line-height: 1;
+  }
+
+  .table-header-rotated th.dont-rotate-45 {
+    height: 0em;
     width: 3em;
     min-width: 3em;
     max-width: 3em;
@@ -118,8 +164,9 @@
 
   .table-header-rotated th.rotate-45 > div{
     position: relative;
+    border: 2pt solid #C0C0C0;
     top: 0px;
-    left: 3em; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
+    left: 5.5em; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
     height: 100%;
     -ms-transform:skew(-45deg,0deg);
     -moz-transform:skew(-45deg,0deg);
@@ -135,6 +182,22 @@
   font-size: 8pt;
   }
 
+  .table-header-rotated th.rotate-45:nth-child(2) > div {
+      background-color: #fff;
+  }
+
+  .table-header-rotated th.rotate-45:nth-child(3) > div {
+      background-color: #C0C0C0;
+  }
+
+  .table-header-rotated th.rotate-45:nth-child(4) > div {
+      background-color: #C0C0C0;
+  }
+
+  .table-header-rotated th.rotate-45:nth-child(5) > div {
+      background-color: #fff;
+  }
+
   .table-header-rotated th.rotate-45 span {
     -ms-transform:skew(45deg,0deg) rotate(315deg);
     -moz-transform:skew(45deg,0deg) rotate(315deg);
@@ -143,7 +206,7 @@
     transform:skew(45deg,0deg) rotate(315deg);
     position: absolute;
     bottom: 55px; /* 40 cos(45) = 28 with an additional 2px margin*/
-    left: -50px; /*Because it looked good, but there is probably a mathematical link here as well*/
+    left: -55px; /*Because it looked good, but there is probably a mathematical link here as well*/
     display: inline-block;
     width: 140px; /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
     text-align: left;
@@ -154,14 +217,15 @@
     width: 90%;
     text-align:left;
     border-left: 0.2cm solid #C0C0C0;
+    padding-right: 0.2cm;
   }
 
   .table-header-rotated tr > td:nth-child(3) {
-    background-color: #eee;
+    background-color: #C0C0C0;
   }
 
   .table-header-rotated tr > td:nth-child(4) {
-    background-color: #eee;
+    background-color: #C0C0C0;
   }
 
   .table-student-info tr > td:first-child {
@@ -181,7 +245,13 @@
 
   .table-header-rotated tr > th:first-child {
     text-align: left;
-    padding: 8px;
+    padding: 5px;
+  }
+
+  .noheight {
+    height: 0px;
+    max-height: 0px;
+    min-height: 0px;
   }
 
   hr {
@@ -193,14 +263,22 @@
 
   h1 {
     text-align: center;
-    font-size: 16pt;
+    font-size: 14pt;
     margin: 0 0 0 0;
   }
 
   h2 {
     text-align: center;
-    font-size: 16pt;
-    margin: 0 0 0 0;
+    font-size: 12pt;
+    margin: 0px 0px 10px 0px;
+  }
+
+  h3 {
+    margin: 0px 0px 10px 5px;
+  }
+
+  h4 {
+    margin: none;
   }
 
   /*.effort > td {
@@ -216,8 +294,9 @@
   }
 
   .report_comment {
-    width: 90%;
+    margin-right:125px;
     margin-bottom: 25px;
+    margin-top: 25px;  
     padding: 1em;
     border: 1px solid #C0C0C0;
     border-left: 0.2cm solid #C0C0C0;

@@ -39,9 +39,9 @@ class Login(scrapy.Spider):
         scrapy.log.msg(log, level=scrapy.log.WARNING)
 
     def parse(self, response):
-        self.warning(gns("Logging in user {settings.username}!"))
         get('USER', 'username')
         get('USER', 'password')
+        self.warning(gns("Logging in user {settings.username}!"))
 
         login_request = scrapy.FormRequest.from_response(
             response,
@@ -59,6 +59,7 @@ class Login(scrapy.Spider):
 
         # Automagically route to method with same name as class
         name_to_dispatch = convert(self.__class__.__name__)
+
         method = getattr(self, name_to_dispatch)
         if method:
             return method()

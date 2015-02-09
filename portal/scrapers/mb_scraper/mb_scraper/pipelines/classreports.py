@@ -5,11 +5,11 @@ from portal.scrapers.shared.pipelines import \
 from portal.scrapers.mb_scraper.mb_scraper.items import \
     PrimaryReportItem, PrimaryReportSupplementItem, \
     PrimaryReportSectionItem, PrimaryReportStrandItem, \
-    PrimaryReportOutcomeItem
+    PrimaryReportOutcomeItem, PrimaryStudentAbsences
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from scrapy import log
+from portal.utils import string_to_entities
 
 class PYPTeacherAssignments(PostgresPipeline):
     BLANK_TOLERANCE = 1
@@ -23,8 +23,7 @@ class PYPTeacherAssignments(PostgresPipeline):
         with DBSession() as session:
             try:
                 exists = session.query(TeacherAssign).filter_by(class_id=class_id, subject_id=subject_id, teacher_id=teacher_id).one()
-                # If it's already there, nothing to add or modify or update...
-            except NoResultFound:            
+            except NoResultFound:
                 teacher_assign = TeacherAssign(
                         teacher_id = teacher_id,
                         subject_id = subject_id,
@@ -48,7 +47,7 @@ class ClassReportsPipeline(PostgresPipeline):
             report_comment = ReportComments(
                     course_id = int(item['course_id']),
                     term_id = int(item['term_id']),
-                    text = item['text'],
+                    text = string_to_entities(item['text']),
                     teacher_id = int(item['teacher_id']) if not item['teacher_id'] is None else None,  # When this becomes an int, change it to an int...
                     student_id = int(item['student_id'])
                 )
@@ -76,15 +75,16 @@ class PYPClassReportsPipline(PostgresPipeline):
 
     def make_primary_report(self, term_id, course_id, student_id, teacher_id=None, homeroom_comment=None):
         PrimaryReport = self.database.table_string_to_class('Primary_Report')
-        log.msg("{} {} {} {} {}".format(term_id, course_id, student_id, teacher_id, homeroom_comment, level=log.WARNING))
+        homeroom_comment = string_to_entities(homeroom_comment)
 
         exists = None
         with DBSession() as session:
             try:
                 exists = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
-                log.msg("-----exists-----")
                 if exists and homeroom_comment is not None:
                     exists.homeroom_comment = homeroom_comment
+                if exists and teacher_id is not None:
+                    exists.teacher_id = teacher_id
                 return exists
             except NoResultFound:
                 primary_report = PrimaryReport(
@@ -94,12 +94,12 @@ class PYPClassReportsPipline(PostgresPipeline):
                         teacher_id = teacher_id if not teacher_id is None else None,  # When this becomes an int, change it to an int...
                         student_id = student_id
                     )
-                log.msg("-----adding-----")
                 session.add(primary_report)
                 return primary_report
 
     def make_primary_report_section(self, term_id, subject_id, course_id, student_id, comment="", name =""):
         exists = None
+        comment = string_to_entities(comment)
         PrimaryReportSection = self.database.table_string_to_class('Primary_Report_Section')
         Teacher = self.database.table_string_to_class('Advisor')
         TeacherAssignments = self.database.table_string_to_class('Primary_Teacher_Assignments')
@@ -123,6 +123,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                         exists.name = name
 
                 # Sync the teachers, removing those that are gone, adding if any needed to be added
+
                 for teacher in exists.teachers:
                     if not teacher in teachers:
                         exists.teachers.remove(teacher)
@@ -134,6 +135,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                 return exists
 
             except NoResultFound:
+
                 # Shouldn't there be a teacher in here somewhere?
                 primary_report_section = PrimaryReportSection(
                         primary_report_id = primary_report.id,
@@ -157,12 +159,14 @@ class PYPClassReportsPipline(PostgresPipeline):
         PrimaryReportStrand = self.database.table_string_to_class('Primary_Report_Strand')
         PrimaryReportLo = self.database.table_string_to_class('Primary_Report_Lo')
 
-        if issubclass(item.__class__, PrimaryReportItem):
+        if item.__class__ is PrimaryReportItem:
             term_id = int(item.get('term_id'))
             course_id = int(item.get('course_id'))
             student_id = int(item.get('student_id'))
+            teacher_id = int(item.get('teacher_id'))
+            homeroom_comment = item.get('homeroom_comment')
 
-            self.make_primary_report(term_id, course_id, student_id, None, "")
+            self.make_primary_report(term_id, course_id, student_id, teacher_id, homeroom_comment)
 
         elif item.__class__ is PrimaryReportSectionItem:
             term_id = int(item.get('term_id'))
@@ -182,13 +186,12 @@ class PYPClassReportsPipline(PostgresPipeline):
             subject_id = int(item.get('subject_id'))
             which = item.get('which')
 
-            with DBSession() as session:
-                # Primary report should already be in the database
-                primary_report = self.make_primary_report(term_id, course_id, student_id)
-                primary_report_section = self.make_primary_report_section(term_id, subject_id, course_id, student_id)
+            # Primary report should already be in the database
+            primary_report = self.make_primary_report(term_id, course_id, student_id)
+            primary_report_section = self.make_primary_report_section(term_id, subject_id, course_id, student_id)
 
-                primary_report_id = primary_report.id
-                primary_report_section_id = primary_report_section.id
+            primary_report_id = primary_report.id
+            primary_report_section_id = primary_report_section.id
 
             if issubclass(item.__class__, PrimaryReportStrandItem):
                 with DBSession() as session:
@@ -206,21 +209,51 @@ class PYPClassReportsPipline(PostgresPipeline):
                         session.add(primary_report_strand)
 
             elif issubclass(item.__class__, PrimaryReportOutcomeItem):
+                outcome_label = string_to_entities(item['outcome_label'])
                 with DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportLo).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
                         exists.heading = item['heading']
-                        exists.label = item['outcome_label']
+                        exists.label = outcome_label
                         exists.selection = item['outcome_text']
                     except NoResultFound:
                         primary_report_outcome = PrimaryReportLo(
                                 primary_report_section_id = primary_report_section_id,
                                 heading = item['heading'],
-                                label = item['outcome_label'],
+                                label = outcome_label,
                                 selection = item['outcome_text'],
                                 which = item['which']
                             )
 
                         session.add(primary_report_outcome)
 
+class PYPStudentAttendance(PostgresPipeline):
+    BLANK_TOLERANCE = 100
 
+    def database_add(self, key, item):
+        Absences = self.database.table_string_to_class('PrimaryStudentAbsences')
+
+        term_id = item['term_id']
+        student_id = item['student_id']
+        absences = item['absences']
+        total_days = item['total_days']
+
+        with DBSession() as session:
+
+            try:
+                exists = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
+                if exists:
+                    exists.absences = absences
+                if exists:
+                    exists.total_days = total_days
+
+            except NoResultFound:
+
+                new = Absences(
+                    student_id=student_id,
+                    term_id = term_id,
+                    absences=absences,
+                    total_days=total_days
+                    )
+
+                session.add(new)

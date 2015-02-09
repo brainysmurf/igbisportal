@@ -20,7 +20,7 @@ from sqlalchemy.orm import relationship, backref
 """
 Klunky, but lets me debug quickly
 """
-PREFIX = 'zzzz_'
+PREFIX = ''
 USERS = "{}users".format(PREFIX)
 STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)
@@ -43,6 +43,7 @@ PRIMARYREPORTSTRAND = "{}primary_report_strand".format(PREFIX)
 PRIMARYREPORTLO = "{}primary_report_lo".format(PREFIX)
 PRIMARYREPORTSECTIONTEACHERASSOC = "{}primary_report_section_teacher_association".format(PREFIX)
 PYPTEACHERASSIGNMENTS = "{}primary_teacher_assign".format(PREFIX)
+PYPSTUDENTABSENCES = "{}primary_student_absences".format(PREFIX)
 
 class User(object):
 	"""
@@ -130,6 +131,7 @@ class Student(Base, User):
 	program = Column(String(255), nullable=True, server_default=None)
 	class_year = Column(Integer, nullable=True, server_default=None)
 	email = Column(String(255), nullable=True, server_default=None)
+	nickname = Column(String(255), nullable=True, server_default=None)
 
 	parents = relationship('Parent', secondary=ParentChildren, backref='children')
 	classes = relationship('Course', secondary=Enrollment, backref='students')
@@ -356,3 +358,10 @@ class PrimaryTeacherAssignments(Base):
 	subject_id = Column(BigInteger, nullable=True, server_default=None)
 	class_id = Column(ForeignKey(COURSES + '.id'))
 
+class PrimaryStudentAbsences(Base):
+	__tablename__ = PYPSTUDENTABSENCES
+	id = Column(BigInteger, primary_key=True)
+	student_id = Column(ForeignKey(STUDENTS + '.id'))
+	term_id = Column(ForeignKey(TERMS + '.id'))
+	absences = Column(Integer, nullable=True, server_default=None)
+	total_days = Column(Integer, nullable=True, server_default=None)

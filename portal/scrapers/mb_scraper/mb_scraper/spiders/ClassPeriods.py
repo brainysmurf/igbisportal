@@ -10,7 +10,7 @@ from portal.scrapers.mb_scraper.mb_scraper.items import \
 from portal.scrapers.mb_scraper.mb_scraper.items import \
     PrimaryReportItem, PrimaryReportStrandItem, \
     PrimaryReportOutcomeItem, PrimaryReportSectionItem, \
-    TeacherAssignmentItem
+    TeacherAssignmentItem, PrimaryStudentAbsences
 from portal.db import \
     Database, DBSession
 
@@ -18,6 +18,7 @@ import datetime, re
 from collections import defaultdict
 from scrapy.exceptions import CloseSpider
 import scrapy
+from scrapy import log
 import gns
 
 
@@ -78,7 +79,7 @@ class ClassLevelManageBac(ManageBacLogin):
 class ClassReports(ClassLevelManageBac):
     #name = 'no name because I don't want this to run separetly'
     program = '#'  # myp, dp, or pyp
-    path = '/classes/{}/{}-gradebook/tasks/term-grades'
+    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=27807'
 
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
@@ -134,22 +135,89 @@ class ClassReports(ClassLevelManageBac):
                 errback=self.error_parsing,
                 dont_filter=True
                 )
-            return request
-        else:
-            return None
+            yield request
 
-class PYPTeacherSubjectAssignments(ClassReports):
+class PYPClassReports(ClassReports):
+    def _initial_query(self):
+        Course = self.db.table_string_to_class('Course')
+        with DBSession() as session:
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Grade%'.format(self.program.upper())))
+            return [s.id for s in statemdent.all()]
+
+class PYPStudentAttendance(ManageBacLogin):
+    name = "PYPStudentAttendance"
+    path = '/admin/reports/attendance/cumulative?program=pyp&term=27807&grade={}&cumulative_view=homeroom'
+
+    def __init__(self, *args, **kwargs):
+        self.grades = [-2]
+
+        super(ManageBacLogin, self).__init__(*args, **kwargs)
+
+    def next(self):
+        self.grade = self.grades.pop() if self.grades else None
+
+    def error_parsing(self, response):
+        self.warning("OOOOOOHHHHHH NOOOOOOOOO")
+
+    def path_to_url(self, grade):
+        return super(PYPStudentAttendance, self).path_to_url(self.path.format(grade))
+
+    def pyp_student_attendance(self):
+        self.next()
+        if self.grade:
+            request = scrapy.Request(
+                url=self.path_to_url(self.grade),
+                callback=self.parse_items,
+                errback=self.error_parsing,
+                dont_filter=True
+                )
+            yield request
+
+    def parse_items(self, response):
+        for row in response.xpath('//tbody/tr'):
+
+            user_id = row.xpath('./td[@class="student"]/@user_id').extract()[0]
+
+            # Takes a lot of shortcuts here...
+            try:
+                absent = row.xpath('./td/span/span[@class="absent"]')
+                if not absent:
+                    absences = 0
+                else:
+                    absences = int(absent.xpath('./text()').extract()[0].strip('\n'))
+            except IndexError:
+                absences = None 
+
+            if not absences is None:
+                item = PrimaryStudentAbsences()
+                item['student_id'] = user_id
+                item['absences'] = absences
+                item['total_days'] = 94  # HARD-CODED!
+                item['term_id'] = 27807
+
+                yield item
+
+class PYPTeacherAssignments(PYPClassReports):
     name = "PYPTeacherAssignments"
     program = 'pyp'
     path = '/classes/{}/teachers'
     
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
+        ret = []
         with DBSession() as session:
             statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Grade%'.format(self.program.upper())))
-            return [s.id for s in statement.all()]
+            for s in statement.all():
+                ret.append(s.id)
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Early Years%'.format(self.program.upper())))
+            for s in statement.all():
+                ret.append(s.id)
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Kindergarten%'.format(self.program.upper())))
+            for s in statement.all():
+                ret.append(s.id)
+        return ret
 
-    def pyp_teacher_subject_assignments(self):        
+    def pyp_teacher_assignments(self):        
         return self.class_reports()
 
     def parse_items(self, response):
@@ -163,8 +231,9 @@ class PYPTeacherSubjectAssignments(ClassReports):
             teacher = None
             subjects = None
             checked = None
+
             if len(teacher_subject) >= 2:
-                checked = row.xpath("../..//td//div/input[@checked='checked']")
+                checked = row.xpath("../..//td//div/label/input[@checked='checked']")
                 teacher = teacher_subject[0]
                 subjects = teacher_subject[1:]
 
@@ -176,6 +245,7 @@ class PYPTeacherSubjectAssignments(ClassReports):
                     item['teacher_id'] = teacher_id
                     item['subject_id'] = subject_id 
                     item['class_id'] = self.class_id
+
                     yield item
 
         # Goes on to the next class
@@ -188,10 +258,30 @@ class PYPTeacherSubjectAssignments(ClassReports):
         return super(ClassLevelManageBac, self).path_to_url(self.path.format(self.class_id))
 
 
-class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
+class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
     name = "PYPClassReports"
     program = 'pyp'
-    path = '/classes/{}/{}-gradebook/tasks/term_grades'
+    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=27807'
+
+    def _initial_query(self):
+        Course = self.db.table_string_to_class('Course')
+        ret = []
+        with DBSession() as session:
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Grade%'.format(self.program.upper())))
+            for s in statement.all():
+                ret.append(s.id)
+
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Early Years%'.format(self.program.upper())))
+
+            for s in statement.all():
+                ret.append(s.id)
+
+            statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Kindergarten%'.format(self.program.upper())))
+
+            for s in statement.all():
+                ret.append(s.id)
+
+        return ret
 
     def pyp_class_reports(self):
         return self.class_reports()
@@ -228,15 +318,14 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         # Goes on to the next class
         yield self.class_reports()
 
-
     def parse_student(self, response):
         """
         Sets up the database with PrimaryReport objects
-        This is called first, before subject, so parse_subject we can guarantee there is already a Primary Report Item
         """
         current_term_id = self.determine_current_term(response)
 
         student_id = response.xpath("//input[@id='pyp_final_grade_user_id']/@value")[0].extract() or None
+
         if student_id is None:
             print("NO STUDENT ID??")
 
@@ -290,7 +379,6 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
             yield item
 
-
             for student_strand in response.xpath("//div[@id='user_strand_marks_{}']".format(student_id)):
                 which = 1
                 for strand in student_strand.xpath('./table/tbody/tr'):
@@ -305,7 +393,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                     item['subject_id'] = subject_id
                     item['which'] = which
 
-                    item['strand_label'] = strand_label
+                    item['strand_label'] = strand_label.title().replace('And', 'and')
                     item['strand_text'] = strand_value
 
                     if strand_label:

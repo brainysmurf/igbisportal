@@ -1,5 +1,6 @@
 from portal.db import Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError
 import portal.settings as settings
 import gns
 import re, json, glob
@@ -19,6 +20,21 @@ class DatabaseSetterUpper(object):
 		settings.get('MANAGEBAC', 'sections', required=True)
 		settings.get('DIRECTORIES', 'path_to_jsons', required=True)
 		settings.get('MANAGEBAC', 'ib_groups_section_url')
+
+		# Uses sqlalchemy tools to poplate...
+
+		Student = self.database.table_string_to_class('Student')
+		Teacher = self.database.table_string_to_class('Advisor')
+		Parent = self.database.table_string_to_class('Parent')
+		Course = self.database.table_string_to_class('Course')
+		IBGroup = self.database.table_string_to_class('IBGroup')
+
+		self.default_logger("Dropping all tables, so we can make them afresh")
+		from portal.db import drop_all_tables_and_sequences
+		drop_all_tables_and_sequences()
+
+		from portal.db import metadata, engine
+		metadata.create_all(engine)
 
 		for gns.section in gns.settings.sections:
 			self.default_logger(gns("Setup {section} on database"))
@@ -53,13 +69,6 @@ class DatabaseSetterUpper(object):
 
 					session.add(instance)
 
-		# Uses sqlalchemy tools to poplate
-
-		Student = self.database.table_string_to_class('Student')
-		Teacher = self.database.table_string_to_class('Advisor')
-		Parent = self.database.table_string_to_class('Parent')
-		Course = self.database.table_string_to_class('Course')
-		IBGroup = self.database.table_string_to_class('IBGroup')
 
 		with open(gns('{settings.path_to_jsons}/users.json')) as _f:
 			this_json = json.load(_f)
@@ -189,11 +198,40 @@ class DatabaseSetterUpper(object):
 				type="Advisor"
 				)
 
-			session.add(adam)
-			session.add(geoff)
-			session.add(matt)
-			session.add(phil)
-			session.add(simon)
-			session.add(lennox)
+
+			try:
+				session.add(adam)
+			except IntegrityError:
+				self.default_logger(adam)
+
+			try:
+				session.add(geoff)
+			except IntegrityError:
+				self.default_logger(geoff)
+
+			try:
+				session.add(matt)
+			except IntegrityError:
+				self.default_logger(matt)
+
+			try:
+				session.add(phil)
+			except IntegrityError:
+				self.default_logger(phil)
+
+			try:
+				session.add(lennox)
+			except IntegrityError:
+				self.default_logger(lennox)
+
+			try:
+				session.add(simon)
+			except IntegrityError:
+				self.default_logger(simon)
+
+			try:
+				session.add(simon)
+			except IntegrityError:
+				self.default_logger(matthew)
 
 		self.default_logger("Done!")

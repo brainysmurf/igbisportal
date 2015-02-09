@@ -38,7 +38,6 @@ def first_launch(obj, download, setupdb):
     dl(lazy=not download, verbose=obj.verbose)
     db_setup(lazy=not setupdb, verbose=obj.verbose)
 
-
 @main.group()
 def api():
     """
@@ -65,17 +64,42 @@ def populate_database(obj, lazy):
     """
     db_setup(lazy, obj.verbose)
 
-def scrape_all():
-    from scrapy import cmdline
+
+def run_scraper(spider, subpath):
     from portal.settings import get
     import os, gns
 
     path = get('DIRECTORIES', 'path_to_scrapers', required=True)
+    gns.subpath = subpath
+    os.chdir(gns('{settings.path_to_scrapers}/{subpath}'))
 
-    os.chdir(gns('{settings.path_to_scrapers}/mb_scraper'))
-    cmdline.execute(['scrapy', 'crawl', 'ClassPeriods'])
-    os.chdir(gns('{settings.path_to_scrapers}/oa_scraper'))
-    cmdline.execute(['scrapy', 'crawl', 'AuditLog'])
+    from twisted.internet import reactor
+    from scrapy.crawler import Crawler
+    from scrapy.utils.project import get_project_settings
+    from scrapy import log, signals
+    settings = get_project_settings()
+
+    sp = spider()
+    crawler = Crawler(settings)
+    crawler.configure()
+    crawler.crawl(sp)
+    crawler.start()  
+
+    log.start()
+    reactor.run()
+
+@main.command()
+def scrape_pyp_assignments():
+    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPTeacherAssignments
+    run_scraper(PYPTeacherAssignments, 'mb_scraper')
+
+    # os.chdir(gns('{settings.path_to_scrapers}/oa_scraper'))
+    # cmdline.execute(['scrapy', 'crawl', 'AuditLog'])
+
+@main.command()
+def scrape_pyp_reports():
+    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPClassReports
+    run_scraper(PYPClassReports, 'mb_scraper')
 
 @main.command()
 def scrape():
