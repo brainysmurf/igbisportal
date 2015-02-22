@@ -337,6 +337,7 @@ class PrimaryReportStrand(Base):
 	which = Column(Integer, nullable=True, server_default=None)
 
 	label = Column(String(1000), nullable=True, server_default=None)
+	label_titled = Column(String(1000), nullable=True, server_default=None)
 	selection = Column(String(4), nullable=True, server_default=None)
 	#selection = Column(Enum('', 'W', 'S', 'I', 'E', name = 'selection'))
 
@@ -348,6 +349,7 @@ class PrimaryReportLo(Base):
 
 	heading = Column(String(1000), nullable=True, server_default=None)	
 	label = Column(String(1000), nullable=True, server_default=None)
+	label_titled = Column(String(1000), nullable=True, server_default=None)
 	selection = Column(String(4), nullable=True, server_default=None)
 	#selection = Column(Enum('', 'O', 'G', 'N', name = 'selection'))
 

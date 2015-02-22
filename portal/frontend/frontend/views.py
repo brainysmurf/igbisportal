@@ -32,6 +32,7 @@ url = 'https://{}.managebac.com/api/{{}}'.format(PREFIX)
 api_token = 'a473e92458548d66c06fe83f69831fd5'
 
 Students = db.table_string_to_class('student')
+Teachers = db.table_string_to_class('advisor')
 ReportComments = db.table_string_to_class('report_comments')
 PrimaryReport = db.table_string_to_class('primary_report')
 Courses = db.table_string_to_class('course')
@@ -436,9 +437,23 @@ def pyp_reports(request):
     }
 
     chinese_teachers = {
-        '11131269':     # Anderina
-            []
+        11131269:     # Anderina
+            [10893375, 10837001, 11080391, 10866875, 10834622, 11080393, 10882226, 10882227, 10834621, 10866876],
+        10792613:     # Xiaoping
+            [10834635, 10882225, 10834617, 10834649, 10834618, 10836999, 10867797, 10893379, 10986169, 10837002, 10863230, 10867796, 10882159, 10882159, 10868400, 10834632, 10863220, 10863229, 10863228, 10973671],
+        10792617:     # Mu Rong
+            [10834645, 10866873, 10912651, 10834633, 10882155, 10834642, 10866172, 10834661],
+        10792610:     # Yu Ri
+            [10834656, 10834637, 10836998, 10856827, 10912650, 10834665, 10882152]
     }
+
+    students_chinese_teachers = {}
+
+    for teacher_id, student_ids in chinese_teachers.items():
+        with DBSession() as session:
+            teacher = session.query(Teachers).filter_by(id=teacher_id).one()
+            for this_student in student_ids:
+                students_chinese_teachers[this_student] = teacher
 
     if 'Grade' in report.course.name or 'Kindergarten' in report.course.name:
         which_folder = 'grades'
@@ -479,13 +494,18 @@ def pyp_reports(request):
         elif len(uoi_units) == 1:
             pagination_list = [0, 1, 2, 7, 10]
         else:
-            pass   # shouldn't get to here...
+            pagination_list = []
 
         for section in report.sections:
             section.rank = subject_rank.get(section.name.lower())
 
+            # Substitute the correct Chinese teachers based on manual info above
+            # Do first so all subsequent operations take place properly
+            if section.rank == 9 and student.id in students_chinese_teachers:
+                section.teachers = [students_chinese_teachers.get(student.id)]
+
             section.append_uoi_table = section.rank in [4]
-            section.display_rotated = section.rank in [0, 1, 2, 5, 8]
+            section.display_rotated = section.rank in [0, 1, 2, 5, 8, 9]
 
             if section.rank == 2:
                 section.organization_header = "Units of Inquiry"
@@ -515,6 +535,7 @@ def pyp_reports(request):
                 section.name = section.name.title()
                 section.name_after = uoi_table.get(grade_norm)[which_uoi]['central_idea']
 
+
             en_dash = u'\u2013'
             for outcome in section.learning_outcomes:
 
@@ -532,6 +553,7 @@ def pyp_reports(request):
                     if match:
                         outcome.heading = match.group(1).strip()
 
+
             # Evaluates and adds data to items
             old_heading = None
             for outcome in section.learning_outcomes:
@@ -541,7 +563,7 @@ def pyp_reports(request):
 
                     if section.rank in [0, 1]:
                         # Determine the effort assigned by the teacher for this
-                        effort = [s.selection for s in section.strands if s.label.startswith(outcome.heading)]
+                        effort = [s.selection for s in section.strands if s.label_titled.startswith(outcome.heading)]
                         effort = effort[0] if len(effort) == 1 else (effort[0] if len(set(effort))==1 else "<?>")
                     else:
                         effort = [s.selection for s in section.strands if s.selection]
@@ -556,6 +578,7 @@ def pyp_reports(request):
 
                 if not outcome.selection and internal_check:
                     raise ReportIncomplete('something')
+
 
 
     elif 'Early' in report.course.name:
@@ -586,6 +609,7 @@ def pyp_reports(request):
         grade_norm = -1
 
         uoi_units = [r for r in report.sections if 'unit of inquiry' in r.name.lower()]
+
         if len(uoi_units) == 3:
             pagination_list = [0, 4, 7, 10]
         else:
@@ -594,6 +618,11 @@ def pyp_reports(request):
         for section in report.sections:
 
             section.rank = subject_rank.get(section.name.lower())
+
+            # Substitute the correct Chinese teachers based on manual info above
+            if section.rank == 9 and student.id in students_chinese_teachers:
+                section.teachers = [students_chinese_teachers.get(student.id)]
+
             if section.rank == 2:
                 section.organization_header = "Units of Inquiry"
                 section.name_after = ""
@@ -621,6 +650,7 @@ def pyp_reports(request):
 
             section.learning_outcomes = sorted(section.learning_outcomes, key=lambda x: x.which)
 
+
     options={
         'quiet': '',
         'header-html': 'http://igbisportal.vagrant:6543/header-html',
@@ -632,7 +662,7 @@ def pyp_reports(request):
 
         'margin-left': '3mm',
         'margin-right': '3mm',
-        'margin-bottom': '5mm',
+        'margin-bottom': '10mm'
         }
 
     if pdf:
@@ -649,7 +679,7 @@ def pyp_reports(request):
                         ),
                     request=request)
  
-        path = '/home/vagrant/igbisportal/pdf-downloads/{}/{}{}-{}.pdf'.format(which_folder, student.first_name.replace(' ', ''), student.last_name.replace(' ', ''), student.id)
+        path = '/home/vagrant/igbisportal/pdf-downloads/{}/{}-{}{}-{}.pdf'.format(which_folder, grade_norm, student.first_name.replace(' ', ''), student.last_name.replace(' ', ''), student.id)
         pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
         
         if pdf.lower() == "download":

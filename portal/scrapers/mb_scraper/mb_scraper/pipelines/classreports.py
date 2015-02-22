@@ -194,15 +194,18 @@ class PYPClassReportsPipline(PostgresPipeline):
             primary_report_section_id = primary_report_section.id
 
             if issubclass(item.__class__, PrimaryReportStrandItem):
+
                 with DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportStrand).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
                         exists.label = item['strand_label']
+                        exists.label_titled = item['strand_label_titled']
                         exists.selection = item['strand_text']
                     except NoResultFound:
                         primary_report_strand = PrimaryReportStrand(
                                 primary_report_section_id = primary_report_section_id,
                                 label = item['strand_label'],
+                                label_titled = item['strand_label_titled'],
                                 selection = item['strand_text'],
                                 which = item['which']
                             )
@@ -210,17 +213,20 @@ class PYPClassReportsPipline(PostgresPipeline):
 
             elif issubclass(item.__class__, PrimaryReportOutcomeItem):
                 outcome_label = string_to_entities(item['outcome_label'])
+                outcome_label_titled = string_to_entities(item['outcome_label'])
                 with DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportLo).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
                         exists.heading = item['heading']
                         exists.label = outcome_label
                         exists.selection = item['outcome_text']
+                        exists.label_titled = outcome_label_titled
                     except NoResultFound:
                         primary_report_outcome = PrimaryReportLo(
                                 primary_report_section_id = primary_report_section_id,
                                 heading = item['heading'],
                                 label = outcome_label,
+                                label_titled = outcome_label_titled,
                                 selection = item['outcome_text'],
                                 which = item['which']
                             )

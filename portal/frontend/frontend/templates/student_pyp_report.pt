@@ -97,8 +97,8 @@
       </table>
 
       <br /><br /><br /><br />
-      <center><img style="width:150px;" src="${static_url}images/logo_no_flame_no_tagline.png" />
-      <p style="margin-top:0px;font-face:Helvetica;font-size:12pt;font-size:9pt;"><span style="color:#EA302B;font-weight:900;">T</span>: +60 3 6145 4688 <span style="color:#EA302B;font-weight:900;">F</span>: +60 3 6145 4600  <span style="color:#EA302B;font-weight:900;">W</span>: <a style="color:#EA302B;font-weight:900;text-decoration:none" href="http://www.igbis.edu.my">www.igbis.edu.my</a></p>
+      <center><img style="width:120px;" src="${static_url}images/logo_no_flame_no_tagline.png" />
+      <p style="margin-top:0px;font-face:Helvetica;font-size:12pt;font-size:9pt;"><span style="color:#EA302B;font-weight:900;">T</span>: +60 3 6145 4688 <span style="color:#EA302B;font-weight:900;">F</span>: +60 3 6145 4600  <span style="color:#EA302B;font-weight:900;">W</span>: <a style="color:#000;text-decoration:none" href="http://www.igbis.edu.my">www.igbis.edu.my</a></p>
       </center>
   
       <hr />
@@ -156,12 +156,12 @@
           <tbody>
             <tal:block tal:repeat="outcome section.learning_outcomes">
               <tr class="effort" tal:condition="hasattr(outcome, 'effort')">
-                <td><strong>${outcome.heading.title().replace('And', 'and')}</strong>
+                <td><strong>${outcome.heading}</strong>
                   <nobr><span style="float:right;white-space: nowrap;"><em>Effort:&nbsp;${outcome.effort}</em></span></nobr>
                 </td>
               </tr>
               <tr tal:condition="outcome.label">
-                <td>${structure: outcome.label.strip().capitalize()}${'.' if outcome.label.strip()[-1] != '.' else ''}</td>
+                <td>${structure: outcome.label}</td>
                 <!-- <td tal:repeat="output ['W', 'S', 'I', 'E']" tal:attributes="style 'text-align:center;;background-color:#8DC1F4;;' if output in ['W', 'E'] else 'text-align:center;;background-color:#3366FF;;'"> -->
                 <td style="text-align:center;" tal:repeat="output ['W', 'S', 'I', 'E']">
                   <i tal:attributes="class 'fa fa-circle' if outcome.selection == output else ''"></i>
@@ -216,7 +216,6 @@
 
       <br />
       <h2>IB Learner's Profile</h2>
-      <br />
       <table class="table table-ib-learners">
         <tr>
           <td><strong>Inquirers</strong></td><td>We nurture our curiosity, developing skills for inquiry and research. We know how to learn independently and with others. We learn with enthusiasm and sustain our love of learning throughout life.</td>
@@ -255,12 +254,15 @@
       <h3>Message from the Principal:</h3>
       <ul>
         <li style="list-style-type:none;">
-      Please discuss the report with your child and encourage their development and effort. The report should not be compared to reports of siblings and peers. If you have any questions regarding your child&srquo;s report please contact their class teacher.
+      Please discuss the report with your child and encourage their development and effort. The report should not be compared to reports of siblings and peers. If you have any questions regarding your child&rsquo;s report please contact their class teacher.
         </li>
       </ul>
-      <p>
-      Teacher: ${report.teacher.first_name} ${report.teacher.last_name} <span style="float:right;text-align:right">Principal: Claire McLeod</span>
-    </p>
+      <p style="margin-top: 50px;margin-left:5px;margin-right:5px;">
+      <strong>Teacher:</strong> ${report.teacher.first_name} ${report.teacher.last_name} <span style="float:right;text-align:right"><strong>Elementary School Principal</strong>: Claire McLeod</span>
+    </p><br />
+      <center><img style="width:120px;" src="${static_url}images/logo_no_flame_no_tagline.png" />
+      <p style="margin-top:0px;font-face:Helvetica;font-size:12pt;font-size:9pt;"><span style="color:#EA302B;font-weight:900;">T</span>: +60 3 6145 4688 <span style="color:#EA302B;font-weight:900;">F</span>: +60 3 6145 4600  <span style="color:#EA302B;font-weight:900;">W</span>: <a style="color:#000;text-decoration:none" href="http://www.igbis.edu.my">www.igbis.edu.my</a></p>
+      </center>
 
 </div>
 

@@ -137,7 +137,7 @@ class ClassReports(ClassLevelManageBac):
                 )
             yield request
 
-class PYPClassReports(ClassReports):
+class PYPClassReportTemplate(ClassReports):
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
         with DBSession() as session:
@@ -149,7 +149,7 @@ class PYPStudentAttendance(ManageBacLogin):
     path = '/admin/reports/attendance/cumulative?program=pyp&term=27807&grade={}&cumulative_view=homeroom'
 
     def __init__(self, *args, **kwargs):
-        self.grades = [-2]
+        self.grades = [-2, -1, 0, 1, 2, 3, 4, 5]
 
         super(ManageBacLogin, self).__init__(*args, **kwargs)
 
@@ -164,7 +164,7 @@ class PYPStudentAttendance(ManageBacLogin):
 
     def pyp_student_attendance(self):
         self.next()
-        if self.grade:
+        if not self.grade is None:
             request = scrapy.Request(
                 url=self.path_to_url(self.grade),
                 callback=self.parse_items,
@@ -197,7 +197,10 @@ class PYPStudentAttendance(ManageBacLogin):
 
                 yield item
 
-class PYPTeacherAssignments(PYPClassReports):
+        for item in self.pyp_student_attendance():
+            yield item
+
+class PYPTeacherAssignments(PYPClassReportTemplate):
     name = "PYPTeacherAssignments"
     program = 'pyp'
     path = '/classes/{}/teachers'
@@ -217,8 +220,7 @@ class PYPTeacherAssignments(PYPClassReports):
                 ret.append(s.id)
         return ret
 
-    def pyp_teacher_assignments(self):        
-        return self.class_reports()
+    pyp_teacher_assignments = PYPClassReportTemplate.class_reports
 
     def parse_items(self, response):
 
@@ -249,7 +251,8 @@ class PYPTeacherAssignments(PYPClassReports):
                     yield item
 
         # Goes on to the next class
-        yield self.class_reports()
+        for item in self.class_reports():
+            yield item
 
     def path_to_url(self):
         """
@@ -258,7 +261,7 @@ class PYPTeacherAssignments(PYPClassReports):
         return super(ClassLevelManageBac, self).path_to_url(self.path.format(self.class_id))
 
 
-class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
+class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inheritence?
     name = "PYPClassReports"
     program = 'pyp'
     path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=27807'
@@ -303,7 +306,6 @@ class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
                 )
             yield request
 
-
         # Dispatch to parse_student per each student on left side
         for student_url in response.xpath("//li[@class='selected own-pyp-class']/ul/li/a/@href").extract():
             request = scrapy.Request(
@@ -316,7 +318,8 @@ class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
             yield request
 
         # Goes on to the next class
-        yield self.class_reports()
+        for item in self.class_reports():
+            yield item
 
     def parse_student(self, response):
         """
@@ -382,7 +385,9 @@ class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
             for student_strand in response.xpath("//div[@id='user_strand_marks_{}']".format(student_id)):
                 which = 1
                 for strand in student_strand.xpath('./table/tbody/tr'):
-                    strand_label = strand.xpath('./td[1]/text()').extract()[0]
+                    strand_label = (strand.xpath('./td[1]/text()').extract()[0]).strip('\n').strip()
+                    strand_label = strand_label[0].upper() + strand_label[1:]
+                    strand_label += "." if strand_label[-1] != '.' else ""
                     value = strand.xpath("./td[2]/select/option[@selected='selected']/text()").extract()
                     strand_value = value[0] if value else ""
  
@@ -393,7 +398,8 @@ class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
                     item['subject_id'] = subject_id
                     item['which'] = which
 
-                    item['strand_label'] = strand_label.title().replace('And', 'and')
+                    item['strand_label'] = strand_label
+                    item['strand_label_titled'] = strand_label.title().replace('And', 'and')
                     item['strand_text'] = strand_value
 
                     if strand_label:
@@ -415,7 +421,9 @@ class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
 
                             cells = outcome_content.xpath('./td')
                             if len(cells) == 2:
-                                outcome_label = cells[0].xpath('./text()').extract()[0]
+                                outcome_label = (cells[0].xpath('./text()').extract()[0]).strip('\n').strip()
+                                outcome_label = outcome_label[0].upper() + outcome_label[1:]
+                                outcome_label += '.' if outcome_label[-1] != "." else ""
                                 value = cells[1].xpath("./select/option[@selected='selected']/text()").extract()
 
                                 outcome_value = value[0] if value else ""
@@ -425,10 +433,10 @@ class PYPClassReports(PYPClassReports):  # Later, re-factor this inheritence?
                                 item['course_id'] = response.meta.get('class_id')
                                 item['term_id'] = current_term_id
                                 item['subject_id'] = subject_id
-                                item['heading'] = strand_heading
+                                item['heading'] = strand_heading.title().replace('And', 'and')
                                 item['which'] = which
-
                                 item['outcome_label'] = outcome_label
+                                item['outcome_label_titled'] = outcome_label.title().replace('And', 'and')
                                 item['outcome_text'] = outcome_value
 
                                 if outcome_label.strip('\n'):

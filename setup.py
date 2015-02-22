@@ -17,6 +17,7 @@ setup(
     'pyramid_chameleon',
     'pyramid_debugtoolbar',
     'pyramid_tm',
+    'service_identity',
     'SQLAlchemy',
     'transaction',
     'zope.sqlalchemy',

@@ -52,11 +52,13 @@ class PrimaryReportSupplementItem(scrapy.Item):
 
 class PrimaryReportStrandItem(PrimaryReportSupplementItem):
     strand_label = scrapy.Field()
+    strand_label_titled = scrapy.Field()
     strand_text = scrapy.Field()
 
 class PrimaryReportOutcomeItem(PrimaryReportSupplementItem):
     heading = scrapy.Field()
     outcome_label = scrapy.Field()
+    outcome_label_titled = scrapy.Field()
     outcome_text = scrapy.Field()   
 
 class TeacherAssignmentItem(scrapy.Item):
