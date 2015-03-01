@@ -20,7 +20,7 @@
         data-clientid="${client_id}"
         data-redirecturi="postmessage"
         data-accesstype="offline"
-        data-origin="http://igbisportal.vagrant:6543"
+        data-origin="${data_origin}"
         data-cookiepolicy="single_host_origin"
         data-callback="signInCallback">
       </span>
