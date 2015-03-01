@@ -6,13 +6,29 @@
   <link rel="stylesheet" type="text/css" href="http://code.jboxcdn.com/0.3.2/jBox.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" defer></script>
 </head>
 <body>
+
+
+
 <div id="wrapper">
+    <div id="signinButton" style="float:right;">
+      <!-- data-approvalprompt="force" -->
+      <span style="float:right;" class="g-signin"
+        data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.login"
+        data-clientid="${client_id}"
+        data-redirecturi="postmessage"
+        data-accesstype="offline"
+        data-origin="http://igbisportal.vagrant:6543"
+        data-cookiepolicy="single_host_origin"
+        data-callback="signInCallback">
+      </span>
+    </div>
+
     <div id="contentwrap">
 <!--       <img src="${static_url}header.png" width="1100px" /> -->
       <div class="tabs_holder">
-
  
       <!-- This is the change icon size -->
        <form id="icon_size_form">
@@ -27,7 +43,6 @@
           <a href="#${key}">${key}</a>
         </li>
        </ul>
-
 
        <div tal:define="global counter 0" tal:repeat="key buttons" tal:condition="buttons" class="content_holder">
         <div id="${key}" style="padding:0px;margin:0px;">
@@ -47,8 +62,6 @@
        </div><!-- /.content_holder -->
       </div><!-- /.tabs_holder -->
     </div>
-
-
 </div>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -80,10 +93,11 @@ $("input[name=icon_size]:radio").change(function () {
 
 <script type="text/javascript">    
     new jBox('Notice', {
-        content: 'Now the pop-ups look way better!',
-        color: 'red'
+        content: 'New: Google login, and more features!',
+        color: 'blue'
     });
 </script>
+
 
 
 <tal:block tal:repeat="key buttons" tal:condition="buttons">
@@ -96,7 +110,10 @@ $("input[name=icon_size]:radio").change(function () {
         <tal:block tal:condition="menu_item.url">
           <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
         </tal:block>
-        <tal:block tal:condition="not menu_item.url">
+        <tal:block tal:condition="menu_item.url is False">
+          <div id="${menu_item.name}"><hr /></div>
+        </tal:block>
+        <tal:block tal:condition="menu_item.url is None">
           <hr />
         </tal:block>
       </li>
@@ -121,6 +138,69 @@ $("input[name=icon_size]:radio").change(function () {
   </tal:block>
   </tal:block>
 </tal:block>
+
+  <script>
+  function signInCallback(authResult) {
+    if (authResult['code']) {
+
+      // Hide the sign-in button now that the user is authorized, for example:
+      //$('#signinButton').attr('style', 'display: none');
+
+      // Send the code to the server
+      console.log(authResult);
+
+      $.ajax({
+        type: 'POST',
+        url: 'signinCallback?' + '${unique}',
+        contentType: 'application/json; charset=utf-8',
+        success: function(result) {
+          // Handle or verify the server response if necessary.
+
+          // Prints the list of people that the user has allowed the app to know
+          // to the console.
+
+          //console.log(result);
+          $.ajax({
+            type: 'POST',
+            url: 'session_user',
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
+              console.log(result);
+              do_update();
+            }
+          })
+        },
+          processData: false,
+        data: JSON.stringify({'code':authResult['code']})
+        });
+    } else if (authResult['error']) {
+      // There was an error.
+      // Possible error codes:
+      //   "access_denied" - User denied access to your app
+      //   "immediate_failed" - Could not automatially log in the user
+      console.log('There was an error: ' + authResult['error']);
+    }
+  }
+
+  function do_update() {
+    $.ajax({
+      type:'POST',
+      url: 'mb_courses',
+      contentType: 'application/json; charset=utf-8',
+      success: function(result) {
+        console.log(result);
+        var link_list = "<li><hr /></li>";
+        for (i=0; i < result.data.length; i++) {
+          if (result.data[i].shortname != null) {
+            link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '"><i class="fa fa-chevron-circle-right fa-fw"></i>&nbsp;' + result.data[i].shortname + '</a></li>';
+          }
+        }
+        $('#mb_classes').parent().replaceWith(link_list);
+      }
+    })
+    console.log('here');
+  }
+  </script>
 
 </body>
 </html>

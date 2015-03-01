@@ -24,6 +24,13 @@ def main(global_config, **settings):
     config.include('pyramid_beaker')
 
     config.add_static_view('static', 'static', cache_max_age=3600)
+
+    config.add_route('signin', '/signin')
+    config.add_route('signinCallback', '/signinCallback')
+    config.add_route('session_user', '/session_user')
+
+    config.add_route('mb_courses', '/mb_courses')
+
     config.add_route('home', '/')
     config.add_route('auditlog', '/auditlog')
     config.add_route('auditlog_data', '/auditlog_data')

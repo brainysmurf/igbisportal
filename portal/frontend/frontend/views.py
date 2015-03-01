@@ -18,18 +18,21 @@ db = Database()
 
 import json, re
 
+from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+
 import requests
 
 from collections import namedtuple, OrderedDict
 
+import portal.settings as settings
+import gns
+settings.get('DIRECTORIES', 'home')
+settings.get('GOOGLE', 'client_id')
+settings.get('GOOGLE', 'data_origin')
+
 class ReportIncomplete(Exception):
     def __init__(self, msg):
         self.msg = msg
-
-PREFIX = 'igbis2014'
-url = 'https://{}.managebac.com/api/{{}}'.format(PREFIX)
-
-api_token = 'a473e92458548d66c06fe83f69831fd5'
 
 Students = db.table_string_to_class('student')
 Teachers = db.table_string_to_class('advisor')
@@ -37,6 +40,139 @@ ReportComments = db.table_string_to_class('report_comments')
 PrimaryReport = db.table_string_to_class('primary_report')
 Courses = db.table_string_to_class('course')
 Absences = db.table_string_to_class('PrimaryStudentAbsences')
+
+@view_config(route_name="signin", renderer="templates/login.pt")
+def signin(request):
+    import uuid
+    unique = uuid.uuid4()  # random
+    request.session['unique_id'] = str(unique)
+    return dict(client_id=gns.settings.client_id, unique=unique, data_origin=gns.settings.data_origin, app_name="IGBIS Portal")
+
+@view_config(route_name="session_user", renderer="json")
+def session_user(request):
+    """
+    Put the user in the session
+    """
+    if not hasattr(request, 'session') or 'credentials' not in request.session:
+        return dict(message="session_user called before session info, you need to use signinCallback (or equiv code) first")
+
+    credentials = request.session['credentials']
+    access_token = credentials.access_token
+    url = 'https://www.googleapis.com/plus/v1/people/me?access_token={}'.format(access_token)
+    result = requests.get(url)
+
+    if result.status_code == 200:
+        items = result.json()
+    elif result.status_code == 403:
+        return dict(message="Insufficient permissions")
+    elif result.status_code == 401:
+        return dict(message="Permission denied when making API call...")
+    else: 
+        return dict(message="Error: {}".format(result.status_code))
+
+    user_email = None
+    for item in items.get('emails'):
+        if item.get('type') == 'account':
+            user_email = item.get('value')
+
+    if not user_email:
+        return dict(message="Error: No user email detected?")
+
+    user = None
+    with DBSession() as session:
+        student = session.query(Students).filter_by(email=user_email).options(joinedload('classes')).first()
+        if student:
+            user = student
+        if not user:
+            teacher = session.query(Teachers).filter_by(email=user_email).options(joinedload('classes')).first()
+            if teacher:
+                user = teacher
+
+        if not user:
+            return dict(message="Error, could not find email {}".format(user_email))
+
+    request.session['mb_user'] = user
+
+    return dict(message="User found on ManageBac")
+
+@view_config(route_name="signinCallback", renderer="json")
+def signinCallback(request):
+    """
+    Does token checking and puts credentials in the session
+    """
+
+    try:
+        unique = request.params.keys()[0]
+    except KeyError:
+        return dict(message="error, identifier not passed!")
+
+    try:
+        session_unique = request.session['unique_id']
+    except KeyError:
+        return dict(message="no unique_id?")
+
+    if unique != session_unique:
+        return dict(message="uniques didn't match!")
+    else:
+
+        code = request.json['code']
+
+        try:
+            oauth_flow = \
+                flow_from_clientsecrets(
+                    gns('{settings.home}/portal/frontend/client_secret.json'), 
+                    scope="",
+                    redirect_uri='postmessage'
+                )
+            oauth_flow.redirect_uris = 'postmessage'
+            credentials = oauth_flow.step2_exchange(code)
+        except FlowExchangeError:
+            return dict(message="Failed to upgrade the authorization code.")
+
+        # Ask Google for info
+        access_token = credentials.access_token
+        result = requests.get('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token))
+    
+        if result.status_code == 200:
+            # No need:
+            # http://stackoverflow.com/questions/16747986/checking-the-user-id-in-a-tokeninfo-response-with-token-received-from-the-googl
+            # if result.json()['user_id'] != gplus_id:
+            #     return dict(message="Token's user ID doesn't match given ID")
+
+            result_json = result.json()
+
+            if 'issued_to' in result_json:
+                if result_json['issued_to'] != gns.settings.client_id:
+                    return dict(message='Token does not match application')
+            else:
+                print('no issued_to in result after API call??')
+
+            stored_credentials = request.session.get('credentials')
+            stored_gplus_id = request.session.get('gplus_id')
+
+            if stored_credentials is not None:
+                return dict(message="Current user is already connected")
+
+            request.session['credentials'] = credentials
+    
+            return dict(message="worked!")
+
+        elif result.status_code == 403:
+            return dict(message="Forbidden: {}".format(result.status_code))
+        else:
+           return dict(message="Error: {}".format(result.status_code))
+
+@view_config(route_name="mb_courses", renderer='json')
+def mb_courses(request):
+    user = request.session.get('mb_user')
+    if not user:
+        return dict(message="No user in session?")
+    if not hasattr(user, 'classes'):
+        return dict(message="User doesn't have classes?")
+    data = []
+    for klass in user.classes:
+        data.append( dict(name=klass.name, shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
+    return dict(message="Success", data=data)
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
 def auditlog(request):
@@ -152,14 +288,16 @@ button = namedtuple('button', ['name', 'url', 'icon', 'context_menu'])
 
 menu_item = namedtuple('menu_item', ['display', 'url', 'icon'])
 menu_separator = lambda : {'url':None}
+menu_placeholder = lambda x: {'url': False, 'name':x}
 
 stndrdbttns = [
     button(name="ManageBac", url="https://igbis.managebac.com", icon="fire",
         context_menu={
-        'items': [   
+        'items': [
             menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
             menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
-            menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee")
+            menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee"),
+            menu_placeholder('mb_classes')
         ],
         }),
     button(name="Gmail", url="https://gmail.com", icon="envelope", 
@@ -181,7 +319,8 @@ stndrdbttns = [
     button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
         context_menu={
         'items': [
-            menu_item(icon="search", display="Catalog", url="http://blah"),
+            menu_item(icon="search", display="Elementary Catalog", url="https://igbis.follettdestiny.com/cataloging/servlet/presentadvancedsearchredirectorform.do?l2m=Library%20Search&tm=TopLevelCatalog&l2m=Library+Search"),
+            menu_item(icon="search", display="Secondary Catalog", url="https://igbis.follettdestiny.com/common/servlet/presenthomeform.do?l2m=Home&tm=Home&l2m=Home"),
             menu_separator(),
             menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
             menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
@@ -195,6 +334,10 @@ stndrdbttns = [
 
 @view_config(route_name='splash', renderer='templates/splash.pt')
 def splash(request):
+    import uuid
+    unique = uuid.uuid4()  # random
+    request.session['unique_id'] = str(unique)
+
     role = request.GET.get('role', 'student')
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
@@ -244,7 +387,10 @@ def splash(request):
     buttons['Teachers'] = teacher_buttons
     buttons['Students'] = student_buttons
     return dict(
-        role=role, 
+        client_id=gns.settings.client_id,
+        unique=unique,
+        data_origin=gns.settings.data_origin,
+        role=role,
         title="[IGBIS] Splash",
         buttons = buttons,
     )
