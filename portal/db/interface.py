@@ -36,6 +36,67 @@ class DatabaseSetterUpper(object):
 		from portal.db import metadata, engine
 		metadata.create_all(engine)
 
+		self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
+
+		admins = []
+		with DBSession() as session:
+			admins.append(Teacher(
+				id = 10792616,
+				first_name= "Adam",
+				last_name = "Morris",
+				type= "Advisors",
+				gender="Male",
+				email="adam.morris@igbis.edu.my"
+				))
+
+			admins.append(Teacher(
+				id = 10792598,
+				first_name="Geoff",
+				last_name ="Derry",
+				email="geoffrey.derry@igbis.edu.my",
+				type="Advisor"
+				))
+
+			admins.append(Teacher(
+				id=10792614,
+				first_name="Matthew",
+				last_name="Marshall",
+				email="Matthew.Marshall@igbis.edu.my",
+				type="Advisor"
+				))
+
+			admins.append(Teacher(
+				id=10792596,
+				first_name="Phil",
+				last_name="Clark",
+				email="Phil.Clark@igbis.edu.my",
+				type="Advisor"
+				))
+
+			admins.append(Teacher(
+				id = 10792615,
+				first_name="Simon",
+				last_name= "Millward",
+				email="Simon.Millward@igbis.edu.my",
+				type="Advisor"
+				))
+
+			admins.append(Teacher(
+				id = 10754285,
+				first_name="Lennox",
+				last_name="Meldrum",
+				email="lennox.meldrum@igbis.edu.my",
+				type="Advisor"
+				))
+
+			for admin in admins:
+				try:
+					session.add(admin)
+				except IntegrityError:
+					print('Nope: {}'.format(admin))
+					self.default_logger(admin)
+
+
 		for gns.section in gns.settings.sections:
 			self.default_logger(gns("Setup {section} on database"))
 
@@ -122,9 +183,15 @@ class DatabaseSetterUpper(object):
 					with DBSession() as session:
 						try:
 							teacher = session.query(Teacher).filter_by(id=teacher_id).one()
+						except NoResultFound:
+							print("Could not find teacher {} in database".format(teacher_id))
+							continue
+						try:
 							course = session.query(Course).filter_by(id=course_id).one()
 						except NoResultFound:
+							print("Could not find course {} in database".format(course_id))
 							continue
+
 						teacher.classes.append(course)  # adds the teacher assignment stuff
 
 		self.default_logger("Setting up student class enrollments on database")
@@ -145,93 +212,6 @@ class DatabaseSetterUpper(object):
 						continue
 					student.classes.append(course)  # add the course/students relation stuff
 
-		self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
 
-		with DBSession() as session:
-			adam = Teacher(
-				id = 10792616,
-				first_name= "Adam",
-				last_name = "Morris",
-				type= "Advisors",
-				gender="Male",
-				email="adam.morris@igbis.edu.my"
-				)
-
-
-			geoff = Teacher(
-				id = 10792598,
-				first_name="Geoff",
-				last_name ="Derry",
-				email="geoffrey.derry@igbis.edu.my",
-				type="Advisor"
-				)
-
-			matt = Teacher(
-				id=10792614,
-				first_name="Matthew",
-				last_name="Marshall",
-				email="Matthew.Marshall@igbis.edu.my",
-				type="Advisor"
-				)
-
-			phil = Teacher(
-				id=10792596,
-				first_name="Phil",
-				last_name="Clark",
-				email="Phil.Clark@igbis.edu.my",
-				type="Advisor"
-				)
-
-			simon = Teacher(
-				id = 10792615,
-				first_name="Simon",
-				last_name= "Millward",
-				email="Simon.Millward@igbis.edu.my",
-				type="Advisor"
-				)
-
-			lennox = Teacher(
-				id = 10754285,
-				first_name="Lennox",
-				last_name="Meldrum",
-				email="lennox.meldrum@igbis.edu.my",
-				type="Advisor"
-				)
-
-
-			try:
-				session.add(adam)
-			except IntegrityError:
-				self.default_logger(adam)
-
-			try:
-				session.add(geoff)
-			except IntegrityError:
-				self.default_logger(geoff)
-
-			try:
-				session.add(matt)
-			except IntegrityError:
-				self.default_logger(matt)
-
-			try:
-				session.add(phil)
-			except IntegrityError:
-				self.default_logger(phil)
-
-			try:
-				session.add(lennox)
-			except IntegrityError:
-				self.default_logger(lennox)
-
-			try:
-				session.add(simon)
-			except IntegrityError:
-				self.default_logger(simon)
-
-			try:
-				session.add(simon)
-			except IntegrityError:
-				self.default_logger(matthew)
 
 		self.default_logger("Done!")
