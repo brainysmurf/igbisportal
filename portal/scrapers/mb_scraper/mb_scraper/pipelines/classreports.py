@@ -63,6 +63,27 @@ class ClassReportsPipeline(PostgresPipeline):
                 # okay, now that both records are all good, make the relationship link
                 report_comment.atl_comments.append(alt_comment)
 
+class SecHRPipeline(ClassReportsPipeline):
+    def allow_this_spider(self, spider):
+        return spider.name == 'SecondaryHomeroomAdvisors'
+
+    def database_add(self, key, item):
+        SecHrTeachers = self.database.table_string_to_class('secondary_homeroom_teachers')
+        student_id = item['student_id']
+        teacher_id = item['teacher_id']
+        with DBSession() as session:
+            try:
+                exists = session.query(SecHrTeachers).filter_by(
+                    teacher_id=teacher_id,
+                    student_id=student_id
+                    ).one()
+            except NoResultFound:
+                exists = False
+            if exists:
+                return exists
+
+            assign = SecHrTeachers(teacher_id=teacher_id, student_id=student_id)
+            session.add(assign)
 
 class PYPClassReportsPipline(PostgresPipeline):
     """

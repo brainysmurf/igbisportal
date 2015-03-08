@@ -113,7 +113,6 @@ class APIDownloader(object):
 			if gns.section in json_info:
 				self.default_logger('Section found in json')
 				for item in json_info[gns.section]:
-					self.default_logger(gns('Adding obj to container in section {section}'))
 					self.container.add(item, gns.section)
 
 		for gns.section in gns.settings.sections:

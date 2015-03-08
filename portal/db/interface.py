@@ -153,22 +153,29 @@ class DatabaseSetterUpper(object):
 			this_json = json.load(_f)
 
 		for ib_group in this_json['ib_groups']:
-			gns.id = ib_group.get('id')
+			gns.group_id = ib_group.get('id')
+			gns.id = gns.group_id
 			gns.uri = gns.settings.ib_groups_section_url.replace('/', '-')
 
+			# Two gns calls because uri has {id} in it
+			print(gns(gns('{settings.path_to_jsons}/{uri}.json')))
 			with open(gns(gns('{settings.path_to_jsons}/{uri}.json'))) as _f2:
 				members_json = json.load(_f2)
 
 			for student_item in members_json['members']:
-				student_id = student_item.get('student_id')
-				if not student_id:
+				gns.student_id = student_item.get('student_id')
+				if not gns.student_id:
 					continue
 				with DBSession() as session:
 					try:
-						student = session.query(Student).filter_by(student_id=student_id).one()
-						group = session.query(IBGroup).filter_by(id=gns.id).one()
+						student = session.query(Student).filter_by(student_id=gns.student_id).one()
 					except NoResultFound:
+						self.default_logger(gns("Student {student_id} not found?"))
 						continue
+					try:
+						group = session.query(IBGroup).filter_by(id=gns.group_id).one()
+					except NoResultFound:
+						self.default_logger(gns("Group {group_id} not found?"))
 					student.ib_groups.append(group)  # adds the ib_group members relation stuff
 
 		self.default_logger("Setting up teacher class assignments on database")
@@ -212,6 +219,8 @@ class DatabaseSetterUpper(object):
 						continue
 					student.classes.append(course)  # add the course/students relation stuff
 
-
-
 		self.default_logger("Done!")
+
+if __name__ == "__main__":
+
+	go  = DatabaseSetterUpper(lazy=False)

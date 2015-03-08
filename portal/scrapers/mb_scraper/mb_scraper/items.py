@@ -71,3 +71,7 @@ class PrimaryStudentAbsences(scrapy.Item):
     term_id = scrapy.Field()
     absences = scrapy.Field()
     total_days = scrapy.Field()
+
+class SecHRItem(scrapy.Item):
+    student_id = scrapy.Field()
+    teacher_id = scrapy.Field()

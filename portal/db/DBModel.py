@@ -44,6 +44,7 @@ PRIMARYREPORTLO = "{}primary_report_lo".format(PREFIX)
 PRIMARYREPORTSECTIONTEACHERASSOC = "{}primary_report_section_teacher_association".format(PREFIX)
 PYPTEACHERASSIGNMENTS = "{}primary_teacher_assign".format(PREFIX)
 PYPSTUDENTABSENCES = "{}primary_student_absences".format(PREFIX)
+SECHRTEACHERS = "{}sec hr teachers".format(PREFIX)
 
 class User(object):
 	"""
@@ -231,6 +232,14 @@ class IBGroup(Base):
 	program = Column(String(255), nullable=True, server_default=None)
 	name = Column(String(255), nullable=True, server_default=None)
 	unique_id = Column(String(255), nullable=True, server_default=None)
+
+class SecondaryHomeroomTeachers(Base):
+	__tablename__ = SECHRTEACHERS
+
+	id = Column(BigInteger, primary_key=True, nullable=True, server_default=None)
+
+	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'), nullable=True, server_default=None)
+	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'), nullable=True, server_default=None)
 
 class AuditLog(Base):
 	__tablename__ = AUDITLOGS

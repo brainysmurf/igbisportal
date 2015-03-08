@@ -10,7 +10,8 @@ from portal.scrapers.mb_scraper.mb_scraper.items import \
 from portal.scrapers.mb_scraper.mb_scraper.items import \
     PrimaryReportItem, PrimaryReportStrandItem, \
     PrimaryReportOutcomeItem, PrimaryReportSectionItem, \
-    TeacherAssignmentItem, PrimaryStudentAbsences
+    TeacherAssignmentItem, PrimaryStudentAbsences, \
+    SecHRItem
 from portal.db import \
     Database, DBSession
 
@@ -21,6 +22,10 @@ import scrapy
 from scrapy import log
 import gns
 
+"""
+FIXME: ClassLevelManageBac is actually a useful thing that allows me to cyle through things depending on data in database
+But that involves a bunch of variable and method changes: class_id, current_class_id, etc
+"""
 
 class ClassLevelManageBac(ManageBacLogin):
     """
@@ -75,6 +80,52 @@ class ClassLevelManageBac(ManageBacLogin):
 
     def error_parsing(self, response):
         self.warning("OOOOOOHHHHHH NOOOOOOOOO")
+
+class SecondaryHomeroomAdvisors(ClassLevelManageBac):
+    name = "SecondaryHomeroomAdvisors"
+    path = "/groups/{}/assign_homeroom_advisors"
+
+    def path_to_url(self):
+        return super(ClassLevelManageBac, self).path_to_url(self.path.format(self.class_id))
+
+    def _initial_query(self):
+        rows = self.db.get_rows_in_table('IB_Group')
+        return [s.id for s in rows]
+
+    def secondary_homeroom_advisors(self):
+        self.next()
+        if self.current_course_id:
+            request = scrapy.Request(
+                url=self.path_to_url(), 
+                callback=self.parse_items,
+                errback=self.error_parsing,
+                dont_filter=True
+                )
+            yield request
+
+    def parse_items(self, response):
+        data = response.xpath('//tbody[@class="data"]')
+        for row in data.xpath('./tr'):
+            student = row.xpath('./td[1]/a/@href').extract()
+            if student:
+                student = student[0]
+                student_id = int(student.split('/')[-1])
+                #second
+            teacher = row.xpath('./td[2]/select/@id').extract()
+            if teacher:
+                teacher = teacher[0]
+                teacher_id = int(teacher.split('_')[1])
+            if not student or not teacher:
+                print('PROBLEM!')
+                continue
+
+            item = SecHRItem()
+            item['student_id'] = student_id
+            item['teacher_id'] = teacher_id
+            yield item
+
+        for item in self.secondary_homeroom_advisors():
+            yield item
 
 class ClassReports(ClassLevelManageBac):
     #name = 'no name because I don't want this to run separetly'

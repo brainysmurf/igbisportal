@@ -26,4 +26,5 @@ ITEM_PIPELINES = {
 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.PYPClassReportsPipline': 3,
 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.PYPTeacherAssignments': 4,
 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.PYPStudentAttendance': 5,
+ 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.SecHRPipeline': 6,
 	}
