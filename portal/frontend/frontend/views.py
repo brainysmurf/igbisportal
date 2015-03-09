@@ -69,6 +69,8 @@ def session_user(request):
 
     if result.status_code == 200:
         items = result.json()
+        if not items:
+            return dict(message="Got 200 from googleapi but no 'items'?")
     elif result.status_code == 403:
         return dict(message="Insufficient permissions")
     elif result.status_code == 401:
