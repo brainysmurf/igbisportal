@@ -79,12 +79,12 @@ def session_user(request):
         return dict(message="Error: {}".format(result.status_code))
 
     user_email = None
-    for item in items.get('emails'):
+    for item in items.get('emails', []):
         if item.get('type') == 'account':
             user_email = item.get('value')
 
     if not user_email:
-        return dict(message="Error: No user email detected?")
+        return dict(message="Error: No user email detected?\n"+ str(items))
 
     user = None
     with DBSession() as session:
