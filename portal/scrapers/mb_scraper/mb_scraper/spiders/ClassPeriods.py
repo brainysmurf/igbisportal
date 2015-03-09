@@ -111,10 +111,10 @@ class SecondaryHomeroomAdvisors(ClassLevelManageBac):
                 student = student[0]
                 student_id = int(student.split('/')[-1])
                 #second
-            teacher = row.xpath('./td[2]/select/@id').extract()
+            teacher = row.xpath('./td[2]/select/option[@selected="selected"]/@value').extract()
             if teacher:
                 teacher = teacher[0]
-                teacher_id = int(teacher.split('_')[1])
+                teacher_id = int(teacher)
             if not student or not teacher:
                 print('PROBLEM!')
                 continue
@@ -122,6 +122,7 @@ class SecondaryHomeroomAdvisors(ClassLevelManageBac):
             item = SecHRItem()
             item['student_id'] = student_id
             item['teacher_id'] = teacher_id
+
             yield item
 
         for item in self.secondary_homeroom_advisors():

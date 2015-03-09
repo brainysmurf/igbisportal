@@ -16,7 +16,7 @@ from sqlalchemy.orm import joinedload, joinedload_all
 from portal.db import Database, DBSession
 db = Database()
 
-import json, re
+import json, re, uuid
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 
@@ -36,10 +36,13 @@ class ReportIncomplete(Exception):
 
 Students = db.table_string_to_class('student')
 Teachers = db.table_string_to_class('advisor')
+Enrollments = db.table_string_to_class('enrollment')
+Assignments = db.table_string_to_class('assignment')
 ReportComments = db.table_string_to_class('report_comments')
 PrimaryReport = db.table_string_to_class('primary_report')
 Courses = db.table_string_to_class('course')
 Absences = db.table_string_to_class('PrimaryStudentAbsences')
+HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 
 @view_config(route_name="signin", renderer="templates/login.pt")
 def signin(request):
@@ -53,6 +56,9 @@ def session_user(request):
     """
     Put the user in the session
     """
+    if 'mb_user' in request.session and request.session['mb_user']:
+        return dict(message="Already got user!")
+
     if not hasattr(request, 'session') or 'credentials' not in request.session:
         return dict(message="session_user called before session info, you need to use signinCallback (or equiv code) first")
 
@@ -161,6 +167,42 @@ def signinCallback(request):
             return dict(message="Forbidden: {}".format(result.status_code))
         else:
            return dict(message="Error: {}".format(result.status_code))
+
+# @view_config(route_name="gd_starred", renderer='json')
+# def gd_starred(request):
+#     pass
+
+@view_config(route_name="mb_homeroom", renderer="json")
+def mb_homeroom(request):
+    user = request.session.get('mb_user')
+    if not user:
+        return dict(message="No user in session?", data=[])
+    if user.type != 'Advisors':
+        return dict(message="Not a teacher", data=[])
+    data = []
+    with DBSession() as session:
+        records = session.query(HRTeachers).filter_by(teacher_id=user.id).all()
+        if not records:
+            return dict(message="This teacher wasn't found in the HR teacher table", data=[])
+        for record in records:
+            try:
+                student = session.query(Students).filter_by(id=record.student_id).one()
+            except NoResultFound:
+                continue
+            try:
+                teachers = session.query(Teachers.email).\
+                    select_from(Students).\
+                        join(Enrollments, Enrollments.c.student_id == record.student_id).\
+                        join(Courses, Courses.id == Enrollments.c.course_id).\
+                        join(Assignments, Assignments.c.course_id == Courses.id).\
+                        join(Teachers, Teachers.id == Assignments.c.teacher_id).\
+                            all()
+            except NoResultFound:
+                continue
+
+            teacher_emails = ",".join(set([t.email for t in teachers]))
+            data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
+    return dict(message="Success", data=data)
 
 @view_config(route_name="mb_courses", renderer='json')
 def mb_courses(request):
@@ -325,8 +367,7 @@ stndrdbttns = [
             menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
             menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
             menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high"),
-            menu_separator(),
-            menu_item(icon="star", display='Britannica Login (?)', url="school.eb.com.au/storeschoolcard?id=igb")
+            menu_placeholder('gd_starred')
         ],
         }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
@@ -334,55 +375,69 @@ stndrdbttns = [
 
 @view_config(route_name='splash', renderer='templates/splash.pt')
 def splash(request):
-    import uuid
-    unique = uuid.uuid4()  # random
-    request.session['unique_id'] = str(unique)
+    if not 'mb_user' in request.session:
+        unique = uuid.uuid4()  # random
+        request.session['unique_id'] = str(unique)
+    else:
+        unique = '0000'
 
     role = request.GET.get('role', 'student')
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
-            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-            button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
-            ]
-        )
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+    ])
+
     teacher_buttons = stndrdbttns[:]
     teacher_buttons.extend([
-            button(name="Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", 
-            context_menu={
-            'items': [
-                menu_item(icon="rocket", display="Current Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/current-activities"),
-                menu_item(icon="plus-circle", display="Sign-up", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up"),
-                menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
-            ]
-        }),
-            button(name="Hapara Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
-            button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
-            context_menu={
-            'items': [
-                menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
-                menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
-                menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
-            ],
-        }),
-            button(name="Secondary Principal", icon="trophy", url="", 
-            context_menu={
-            'items': [
-                menu_item(icon="warning", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
-                menu_item(icon="pencil", display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
-            ],
-        }),
-            button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu=None),
-            button(name="Book Geoff", url="https://geoffreyderry.youcanbook.me/", icon="thumb-tack", context_menu=None),
-            button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
-            button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", 
-            context_menu={
-            'items': [
-                menu_item(icon="external-link-square", display="Make sharable link", url="/brainpop"),
-            ]
-            }),
-            button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
-            ]
-        )
+        button(name="Your Homeroom", url="notsure", icon="cube", 
+        context_menu={
+        'items': [
+            menu_placeholder("mb_homeroom"),
+        ]}),
+
+        button(name="Communications", url="dunno", icon="comments",
+        context_menu={
+        'items': [
+            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/things-to-do-in-kl")
+        ]}),
+
+        button(name="Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", 
+        context_menu={
+        'items': [
+            menu_item(icon="rocket", display="Current Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/current-activities"),
+            menu_item(icon="plus-circle", display="Sign-up", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up"),
+            menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
+        ]}),
+
+        button(name="Hapara Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
+        button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
+        context_menu={
+        'items': [
+            menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
+            menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
+            menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
+        ]}),
+
+        button(name="Secondary Principal", icon="trophy", url="", 
+        context_menu={
+        'items': [
+            menu_item(icon="warning", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
+            menu_item(icon="pencil", display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
+        ]}),
+
+        button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu=None),
+        button(name="Book Geoff", url="https://geoffreyderry.youcanbook.me/", icon="thumb-tack", context_menu=None),
+        button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", 
+        context_menu={
+        'items': [
+            menu_item(icon="external-link-square", display="Make sharable link", url="/brainpop"),
+        ]}),
+
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+    ])
+
     buttons = OrderedDict()
     buttons['Teachers'] = teacher_buttons
     buttons['Students'] = student_buttons

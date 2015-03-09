@@ -91,13 +91,14 @@ $("input[name=icon_size]:radio").change(function () {
 
 <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
 
+<!-- 
 <script type="text/javascript">    
     new jBox('Notice', {
         content: 'New: Google login, and more features!',
         color: 'blue'
     });
 </script>
-
+-->
 
 
 <tal:block tal:repeat="key buttons" tal:condition="buttons">
@@ -188,7 +189,6 @@ $("input[name=icon_size]:radio").change(function () {
       url: 'mb_courses',
       contentType: 'application/json; charset=utf-8',
       success: function(result) {
-        console.log(result);
         var link_list = "<li><hr /></li>";
         for (i=0; i < result.data.length; i++) {
           if (result.data[i].shortname != null) {
@@ -197,8 +197,20 @@ $("input[name=icon_size]:radio").change(function () {
         }
         $('#mb_classes').parent().replaceWith(link_list);
       }
-    })
-    console.log('here');
+    });
+
+    $.ajax({
+      type:'POST',
+      url: 'mb_homeroom',
+      contentType: 'application/json; charset=utf-8',
+      success: function(result) {
+        var link_list = "";
+        for (i=0; i < result.data.length; i++) {
+          link_list += '<li><a href="mailto:' + result.data[i].student_email + '"><i class="fa fa-envelope"></i>&nbsp;' + result.data[i].student_name + '</a></li>';
+        }
+        $('#mb_homeroom').parent().replaceWith(link_list);
+      }
+    });
   }
   </script>
 

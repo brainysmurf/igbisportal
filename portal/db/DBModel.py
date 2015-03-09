@@ -20,7 +20,7 @@ from sqlalchemy.orm import relationship, backref
 """
 Klunky, but lets me debug quickly
 """
-PREFIX = ''
+PREFIX = 'new_'
 USERS = "{}users".format(PREFIX)
 STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)
@@ -53,7 +53,6 @@ class User(object):
 	"""
 	#__tablename__ = USERS
 
-	id = Column(BigInteger, primary_key=True)
 	type = Column(String(255), nullable=True, server_default=None)
 
 	first_name = Column(String(255), nullable=True, server_default=None)
@@ -89,7 +88,7 @@ Many to many relationships need an association table, this is it for parent/chil
 ParentChildren = Table(
 	PARENTCHILDREN, Base.metadata,
 	Column('parent_id', BigInteger, ForeignKey(PARENTS+'.id'), primary_key=True),
-	Column('student_id', String(255), ForeignKey(STUDENTS+'.student_id'), primary_key=True)
+	Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
 	)
 
 """
@@ -108,7 +107,7 @@ Many to many relationships need an association table, this is it for student/cou
 Enrollment = Table(
 	ENROLLMENT, Base.metadata,
 	Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
-	Column('student_id', String(255), ForeignKey(STUDENTS+'.student_id'), primary_key=True)
+	Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
 	)
 
 """
@@ -118,7 +117,7 @@ TODO: Wait, can a user be a member of only one IB Group?
 IBGroupMembership = Table(
 	IBGROUPSMEMBERSHIP, Base.metadata,
 	Column('ib_group_id', BigInteger, ForeignKey(IBGROUPS+'.id'), primary_key=True),
-	Column('student_id', String(255), ForeignKey(STUDENTS+'.student_id'), primary_key=True)
+	Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
 	)
 
 
@@ -128,7 +127,9 @@ class Student(Base, User):
 	"""
 	__tablename__ = STUDENTS
 
-	student_id = Column(String(255), nullable=True, unique=True, server_default=None)
+	id = Column(BigInteger, primary_key=True)
+
+	student_id = Column(String(255), nullable=True, server_default=None)
 	program = Column(String(255), nullable=True, server_default=None)
 	class_year = Column(Integer, nullable=True, server_default=None)
 	email = Column(String(255), nullable=True, server_default=None)
@@ -155,6 +156,7 @@ class Parent(Base, User):
 	__tablename__ = PARENTS
 
 	id = Column(BigInteger, primary_key=True)
+
 	nickname = Column(String(255), nullable=True, server_default=None)
 	salutation = Column(String(255), nullable=True, server_default=None)
 
@@ -182,6 +184,7 @@ class Advisor(Base, User):
 	__tablename__ = ADVISORS
 
 	id = Column(BigInteger, primary_key=True)
+
 	first_name = Column(String(255), nullable=True, server_default=None)
 	last_name = Column(String(255), nullable=True, server_default=None)
 	national_id = Column(String(255), nullable=True, server_default=None)
