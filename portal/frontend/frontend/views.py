@@ -471,7 +471,7 @@ def splash(request):
         button(name="Communications", url="dunno", icon="comments",
         context_menu={
         'items': [
-            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/things-to-do-in-kl"),
+            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
             menu_placeholder('mb_grade_teachers')
         ]}),
 
@@ -521,6 +521,8 @@ def splash(request):
     buttons = OrderedDict()
     buttons['Teachers'] = teacher_buttons
     buttons['Students'] = student_buttons
+    #buttons['Settings'] = settings_buttons
+
     return dict(
         client_id=gns.settings.client_id,
         unique=unique,
