@@ -424,7 +424,7 @@ stndrdbttns = [
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
 ]
 
-@view_config(route_name='splash', renderer='templates/splash.pt')
+@view_config(route_name='splash', renderer='templates/splash.pt', http_cache=0)
 def splash(request):
     if not 'mb_user' in request.session:
         unique = uuid.uuid4()  # random
