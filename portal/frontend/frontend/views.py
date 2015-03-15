@@ -17,6 +17,7 @@ from portal.db import Database, DBSession
 db = Database()
 
 import json, re, uuid
+from collections import defaultdict
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 
@@ -43,6 +44,7 @@ PrimaryReport = db.table_string_to_class('primary_report')
 Courses = db.table_string_to_class('course')
 Absences = db.table_string_to_class('PrimaryStudentAbsences')
 HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
+GSignIn = db.table_string_to_class('google_sign_in')
 
 @view_config(route_name="signin", renderer="templates/login.pt")
 def signin(request):
@@ -54,7 +56,7 @@ def signin(request):
 @view_config(route_name="session_user", renderer="json")
 def session_user(request):
     """
-    Put the user in the session
+    Converts the credentials to a database user
     """
     if 'mb_user' in request.session and request.session['mb_user']:
         return dict(message="Already got user!")
@@ -63,25 +65,9 @@ def session_user(request):
         return dict(message="session_user called before session info, you need to use signinCallback (or equiv code) first")
 
     credentials = request.session['credentials']
+    user_email = credentials.id_token.get('email')
+
     access_token = credentials.access_token
-    url = 'https://www.googleapis.com/plus/v1/people/me?access_token={}'.format(access_token)
-    result = requests.get(url)
-
-    if result.status_code == 200:
-        items = result.json()
-        if not items:
-            return dict(message="Got 200 from googleapi but no 'items'?")
-    elif result.status_code == 403:
-        return dict(message="Insufficient permissions")
-    elif result.status_code == 401:
-        return dict(message="Permission denied when making API call...")
-    else: 
-        return dict(message="Error: {}".format(result.status_code))
-
-    user_email = None
-    for item in items.get('emails', []):
-        if item.get('type') == 'account':
-            user_email = item.get('value')
 
     if not user_email:
         return dict(message="Error: No user email detected?\n"+ str(items))
@@ -103,6 +89,69 @@ def session_user(request):
 
     return dict(message="User found on ManageBac")
 
+def credentials_flow(request, code):
+    try:
+        oauth_flow = \
+            flow_from_clientsecrets(
+                gns('{settings.home}/portal/frontend/client_secret.json'), 
+                scope="",
+                redirect_uri='postmessage'
+            )
+        oauth_flow.redirect_uris = 'postmessage'
+        credentials = oauth_flow.step2_exchange(code)
+    except FlowExchangeError:
+        return dict(message="Failed to upgrade the authorization code.")
+
+    # Ask Google for info
+    access_token = credentials.access_token
+    result = requests.get('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token))
+
+    if result.ok:
+        # No need:
+        # http://stackoverflow.com/questions/16747986/checking-the-user-id-in-a-tokeninfo-response-with-token-received-from-the-googl
+        # if result.json()['user_id'] != gplus_id:
+        #     return dict(message="Token's user ID doesn't match given ID")
+
+        result_json = result.json()
+
+        if 'issued_to' in result_json:
+            if result_json['issued_to'] != gns.settings.client_id:
+                return dict(message='Token does not match application')
+        else:
+            print('no issued_to in result after API call??')
+
+        stored_credentials = request.session.get('credentials')
+
+        if stored_credentials is not None:
+            return dict(message="Current user is already connected")
+
+        request.session['credentials'] = credentials
+        unique_id = credentials.id_token['sub']  # guaranteed to exist and to be unique
+
+        with DBSession() as session:
+            try:
+                exists = session.query(GSignIn).filter_by(unique_id=unique_id).one()
+                if exists:
+                    # update it!
+                    exists.access_token = credentials.access_token
+                    exists.refresh_token = crednetials.refresh_token
+
+            except NoResultFound:
+                sign_in = GSignIn(
+                    unique_id=credentials.id_token['sub'],  # always unique
+                    auth_code=code,
+                    access_token=credentials.access_token,
+                    refresh_token=credentials.refresh_token,
+                )
+                session.add(sign_in)
+
+        return HTTPFound(location="session_user")
+
+    elif result.status_code == 403:
+        return dict(message="Forbidden: {}".format(result.status_code))
+    else:
+       return dict(message="Error: {}".format(result.status_code))    
+
 @view_config(route_name="signinCallback", renderer="json")
 def signinCallback(request):
     """
@@ -119,60 +168,58 @@ def signinCallback(request):
     except KeyError:
         return dict(message="no unique_id?")
 
-    if unique != session_unique:
-        return dict(message="uniques didn't match!")
-    else:
+    if unique == session_unique:
 
+        auth_object = request.json['authResult']
         code = request.json['code']
 
-        try:
-            oauth_flow = \
-                flow_from_clientsecrets(
-                    gns('{settings.home}/portal/frontend/client_secret.json'), 
-                    scope="",
-                    redirect_uri='postmessage'
-                )
-            oauth_flow.redirect_uris = 'postmessage'
-            credentials = oauth_flow.step2_exchange(code)
-        except FlowExchangeError:
-            return dict(message="Failed to upgrade the authorization code.")
+        if auth_object['status']['signed_in']:
 
-        # Ask Google for info
-        access_token = credentials.access_token
-        result = requests.get('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token))
-    
-        if result.status_code == 200:
-            # No need:
-            # http://stackoverflow.com/questions/16747986/checking-the-user-id-in-a-tokeninfo-response-with-token-received-from-the-googl
-            # if result.json()['user_id'] != gplus_id:
-            #     return dict(message="Token's user ID doesn't match given ID")
+            if request.session.get('mb_user'):
+                return dict(message="User already in session! Woohoo!")
 
-            result_json = result.json()
+            if request.session.get('credentials'):
+                return HTTPFound(location="session_user")
+            
+            return credentials_flow(request, code) 
 
-            if 'issued_to' in result_json:
-                if result_json['issued_to'] != gns.settings.client_id:
-                    return dict(message='Token does not match application')
-            else:
-                print('no issued_to in result after API call??')
+        return credentials_flow(request, code)
 
-            stored_credentials = request.session.get('credentials')
-            stored_gplus_id = request.session.get('gplus_id')
+    return dict(message="Uniques don't match, which happens on reloads")
 
-            if stored_credentials is not None:
-                return dict(message="Current user is already connected")
-
-            request.session['credentials'] = credentials
-    
-            return dict(message="worked!")
-
-        elif result.status_code == 403:
-            return dict(message="Forbidden: {}".format(result.status_code))
-        else:
-           return dict(message="Error: {}".format(result.status_code))
 
 # @view_config(route_name="gd_starred", renderer='json')
 # def gd_starred(request):
 #     pass
+@view_config(route_name="mb_grade_teachers", renderer="json")
+def mb_grade_teachers(request):
+    user = request.session.get('mb_user')
+    if not user:
+        return dict(message="No user in session?", data=[])
+    if user.type != 'Advisors':
+        return dict(message="Not a teacher", data=[])
+
+    raw_data = defaultdict(list)
+    with DBSession() as session:
+        records = session.query(Teachers).options(joinedload('classes')).all()
+        for record in records:
+            for course in record.classes:
+                g = re.sub('[^0-9]', '', course.grade)
+                if not g:
+                    continue
+                grade = int(g)
+                if grade < 6:
+                    continue
+                raw_data[grade].append(record.email)
+
+    data = []
+    # Convert keys to integers, and sort by that
+    for grade in raw_data:
+        teacher_emails = ",".join(set(raw_data[grade]))
+        data.append(dict(grade=grade, teacher_emails=teacher_emails))
+
+    return dict(message="Success!", data=data)
+
 
 @view_config(route_name="mb_homeroom", renderer="json")
 def mb_homeroom(request):
@@ -185,7 +232,7 @@ def mb_homeroom(request):
     with DBSession() as session:
         records = session.query(HRTeachers).filter_by(teacher_id=user.id).all()
         if not records:
-            return dict(message="This teacher wasn't found in the HR teacher table", data=[])
+            return dict(message="This teacher was not found in the HR teacher table", data=[])
         for record in records:
             try:
                 student = session.query(Students).filter_by(id=record.student_id).one()
@@ -347,7 +394,7 @@ stndrdbttns = [
     button(name="Gmail", url="https://gmail.com", icon="envelope", 
         context_menu={
         'items': [
-            menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new")
+            menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
         ]
         }),
     button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
@@ -391,17 +438,39 @@ def splash(request):
     ])
 
     teacher_buttons = stndrdbttns[:]
+
+    with DBSession() as session:
+        hroom_teachers = session.query(Teachers.email, Students.class_year).\
+            join(HRTeachers, HRTeachers.teacher_id == Teachers.id).\
+            join(Students, Students.id == HRTeachers.student_id).\
+            all()
+
+        homeroom_teachers = defaultdict(list)
+        for item in hroom_teachers:
+            if item.class_year and int(item.class_year) >= 6:
+                grade = int(item.class_year) - 1
+                if not item.email in homeroom_teachers[grade]:
+                    homeroom_teachers[grade].append(item.email)
+
+    homeroom_items = []
+    for grade in sorted(homeroom_teachers):
+        these_teachers = homeroom_teachers[grade]
+        hroom_emails = ",".join(these_teachers)
+        base_display = "Grade {{}} HR {}"
+        display = base_display.format("Teachers" if len(these_teachers) > 1 else "Teacher")
+        homeroom_items.append(menu_item(icon="envelope", display=display.format(grade), url="mailto:{}".format(hroom_emails)))
+    homeroom_items.append(menu_placeholder("mb_homeroom"))
+
     teacher_buttons.extend([
-        button(name="Your Homeroom", url="notsure", icon="cube", 
+        button(name="Homeroom", url="notsure", icon="cube", 
         context_menu={
-        'items': [
-            menu_placeholder("mb_homeroom"),
-        ]}),
+        'items': homeroom_items}),
 
         button(name="Communications", url="dunno", icon="comments",
         context_menu={
         'items': [
-            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/things-to-do-in-kl")
+            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/things-to-do-in-kl"),
+            menu_placeholder('mb_grade_teachers')
         ]}),
 
         button(name="Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", 
@@ -428,7 +497,10 @@ def splash(request):
             menu_item(icon="pencil", display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
         ]}),
 
-        button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu=None),
+        button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu={
+        'items':[
+            menu_item(icon="gear", display="ATL on the OCC", url="https://xmltwo.ibo.org/publications/DP/Group0/d_0_dpatl_gui_1502_1/static/dpatl/"),
+        ]}),
         button(name="IT Integration", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", context_menu={
         'items': [
             menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),

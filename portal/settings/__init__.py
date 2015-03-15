@@ -97,7 +97,7 @@ import datetime
 path_to_logging += str(datetime.datetime.now().isoformat())
 logging.basicConfig(filename=path_to_logging, filemode='a+', level=numeric_level)
 
-if sys.stdout.isatty():
+if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
     # running with an attached terminal, automatically
     # set stdout debugging to full verbosity
     root = logging.getLogger()

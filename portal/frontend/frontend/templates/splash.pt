@@ -10,20 +10,18 @@
 </head>
 <body>
 
-
-
 <div id="wrapper">
     <div id="signinButton" style="float:right;">
       <!-- data-approvalprompt="force" -->
       <span style="float:right;" class="g-signin"
-        data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.login"
+        data-scope="openid profile https://www.googleapis.com/auth/plus.login"
         data-clientid="${client_id}"
         data-redirecturi="postmessage"
         data-accesstype="offline"
         data-origin="${data_origin}"
         data-cookiepolicy="single_host_origin"
         data-callback="signInCallback"
-        data-approvalprompt="force">
+        >
       </span>
     </div>
 
@@ -143,37 +141,29 @@ $("input[name=icon_size]:radio").change(function () {
 
   <script>
   function signInCallback(authResult) {
+    delete authResult['g-oauth-window'];  // it took me forever to find this
+    //http://stackoverflow.com/questions/25065194/google-sign-in-uncaught-securityerror
+    // It's started happening when I serialized the entire authResult object, could just send what I need...
+
+    console.log(authResult); 
+  
     if (authResult['code']) {
 
       // Hide the sign-in button now that the user is authorized, for example:
-      //$('#signinButton').attr('style', 'display: none');
+      $('#signinButton').attr('style', 'display: none');
 
       // Send the code to the server
-      console.log(authResult);
 
       $.ajax({
         type: 'POST',
         url: 'signinCallback?' + '${unique}',
         contentType: 'application/json; charset=utf-8',
         success: function(result) {
-          // Handle or verify the server response if necessary.
-
-          // Prints the list of people that the user has allowed the app to know
-          // to the console.
-
-          //console.log(result);
-          $.ajax({
-            type: 'POST',
-            url: 'session_user',
-            contentType: 'application/json; charset=utf-8',
-            success: function(result) {
-              console.log(result);
-              do_update();
-            }
-          })
-        },
-          processData: false,
-        data: JSON.stringify({'code':authResult['code']})
+            console.log('Callback returned');
+            console.log(result);
+            do_update();
+          },
+        data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
         });
     } else if (authResult['error']) {
       // There was an error.
@@ -190,7 +180,7 @@ $("input[name=icon_size]:radio").change(function () {
       url: 'mb_courses',
       contentType: 'application/json; charset=utf-8',
       success: function(result) {
-        var link_list = "<li><hr /></li>";
+        var link_list = '<li><hr /></li><li class="button_sub_heading">Your courses:</li>';
         for (i=0; i < result.data.length; i++) {
           if (result.data[i].shortname != null) {
             link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '"><i class="fa fa-chevron-circle-right fa-fw"></i>&nbsp;' + result.data[i].shortname + '</a></li>';
@@ -205,11 +195,25 @@ $("input[name=icon_size]:radio").change(function () {
       url: 'mb_homeroom',
       contentType: 'application/json; charset=utf-8',
       success: function(result) {
-        var link_list = "";
+        var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
         for (i=0; i < result.data.length; i++) {
           link_list += '<li><a href="mailto:' + result.data[i].student_email + '"><i class="fa fa-envelope"></i>&nbsp;' + result.data[i].student_name + '</a></li>';
         }
         $('#mb_homeroom').parent().replaceWith(link_list);
+      }
+    });
+
+    $.ajax({
+      type:'POST',
+      url: 'mb_grade_teachers',
+      contentType: 'application/json; charset=utf-8',
+      success: function(result) {
+        var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
+        for (i=0; i < result.data.length; i++) {
+          link_list += '<li><a href="mailto:' + result.data[i].teacher_emails + '"><i class="fa fa-envelope"></i>&nbsp; Grade ' + result.data[i].grade + '</a></li>';
+        }
+
+        $('#mb_grade_teachers').parent().replaceWith(link_list);
       }
     });
   }

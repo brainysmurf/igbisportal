@@ -45,6 +45,13 @@ p {
     margin-left:20px;
 }
 
+.button_sub_heading {
+    font-size: 8pt;
+    color: #424242;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
 .button {
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
     -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;

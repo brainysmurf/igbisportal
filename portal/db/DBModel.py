@@ -175,7 +175,6 @@ class Parent(Base, User):
 	work_state = Column(String(255), nullable=True, server_default=None)
 	work_zipcode = Column(String(255), nullable=True, server_default=None)
 
-
 class Advisor(Base, User):
 	"""
 	I am a teacher in ManageBac, obviously we call them advisors for legacy reasons
@@ -298,8 +297,6 @@ class AtlComments(Base):
 	selection = Column(Enum('EE', 'ME', 'AE', 'BE', name = 'selection'))
 
 
-
-
 class PrimaryReport(Base):
 	__tablename__ = PRIMARYREPORT
 
@@ -379,3 +376,13 @@ class PrimaryStudentAbsences(Base):
 	term_id = Column(ForeignKey(TERMS + '.id'))
 	absences = Column(Integer, nullable=True, server_default=None)
 	total_days = Column(Integer, nullable=True, server_default=None)
+
+class GoogleSignIn(Base):
+	__tablename__ = "GoogleSignIn"   # NOT based on the prefix...
+
+	id = Column(BigInteger, primary_key=True)
+	unique_id = Column(String(1000), nullable=True, server_default=None)
+	auth_code = Column(String(255), nullable=True, server_default=None)
+	access_token = Column(String(255), nullable=True, server_default=None)
+	refresh_token = Column(String(255), nullable=True, server_default=None)
+
