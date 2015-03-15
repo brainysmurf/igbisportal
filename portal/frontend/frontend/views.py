@@ -70,7 +70,7 @@ def session_user(request):
     access_token = credentials.access_token
 
     if not user_email:
-        return dict(message="Error: No user email detected?\n"+ str(items))
+        return dict(message="Error: No user email detected?\n{}".format(str(credentials.id_token)))
 
     user = None
     with DBSession() as session:
