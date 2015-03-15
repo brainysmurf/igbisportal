@@ -14,7 +14,7 @@
     <div id="signinButton" style="float:right;">
       <!-- data-approvalprompt="force" -->
       <span style="float:right;" class="g-signin"
-        data-scope="email profile https://www.googleapis.com/auth/plus.login"
+        data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
         data-clientid="${client_id}"
         data-redirecturi="postmessage"
         data-accesstype="offline"
