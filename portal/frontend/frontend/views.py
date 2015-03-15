@@ -133,8 +133,10 @@ def credentials_flow(request, code):
                 exists = session.query(GSignIn).filter_by(unique_id=unique_id).one()
                 if exists:
                     # update it!
-                    exists.access_token = credentials.access_token
-                    exists.refresh_token = crednetials.refresh_token
+                    if exists.access_token != credentials.access_token:
+                        exists.access_token = credentials.access_token
+                    if exists.refresh_token != credentials.refresh_token:
+                        exists.refresh_token = credentials.refresh_token
 
             except NoResultFound:
                 sign_in = GSignIn(
