@@ -171,6 +171,8 @@ $("input[name=icon_size]:radio").change(function () {
       //   "access_denied" - User denied access to your app
       //   "immediate_failed" - Could not automatially log in the user
       console.log('There was an error: ' + authResult['error']);
+      // do this just in case we have the user anyway
+      do_update();
     }
   }
 
