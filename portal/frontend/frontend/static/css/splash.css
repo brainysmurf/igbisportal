@@ -26,12 +26,11 @@ p {
 
 #wrapper {
     margin: 0 auto;
-    width: 1100px;
+    width: 100%;
 }
 
 #contentwrap {
-    width: 1000;
-    float: left;
+    width: 95%;
     margin: 0 auto;
     margin-top: 45px;
 }
@@ -52,7 +51,30 @@ p {
     margin-top: 5px;
 }
 
-.button {
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+
+.ui-button-text {
+    color: #555;
+}
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+    border: 1px solid #555;
+    background: #eee;
+}
+
+.ui-dialog-titlebar {
+    background: #555;
+    border: 1px solid #555;
+}
+
+.splash_button {
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
     -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
     box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -80,7 +102,7 @@ p {
     font-size:14px;
     font-weight:bold;
     font-style:normal;
-    height:100px;
+    height:110px;
     width:140px;
     line-height:25px;
     text-decoration:none;
@@ -91,14 +113,14 @@ p {
     margin-right:20px;
     margin-bottom:50px;
 }
-.button:hover {
+.splash_button:hover {
     background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
     background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
     background-color:#dfdfdf;
 }
 
-.button:active {
+.splash_button:active {
     position:relative;
     top:1px;
 }
@@ -111,10 +133,10 @@ p {
     height:70px;
     width:100px;
 
-    margin-left: 20px;
-    margin-right:10px;
+    margin-left: 10px;
+    margin-right:5px;
     margin-bottom:20px;
-
+    padding-bottom:0px;
 }
 
 /*.skin5.top .tabs_header {

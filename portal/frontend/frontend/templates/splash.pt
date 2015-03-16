@@ -4,21 +4,33 @@
   <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
   <title>${title}</title>
 
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
+
+  <!-- Bootstrap stuff 
+  <link rel="stylesheet" type="text/css" href="${static_url}bootstrap/css/bootstrap.min.css" />
+  <script src="${static_url}bootstrap/js/bootstrap.min.js"></script>
+-->
+  <link rel="stylesheet" type="text/css" href="${static_url}jquery-ui/jquery-ui.min.css" />
   <link rel="stylesheet" type="text/css" href="http://code.jboxcdn.com/0.3.2/jBox.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+  <!-- Launch Google Signin procedures, use defer  -->
   <script src="https://apis.google.com/js/client:platform.js?onload=start" defer></script>
+
+
 </head>
 <body>
 
 <div id="wrapper">
-    <div id="signinButton" style="height:36px;float:right;">
+    <div id="signinButton" style="height:36px;">
       <!-- 
         data-approvalprompt="force" 
         https://developers.google.com/+/web/signin/reference 
       -->
-      <div style="height:200px;float:right;display:block;" class="g-signin"
+      <div style="height:200px;" class="g-signin"
         data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
         data-clientid="${client_id}"
         data-redirecturi="postmessage"
@@ -31,17 +43,19 @@
       </div>
     </div>
 
+    <div id="settings_dialog" style="display:none;">
+      <br />I prefer:<br /><br />
+       <form id="icon_size_form">
+        <input type="radio" name="icon_size" id="larger_icons" value="+1" checked>Larger Icons (with title)<br />
+        <input type="radio" name="icon_size" id="smaller_icons" value="-1">Smaller Icons (without title)<br />
+       </form>
+    </div>
 
     <div id="contentwrap">
 <!--       <img src="${static_url}header.png" width="1100px" /> -->
       <div class="tabs_holder">
  
       <!-- This is the change icon size -->
-       <form id="icon_size_form">
-        <input type="radio" name="icon_size" id="larger_icons" value="+1" checked>Larger Icons
-        <input type="radio" name="icon_size" id="smaller_icons" value="-1">Smaller Icons
-
-       </form>
 
       <!-- This is the tabs -->
        <ul>
@@ -55,12 +69,12 @@
           <div id="content">
            <p>
             <tal:block tal:define="items buttons[key]" tal:repeat="button items">
-              <div tal:define="global counter counter+1"  id="button_${counter}" class="button">
+              <button tal:define="global counter counter+1"  id="button_${counter}" class="splash_button">
                 <a href="${button.url}">
                     <div><i class="fa fa-${button.icon} fa-5x"></i></div>
                     ${button.name}
                 </a>
-              </div>
+              </button>
             </tal:block>
            </p> 
          </div>  
@@ -70,9 +84,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
-<script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
 <script type="text/javascript">
   $('.tabs_holder').skinableTabs({
     skin: 'skin5',
@@ -85,11 +96,11 @@
 $("input[name=icon_size]:radio").change(function () {
       if ( $(this).val() == '+1' ) {
       
-        $(".button").toggleClass('smaller');
+        $(".splash_button").toggleClass('smaller');
 
       } else if ( $(this).val() == '-1' ) {
 
-        $(".button").toggleClass('smaller');
+        $(".splash_button").toggleClass('smaller');
 
       }
     });
@@ -157,12 +168,31 @@ $("input[name=icon_size]:radio").change(function () {
     if (authResult['code']) {
 
       // Hide the sign-in button now that the user is authorized, for example:
-      welcomeButton = '<div id="signinButton" style="float:right;height:31px;width:114px;margin-bottom:5px"><button style="background-color:#0266C8;color:#FFF;border-radius:0 3px 3px 0;line-height:18px;display:inline-block;height:31px;width:114px;"><i class="fa fa-check"></i>&nbsp;&nbsp;Logged in</button></div>';
+      welcomeButton = '<div id="signinButton" style="height:36px;width:114px;margin-bottom:5px;"><button style="cursor:pointer;background-color:#0266C8;color:#FFF;border-radius:0 3px 3px 0;line-height:18px;display:inline-block;height:31px;width:114px;"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button></div>';
+
+      settings_html = ''
+
       $('#signinButton').fadeOut("slow", function () {
+
           $(this).replaceWith(welcomeButton);
+          $('#signinButton').on('click', function () {
+            $('#settings_dialog').dialog({
+              dialogClass: "no-close",
+              resizeable: false,
+              model: true,
+              title: "Settings",
+              height: 250,
+              width: 400,
+              close: false,
+              buttons: {
+                "Done": function () {
+                  $(this).dialog('close');
+                }
+              }
+            });
+          });
           $('#signinButton').fadeIn("slow");
         });
-      // Send the code to the server
 
       $.ajax({
         type: 'POST',
