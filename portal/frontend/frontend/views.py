@@ -45,6 +45,7 @@ Courses = db.table_string_to_class('course')
 Absences = db.table_string_to_class('PrimaryStudentAbsences')
 HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 GSignIn = db.table_string_to_class('google_sign_in')
+UserSettings = db.table_string_to_class('user_settings')
 
 @view_config(route_name="signin", renderer="templates/login.pt")
 def signin(request):
@@ -85,7 +86,12 @@ def session_user(request):
         if not user:
             return dict(message="Error, could not find email {}".format(user_email))
 
+        unique_id = credentials.id_token['sub']
+        if user.g_plus_unique_id != unique_id:
+            user.g_plus_unique_id = unique_id
+
     request.session['mb_user'] = user
+    request.session['g_plus_unique_id'] = unique_id
 
     return dict(message="User found on ManageBac")
 
@@ -424,13 +430,42 @@ stndrdbttns = [
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
 ]
 
+@view_config(route_name='user_data', renderer='json', http_cache=0)
+def user_data(request):
+    if not 'mb_user' in request.session:
+        return dict(message="user_data: no user in sesssion")
+
+    user = request.session.get('mb_user')
+    return dict(message="success", data=user.first_name)
+
+@view_config(route_name='get_user_settings', renderer='json', http_cache=0)
+def get_user_settings(request):
+    if not 'g_plus_unique_id' in request.session:
+        return dict(message="get_user_settings: no user in sesssion")
+    settings = None
+    g_plus_unique_id = request.session.get('g_plus_unique_id')
+    if g_plus_unique_id:
+        with DBSession() as session:
+            try:
+                settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
+            except NoResultFound:
+                pass
+    else:
+        return dict(message="g_plus_unique_id not in session", data=settings)
+
+    data = {'icon_size':settings.icon_size}
+    return dict(message="success", data=data)
+
+
 @view_config(route_name='splash', renderer='templates/splash.pt', http_cache=0)
 def splash(request):
     if not 'mb_user' in request.session:
         unique = uuid.uuid4()  # random
         request.session['unique_id'] = str(unique)
+        user_name = None
     else:
-        unique = '0000'
+        user_name = request.session['mb_user'].first_name
+        unique = None
 
     role = request.GET.get('role', 'student')
     student_buttons = stndrdbttns[:]
@@ -461,6 +496,7 @@ def splash(request):
         base_display = "Grade {{}} HR {}"
         display = base_display.format("Teachers" if len(these_teachers) > 1 else "Teacher")
         homeroom_items.append(menu_item(icon="envelope", display=display.format(grade), url="mailto:{}".format(hroom_emails)))
+
     homeroom_items.append(menu_placeholder("mb_homeroom"))
 
     teacher_buttons.extend([
@@ -523,66 +559,45 @@ def splash(request):
     buttons['Students'] = student_buttons
     #buttons['Settings'] = settings_buttons
 
+    g_plus_unique_id = request.session.get('g_plus_unique_id')
+    settings = None
+    if g_plus_unique_id:
+        with DBSession() as session:
+            try:
+                settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
+            except NoResultFound:
+                pass
+
     return dict(
         client_id=gns.settings.client_id,
         unique=unique,
+        name=user_name,
         data_origin=gns.settings.data_origin,
         role=role,
-        title="[IGBIS] Splash",
+        title="IGBIS Splash Page",
         buttons = buttons,
+        settings = settings
     )
 
-@view_config(route_name='hourofcode', renderer='templates/hourofcode.pt')
-def hourofcode(request):
-    role = request.GET.get('role', 'student')
-    student_buttons = []
-    teacher_buttons = []
-    teacher_buttons.extend([
-            button(name="Program a Game", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="gamepad", 
-                context_menu={
-                'items': [
-                    menu_item(icon="dot-circle-o", display="Angry Birds", url="http://studio.code.org/s/course2/stage/3/puzzle/1"),
-                    menu_item(icon="dot-circle-o", display='Plants vs Zombies', url="http://studio.code.org/s/course3/stage/2/puzzle/1"),
-                    menu_separator(),
-                    menu_item(icon="dot-circle-o", display='More! More!', url="http://studio.code.org/"),
-                ]
-                }
-            ),
-            button(name="Design a World", url="#", icon="codepen",
-                context_menu={
-                'items': [
-                    menu_item(icon="dot-circle-o", display='Scratch Starter Projects', url="http://scratch.mit.edu/starter_projects/"),
-                    menu_item(icon="dot-circle-o", display="Start with Stratch Online", url="http://scratch.mit.edu/projects/editor/?tip_bar=getStarted"),
-                ]
-                }
-            ),
-            button(name="Fiddle with Code", url="#", icon="code",
-                context_menu={
-                'items': [
-                    menu_item(icon="dot-circle-o", display='Fiddle with a Website', url="http://jsfiddle.net/xpatm05k/"),
-                    menu_item(icon="dot-circle-o", display='Fiddle with Tic Tac Toe', url="http://jsfiddle.net/rtoal/5wKfF/"),
-                ]
-                }
-            ),
-            button(name="Learn More", url="#", icon="question-circle",
-                context_menu={
-                'items': [
-                    menu_item(icon="dot-circle-o", display='Introduction to Computer Science', url="http://www.brainpop.com/technology/computerscience/computerprogramming?user=igbisbrainpop&password=2014igbis"),
-                    menu_item(icon="dot-circle-o", display="Learn to Code a Website", url="http://www.codecademy.com/en/tracks/web"),
-                ]
-                }
-            ),
-            ]
-        )
-    buttons = OrderedDict()
-    buttons['Teachers'] = teacher_buttons
-    buttons['Students'] = student_buttons
-    return dict(
-        role=role, 
-        title="[IGBIS] Hour of Code",
-        buttons = buttons,
-    )
+@view_config(route_name='user_settings', renderer='json')
+def user_settings(request):
+    unique_id = request.session.get('g_plus_unique_id')
+    if not unique_id:
+        return dict(message="No unique_id in session")
 
+    icon_size = request.json.get('icon_size')
+    if icon_size:
+        with DBSession() as session:
+            try:
+                setting = session.query(UserSettings).filter_by(unique_id=unique_id).one()
+                if setting.icon_size != icon_size:
+                    setting.icon_size = icon_size
+                    return dict(message="Updated setting record to {}".format(setting.icon_size))
+                return dict(message="Message received but no need to update")
+            except NoResultFound:
+                new_setting = UserSettings(unique_id=unique_id, icon_size=icon_size)
+                session.add(new_setting)
+                return dict(message="Created new setting record in db")
 
 @view_config(route_name='reports_ind', renderer='templates/report_ind.pt')
 def reports_ind(request):

@@ -20,39 +20,168 @@
   <!-- Launch Google Signin procedures, use defer  -->
   <script src="https://apis.google.com/js/client:platform.js?onload=start" defer></script>
 
-
 </head>
 <body>
 
 <div id="wrapper">
-    <div id="signinButton" style="height:36px;">
-      <!-- 
-        data-approvalprompt="force" 
-        https://developers.google.com/+/web/signin/reference 
-      -->
-      <div style="height:200px;" class="g-signin"
-        data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
-        data-clientid="${client_id}"
-        data-redirecturi="postmessage"
-        data-accesstype="offline"
-        data-origin="${data_origin}"
-        data-cookiepolicy="single_host_origin"
-        data-callback="signInCallback"
-        data-height="standard"
-        >
-      </div>
+
+    <div class="contentwrap">
+        <div id="button_list" style="display:none;">
+            <button id="settingsButton" class="click_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>
+            <button id="userButton" class="click_button" ><i class="fa fa-user"></i>&nbsp;&nbsp;${name or "Logged in!"}</button>
+        </div>
+        <div class="clearfix"></div>
+
+      <div tal:condition="unique" id="signinButton" style="height:36px;">
+        <!-- 
+          data-approvalprompt="force" 
+          https://developers.google.com/+/web/signin/reference 
+        -->
+        <div id="button_list" style="float:right;">
+          <div id="userButton" style="height:200px;" class="g-signin"
+          data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
+          data-clientid="${client_id}"
+          data-redirecturi="postmessage"
+          data-accesstype="offline"
+          data-origin="${data_origin}"
+          data-cookiepolicy="single_host_origin"
+          data-callback="signInCallback"
+          data-height="standard"
+          >
+        </div></div>
+        <div class="clearfix"></div>
     </div>
 
-    <div id="settings_dialog" style="display:none;">
-      <br />I prefer:<br /><br />
+    <div id="settings_dialog" style="display:none;">      
        <form id="icon_size_form">
-        <input type="radio" name="icon_size" id="larger_icons" value="+1" checked>Larger Icons (with title)<br />
-        <input type="radio" name="icon_size" id="smaller_icons" value="-1">Smaller Icons (without title)<br />
+        <br /><strong>Button Size:</strong><br />
+        <input type="radio" name="icon_size" id="larger_icons" value="+1" ${'checked' if (settings and settings.icon_size == '+1') or not settings else ""} />
+        <label for="larger_icons">Larger Icons, with title</label><br />
+
+        <input type="radio" name="icon_size" id="smaller_icons" value="-1" ${'checked' if settings and settings.icon_size == '-1' else ""} />
+        <label for="smaller_icons">Smaller Icons, without title</label>
        </form>
     </div>
 
-    <div id="contentwrap">
-<!--       <img src="${static_url}header.png" width="1100px" /> -->
+  </div>
+
+    <div class="contentwrap">
+
+      <script>
+
+        // First check that the name has been placed, if not, do round-trip to the server
+
+        var jbox_array = [];
+
+        function do_settings_dialog() {
+
+          $('#settingsButton').on('click', function () {
+
+            jbox_array.forEach(function (item, index) { 
+              //console.log(jbox_array[index]);
+              //FIXME this doesn't actually work
+              jbox_array[index].disable();
+            });
+
+            $('#settings_dialog').dialog({
+              dialogClass: "no-close",
+              resizeable: false,
+              hide: "fold",
+              show: "fold",
+              model: true,
+              title: "Settings",
+              height: 250,
+              width: 400,
+              close: false,
+              buttons: {
+                "Done": function () { 
+                  $(this).dialog('close');
+                  //FIXME: check for disabled first?
+                  jbox_array.forEach(function (item, index) {
+                    jbox_array[index].enable();
+                  });
+                }
+              }
+            });
+
+
+          });
+        }
+
+        function do_update() {
+          // FIXME: 
+          // userText = $('#userButton').html();
+          // if (userText.indexOf('add_name_here') != -1) {
+          //   $.ajax({
+          //     type:'POST',
+          //     url: 'user_data',
+          //     contentType: 'application/json; charset=utf-8',
+          //     success: function(result) {
+          //         console.log(result);
+          //         userText.replace('add_name_here', result['data']);
+          //         console.log(userText);
+          //         $("#userButton").replaceWith(userText);
+          //       }
+          //   });
+          // }
+          console.log("Updating");
+
+          $.ajax({
+            type:'POST',
+            url: 'mb_homeroom',
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
+              if (result.hasOwnProperty('data') && result.data.length > 0) {
+                var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
+                for (i=0; i < result.data.length; i++) {
+                  link_list += '<li><a href="mailto:' + result.data[i].student_email + '"><i class="fa fa-envelope"></i>&nbsp;' + result.data[i].student_name + '</a></li>';
+                }
+                $('#mb_homeroom').parent().replaceWith(link_list);
+              }
+            }
+          });
+
+          $.ajax({
+            type:'POST',
+            url: 'mb_grade_teachers',
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
+              if (result.hasOwnProperty('data') && result.data.length > 0) {
+                var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
+                for (i=0; i < result.data.length; i++) {
+                  link_list += '<li><a href="mailto:' + result.data[i].teacher_emails + '"><i class="fa fa-envelope"></i>&nbsp; Grade ' + result.data[i].grade + '</a></li>';
+                }
+              }
+              $('#mb_grade_teachers').parent().replaceWith(link_list);
+            }
+          });
+
+          $.ajax({
+            type:'POST',
+            url: 'mb_courses',
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
+              if (result.hasOwnProperty('data') && result.data.length > 0) {
+                var link_list = '<li><hr /></li><li class="button_sub_heading">Your courses:</li>';
+                for (i=0; i < result.data.length; i++) {
+                  if (result.data[i].shortname != null) {
+                    link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '"><i class="fa fa-chevron-circle-right fa-fw"></i>&nbsp;' + result.data[i].shortname + '</a></li>';
+                  }
+                }
+                $('#mb_classes').parent().replaceWith(link_list);
+              }
+            }
+          });
+
+        }
+      </script>
+
+      <script tal:condition="not unique">
+        do_settings_dialog();
+        do_update();
+        $('#button_list').attr('style', 'display:block;');
+      </script>
+
       <div class="tabs_holder">
  
       <!-- This is the change icon size -->
@@ -69,7 +198,7 @@
           <div id="content">
            <p>
             <tal:block tal:define="items buttons[key]" tal:repeat="button items">
-              <button tal:define="global counter counter+1"  id="button_${counter}" class="splash_button">
+              <button tal:define="global counter counter+1"  id="jbox_button_${counter}" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}">
                 <a href="${button.url}">
                     <div><i class="fa fa-${button.icon} fa-5x"></i></div>
                     ${button.name}
@@ -94,15 +223,27 @@
 
 <script type="text/javascript">
 $("input[name=icon_size]:radio").change(function () {
-      if ( $(this).val() == '+1' ) {
-      
-        $(".splash_button").toggleClass('smaller');
+      var value = $(this).val();
 
-      } else if ( $(this).val() == '-1' ) {
+      if ( value == '+1' ) {
+      
+        $(".splash_button").toggleClass('smaller');        
+
+      } else if ( value == '-1' ) {
 
         $(".splash_button").toggleClass('smaller');
 
       }
+
+      $.ajax({
+        type:'POST',
+        url: 'user_settings',
+        contentType: 'application/json; charset=utf-8',
+        success: function(result) {
+            console.log(result);
+          },
+        data: JSON.stringify({'icon_size':value})
+      });
     });
 </script>
 
@@ -137,10 +278,9 @@ $("input[name=icon_size]:radio").change(function () {
       </li>
     </ul>
 
-
     <script type="text/javascript">
 
-    $('#button_${another_counter}').jBox('Tooltip', {
+    var jbox = $('#jbox_button_${another_counter}').jBox('Tooltip', {
         position: {
             y: 'top',
         },
@@ -149,6 +289,8 @@ $("input[name=icon_size]:radio").change(function () {
         closeOnMouseleave:true,
         content: $('#submenus_for_${another_counter}')
     });
+
+    jbox_array.push(jbox);
 
     </script>
 
@@ -168,30 +310,10 @@ $("input[name=icon_size]:radio").change(function () {
     if (authResult['code']) {
 
       // Hide the sign-in button now that the user is authorized, for example:
-      welcomeButton = '<div id="signinButton" style="height:36px;width:114px;margin-bottom:5px;"><button style="cursor:pointer;background-color:#0266C8;color:#FFF;border-radius:0 3px 3px 0;line-height:18px;display:inline-block;height:31px;width:114px;"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button></div>';
-
-      settings_html = ''
-
+      
       $('#signinButton').fadeOut("slow", function () {
-
-          $(this).replaceWith(welcomeButton);
-          $('#signinButton').on('click', function () {
-            $('#settings_dialog').dialog({
-              dialogClass: "no-close",
-              resizeable: false,
-              model: true,
-              title: "Settings",
-              height: 250,
-              width: 400,
-              close: false,
-              buttons: {
-                "Done": function () {
-                  $(this).dialog('close');
-                }
-              }
-            });
-          });
-          $('#signinButton').fadeIn("slow");
+          do_settings_dialog();
+          $('#button_list').fadeIn("slow");
         });
 
       $.ajax({
@@ -199,9 +321,8 @@ $("input[name=icon_size]:radio").change(function () {
         url: 'signinCallback?' + '${unique}',
         contentType: 'application/json; charset=utf-8',
         success: function(result) {
-            console.log('Callback returned');
-            console.log(result);
-            do_update();
+            window.location.reload();   // refresh
+            //do_update();
           },
         data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
         });
@@ -216,54 +337,8 @@ $("input[name=icon_size]:radio").change(function () {
     }
   }
 
-  function do_update() {
-    $.ajax({
-      type:'POST',
-      url: 'mb_courses',
-      contentType: 'application/json; charset=utf-8',
-      success: function(result) {
-        if (result.hasOwnProperty('data') && result.data.length > 0) {
-          var link_list = '<li><hr /></li><li class="button_sub_heading">Your courses:</li>';
-          for (i=0; i < result.data.length; i++) {
-            if (result.data[i].shortname != null) {
-              link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '"><i class="fa fa-chevron-circle-right fa-fw"></i>&nbsp;' + result.data[i].shortname + '</a></li>';
-            }
-          }
-          $('#mb_classes').parent().replaceWith(link_list);
-        }
-      }
-    });
 
-    $.ajax({
-      type:'POST',
-      url: 'mb_homeroom',
-      contentType: 'application/json; charset=utf-8',
-      success: function(result) {
-        if (result.hasOwnProperty('data') && result.data.length > 0) {
-          var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
-          for (i=0; i < result.data.length; i++) {
-            link_list += '<li><a href="mailto:' + result.data[i].student_email + '"><i class="fa fa-envelope"></i>&nbsp;' + result.data[i].student_name + '</a></li>';
-          }
-          $('#mb_homeroom').parent().replaceWith(link_list);
-        }
-      }
-    });
-
-    $.ajax({
-      type:'POST',
-      url: 'mb_grade_teachers',
-      contentType: 'application/json; charset=utf-8',
-      success: function(result) {
-        if (result.hasOwnProperty('data') && result.data.length > 0) {
-          var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
-          for (i=0; i < result.data.length; i++) {
-            link_list += '<li><a href="mailto:' + result.data[i].teacher_emails + '"><i class="fa fa-envelope"></i>&nbsp; Grade ' + result.data[i].grade + '</a></li>';
-          }
-        }
-        $('#mb_grade_teachers').parent().replaceWith(link_list);
-      }
-    });
-  }
+  
   </script>
 
 </body>

@@ -28,6 +28,9 @@ def main(global_config, **settings):
     config.add_route('signin', '/signin')
     config.add_route('signinCallback', '/signinCallback')
     config.add_route('session_user', '/session_user')
+    config.add_route('user_settings', '/user_settings')
+    config.add_route('user_data', '/user_data')
+    config.add_route('get_user_settings', '/get_user_settings')
 
     config.add_route('mb_courses', '/mb_courses')
     config.add_route('mb_homeroom', '/mb_homeroom')

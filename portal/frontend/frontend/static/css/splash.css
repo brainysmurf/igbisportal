@@ -21,7 +21,7 @@ a {
 
 
 p {
-    padding: 10px;
+    padding-top: 10px
 }
 
 #wrapper {
@@ -29,10 +29,11 @@ p {
     width: 100%;
 }
 
-#contentwrap {
-    width: 95%;
+.contentwrap {
+    width: 85%;
     margin: 0 auto;
     margin-top: 45px;
+    margin-bottom: 45px;
 }
 
 #content {
@@ -41,7 +42,7 @@ p {
     border-radius: 10px;
     border: 1px solid 000000;
     margin: 0px;
-    margin-left:20px;
+    padding-left: 5px;
 }
 
 .button_sub_heading {
@@ -109,7 +110,7 @@ p {
     text-align:center;
     text-shadow:1px 1px 0px #ffffff;
     padding-top:10px;
-    margin-left: 30px;
+    margin-left: 20px;
     margin-right:20px;
     margin-bottom:50px;
 }
@@ -133,7 +134,7 @@ p {
     height:70px;
     width:100px;
 
-    margin-left: 10px;
+    margin-left: 5px;
     margin-right:5px;
     margin-bottom:20px;
     padding-bottom:0px;
@@ -209,6 +210,7 @@ p {
     color: #333;
     text-decoration: none;
     outline: 0;
+    border-right: 1px solid #ededed;
 }
 
  .skin5.top .tab_content {
@@ -276,3 +278,66 @@ hr {
     border-color: #FFF;
 } 
 
+.button_list {
+    height: 36px;
+    width: 114px;
+    margin-bottom: 40px;
+    display: block;
+    white-space: nowrap;
+}
+
+.click_button {
+    cursor: pointer;
+    background-color: #555;
+    color: #FFF;
+    border-radius: 0 3px 3px 0;
+    line-height: 18px;
+    display: inline-block;
+    height: 31px;
+    width: 114px;
+    margin-top: 5px;
+    float:right;
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #333), color-stop(1, #555) );
+    background:-moz-linear-gradient( center top, #333 5%, #555 100% );
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+    background-color:#ededed;
+    -webkit-border-top-left-radius:9px;
+    -moz-border-radius-topleft:9px;
+    border-top-left-radius:9px;
+    -webkit-border-top-right-radius:9px;
+    -moz-border-radius-topright:9px;
+    border-top-right-radius:9px;
+    -webkit-border-bottom-right-radius:9px;
+    -moz-border-radius-bottomright:9px;
+    border-bottom-right-radius:9px;
+    -webkit-border-bottom-left-radius:9px;
+    -moz-border-radius-bottomleft:9px;
+    border-bottom-left-radius:9px;
+}
+
+#signinButton {
+    margin-top: 5px;
+}
+
+
+#icon_size_form {
+    line-height: 1.5em;
+    font-size: 18px;
+}
+
+.clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.clearfix {
+    display: inline-block;
+}
+.clearfix {
+    display: block;
+}

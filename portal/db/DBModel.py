@@ -45,6 +45,7 @@ PRIMARYREPORTSECTIONTEACHERASSOC = "{}primary_report_section_teacher_association
 PYPTEACHERASSIGNMENTS = "{}primary_teacher_assign".format(PREFIX)
 PYPSTUDENTABSENCES = "{}primary_student_absences".format(PREFIX)
 SECHRTEACHERS = "{}sec hr teachers".format(PREFIX)
+SETTINGS = "{}settings".format(PREFIX)
 
 class User(object):
 	"""
@@ -78,6 +79,8 @@ class User(object):
 	city = Column(String(255), nullable=True, server_default=None)
 	state = Column(String(255), nullable=True, server_default=None)
 	zipcode = Column(String(255), nullable=True, server_default=None)
+
+	g_plus_unique_id = Column(String(255), nullable=True, server_default=None)
 
 	def __str__(self):
 		return self.first_name + ' ' + self.last_name
@@ -385,4 +388,11 @@ class GoogleSignIn(Base):
 	auth_code = Column(String(255), nullable=True, server_default=None)
 	access_token = Column(String(255), nullable=True, server_default=None)
 	refresh_token = Column(String(255), nullable=True, server_default=None)
+
+class UserSettings(Base):
+	__tablename__ = SETTINGS
+
+	id = Column(BigInteger, primary_key=True)
+	unique_id = Column(String(255), nullable=True, server_default=None)
+	icon_size = Column(String(2), nullable=True, server_default=None)
 
