@@ -133,7 +133,6 @@
           console.log("Updating");
 
           var value = $("#new_tab_checkbox").val();
-          console.assert(typeof(value) == "integer", "value is an integer?: "+value);
 
           if (value === "1") {
             console.log($('a'));
@@ -141,7 +140,7 @@
               console.log(index);
               $(this).attr('target', '_blank_'+index);
             });
-            console.log('added target');
+            console.log('added targets to links');
           }
 
 
@@ -288,7 +287,7 @@ $("#new_tab_checkbox").change(function () {
         success: function(result) {
             console.log(result);
           },
-        data: JSON.stringify({'new_tab':value})
+        data: JSON.stringify({'new_tab': value})
       });
 });
 </script>
