@@ -395,4 +395,5 @@ class UserSettings(Base):
 	id = Column(BigInteger, primary_key=True)
 	unique_id = Column(String(255), nullable=True, server_default=None)
 	icon_size = Column(String(2), nullable=True, server_default=None)
+	new_tab = Column(Boolean, nullable=True, server_default=None)
 

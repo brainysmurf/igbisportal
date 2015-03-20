@@ -519,7 +519,7 @@ def splash(request):
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
 
-        button(name="Hapara Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
+        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
         button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
         context_menu={
         'items': [
@@ -595,7 +595,21 @@ def user_settings(request):
                     return dict(message="Updated setting record to {}".format(setting.icon_size))
                 return dict(message="Message received but no need to update")
             except NoResultFound:
-                new_setting = UserSettings(unique_id=unique_id, icon_size=icon_size)
+                new_setting = UserSettings(unique_id=unique_id, icon_size=icon_size, new_tab=1)
+                session.add(new_setting)
+                return dict(message="Created new setting record in db")
+
+    new_tab = request.json.get('new_tab')
+    if new_tab:
+        with DBSession() as session:
+            try:
+                setting = session.query(UserSettings).filter_by(unique_id=unique_id).one()
+                if setting.new_tab != new_tab:
+                    setting.new_tab = new_tab
+                    return dict(message="Updated setting record to {}".format(setting.new_tab))
+                return dict(message="Message received but no need to update")
+            except NoResultFound:
+                new_setting = UserSettings(unique_id=unique_id, new_tab=int(new_tab))
                 session.add(new_setting)
                 return dict(message="Created new setting record in db")
 

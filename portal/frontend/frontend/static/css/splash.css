@@ -322,12 +322,6 @@ hr {
     margin-top: 5px;
 }
 
-
-#icon_size_form {
-    line-height: 1.5em;
-    font-size: 18px;
-}
-
 .clearfix:after {
     clear: both;
     content: ".";

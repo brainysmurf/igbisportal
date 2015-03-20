@@ -23,6 +23,7 @@
 </head>
 <body>
 
+
 <div id="wrapper">
 
     <div class="contentwrap">
@@ -60,6 +61,11 @@
 
         <input type="radio" name="icon_size" id="smaller_icons" value="-1" ${'checked' if settings and settings.icon_size == '-1' else ""} />
         <label for="smaller_icons">Smaller Icons, without title</label>
+       </form>
+       <form id="new_tab_form">
+        <br /><strong>On Click:</strong><br />
+        <input id="new_tab_checkbox" type="checkbox" name="new_tab" ${'value="1" checked="checked"' if settings and settings.new_tab else 'value="0"'}  />
+        <label for="new_tab_checkbox">Open in a new tab</label>
        </form>
     </div>
 
@@ -125,6 +131,19 @@
           //   });
           // }
           console.log("Updating");
+
+          var value = $("#new_tab_checkbox").val();
+          console.assert(typeof(value) == "integer", "value is an integer?: "+value);
+
+          if (value === "1") {
+            console.log($('a'));
+            $('a').each(function(index) {
+              console.log(index);
+              $(this).attr('target', '_blank_'+index);
+            });
+            console.log('added target');
+          }
+
 
           $.ajax({
             type:'POST',
@@ -245,6 +264,33 @@ $("input[name=icon_size]:radio").change(function () {
         data: JSON.stringify({'icon_size':value})
       });
     });
+
+$("#new_tab_checkbox").change(function () {
+      var value = $(this).val();
+      console.log(value);
+      value = value == "1" ? "0" : "1";
+      $(this).val(value);
+
+      if (value == "1") {
+        $('a').each(function(index) {
+          $(this).attr('target', '_blank_'+index);
+        });
+        console.log('added target');
+      } else {
+        $('a').removeAttr('target');
+        console.log('removed target');
+      }
+
+      $.ajax({
+        type:'POST',
+        url: 'user_settings',
+        contentType: 'application/json; charset=utf-8',
+        success: function(result) {
+            console.log(result);
+          },
+        data: JSON.stringify({'new_tab':value})
+      });
+});
 </script>
 
 <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
