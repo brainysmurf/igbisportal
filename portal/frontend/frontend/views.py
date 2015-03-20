@@ -595,7 +595,7 @@ def user_settings(request):
                     return dict(message="Updated setting record to {}".format(setting.icon_size))
                 return dict(message="Message received but no need to update")
             except NoResultFound:
-                new_setting = UserSettings(unique_id=unique_id, icon_size=icon_size, new_tab=1)
+                new_setting = UserSettings(unique_id=unique_id, icon_size=icon_size, new_tab=True)
                 session.add(new_setting)
                 return dict(message="Created new setting record in db")
 
@@ -609,7 +609,7 @@ def user_settings(request):
                     return dict(message="Updated setting record to {}".format(setting.new_tab))
                 return dict(message="Message received but no need to update")
             except NoResultFound:
-                new_setting = UserSettings(unique_id=unique_id, new_tab=boolean(int(new_tab)))
+                new_setting = UserSettings(unique_id=unique_id, new_tab=bool(int(new_tab)))
                 session.add(new_setting)
                 return dict(message="Created new setting record in db")
 
