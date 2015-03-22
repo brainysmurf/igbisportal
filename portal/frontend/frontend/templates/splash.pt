@@ -133,14 +133,10 @@
           console.log("Updating");
 
           var value = $("#new_tab_checkbox").val();
-
-          if (value === "1") {
-            console.log($('a'));
-            $('a').each(function(index) {
-              console.log(index);
+          if (value == "1") {
+            $('a').each(function(index, element) {
               $(this).attr('target', '_blank_'+index);
             });
-            console.log('added targets to links');
           }
 
 
@@ -194,11 +190,6 @@
         }
       </script>
 
-      <script tal:condition="not unique">
-        do_settings_dialog();
-        do_update();
-        $('#button_list').attr('style', 'display:block;');
-      </script>
 
       <div class="tabs_holder">
  
@@ -230,6 +221,13 @@
       </div><!-- /.tabs_holder -->
     </div>
 </div>
+
+<script tal:condition="not unique">
+  do_settings_dialog();
+  do_update();
+  $('#button_list').attr('style', 'display:block;');
+</script>
+
 
 <script type="text/javascript">
   $('.tabs_holder').skinableTabs({
