@@ -4,7 +4,7 @@
   <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
   <title>${title}</title>
 
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="${static_url}jquery.min.js"></script>
   <script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js"></script>
   <script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
 
