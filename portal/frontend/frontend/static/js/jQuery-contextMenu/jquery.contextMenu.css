@@ -1,0 +1,19 @@
+.context-menu {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    background-color: #F2F2F2;
+    border: 1px solid #999999;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.context-menu a {
+    color: #333333;
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+}
+.context-menu a:hover {
+    background-color: #666666;
+    color: white;
+    text-decoration: none;
+}

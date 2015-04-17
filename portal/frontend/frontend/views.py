@@ -20,6 +20,7 @@ import json, re, uuid
 from collections import defaultdict
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+from httplib import ResponseNotReady
 
 import requests
 
@@ -107,6 +108,8 @@ def credentials_flow(request, code):
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
         return dict(message="Failed to upgrade the authorization code.")
+    except ResponseNotReady:
+        return dict(message="httplib says ReponseNotReady")
 
     # Ask Google for info
     access_token = credentials.access_token
@@ -158,14 +161,14 @@ def credentials_flow(request, code):
     elif result.status_code == 403:
         return dict(message="Forbidden: {}".format(result.status_code))
     else:
-       return dict(message="Error: {}".format(result.status_code))    
+       return dict(message="Error: {}".format(result.status_code))
 
 @view_config(route_name="signinCallback", renderer="json")
 def signinCallback(request):
     """
     Does token checking and puts credentials in the session
     """
-
+    print('open')
     try:
         unique = request.params.keys()[0]
     except KeyError:
@@ -180,6 +183,8 @@ def signinCallback(request):
 
         auth_object = request.json['authResult']
         code = request.json['code']
+        print(unique == session_unique)
+
 
         if auth_object['status']['signed_in']:
 
@@ -187,13 +192,15 @@ def signinCallback(request):
                 return dict(message="User already in session! Woohoo!")
 
             if request.session.get('credentials'):
-                return HTTPFound(location="session_user")
+                #return HTTPFound(location="session_user")
+                pass
             
             return credentials_flow(request, code) 
 
         return credentials_flow(request, code)
 
     return dict(message="Uniques don't match, which happens on reloads")
+
 
 
 # @view_config(route_name="gd_starred", renderer='json')
@@ -548,16 +555,20 @@ def splash(request):
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", 
         context_menu={
         'items': [
-            menu_item(icon="external-link-square", display="Make sharable link", url="/brainpop"),
+            menu_placeholder("bp_shareablelink")
         ]}),
 
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
     ])
 
+    your_buttons = [
+        button(name="Add new...", url="#", icon="plus", context_menu=None),        
+    ]
+
     buttons = OrderedDict()
     buttons['Teachers'] = teacher_buttons
     buttons['Students'] = student_buttons
-    #buttons['Settings'] = settings_buttons
+    buttons['Yours'] = your_buttons
 
     g_plus_unique_id = request.session.get('g_plus_unique_id')
     settings = None

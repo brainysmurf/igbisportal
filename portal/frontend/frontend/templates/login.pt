@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html tal:define="static_url request.static_url('frontend:static/')">
+<head>
+  <!-- BEGIN Pre-requisites -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+  </script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+  </script>
+  <!-- END Pre-requisites -->
+</head>
+<body>
+	<div id="signinButton">
+		<!-- data-approvalprompt="force" -->
+	  <span class="g-signin"
+	    data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.login"
+	    data-clientid="${client_id}"
+	    data-redirecturi="postmessage"
+	    data-accesstype="offline"
+	    data-origin="http://igbisportal.vagrant:6543"
+	    data-cookiepolicy="single_host_origin"
+	    data-callback="signInCallback">
+	  </span>
+	</div>
+	<div id="content"></div>
+	<div id="people"></div>
+	<script>
+	function signInCallback(authResult) {
+	  if (authResult['code']) {
+
+	    // Hide the sign-in button now that the user is authorized, for example:
+	    //$('#signinButton').attr('style', 'display: none');
+
+	    // Send the code to the server
+	    console.log(authResult);
+
+	    $.ajax({
+	      type: 'POST',
+	      url: 'signinCallback?' + '${unique}',
+	      contentType: 'application/json; charset=utf-8',
+	      success: function(result) {
+	        // Handle or verify the server response if necessary.
+
+	        // Prints the list of people that the user has allowed the app to know
+	        // to the console.
+
+	        //console.log(result);
+	        $.ajax({
+	        	type: 'POST',
+	        	url: 'session_user',
+	        	contentType: 'application/json; charset=utf-8',
+	        	success: function(result) {
+	        		console.log(result);
+	        		do_update();
+	        	}
+	        })
+	      },
+          processData: false,
+	      data: JSON.stringify({'code':authResult['code']})
+        });
+	  } else if (authResult['error']) {
+	    // There was an error.
+	    // Possible error codes:
+	    //   "access_denied" - User denied access to your app
+	    //   "immediate_failed" - Could not automatially log in the user
+	    console.log('There was an error: ' + authResult['error']);
+	  }
+	}
+
+	function do_update() {
+		$.ajax({
+			type:'POST',
+			url: 'mb_courses',
+			contentType: 'application/json; charset=utf-8',
+			success: function(result) {
+				console.log(result);
+				$('#content').html('List of classes you are in:');
+				var link_list = "<ul>";
+				for (i=0; i < result.data.length; i++) {
+					if (result.data[i].name != "null") {
+						link_list += '<li><a href="' + result.data[i].link + '">' + result.data[i].name + '</a></li>';
+					}
+				}
+				link_list += '</ul>';
+				$('#people').html(link_list);
+			}
+		})
+		console.log('here');
+	}
+	</script>
+</body>
+</html>
