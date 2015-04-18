@@ -1,59 +1,16 @@
-<!DOCTYPE html>
-<html tal:define="role request.GET.get('role', 'student')" tal:define="static_url request.static_url('frontend:static/')">
-<head>
-  <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
-  <title>${title}</title>
+<html metal:use-macro="load: portal_main.pt">
 
-  <script type="text/javascript" src="${static_url}jquery.min.js"></script>
-  <script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
-
-  <!-- Bootstrap stuff 
-  <link rel="stylesheet" type="text/css" href="${static_url}bootstrap/css/bootstrap.min.css" />
-  <script src="${static_url}bootstrap/js/bootstrap.min.js"></script>
--->
-  <link rel="stylesheet" type="text/css" href="${static_url}jquery-ui/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="http://code.jboxcdn.com/0.3.2/jBox.css" />
-  <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
-  <link rel="stylesheet" type="text/css" href="${static_url}css/top.css" />
-
+<div metal:fill-slot="additional-css">
   <!-- Launch Google Signin procedures, use defer  -->
-  <script src="https://apis.google.com/js/client:platform.js?onload=start" defer></script>
+  <script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
+</div>
 
-</head>
-<body>
+<div metal:fill-slot="additional-buttons">
+  <button id="settingsButton" class="click_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>  
+</div>
 
-
-<div id="wrapper">
-
-    <div class="contentwrap">
-        <div id="button_list" style="display:none;">
-            <button id="settingsButton" class="click_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>
-            <button id="userButton" class="click_button" ><i class="fa fa-user"></i>&nbsp;&nbsp;${name or "Logged in!"}</button>
-        </div>
-        <div class="clearfix"></div>
-
-      <div tal:condition="unique" id="signinButton" style="height:36px;">
-        <!-- 
-          data-approvalprompt="force" 
-          https://developers.google.com/+/web/signin/reference 
-        -->
-        <div id="button_list" style="float:right;">
-          <div id="userButton" style="height:200px;" class="g-signin"
-          data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
-          data-clientid="${client_id}"
-          data-redirecturi="postmessage"
-          data-accesstype="offline"
-          data-origin="${data_origin}"
-          data-cookiepolicy="single_host_origin"
-          data-callback="signInCallback"
-          data-height="standard"
-          >
-        </div></div>
-        <div class="clearfix"></div>
-    </div>
-
-    <div id="settings_dialog" style="display:none;">      
+<div metal:fill-slot="dialogs">
+      <div id="settings_dialog" style="display:none;">      
        <form id="icon_size_form">
         <br /><strong>Button Size:</strong><br />
         <input type="radio" name="icon_size" id="larger_icons" value="+1" ${'checked' if (settings and settings.icon_size == '+1') or not settings else ""} />
@@ -68,10 +25,10 @@
         <label for="new_tab_checkbox">Open in a new tab</label>
        </form>
     </div>
+</div>
 
-  </div>
 
-    <div class="contentwrap">
+    <div metal:fill-slot="content">
 
       <script>
 
@@ -219,170 +176,169 @@
         </div> 
        </div><!-- /.content_holder -->
       </div><!-- /.tabs_holder -->
-    </div>
-</div>
 
-<script tal:condition="not unique">
-  do_settings_dialog();
-  do_update();
-  $('#button_list').attr('style', 'display:block;');
-</script>
-
-
-<script type="text/javascript">
-  $('.tabs_holder').skinableTabs({
-    skin: 'skin5',
-    position: 'top',
-    persist_tab: '1'
-  });
-</script>
-
-<script type="text/javascript">
-$("input[name=icon_size]:radio").change(function () {
-      var value = $(this).val();
-
-      if ( value == '+1' ) {
-      
-        $(".splash_button").toggleClass('smaller');        
-
-      } else if ( value == '-1' ) {
-
-        $(".splash_button").toggleClass('smaller');
-
-      }
-
-      $.ajax({
-        type:'POST',
-        url: 'user_settings',
-        contentType: 'application/json; charset=utf-8',
-        success: function(result) {
-            console.log(result);
-          },
-        data: JSON.stringify({'icon_size':value})
-      });
-    });
-
-$("#new_tab_checkbox").change(function () {
-      var value = $(this).val();
-      console.log(value);
-      value = value == "1" ? "0" : "1";
-      $(this).val(value);
-
-      if (value == "1") {
-        $('a').each(function(index) {
-          $(this).attr('target', '_blank_'+index);
-        });
-        console.log('added target');
-      } else {
-        $('a').removeAttr('target');
-        console.log('removed target');
-      }
-
-      $.ajax({
-        type:'POST',
-        url: 'user_settings',
-        contentType: 'application/json; charset=utf-8',
-        success: function(result) {
-            console.log(result);
-          },
-        data: JSON.stringify({'new_tab': value})
-      });
-});
-</script>
-
-<script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
-
-<!-- 
-<script type="text/javascript">    
-    new jBox('Notice', {
-        content: 'New: Google login, and more features!',
-        color: 'blue'
-    });
-</script>
--->
-
-
-<tal:block tal:repeat="key buttons" tal:condition="buttons">
-  <tal:block tal:define="global another_counter 0" tal:repeat="button buttons[key]">
-  <tal:block tal:define="global another_counter another_counter+1">
-  <tal:block tal:condition="button.context_menu">
-
-    <ul style="display:none" id="submenus_for_${another_counter}">
-      <li tal:repeat="menu_item button.context_menu.get('items')">
-        <tal:block tal:condition="menu_item.url">
-          <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
-        </tal:block>
-        <tal:block tal:condition="menu_item.url is False">
-          <div id="${menu_item.name}"><hr /></div>
-        </tal:block>
-        <tal:block tal:condition="menu_item.url is None">
-          <hr />
-        </tal:block>
-      </li>
-    </ul>
-
-    <script type="text/javascript">
-
-    var jbox = $('#jbox_button_${another_counter}').jBox('Tooltip', {
-        position: {
-            y: 'top',
-        },
-        outside: 'x',
-        title: '<a href="${button.url}"><i class="fa fa-${button.icon} fa-fw"></i>&nbsp;${button.name}</a>',
-        closeOnMouseleave:true,
-        content: $('#submenus_for_${another_counter}')
-    });
-
-    jbox_array.push(jbox);
-
-    </script>
-
-  </tal:block>
-  </tal:block>
-  </tal:block>
-</tal:block>
-
-  <script>
-  function signInCallback(authResult) {
-    delete authResult['g-oauth-window'];  // it took me forever to find this
-    //http://stackoverflow.com/questions/25065194/google-sign-in-uncaught-securityerror
-    // It's started happening when I serialized the entire authResult object, could just send what I need...
-
-    console.log(authResult); 
-  
-    if (authResult['code']) {
-
-      // Hide the sign-in button now that the user is authorized, for example:
-      
-      $('#signinButton').fadeOut("slow", function () {
-          do_settings_dialog();
-          $('#button_list').fadeIn("slow");
-        });
-
-      $.ajax({
-        type: 'POST',
-        url: 'signinCallback?' + '${unique}',
-        contentType: 'application/json; charset=utf-8',
-        success: function(result) {
-            window.location.reload();   // refresh
-            //do_update();
-          },
-        data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
-        });
-    } else if (authResult['error']) {
-      // There was an error.
-      // Possible error codes:
-      //   "access_denied" - User denied access to your app
-      //   "immediate_failed" - Could not automatially log in the user
-      console.log('There was an error: ' + authResult['error']);
-      // do this just in case we have the user anyway
-      do_update();
-    }
-  }
-
-
-  
+  <script tal:condition="not unique">
+    do_settings_dialog();
+    do_update();
+    $('#button_list').attr('style', 'display:block;');
   </script>
 
-</body>
+
+  <script type="text/javascript">
+    $('.tabs_holder').skinableTabs({
+      skin: 'skin5',
+      position: 'top',
+      persist_tab: '1'
+    });
+  </script>
+
+  <script type="text/javascript">
+  $("input[name=icon_size]:radio").change(function () {
+        var value = $(this).val();
+
+        if ( value == '+1' ) {
+        
+          $(".splash_button").toggleClass('smaller');        
+
+        } else if ( value == '-1' ) {
+
+          $(".splash_button").toggleClass('smaller');
+
+        }
+
+        $.ajax({
+          type:'POST',
+          url: 'user_settings',
+          contentType: 'application/json; charset=utf-8',
+          success: function(result) {
+              console.log(result);
+            },
+          data: JSON.stringify({'icon_size':value})
+        });
+      });
+
+  $("#new_tab_checkbox").change(function () {
+        var value = $(this).val();
+        console.log(value);
+        value = value == "1" ? "0" : "1";
+        $(this).val(value);
+
+        if (value == "1") {
+          $('a').each(function(index) {
+            $(this).attr('target', '_blank_'+index);
+          });
+          console.log('added target');
+        } else {
+          $('a').removeAttr('target');
+          console.log('removed target');
+        }
+
+        $.ajax({
+          type:'POST',
+          url: 'user_settings',
+          contentType: 'application/json; charset=utf-8',
+          success: function(result) {
+              console.log(result);
+            },
+          data: JSON.stringify({'new_tab': value})
+        });
+  });
+  </script>
+
+  <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
+
+  <!-- 
+  <script type="text/javascript">    
+      new jBox('Notice', {
+          content: 'New: Google login, and more features!',
+          color: 'blue'
+      });
+  </script>
+  -->
+
+
+  <tal:block tal:repeat="key buttons" tal:condition="buttons">
+    <tal:block tal:define="global another_counter 0" tal:repeat="button buttons[key]">
+    <tal:block tal:define="global another_counter another_counter+1">
+    <tal:block tal:condition="button.context_menu">
+
+      <ul style="display:none" id="submenus_for_${another_counter}">
+        <li tal:repeat="menu_item button.context_menu.get('items')">
+          <tal:block tal:condition="menu_item.url">
+            <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
+          </tal:block>
+          <tal:block tal:condition="menu_item.url is False">
+            <div id="${menu_item.name}"><hr /></div>
+          </tal:block>
+          <tal:block tal:condition="menu_item.url is None">
+            <hr />
+          </tal:block>
+        </li>
+      </ul>
+
+      <script type="text/javascript">
+
+      var jbox = $('#jbox_button_${another_counter}').jBox('Tooltip', {
+          position: {
+              y: 'top',
+          },
+          outside: 'x',
+          title: '<a href="${button.url}"><i class="fa fa-${button.icon} fa-fw"></i>&nbsp;${button.name}</a>',
+          closeOnMouseleave:true,
+          content: $('#submenus_for_${another_counter}')
+      });
+
+      jbox_array.push(jbox);
+
+      </script>
+
+    </tal:block>
+    </tal:block>
+    </tal:block>
+  </tal:block>
+
+    <script>
+    function signInCallback(authResult) {
+      delete authResult['g-oauth-window'];  // it took me forever to find this
+      //http://stackoverflow.com/questions/25065194/google-sign-in-uncaught-securityerror
+      // It's started happening when I serialized the entire authResult object, could just send what I need...
+
+      console.log(authResult); 
+    
+      if (authResult['code']) {
+
+        // Hide the sign-in button now that the user is authorized, for example:
+        
+        $('#signinButton').fadeOut("slow", function () {
+            do_settings_dialog();
+            $('#button_list').fadeIn("slow");
+          });
+
+        $.ajax({
+          type: 'POST',
+          url: 'signinCallback?' + '${unique}',
+          contentType: 'application/json; charset=utf-8',
+          success: function(result) {
+              window.location.reload();   // refresh
+              //do_update();
+            },
+          data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
+          });
+      } else if (authResult['error']) {
+        // There was an error.
+        // Possible error codes:
+        //   "access_denied" - User denied access to your app
+        //   "immediate_failed" - Could not automatially log in the user
+        console.log('There was an error: ' + authResult['error']);
+        // do this just in case we have the user anyway
+        do_update();
+      }
+    }
+
+
+    
+    </script>
+    </div>
+
 </html>
+
