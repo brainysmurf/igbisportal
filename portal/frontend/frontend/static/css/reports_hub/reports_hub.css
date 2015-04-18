@@ -1,0 +1,37 @@
+body {
+	font-family: "Open Sans";
+	font-size: 14pt;
+}
+
+input {
+	font-family: "Open Sans";
+	font-size: 14pt;
+	padding: 5px;
+	margin: 0;
+}
+
+.area {
+	width: 100%;
+}
+
+#userEnter {
+	width: 80%;
+	font-size: 2em;
+	margin: 0;
+	border-radius: 5px;
+}
+
+#userSubmit {
+	float:right;
+	font-size: 1em;
+	margin: 0;
+	height: 65px;
+	width: 18%;
+	background: #eee;
+	border-radius: 5px;
+}
+
+.ui-font {
+	font-family: "Open Sans";
+	padding-right: 15px;
+}

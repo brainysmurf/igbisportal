@@ -67,8 +67,6 @@ def main(global_config, **settings):
 
     config.add_route('splash', '/splash')
 
-    config.add_route('hourofcode', '/hourofcode')
-
-
+    config.add_route('reports_hub', '/reports_hub')
     config.scan()
     return config.make_wsgi_app()
