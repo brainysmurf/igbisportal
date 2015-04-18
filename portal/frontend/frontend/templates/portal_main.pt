@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html tal:define="static_url request.static_url('frontend:static/')">
+<head>
+  <title>${title}</title>
+
+  <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
+  <script type="text/javascript" src="${static_url}jquery.min.js"></script>
+  <script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js" defer></script>
+  <link rel="stylesheet" type="text/css" href="${static_url}jquery-ui/jquery-ui.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
+  <div metal:define-slot="additional-css"></div>
+
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" defer></script>
+
+</head>
+<body>
+
+  <div metal:define-slot="dialogs">
+  </div>
+
+  <div id="button_list" style="display:none;">
+      <div metal:define-slot="additional-buttons"></div>
+      <button id="settingsButton" class="click_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>
+      <button id="userButton" class="click_button" ><i class="fa fa-user"></i>&nbsp;&nbsp;${name or "Logged in!"}</button>
+  </div>
+  <div class="clearfix"></div>
+
+  <div tal:condition="unique" id="signinButton" style="height:36px;">
+    <!-- 
+      data-approvalprompt="force" 
+      https://developers.google.com/+/web/signin/reference 
+    -->
+    <div id="button_list" style="float:right;">
+      <div id="userButton" style="height:200px;" class="g-signin"
+      data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
+      data-clientid="${client_id}"
+      data-redirecturi="postmessage"
+      data-accesstype="offline"
+      data-origin="${data_origin}"
+      data-cookiepolicy="single_host_origin"
+      data-callback="signInCallback"
+      data-height="standard"
+      >
+    </div></div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div id="contentwrap">
+			<div metal:define-slot="content"></div>
+  </div>
+</body>
+</html>
