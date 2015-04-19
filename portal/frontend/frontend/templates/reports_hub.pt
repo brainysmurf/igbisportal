@@ -2,14 +2,11 @@
 
 	<div metal:fill-slot="additional-css">
 		<link rel="stylesheet" type="text/css" href="${static_url}css/reports_hub/reports_hub.css" />
-		<link rel="stylesheet" type="text/css" href="${static_url}jquery-ui/jquery-ui.min.css" />
-		<script type="text/javascript" src="${static_url}jquery.min.js" defer></script>
-		<script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js" defer></script>
 		<script type="text/javascript" src="${static_url}js/reports_hub/init.js" defer></script>
 	</div>
 
 	<div metal:fill-slot="content">
-		<p>
+		<p>(NOTE: This area is still under development)
 			<div class="ui-font">Enter any part of the name:</div>
 			<div class="area">
 				<input id="userEnter" type="text" name="userEnter" data-autocomplete-source="${auto_complete_source}" /><button id="userSubmit">Check out report</button><input type="hidden" id="studentID" />

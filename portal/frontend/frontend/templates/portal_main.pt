@@ -5,7 +5,7 @@
 
   <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
   <script type="text/javascript" src="${static_url}jquery.min.js"></script>
-  <script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js" defer></script>
+  <script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js"></script>
   <link rel="stylesheet" type="text/css" href="${static_url}jquery-ui/jquery-ui.min.css" />
 
   <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
@@ -22,8 +22,7 @@
 
   <div id="button_list" style="display:none;">
       <div metal:define-slot="additional-buttons"></div>
-      <button id="settingsButton" class="click_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>
-      <button id="userButton" class="click_button" ><i class="fa fa-user"></i>&nbsp;&nbsp;${name or "Logged in!"}</button>
+      <button id="userButton" class="nav_button" ><i class="fa fa-user"></i>&nbsp;&nbsp;${name or "Logged in!"}</button>
   </div>
   <div class="clearfix"></div>
 

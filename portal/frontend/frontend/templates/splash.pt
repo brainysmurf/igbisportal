@@ -2,11 +2,15 @@
 
 <div metal:fill-slot="additional-css">
   <!-- Launch Google Signin procedures, use defer  -->
-  <script type="text/javascript" src="${static_url}js/skinable_tabs.js"></script>
+  <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
+
 </div>
 
 <div metal:fill-slot="additional-buttons">
-  <button id="settingsButton" class="click_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>  
+  <!-- <input data-size="large" id="edit_button" type="checkbox" value="1" /> -->
+  <button id="settingsButton" class="nav_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>  
 </div>
 
 <div metal:fill-slot="dialogs">
@@ -14,10 +18,10 @@
        <form id="icon_size_form">
         <br /><strong>Button Size:</strong><br />
         <input type="radio" name="icon_size" id="larger_icons" value="+1" ${'checked' if (settings and settings.icon_size == '+1') or not settings else ""} />
-        <label for="larger_icons">Larger Icons, with title</label><br />
+        <label for="larger_icons">Larger Icons</label><br />
 
         <input type="radio" name="icon_size" id="smaller_icons" value="-1" ${'checked' if settings and settings.icon_size == '-1' else ""} />
-        <label for="smaller_icons">Smaller Icons, without title</label>
+        <label for="smaller_icons">Smaller Icons</label>
        </form>
        <form id="new_tab_form">
         <br /><strong>On Click:</strong><br />
@@ -32,7 +36,55 @@
 
       <script>
 
-        // First check that the name has been placed, if not, do round-trip to the server
+        $("#edit_button").bootstrapSwitch({
+          onText: 'On',
+          offText: '',
+          labelWidth: 80,
+          labelText: '<i class="fa fa-edit"></i>&nbsp;Edit Mode',
+          onColor: 'success',
+          size: 'mini', 
+          inverse: true,
+          onSwitchChange: function (event, state) {
+            $containers = $('.splash_button_container');
+            console.log($containers);
+
+            if (state) {  // edit mode on
+
+                // disable jboxes
+              $.each(jbox_array, function (index, value) {
+                value.disable();
+              });
+
+              // enable drag'n'drop
+              $.each($containers, function (index, value) {
+                var $buttons = $(value).find('.splash_button_item');
+                  $(value).packery('bindUIDraggableEvents', $buttons);
+                $buttons.draggable('enable');
+                $buttons.find('.splash_button > a').css('cursor', 'move');  // specificity gets rid of a:-webkit-any-link definition
+                $splash_button_texts = $buttons.find('.splash_button_text');
+                $splash_button_texts.css('cursor', 'text');
+                $splash_button_texts.addClass('editable');
+              });
+            } else {      // edit mode off
+              // jboxes enabled
+              $.each(jbox_array, function (index, value) {
+                value.enable();
+              });
+
+              $.each($containers, function (index, value) {
+                var $buttons = $(value).find('.splash_button_item');
+                $buttons.draggable('disable');
+                $buttons.find('.splash_button > a').css('cursor', 'pointer');
+                $splash_button_texts = $buttons.find('.splash_button_text');
+                $splash_button_texts.removeClass('editable');
+                $splash_button_texts.css('cursor', 'pointer');
+              });
+
+
+            }
+
+          }
+        });
 
         var jbox_array = [];
 
@@ -103,7 +155,7 @@
             contentType: 'application/json; charset=utf-8',
             success: function(result) {
               if (result.hasOwnProperty('data') && result.data.length > 0) {
-                var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
+                var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Email teachers of:</li>';
                 for (i=0; i < result.data.length; i++) {
                   link_list += '<li><a href="mailto:' + result.data[i].student_email + '"><i class="fa fa-envelope"></i>&nbsp;' + result.data[i].student_name + '</a></li>';
                 }
@@ -118,7 +170,7 @@
             contentType: 'application/json; charset=utf-8',
             success: function(result) {
               if (result.hasOwnProperty('data') && result.data.length > 0) {
-                var link_list = '<li><hr /></li><li class="button_sub_heading">Email teachers of:</li>';
+                var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Email teachers of:</li>';
                 for (i=0; i < result.data.length; i++) {
                   link_list += '<li><a href="mailto:' + result.data[i].teacher_emails + '"><i class="fa fa-envelope"></i>&nbsp; Grade ' + result.data[i].grade + '</a></li>';
                 }
@@ -133,7 +185,7 @@
             contentType: 'application/json; charset=utf-8',
             success: function(result) {
               if (result.hasOwnProperty('data') && result.data.length > 0) {
-                var link_list = '<li><hr /></li><li class="button_sub_heading">Your courses:</li>';
+                var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Your courses:</li>';
                 for (i=0; i < result.data.length; i++) {
                   if (result.data[i].shortname != null) {
                     link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '"><i class="fa fa-chevron-circle-right fa-fw"></i>&nbsp;' + result.data[i].shortname + '</a></li>';
@@ -147,34 +199,23 @@
         }
       </script>
 
-
-      <div class="tabs_holder">
- 
-      <!-- This is the change icon size -->
-
-      <!-- This is the tabs -->
-       <ul>
-        <li tal:repeat="key buttons" tal:attributes="class 'tab_selected' if role=='${key}' else ''">
-          <a href="#${key}">${key}</a>
-        </li>
+      <div id="tabs_holder">
+        <ul id="tabs_titlebar">
+        <li tal:repeat="key buttons"><a href="#${key}">${key.replace('+', ' ')}</a></li>
        </ul>
 
-       <div tal:define="global counter 0" tal:repeat="key buttons" tal:condition="buttons" class="content_holder">
-        <div id="${key}" style="padding:0px;margin:0px;">
-          <div id="content">
-           <p>
-            <tal:block tal:define="items buttons[key]" tal:repeat="button items">
-              <button tal:define="global counter counter+1"  id="jbox_button_${counter}" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}">
-                <a href="${button.url}">
-                    <div><i class="fa fa-${button.icon} fa-5x"></i></div>
-                    ${button.name}
-                </a>
-              </button>
-            </tal:block>
-           </p> 
-         </div>  
+       <tal:block tal:define="global counter 0" tal:repeat="key buttons">
+        <div id="${key}">
+          <tal:block tal:define="items buttons[key]" tal:repeat="button items">
+            <div tal:define="global counter counter+1"  id="jbox_button_${counter}" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}">
+              <a href="${button.url}">
+                  <div><i class="fa fa-${button.icon} fa-5x"></i></div>
+                  ${button.name}
+              </a>
+            </div>
+          </tal:block>
         </div> 
-       </div><!-- /.content_holder -->
+       </tal:block>
       </div><!-- /.tabs_holder -->
 
   <script tal:condition="not unique">
@@ -185,11 +226,8 @@
 
 
   <script type="text/javascript">
-    $('.tabs_holder').skinableTabs({
-      skin: 'skin5',
-      position: 'top',
-      persist_tab: '1'
-    });
+    $('#tabs_holder').tabs();
+    console.log("don");
   </script>
 
   <script type="text/javascript">

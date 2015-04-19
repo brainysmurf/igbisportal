@@ -6,8 +6,7 @@ body {
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 13px;
     color:#333;
-    background: #fff url(../static/back.gif) repeat top left;    
-/*    background:#D22018;*/
+    background: #eee ;
 }
 
 a:visited {
@@ -29,11 +28,12 @@ p {
     width: 100%;
 }
 
-.contentwrap {
+#contentwrap {
     width: 85%;
     margin: 0 auto;
     margin-top: 45px;
     margin-bottom: 45px;
+    margin-right: 100px;
 }
 
 #content {
@@ -50,6 +50,7 @@ p {
     color: #424242;
     margin-bottom: 5px;
     margin-top: 5px;
+    padding-right: 10px;
 }
 
 .no-close .ui-dialog-titlebar-close {
@@ -60,20 +61,6 @@ p {
     color: #555;
 }
 
-.ui-state-hover,
-.ui-widget-content .ui-state-hover,
-.ui-widget-header .ui-state-hover,
-.ui-state-focus,
-.ui-widget-content .ui-state-focus,
-.ui-widget-header .ui-state-focus {
-    border: 1px solid #555;
-    background: #eee;
-}
-
-.ui-dialog-titlebar {
-    background: #555;
-    border: 1px solid #555;
-}
 
 .splash_button {
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -96,11 +83,11 @@ p {
     -moz-border-radius-bottomleft:9px;
     border-bottom-left-radius:9px;
     text-indent:0;
-    border:1px solid #dcdcdc;
+    border:1px solid #cecece;
     display:inline-block;
     color:#D22018;
-    font-family:Trebuchet MS;
-    font-size:14px;
+    font-family:"Roboto Condensed";
+    font-size:16px;
     font-weight:bold;
     font-style:normal;
     height:110px;
@@ -140,85 +127,8 @@ p {
     padding-bottom:0px;
 }
 
-/*.skin5.top .tabs_header {
-    padding: 0px;
-    margin-bottom: 0px;
-    list-style: none;
-}*/
-
- .skin5.top .tab_header_item {
-    display: inline-block;
-    margin: 0px;
-    height: 40px;
-}
-
- .skin5.top .tab_content {
-    clear: left;
-    display: none;
-}
-
-/* skin2 */
-
-.skin5.top.tabs_wrapper {
-    border: 1px solid #ddd;
-}
-
-.skin5.top .tabs_header {
-    overflow: visible;
-    margin-bottom: 0px;
-    padding-top: 0px;
-    background: url(images/tabs_header.png) left bottom repeat-x;
-    border-bottom: 1px solid #ddd;
-}
-
- .skin5.top .tab_header_item {
-    margin-left: 0px;
-    background: url(images/tabs_border_top.png) right bottom no-repeat;
-    position: relative;
-}
-
- .skin5.top .tab_header_item.tab_selected span.header_item_before {
-    background: url(images/tabs_selected.png) center bottom no-repeat;
-    display: block;
-    position: absolute;
-    bottom: -10px;
-    width: 100%;
-    height: 10px;
-}
-
- .skin5.top .tab_header_item.tab_selected a {
-    color: #cd0000;
-}
-
- .skin5.top .tab_header_item.first_tab {
-}
-
- .skin5.top .tab_header_item.first_tab.tab_selected {
-}
-
- .skin5.top .tab_header_item.last_tab {
-}
-
- .skin5.top .tab_header_item.last_tab.tab_selected {
-    border-right: none;
-}
-
- .skin5.top .tab_header_item a {
-    padding: 0px 20px;
-    font: bold 12px Arial, Helvetica, sans-serif;
-    line-height: 40px;
-    color: #333;
-    text-decoration: none;
-    outline: 0;
-    border-right: 1px solid #ededed;
-}
-
- .skin5.top .tab_content {
-    font: 12px/24px Arial, Helvetica, sans-serif;
-    color: #777;
-}
-
 .jBox-container {    
+    font-family: "Roboto Condensed";
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
     -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
     box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -240,13 +150,23 @@ p {
     border-bottom-left-radius:9px;
     text-indent:0;
     border:1px solid #D22018;
-
     min-width:140px;
 
 }
 
 .jBox-pointer:after {
     background: #eee;
+}
+
+#tabs_holder {
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#tabs_titlebar {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 
 ul>li>a {
@@ -261,9 +181,7 @@ ul>li>a {
     border-bottom: 1px solid #C8C8C8;
 }
 
-ul>li>a:hover {
-    background-color:#E8E8E8;
-}
+
 
 hr { 
     padding:5px;
@@ -278,32 +196,43 @@ hr {
     border-color: #FFF;
 } 
 
-.button_list {
-    height: 36px;
-    width: 114px;
-    margin-bottom: 40px;
-    display: block;
-    white-space: nowrap;
+#button_list {
+    margin-right:100px;
 }
 
-.click_button {
+.bootstrap-switch-container {
+    font-family: "Roboto Condensed";
+    line-height: 2;
+}
+
+.bootstrap-switch.bootstrap-switch-mini .bootstrap-switch-handle-off, .bootstrap-switch.bootstrap-switch-mini .bootstrap-switch-label {
+    font-family: "Roboto Condensed";
+    font-size: 8pt;
+    line-height: 2em;
+    background: #eee;
+    color: #999;
+    padding-top: 5px;
+}
+
+.bootstrap-switch.bootstrap-switch-mini .bootstrap-switch-handle-on {
+    padding-top: 10px;
+    padding-bottom: 10px;    
+    line-height: .7;
+}
+
+.bootstrap-switch-wrapper {
+    float: right;
     cursor: pointer;
-    background-color: #555;
-    color: #FFF;
-    border-radius: 0 3px 3px 0;
-    line-height: 18px;
+    background-color: #eee;
+    color: #999;
+
+    border: 1px solid #dcdcdc;
     display: inline-block;
-    height: 31px;
+    height: 28px;
     width: 114px;
     margin-top: 5px;
     float:right;
-    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-    box-shadow:inset 0px 1px 0px 0px #ffffff;
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #333), color-stop(1, #555) );
-    background:-moz-linear-gradient( center top, #333 5%, #555 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
-    background-color:#ededed;
+    background-color:#eee;
     -webkit-border-top-left-radius:9px;
     -moz-border-radius-topleft:9px;
     border-top-left-radius:9px;
@@ -318,6 +247,39 @@ hr {
     border-bottom-left-radius:9px;
 }
 
+.nav_button {
+    font-family: "Roboto Condensed";
+    cursor: pointer;
+    background-color: #eee;
+    color: #999;
+    line-height: 2em;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    height: 31px;
+    width: 114px;
+    margin-top: 5px;
+    float:right;
+    background-color:#eee;
+    -webkit-border-top-left-radius:9px;
+    -moz-border-radius-topleft:9px;
+    border-top-left-radius:9px;
+    -webkit-border-top-right-radius:9px;
+    -moz-border-radius-topright:9px;
+    border-top-right-radius:9px;
+    -webkit-border-bottom-right-radius:9px;
+    -moz-border-radius-bottomright:9px;
+    border-bottom-right-radius:9px;
+    -webkit-border-bottom-left-radius:9px;
+    -moz-border-radius-bottomleft:9px;
+    border-bottom-left-radius:9px;
+}
+.nav_button:hover {
+  background: #999;
+  border: 1px solid #999;
+  color: #eee;
+  text-decoration: none;
+}
+
 #signinButton {
     margin-top: 5px;
 }
@@ -330,8 +292,87 @@ hr {
     visibility: hidden;
 }
 .clearfix {
-    display: inline-block;
-}
-.clearfix {
     display: block;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover {
+    background: #999;
+    color: #eee;
+    border: 1px solid #999;
+}
+
+.ui-widget-content a {
+    color: #D22018;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    color: #999;
+    background: #eee;
+}
+
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+    color: #999;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border-top: 1px solid #D22018;
+    border-left: 1px solid #D22018;
+    border-right: 1px solid #D22018;
+    border-bottom: 1px solid #999;
+    background: #D22018;
+    color: #eee;
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+    color: #eee;
+}
+
+.ui-tabs {
+    background: #fff;
+    cursor: default;
+}
+
+*:focus {
+    outline: none;
+}
+
+.ui-tabs-nav {
+    font-family: "Roboto Condensed";
+    border: 1px solid #eee;
+    color: #D22018;
+}
+
+.ui-helper-reset {
+    outline: none;
+    box-shadow: none;
+}
+
+.ui-widget-header {
+    background: #ededed;
+    border-bottom: 1px solid #999;
+}
+
+
+.ui-widget-content {
+    color: #000;
+    border: 1px solid #999;
+}
+
+.ui-widget-content #settings {
+    color: #dfdfdf;
+}
+
+.ui-dialog-titlebar {
+    font-family: "Roboto Condensed";
+    background: #999;
+    color: #eee;
+    border: 1px solid #dfdfdf;
+}
+
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+
+.ui-button-text {
+    color: #999;
 }

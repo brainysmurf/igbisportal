@@ -186,8 +186,8 @@ def splash(request):
 
     buttons = OrderedDict()
     #FIXME: Why need no spaces?
-    buttons['SecondaryTeachers'] = sec_teacher_buttons
-    buttons['ElementaryTeachers'] = elem_teacher_buttons
+    buttons['Secondary+Teachers'] = sec_teacher_buttons
+    buttons['Elementary+Teachers'] = elem_teacher_buttons
     buttons['Students'] = student_buttons
     #buttons['Settings'] = settings_buttons
 
