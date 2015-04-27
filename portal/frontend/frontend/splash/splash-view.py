@@ -188,7 +188,7 @@ def splash(request):
         if account_type == 'Advisors':
             buttons['Secondary+Teachers'] = sec_teacher_buttons
             buttons['Elementary+Teachers'] = elem_teacher_buttons
-            buttons['Students'] = student_buttons  # for debugging
+            #buttons['Students'] = student_buttons  # for debugging
         elif account_type == 'Students':
             buttons['Students'] = student_buttons
         else:

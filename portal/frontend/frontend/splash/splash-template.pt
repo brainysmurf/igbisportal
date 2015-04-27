@@ -400,7 +400,7 @@
           contentType: 'application/json; charset=utf-8',
           success: function(result) {
               window.location.reload();   // refresh
-              //do_update();
+              do_update();
             },
           data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
           });
