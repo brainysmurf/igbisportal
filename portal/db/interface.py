@@ -34,8 +34,8 @@ class DatabaseSetterUpper(object):
 
 		# Uses sqlalchemy tools to poplate...
 
-
-		self.default_logger("Dropping all tables, so we can make them afresh")
+		# FIXED: Uses alembic to do this now.
+		#self.default_logger("Dropping all tables, so we can make them afresh")
 		#from portal.db import drop_all_tables_and_sequences
 		#drop_all_tables_and_sequences()
 		#from portal.db import metadata, engine

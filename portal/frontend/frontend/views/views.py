@@ -228,6 +228,10 @@ def mb_grade_teachers(request):
 
 @view_config(route_name="mb_homeroom", renderer="json")
 def mb_homeroom(request):
+    """
+    Return teacher emails for every student who is in my homeroom
+    """
+
     user = request.session.get('mb_user')
     if not user:
         return dict(message="No user in session?", data=[])
@@ -235,18 +239,14 @@ def mb_homeroom(request):
         return dict(message="Not a teacher", data=[])
     data = []
     with DBSession() as session:
-        records = session.query(HRTeachers).filter_by(teacher_id=user.id).all()
-        if not records:
+        students = session.query(Students).filter_by(homeroom_advisor=user.id).all()
+        if not students:
             return dict(message="This teacher was not found in the HR teacher table", data=[])
-        for record in records:
-            try:
-                student = session.query(Students).filter_by(id=record.student_id).one()
-            except NoResultFound:
-                continue
+        for student in students:
             try:
                 teachers = session.query(Teachers.email).\
                     select_from(Students).\
-                        join(Enrollments, Enrollments.c.student_id == record.student_id).\
+                        join(Enrollments, Enrollments.c.student_id == student.student_id).\
                         join(Courses, Courses.id == Enrollments.c.course_id).\
                         join(Assignments, Assignments.c.course_id == Courses.id).\
                         join(Teachers, Teachers.id == Assignments.c.teacher_id).\

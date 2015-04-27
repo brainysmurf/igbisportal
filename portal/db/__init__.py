@@ -28,11 +28,12 @@ from portal.db.DBModel import Student
 
 metadata = Student.metadata
 
-engine =  create_engine(
-    # 'postgresql://{db_username}:{db_password}@{db_host}/{db_name}'.\
-    #     format(**ns.declared_kwargs),
-    'postgresql://igbisportaluser:igbisportaluser@localhost/igbisportal',
-        max_overflow=0, pool_size=100, echo=False)
+import portal.settings as settings
+import gns
+
+database_url = settings.get('DATABASE', 'sqlalchemy.url')
+
+engine =  create_engine(database_url, max_overflow=0, pool_size=100, echo=False)
 
 execute = engine.execute
 
@@ -40,8 +41,6 @@ session_maker = sessionmaker(
     bind=engine,
     expire_on_commit=False
     )
-
-
 
 def get_table_list_from_db():
     """

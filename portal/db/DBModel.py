@@ -20,7 +20,10 @@ from sqlalchemy.orm import relationship, backref
 """
 Klunky, but lets me debug quickly
 """
-PREFIX = 'new_'
+import portal.settings as settings
+PREFIX = settings.get('DATABASE', 'db_prefix')
+if PREFIX is None or PREFIX.upper() is "NONE":
+	PREFIX = ""
 USERS = "{}users".format(PREFIX)
 STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)
@@ -148,7 +151,7 @@ class Student(Base, User):
 	birthday = Column(String(255), nullable=True, server_default=None)
 
 	open_apply_student_id = Column(String(255), nullable=True, server_default=None)
-
+	homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
 class Parent(Base, User):
 	"""
