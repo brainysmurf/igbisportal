@@ -17,6 +17,8 @@ import sqlalchemy as sa
 
 import portal.settings as settings
 prefix = settings.get('DATABASE', 'db_prefix')
+if prefix is None or prefix.upper() is "NONE":
+	prefix = ""
 
 
 def upgrade():
