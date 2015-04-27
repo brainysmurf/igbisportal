@@ -1,0 +1,96 @@
+@font-face {
+	font-family: 'Roboto Condensed';
+	font-style: normal;
+	font-weight: 400;
+	src:
+		local('Roboto Condensed'),
+		local('RobotoCondensed-Regular'),
+		/* from http://fonts.gstatic.com/s/robotocondensed/v13/Zd2E9abXLFGSr9G3YK2MsG8ITcfo9NwJpvZiO7_FxEg.eot */
+		url('Roboto_Condensed_400.eot?#iefix') format('embedded-opentype'),
+		/* from http://fonts.gstatic.com/s/robotocondensed/v13/Zd2E9abXLFGSr9G3YK2MsFzqCfRpIA3W6ypxnPISCPA.woff */
+		url('Roboto_Condensed_400.woff') format('woff'),
+		/* from http://fonts.gstatic.com/s/robotocondensed/v13/Zd2E9abXLFGSr9G3YK2MsDR-eWpsHSw83BRsAQElGgc.ttf */
+		url('Roboto_Condensed_400.ttf') format('truetype'),
+		/* from http://fonts.gstatic.com/l/font?kit=Zd2E9abXLFGSr9G3YK2MsM9XqQMESZbwKrSTBefVM6U#RobotoCondensed */
+		url('Roboto_Condensed_400.svg#RobotoCondensed') format('svg');
+}
+@font-face {
+	font-family: 'Roboto Condensed';
+	font-style: italic;
+	font-weight: 400;
+	src:
+		local('Roboto Condensed Italic'),
+		local('RobotoCondensed-Italic'),
+		/* from http://fonts.gstatic.com/s/robotocondensed/v13/BP5K8ZAJv9qEbmuFp8RpJWVMz6u1mZhSCOxOw1L508I.eot */
+		url('Roboto_Condensed_400italic.eot?#iefix') format('embedded-opentype'),
+		/* from http://fonts.gstatic.com/s/robotocondensed/v13/BP5K8ZAJv9qEbmuFp8RpJfHZ7IfZvqUgXLEMrfwTXOk.woff */
+		url('Roboto_Condensed_400italic.woff') format('woff'),
+		/* from http://fonts.gstatic.com/s/robotocondensed/v13/BP5K8ZAJv9qEbmuFp8RpJdNyc1nIn01s4QPT2l20KA4.ttf */
+		url('Roboto_Condensed_400italic.ttf') format('truetype'),
+		/* from http://fonts.gstatic.com/l/font?kit=BP5K8ZAJv9qEbmuFp8RpJUgSycwWYVmqVKeH20EnyKI#RobotoCondensed */
+		url('Roboto_Condensed_400italic.svg#RobotoCondensed') format('svg');
+}
+@font-face {
+	font-family: 'Lora';
+	font-style: normal;
+	font-weight: 400;
+	src:
+		local('Lora'),
+		local('Lora-Regular'),
+		/* from http://fonts.gstatic.com/s/lora/v9/rMDaOpSw-8ss9B8Y3bLqyA.eot */
+		url('Lora_400.eot?#iefix') format('embedded-opentype'),
+		/* from http://fonts.gstatic.com/s/lora/v9/5-AYViExptypIdFoLKAxTA.woff */
+		url('Lora_400.woff') format('woff'),
+		/* from http://fonts.gstatic.com/s/lora/v9/4A-myfZX6oDr9CtSTkTGig.ttf */
+		url('Lora_400.ttf') format('truetype'),
+		/* from http://fonts.gstatic.com/l/font?kit=b9Q3-ov7xEcW76ymki76Ag#Lora */
+		url('Lora_400.svg#Lora') format('svg');
+}
+@font-face {
+	font-family: 'Lora';
+	font-style: italic;
+	font-weight: 400;
+	src:
+		local('Lora Italic'),
+		local('Lora-Italic'),
+		/* from http://fonts.gstatic.com/s/lora/v9/EJ2E0VlN4DLy-wT0t9nagw.eot */
+		url('Lora_400italic.eot?#iefix') format('embedded-opentype'),
+		/* from http://fonts.gstatic.com/s/lora/v9/wXeMvRh7Gui36p_I04Ex6g.woff */
+		url('Lora_400italic.woff') format('woff'),
+		/* from http://fonts.gstatic.com/s/lora/v9/DeoOq1kX9ExfArSHppos_g.ttf */
+		url('Lora_400italic.ttf') format('truetype'),
+		/* from http://fonts.gstatic.com/l/font?kit=Hm0XuTrgQw0KWgYD2kG1hw#Lora */
+		url('Lora_400italic.svg#Lora') format('svg');
+}
+@font-face {
+	font-family: 'Lora';
+	font-style: normal;
+	font-weight: 700bold;
+	src:
+		local('Lora Bold'),
+		local('Lora-Bold'),
+		/* from http://fonts.gstatic.com/s/lora/v9/1HJZfNlOezBHPPwzRKlEcQ.eot */
+		url('Lora_700bold.eot?#iefix') format('embedded-opentype'),
+		/* from http://fonts.gstatic.com/s/lora/v9/XpaepWHcooQHSRnzoohUng.woff */
+		url('Lora_700bold.woff') format('woff'),
+		/* from http://fonts.gstatic.com/s/lora/v9/rapsGf8n-DpRu9kcmAAciA.ttf */
+		url('Lora_700bold.ttf') format('truetype'),
+		/* from http://fonts.gstatic.com/l/font?kit=zqoBbCqeaofBZQ-8-sdxfQ#Lora */
+		url('Lora_700bold.svg#Lora') format('svg');
+}
+@font-face {
+	font-family: 'Lora';
+	font-style: italic;
+	font-weight: 700;
+	src:
+		local('Lora Bold Italic'),
+		local('Lora-BoldItalic'),
+		/* from http://fonts.gstatic.com/s/lora/v9/_IxjUs2lbQSu0MyFEAfa7fY6323mHUZFJMgTvxaG2iE.eot */
+		url('Lora_700italic.eot?#iefix') format('embedded-opentype'),
+		/* from http://fonts.gstatic.com/s/lora/v9/_IxjUs2lbQSu0MyFEAfa7T8E0i7KZn-EPnyo3HZu7kw.woff */
+		url('Lora_700italic.woff') format('woff'),
+		/* from http://fonts.gstatic.com/s/lora/v9/_IxjUs2lbQSu0MyFEAfa7aCWcynf_cDxXwCLxiixG1c.ttf */
+		url('Lora_700italic.ttf') format('truetype'),
+		/* from http://fonts.gstatic.com/l/font?kit=_IxjUs2lbQSu0MyFEAfa7Zbd9NUM7myrQQz30yPaGQ4#Lora */
+		url('Lora_700italic.svg#Lora') format('svg');
+}

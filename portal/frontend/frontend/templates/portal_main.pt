@@ -8,8 +8,8 @@
   <script type="text/javascript" src="${static_url}jquery-ui/jquery-ui.min.js"></script>
   <link rel="stylesheet" type="text/css" href="${static_url}jquery-ui/jquery-ui.min.css" />
 
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
+  <link rel="stylesheet" type="text/css" href="${static_url}fonts/fonts.css">
+
   <div metal:define-slot="additional-css"></div>
 
   <script src="https://apis.google.com/js/client:platform.js?onload=start" defer></script>
@@ -41,6 +41,7 @@
       data-cookiepolicy="single_host_origin"
       data-callback="signInCallback"
       data-height="standard"
+      data-approvalprompt="force"
       >
     </div></div>
     <div class="clearfix"></div>

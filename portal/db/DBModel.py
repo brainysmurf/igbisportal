@@ -83,7 +83,7 @@ class User(object):
 	g_plus_unique_id = Column(String(255), nullable=True, server_default=None)
 
 	def __str__(self):
-		return self.first_name + ' ' + self.last_name
+		return (self.first_name or "") + ' ' + (self.last_name or "")
 
 """
 Many to many relationships need an association table, this is it for parent/children links

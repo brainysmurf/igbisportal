@@ -376,3 +376,7 @@ hr {
 .ui-button-text {
     color: #999;
 }
+
+.bp_shareable_link_input {
+    width: 100%;
+}

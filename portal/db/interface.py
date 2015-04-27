@@ -5,6 +5,17 @@ import portal.settings as settings
 import gns
 import re, json, glob
 
+from portal.db.UpdaterHelper import updater_helper
+
+db = Database()
+Student = db.table_string_to_class('Student')
+Teacher = db.table_string_to_class('Advisor')
+Parent = db.table_string_to_class('Parent')
+Course = db.table_string_to_class('Course')
+IBGroup = db.table_string_to_class('IBGroup')
+
+
+
 class DatabaseSetterUpper(object):
 
 	def __init__(self, lazy=True, verbose=False):
@@ -23,89 +34,110 @@ class DatabaseSetterUpper(object):
 
 		# Uses sqlalchemy tools to poplate...
 
-		Student = self.database.table_string_to_class('Student')
-		Teacher = self.database.table_string_to_class('Advisor')
-		Parent = self.database.table_string_to_class('Parent')
-		Course = self.database.table_string_to_class('Course')
-		IBGroup = self.database.table_string_to_class('IBGroup')
 
 		self.default_logger("Dropping all tables, so we can make them afresh")
-		from portal.db import drop_all_tables_and_sequences
-		drop_all_tables_and_sequences()
-
-		from portal.db import metadata, engine
-		metadata.create_all(engine)
+		#from portal.db import drop_all_tables_and_sequences
+		#drop_all_tables_and_sequences()
+		#from portal.db import metadata, engine
+		#metadata.create_all(engine)
 
 		self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
 
 		admins = []
-		with DBSession() as session:
-			admins.append(Teacher(
-				id = 10792616,
-				first_name= "Adam",
-				last_name = "Morris",
-				type= "Advisors",
-				gender="Male",
-				email="adam.morris@igbis.edu.my"
-				))
+		admins.append(Teacher(
+			id = 10792616,
+			first_name= "Adam",
+			last_name = "Morris",
+			type= "Advisors",
+			gender="Male",
+			email="adam.morris@igbis.edu.my"
+			))
 
-			admins.append(Teacher(
-				id = 10792598,
-				first_name="Geoff",
-				last_name ="Derry",
-				email="geoffrey.derry@igbis.edu.my",
-				type="Advisor"
-				))
+		admins.append(Teacher(
+			id = 10792598,
+			first_name="Geoff",
+			last_name ="Derry",
+			email="geoffrey.derry@igbis.edu.my",
+			type="Advisor"
+			))
 
-			admins.append(Teacher(
-				id=10792614,
-				first_name="Matthew",
-				last_name="Marshall",
-				email="Matthew.Marshall@igbis.edu.my",
-				type="Advisor"
-				))
+		admins.append(Teacher(
+			id=10792614,
+			first_name="Matthew",
+			last_name="Marshall",
+			email="Matthew.Marshall@igbis.edu.my",
+			type="Advisor"
+			))
 
-			admins.append(Teacher(
-				id=10792596,
-				first_name="Phil",
-				last_name="Clark",
-				email="Phil.Clark@igbis.edu.my",
-				type="Advisor"
-				))
+		admins.append(Teacher(
+			id=10792596,
+			first_name="Phil",
+			last_name="Clark",
+			email="Phil.Clark@igbis.edu.my",
+			type="Advisor"
+			))
 
-			admins.append(Teacher(
-				id = 10792615,
-				first_name="Simon",
-				last_name= "Millward",
-				email="Simon.Millward@igbis.edu.my",
-				type="Advisor"
-				))
+		admins.append(Teacher(
+			id = 10792615,
+			first_name="Simon",
+			last_name= "Millward",
+			email="Simon.Millward@igbis.edu.my",
+			type="Advisor"
+			))
 
-			admins.append(Teacher(
-				id = 10754285,
-				first_name="Lennox",
-				last_name="Meldrum",
-				email="lennox.meldrum@igbis.edu.my",
-				type="Advisor"
-				))
+		admins.append(Teacher(
+			id = 10754285,
+			first_name="Lennox",
+			last_name="Meldrum",
+			email="lennox.meldrum@igbis.edu.my",
+			type="Advisor"
+			))
+
+		admins.append(Teacher(
+			id = 10792603,
+			first_name="Peter",
+			last_name="Fowles",
+			email="peter.fowles@igbis.edu.my",
+			type="Advisor"
+			))
+
+		admins.append(Teacher(
+			id = 10792604,
+			first_name="Gail",
+			last_name="Hall",
+			email="gail.hall@igbis.edu.my",
+			type="Advisor"
+			))
+
+		admins.append(Teacher(
+			id = 13546,
+			first_name="Super",
+			last_name="Admin",
+			email="superadmin@managebac.com",
+			type="Advisor"
+			))
+
+		admins.append(Teacher(
+			id = 10958256,
+			first_name="Usha",
+			last_name ="Ranikrishnan",
+			email="usha.ranikrishnan",
+			type="Advisor"
+			))
+
+		with updater_helper() as u:
 
 			for admin in admins:
-				try:
-					session.add(admin)
-				except IntegrityError:
-					print('Nope: {}'.format(admin))
-					self.default_logger(admin)
+				u.update_or_add(admin)
 
+			for gns.section in gns.settings.sections:
+				self.default_logger(gns("Setup {section} on database"))
 
-		for gns.section in gns.settings.sections:
-			self.default_logger(gns("Setup {section} on database"))
+				with open(gns('{settings.path_to_jsons}/{section}.json')) as _f:
+					this_json = json.load(_f)
 
-			with open(gns('{settings.path_to_jsons}/{section}.json')) as _f:
-				this_json = json.load(_f)
+				_map = dict(Classes="Course", Students="Student", Advisors="Advisor", Parents="Parent")
 
-			_map = dict(Classes="Course", Students="Student", Advisors="Advisor", Parents="Parent")
-
-			with DBSession() as session:
 				for item in this_json[gns.section]:
 					_type = item.get('type', None)
 					_type = _map.get(_type, _type)
@@ -125,101 +157,84 @@ class DatabaseSetterUpper(object):
 
 					table_class = self.database.table_string_to_class(_type)
 					instance = table_class()
+					gotcha = False
 					for item_key in item:
+						if item_key == 'id' and item[item_key] == 10225796:
+							gotcha = True
 						setattr(instance, item_key, item[item_key])
 
-					session.add(instance)
+					#if gotcha:
+					#	from IPython import embed; embed();
+					u.update_or_add(instance)
+					#if gotcha:
+					#	exit()
 
+			with u.collection(Student, Parent, 'parents', left_column='student_id') as stu_par:
 
-		with open(gns('{settings.path_to_jsons}/users.json')) as _f:
-			this_json = json.load(_f)
+				with open(gns('{settings.path_to_jsons}/users.json')) as _f:
+					this_json = json.load(_f)
 
-		self.default_logger("Setting up student-parent relations on database")
-		for user in this_json['users']:
-			with DBSession() as session:
-				_type = user.get('type')
+				self.default_logger("Setting up student-parent relations on database")
+				for user in this_json['users']:
+					_type = user.get('type')
+					if _type == "Students":
+						student_id = user.get('student_id')
+						if student_id:
+							for parent_id in user.get('parents_ids'):
+								stu_par.append(student_id, parent_id)
 
-				if _type == "Students":
-					student_id = user.get('student_id')
-					if student_id:
-						student = session.query(Student).filter_by(student_id=user.get('student_id')).one()
-						for parent_id in user.get('parents_ids'):
-							parent = session.query(Parent).filter_by(id=parent_id).one()
+			with u.collection(Student, IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
+				self.default_logger("Setting up student IB Group membership on database")
+				with open(gns('{settings.path_to_jsons}/ib_groups.json')) as _f:
+					this_json = json.load(_f)
 
-							student.parents.append(parent)  # adds the parent/child relation stuff automagically
+				for ib_group in this_json['ib_groups']:
+					gns.group_id = ib_group.get('id')
+					gns.id = gns.group_id
+					gns.uri = gns.settings.ib_groups_section_url.replace('/', '-')
 
-		self.default_logger("Setting up student IB Group membership on database")
-		with open(gns('{settings.path_to_jsons}/ib_groups.json')) as _f:
-			this_json = json.load(_f)
+					# Two gns calls because uri has {id} in it
+					with open(gns(gns('{settings.path_to_jsons}/{uri}.json'))) as _f2:
+						members_json = json.load(_f2)
 
-		for ib_group in this_json['ib_groups']:
-			gns.group_id = ib_group.get('id')
-			gns.id = gns.group_id
-			gns.uri = gns.settings.ib_groups_section_url.replace('/', '-')
+					for student_item in members_json['members']:
+						gns.student_id = student_item.get('student_id')
+						if not gns.student_id:
+							continue
+						stu_ibgroup.append(gns.student_id, gns.group_id)						
 
-			# Two gns calls because uri has {id} in it
-			print(gns(gns('{settings.path_to_jsons}/{uri}.json')))
-			with open(gns(gns('{settings.path_to_jsons}/{uri}.json'))) as _f2:
-				members_json = json.load(_f2)
+			with u.collection(Teacher, Course, 'classes') as teacher_course:
+				self.default_logger("Setting up teacher class assignments on database")
+				with open(gns('{settings.path_to_jsons}/classes.json')) as _f:
+					this_json = json.load(_f)
+				for clss in this_json['classes']:
+					for teacher in clss.get('teacher'):
+						teacher_id = teacher.get('teacher_id')
+						course_id = clss.get('id')
 
-			for student_item in members_json['members']:
-				gns.student_id = student_item.get('student_id')
-				if not gns.student_id:
-					continue
-				with DBSession() as session:
-					try:
-						student = session.query(Student).filter_by(student_id=gns.student_id).one()
-					except NoResultFound:
-						self.default_logger(gns("Student {student_id} not found?"))
-						continue
-					try:
-						group = session.query(IBGroup).filter_by(id=gns.group_id).one()
-					except NoResultFound:
-						self.default_logger(gns("Group {group_id} not found?"))
-					student.ib_groups.append(group)  # adds the ib_group members relation stuff
+						if teacher_id and course_id:
+							teacher_course.append(teacher_id, course_id)
 
-		self.default_logger("Setting up teacher class assignments on database")
-		with open(gns('{settings.path_to_jsons}/classes.json')) as _f:
-			this_json = json.load(_f)
-		for clss in this_json['classes']:
-			for teacher in clss.get('teacher'):
-				teacher_id = teacher.get('teacher_id')
-				course_id = clss.get('id')
+			with u.collection(Student, Course, 'classes', left_column='student_id') as stu_course:
 
-				if teacher_id and course_id:
+				self.default_logger("Setting up student class enrollments on database")
+				for path in glob.glob(gns('{settings.path_to_jsons}/groups-*-members.json')):
+					with open(path) as _f:
+						this_json = json.load(_f)
+
 					with DBSession() as session:
-						try:
-							teacher = session.query(Teacher).filter_by(id=teacher_id).one()
-						except NoResultFound:
-							print("Could not find teacher {} in database".format(teacher_id))
-							continue
-						try:
-							course = session.query(Course).filter_by(id=course_id).one()
-						except NoResultFound:
-							print("Could not find course {} in database".format(course_id))
-							continue
+						course_id = re.match(gns('{settings.path_to_jsons}/groups-(\d+)-members.json'), path).group(1)
+						for course in this_json['members']:
+							student_id = course.get('student_id')
+							if student_id is None:
+								continue
+							try:
+								stu_course.append(student_id, course_id)
+							except NoResultFound:
+								pass
+								#print('course_id {} or student_id {} not found'.format(course_id, student_id))
 
-						teacher.classes.append(course)  # adds the teacher assignment stuff
-
-		self.default_logger("Setting up student class enrollments on database")
-		for path in glob.glob(gns('{settings.path_to_jsons}/groups-*-members.json')):
-			with open(path) as _f:
-				this_json = json.load(_f)
-
-			with DBSession() as session:
-				course_id = re.match(gns('{settings.path_to_jsons}/groups-(\d+)-members.json'), path).group(1)
-				for course in this_json['members']:
-					student_id = course.get('student_id')
-					if student_id is None:
-						continue
-					try:
-						student = session.query(Student).filter_by(student_id=student_id).one()
-						course = session.query(Course).filter_by(id=course_id).one()
-					except NoResultFound:
-						continue
-					student.classes.append(course)  # add the course/students relation stuff
-
-		self.default_logger("Done!")
+			self.default_logger("Done!")
 
 if __name__ == "__main__":
 

@@ -83,7 +83,7 @@ stndrdbttns = [
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
 ]
 
-@view_config(route_name='splash', renderer='{}:templates/splash.pt'.format('frontend'), http_cache=0)
+@view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
     if not 'mb_user' in request.session:
         unique = uuid.uuid4()  # random
@@ -92,8 +92,8 @@ def splash(request):
     else:
         user_name = request.session['mb_user'].first_name
         unique = None
+    logged_in_user = request.session.get('mb_user', None)
 
-    role = request.GET.get('role', 'student')
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
@@ -175,21 +175,28 @@ def splash(request):
             menu_item(icon="apple", display="An Apple a Day", url="https://sites.google.com/a/igbis.edu.my/plehhcet/an-apple-a-day"),
         ]}),
         button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
-        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", 
-        context_menu={
-        'items': [
-            menu_item(icon="external-link-square", display="Make sharable link", url="/brainpop"),
-        ]}),
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
 
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
     ])
 
     buttons = OrderedDict()
     #FIXME: Why need no spaces?
-    buttons['Secondary+Teachers'] = sec_teacher_buttons
-    buttons['Elementary+Teachers'] = elem_teacher_buttons
-    buttons['Students'] = student_buttons
-    #buttons['Settings'] = settings_buttons
+
+    if logged_in_user:
+        account_type = logged_in_user.type
+        if account_type == 'Advisors':
+            buttons['Secondary+Teachers'] = sec_teacher_buttons
+            buttons['Elementary+Teachers'] = elem_teacher_buttons
+            buttons['Students'] = student_buttons  # for debugging
+        elif account_type == 'Students':
+            buttons['Students'] = student_buttons
+        else:
+            buttons['Secondary+Teachers'] = sec_teacher_buttons
+            buttons['Elementary+Teachers'] = elem_teacher_buttons
+            buttons['Students'] = student_buttons            
+    else:
+        buttons['Students'] = student_buttons
 
     g_plus_unique_id = request.session.get('g_plus_unique_id')
     settings = None
@@ -205,7 +212,6 @@ def splash(request):
         unique=unique,
         name=user_name,
         data_origin=gns.settings.data_origin,
-        role=role,
         title="IGBIS Splash Page",
         buttons = buttons,
         settings = settings

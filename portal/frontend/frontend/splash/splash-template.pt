@@ -1,4 +1,4 @@
-<html metal:use-macro="load: portal_main.pt">
+<html metal:use-macro="load: frontend:templates/portal_main.pt">
 
 <div metal:fill-slot="additional-css">
   <!-- Launch Google Signin procedures, use defer  -->
@@ -14,6 +14,15 @@
 </div>
 
 <div metal:fill-slot="dialogs">
+      <div id="shareable_link_bp" style="display:none;">
+        <p>NOTE: Convert "plain" links to links that have our IGBIS username/password embedded.</p><br /><br />
+
+        <label for="bp_from">Enter the URL here:</label><br />
+        <input id="bp_from" class="bp_shareable_link_input" type="text" /><br /><br />
+        <label for="bp_to">Click the box to "copy":</label><br />
+        <input id="bp_to" class="bp_shareable_link_input" type="text" />
+      </div>
+
       <div id="settings_dialog" style="display:none;">      
        <form id="icon_size_form">
         <br /><strong>Button Size:</strong><br />
@@ -35,6 +44,7 @@
     <div metal:fill-slot="content">
 
       <script>
+  
 
         $("#edit_button").bootstrapSwitch({
           onText: 'On',
@@ -46,7 +56,6 @@
           inverse: true,
           onSwitchChange: function (event, state) {
             $containers = $('.splash_button_container');
-            console.log($containers);
 
             if (state) {  // edit mode on
 
@@ -139,7 +148,6 @@
           //       }
           //   });
           // }
-          console.log("Updating");
 
           var value = $("#new_tab_checkbox").val();
           if (value == "1") {
@@ -227,10 +235,10 @@
 
   <script type="text/javascript">
     $('#tabs_holder').tabs();
-    console.log("don");
   </script>
 
   <script type="text/javascript">
+
   $("input[name=icon_size]:radio").change(function () {
         var value = $(this).val();
 
@@ -257,7 +265,6 @@
 
   $("#new_tab_checkbox").change(function () {
         var value = $(this).val();
-        console.log(value);
         value = value == "1" ? "0" : "1";
         $(this).val(value);
 
@@ -336,6 +343,41 @@
   </tal:block>
 
     <script>
+
+
+    toLiItem = function (id, icon, display) {
+      return '<li id="' + id + '"><a><i class="fa fa-' + icon + '"></i>&nbsp;' + display+'</a></li>';
+    }
+
+    $("#bp_link").parent().replaceWith(toLiItem('bp_link', 'user', 'Shareable Link'));
+    $("#bp_link").on("click", function() {
+      $('#shareable_link_bp').dialog({
+        dialogClass: "no-close",
+        resizeable: false,
+        hide: "fold",
+        show: "fold",
+        model: true,
+        title: "BrainPop Shareable Link",
+        height: 300,
+        width: 400,
+        close: false,
+        buttons: {
+          "Done": function () { 
+            $(this).dialog('close');
+          }
+        }
+      });
+
+      $('#bp_from').change( function () {
+        console.log("on click");
+        $('#bp_to').val($('#bp_from').val());
+      });
+
+      setInterval(function() {
+        $('#bp_to').val($('#bp_from').val());
+      }, 500);      
+    });
+
     function signInCallback(authResult) {
       delete authResult['g-oauth-window'];  // it took me forever to find this
       //http://stackoverflow.com/questions/25065194/google-sign-in-uncaught-securityerror

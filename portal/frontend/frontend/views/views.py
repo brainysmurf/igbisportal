@@ -31,6 +31,10 @@ settings.get('DIRECTORIES', 'home')
 settings.get('GOOGLE', 'client_id')
 settings.get('GOOGLE', 'data_origin')
 
+@view_config(route_name="frontpage")
+def frontpage(request):
+    return HTTPFound(location="splash")
+
 class ReportIncomplete(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -46,14 +50,6 @@ Absences = db.table_string_to_class('PrimaryStudentAbsences')
 HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 GSignIn = db.table_string_to_class('google_sign_in')
 UserSettings = db.table_string_to_class('user_settings')
-
-@view_config(route_name="signin", renderer="templates/login.pt")
-def signin(request):
-    import uuid
-    'hello'
-    unique = uuid.uuid4()  # random
-    request.session['unique_id'] = str(unique)
-    return dict(client_id=gns.settings.client_id, unique=unique, data_origin=gns.settings.data_origin, app_name="IGBIS Portal")
 
 @view_config(route_name="session_user", renderer="json")
 def session_user(request):
@@ -285,10 +281,6 @@ def auditlog_data(request):
         python_list = json.loads(serialized_item)
         data['data'].append(python_list)
     return data
-
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
-def my_view(request):
-    return {'one': 'yo', 'project': 'frontend'}
 
 @view_config(route_name='grade_course', renderer='templates/grade_course.pt')
 def grade_course(request):

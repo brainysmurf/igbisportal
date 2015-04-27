@@ -25,7 +25,6 @@ def main(global_config, **settings):
 
     config.add_static_view('static', 'static', cache_max_age=3600)
 
-    config.add_route('signin', '/signin')
     config.add_route('signinCallback', '/signinCallback')
     config.add_route('session_user', '/session_user')
     config.add_route('user_settings', '/user_settings')
@@ -36,7 +35,7 @@ def main(global_config, **settings):
     config.add_route('mb_homeroom', '/mb_homeroom')
     config.add_route('mb_grade_teachers', '/mb_grade_teachers')
 
-    config.add_route('home', '/')
+    config.add_route('frontpage', '/')
     config.add_route('auditlog', '/auditlog')
     config.add_route('auditlog_data', '/auditlog_data')
 
