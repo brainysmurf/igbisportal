@@ -260,7 +260,7 @@ def mb_homeroom(request):
 @view_config(route_name='api-students', renderer='json')
 def api_students(request):
     payload = request.params.get('secret')
-    as_multidimentional_arrays = request.params.get('as_array')
+    as_multidimentional_arrays = request.params.get('as_multidimentional_arrays')
     data = []
     if payload != gns.settings.secret:
         return dict(message="wrong secret", data=data)
