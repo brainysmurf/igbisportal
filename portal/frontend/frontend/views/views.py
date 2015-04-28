@@ -268,13 +268,14 @@ def api_students(request):
     with DBSession() as session:
         data = session.query(Students).all()
 
+    columns = list(Students.__table__.columns.keys())
+
     if as_array:
         ret = []
-        columns = list(Students.__table__.columns.keys())
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
-        return dict(message="Success, as array", data=ret)
+        return dict(message="Success, as array", columns=columns, data=ret)
     else:
-        return dict(message="Success", data=[d.as_dict() for d in data])
+        return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
 
 
 @view_config(route_name="mb_courses", renderer='json')
