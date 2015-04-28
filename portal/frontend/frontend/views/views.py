@@ -270,9 +270,9 @@ def api_students(request):
 
     columns = list(Students.__table__.columns.keys())
 
-    if as_array:
-        ret = []
+    if as_multidimentional_arrays:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
+        columns = [[columns[column] for column in range(len(columns))] for row in range(1)]
         return dict(message="Success, as array", columns=columns, data=ret)
     else:
         return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
