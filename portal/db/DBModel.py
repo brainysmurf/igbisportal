@@ -54,6 +54,12 @@ class PortalORM(object):
    def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+   def as_array(self):
+   		ret = []
+   		for column in range(len(self.__table__.columns)):
+   			ret[column] = getattr(self, self.__table__.columns[column])
+   		return ret
+
 class User(PortalORM):
 	"""
 	Fields shared by all users

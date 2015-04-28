@@ -260,6 +260,7 @@ def mb_homeroom(request):
 @view_config(route_name='api-students', renderer='json')
 def api_students(request):
     payload = request.params.get('secret')
+    as_array = request.params.get('as_array')
     data = []
     if payload != gns.settings.secret:
         return dict(message="wrong secret", data=data)
@@ -267,7 +268,13 @@ def api_students(request):
     with DBSession() as session:
         data = session.query(Students).all()
 
-    return dict(message="Success", data=[d.as_dict() for d in data])
+    if as_array:
+        ret = []
+        columns = list(Students.__table__.columns.keys())
+        ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
+        return dict(message="Success, as array", data=ret)
+    else:
+        return dict(message="Success", data=[d.as_dict() for d in data])
 
 
 @view_config(route_name="mb_courses", renderer='json')
