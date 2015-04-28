@@ -50,7 +50,11 @@ PYPSTUDENTABSENCES = "{}primary_student_absences".format(PREFIX)
 SECHRTEACHERS = "{}sec hr teachers".format(PREFIX)
 SETTINGS = "{}settings".format(PREFIX)
 
-class User(object):
+class PortalORM(object):
+   def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class User(PortalORM):
 	"""
 	Fields shared by all users
 	TODO: Check this more carefully, bound to need some tweaks
