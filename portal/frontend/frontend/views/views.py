@@ -30,6 +30,7 @@ import gns
 settings.get('DIRECTORIES', 'home')
 settings.get('GOOGLE', 'client_id')
 settings.get('GOOGLE', 'data_origin')
+settings.get('API', 'secret')
 
 @view_config(route_name="frontpage")
 def frontpage(request):
@@ -240,8 +241,6 @@ def mb_homeroom(request):
     data = []
     with DBSession() as session:
         students = session.query(Students).filter_by(homeroom_advisor=user.id).all()
-        if not students:
-            return dict(message="This teacher was not found in the HR teacher table", data=[])
         for student in students:
             try:
                 teachers = session.query(Teachers.email).\
@@ -257,6 +256,19 @@ def mb_homeroom(request):
             teacher_emails = ",".join(set([t.email for t in teachers]))
             data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
+
+@view_config(route_name='api-students', renderer='json')
+def api_students(request):
+    payload = request.params.get('secret')
+    data = []
+    if payload != gns.settings.secret:
+        return dict(message="wrong secret", data=data)
+
+    with DBSession() as session:
+        data = session.query(Students).all()
+
+    return dict(message="Success", data=[d.as_dict() for d in data])
+
 
 @view_config(route_name="mb_courses", renderer='json')
 def mb_courses(request):
