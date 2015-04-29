@@ -12,6 +12,10 @@ So I guess we'll have to figure that out if we choose to go to production qualit
 from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.orm import column_property
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.sql.functions import concat
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -67,33 +71,34 @@ class User(PortalORM):
 	"""
 	#__tablename__ = USERS
 
-	type = Column(String(255), nullable=True, server_default=None)
+	type = Column(String(255))
 
-	first_name = Column(String(255), nullable=True, server_default=None)
-	last_name = Column(String(255), nullable=True, server_default=None)
-	gender = Column(String(255), nullable=True, server_default=None)
+	first_name = Column(String(255))
+	last_name = Column(String(255))
 
-	national_id = Column(String(255), nullable=True, server_default=None)   # This is the same as passport ID??  Fix
+	gender = Column(String(255))
 
-	nationality1 = Column(String(255), nullable=True, server_default=None)
-	nationality2 = Column(String(255), nullable=True, server_default=None)
-	nationality3 = Column(String(255), nullable=True, server_default=None)
-	nationality4 = Column(String(255), nullable=True, server_default=None)
-	language1 = Column(String(255), nullable=True, server_default=None)
-	language2 = Column(String(255), nullable=True, server_default=None)
-	language3 = Column(String(255), nullable=True, server_default=None)
-	language4 = Column(String(255), nullable=True, server_default=None)
+	national_id = Column(String(255))   # This is the same as passport ID??  Fix
 
-	phone_number = Column(String(255), nullable=True, server_default=None)
-	mobile_phone_number = Column(String(255), nullable=True, server_default=None)
+	nationality1 = Column(String(255))
+	nationality2 = Column(String(255))
+	nationality3 = Column(String(255))
+	nationality4 = Column(String(255))
+	language1 = Column(String(255))
+	language2 = Column(String(255))
+	language3 = Column(String(255))
+	language4 = Column(String(255))
 
-	street_address = Column(String(255), nullable=True, server_default=None)
-	street_address_ii = Column(String(255), nullable=True, server_default=None)
-	city = Column(String(255), nullable=True, server_default=None)
-	state = Column(String(255), nullable=True, server_default=None)
-	zipcode = Column(String(255), nullable=True, server_default=None)
+	phone_number = Column(String(255))
+	mobile_phone_number = Column(String(255))
 
-	g_plus_unique_id = Column(String(255), nullable=True, server_default=None)
+	street_address = Column(String(255))
+	street_address_ii = Column(String(255))
+	city = Column(String(255))
+	state = Column(String(255))
+	zipcode = Column(String(255))
+
+	g_plus_unique_id = Column(String(255))
 
 	def __str__(self):
 		return (self.first_name or "") + ' ' + (self.last_name or "")
@@ -145,23 +150,28 @@ class Student(Base, User):
 
 	id = Column(BigInteger, primary_key=True)
 
-	student_id = Column(String(255), nullable=True, server_default=None)
-	program = Column(String(255), nullable=True, server_default=None)
-	class_year = Column(Integer, nullable=True, server_default=None)
-	email = Column(String(255), nullable=True, server_default=None)
-	nickname = Column(String(255), nullable=True, server_default=None)
+	student_id = Column(String(255))
+	program = Column(String(255))
+	class_year = Column(Integer)
+	email = Column(String(255))
+	nickname = Column(String(255))
 
 	parents = relationship('Parent', secondary=ParentChildren, backref='children')
 	classes = relationship('Course', secondary=Enrollment, backref='students')
 	ib_groups = relationship('IBGroup', secondary=IBGroupMembership, backref='students')
 
-	language = Column(String(255), nullable=True, server_default=None)   # only one with language and not languageX  HUH
+	language = Column(String(255))   # only one with language and not languageX  HUH
 
-	attendance_start_date = Column(String(255), nullable=True, server_default=None)
-	birthday = Column(String(255), nullable=True, server_default=None)
+	attendance_start_date = Column(String(255))
+	birthday = Column(String(255))
 
-	open_apply_student_id = Column(String(255), nullable=True, server_default=None)
+	open_apply_student_id = Column(String(255))
 	homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
+
+	@declared_attr
+	def display_name(cls):
+		return column_property(concat(cls.first_name, cls.last_name).label('display_name')) #+ ' (Grade ' + cast(cls.class_year) + ')')
+
 
 class Parent(Base, User):
 	"""
@@ -173,23 +183,23 @@ class Parent(Base, User):
 
 	id = Column(BigInteger, primary_key=True)
 
-	nickname = Column(String(255), nullable=True, server_default=None)
-	salutation = Column(String(255), nullable=True, server_default=None)
+	nickname = Column(String(255))
+	salutation = Column(String(255))
 
-	employer = Column(String(255), nullable=True, server_default=None)
-	title = Column(String(255), nullable=True, server_default=None)
+	employer = Column(String(255))
+	title = Column(String(255))
 
-	openapply_parent_id = Column(String(255), nullable=True, server_default=None)
-	openapply_student_id = Column(String(255), nullable=True, server_default=None)
+	openapply_parent_id = Column(String(255))
+	openapply_student_id = Column(String(255))
 
 	# children relation made by Student.parents 'backref'
 
 	# FIXME: This is crazy, why define the work info for each parent??
-	work_street_address = Column(String(255), nullable=True, server_default=None)
-	work_street_address_ii = Column(String(255), nullable=True, server_default=None)
-	work_city = Column(String(255), nullable=True, server_default=None)
-	work_state = Column(String(255), nullable=True, server_default=None)
-	work_zipcode = Column(String(255), nullable=True, server_default=None)
+	work_street_address = Column(String(255))
+	work_street_address_ii = Column(String(255))
+	work_city = Column(String(255))
+	work_state = Column(String(255))
+	work_zipcode = Column(String(255))
 
 class Advisor(Base, User):
 	"""
@@ -200,12 +210,12 @@ class Advisor(Base, User):
 
 	id = Column(BigInteger, primary_key=True)
 
-	first_name = Column(String(255), nullable=True, server_default=None)
-	last_name = Column(String(255), nullable=True, server_default=None)
-	national_id = Column(String(255), nullable=True, server_default=None)
+	first_name = Column(String(255))
+	last_name = Column(String(255))
+	national_id = Column(String(255))
 	classes = relationship('Course', secondary=Assignment, backref='teachers')
 
-	email = Column(String(255), nullable=True, server_default=None)
+	email = Column(String(255))
 
 class Course(Base):
 	"""
@@ -215,9 +225,9 @@ class Course(Base):
 	__tablename__ = COURSES
 
 	id = Column(BigInteger, primary_key=True)
-	type = Column(String(255), nullable=True, server_default=None)
-	name = Column(String(255), nullable=True, server_default=None)
-	grade = Column(String(255), nullable=True, server_default=None)
+	type = Column(String(255))
+	name = Column(String(255))
+	grade = Column(String(255))
 	uniq_id = Column(String(255), nullable=True, unique=True, server_default=None)
 
 	# timetables relation defined by Timetable.course 'backref'
@@ -229,8 +239,8 @@ class Timetable(Base):
 	__tablename__ = TIMETABLES
 
 	course_id = Column(BigInteger, ForeignKey(COURSES+'.id'), primary_key=True)
-	day = Column(Integer, nullable=True, server_default=None, primary_key=True)
-	period = Column(Integer, nullable=True, server_default=None, primary_key=True)
+	day = Column(Integer, primary_key=True)
+	period = Column(Integer, primary_key=True)
 
 	course = relationship('Course', backref='timetables')
 
@@ -246,27 +256,27 @@ class IBGroup(Base):
 
 	id = Column(BigInteger, primary_key=True)
 
-	grade = Column(String(255), nullable=True, server_default=None)
-	program = Column(String(255), nullable=True, server_default=None)
-	name = Column(String(255), nullable=True, server_default=None)
-	unique_id = Column(String(255), nullable=True, server_default=None)
+	grade = Column(String(255))
+	program = Column(String(255))
+	name = Column(String(255))
+	unique_id = Column(String(255))
 
 class SecondaryHomeroomTeachers(Base):
 	__tablename__ = SECHRTEACHERS
 
-	id = Column(BigInteger, primary_key=True, nullable=True, server_default=None)
+	id = Column(BigInteger, primary_key=True)
 
-	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'), nullable=True, server_default=None)
-	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'), nullable=True, server_default=None)
+	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
+	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
 class AuditLog(Base):
 	__tablename__ = AUDITLOGS
 	id = Column(BigInteger, primary_key=True)
-	date = Column(String(255), nullable=True, server_default=None)
-	target = Column(String(255), nullable=True, server_default=None)
-	administrator = Column(String(255), nullable=True, server_default=None)
-	applicant = Column(String(255), nullable=True, server_default=None)
-	action = Column(String(1000), nullable=True, server_default=None)
+	date = Column(String(255))
+	target = Column(String(255))
+	administrator = Column(String(255))
+	applicant = Column(String(255))
+	action = Column(String(1000))
 
 class Terms(Base):
 	"""
@@ -275,9 +285,9 @@ class Terms(Base):
 	__tablename__ = TERMS
 
 	id = Column(BigInteger, primary_key=True)
-	name = Column(String(255), nullable=True, server_default=None)
+	name = Column(String(255))
 	start_date = Column(String(255), nullable=True, 	server_default=None)
-	end_date = Column(String(255), nullable=True, server_default=None)
+	end_date = Column(String(255))
 	current = Column(Boolean, default=False, server_default=None)
 
 comments_association_table = Table(REPORTATLASSOC, Base.metadata,
@@ -297,7 +307,7 @@ class ReportComments(Base):
 	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
 	student = relationship('Student', backref="reports", uselist=False)  # userlist makes it just one
 
-	text = Column(String(1000), nullable=True, server_default=None)
+	text = Column(String(1000))
 
 	# One to one? One to many? Who knows.
 	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
@@ -330,7 +340,7 @@ class PrimaryReport(Base):
 	teacher = relationship('Advisor')
 	sections = relationship('PrimaryReportSection')
 
-	homeroom_comment = Column(String(2000), nullable=True, server_default=None)
+	homeroom_comment = Column(String(2000))
 
 	#section = relationship('PrimaryReportSection')
 
@@ -347,8 +357,8 @@ class PrimaryReportSection(Base):
 	primary_report_id = Column(ForeignKey(PRIMARYREPORT + '.id'))
 	subject_id = Column(BigInteger)
 
-	name = Column(String(500), nullable=True, server_default=None)
-	comment = Column(String(2000), nullable=True, server_default=None)
+	name = Column(String(500))
+	comment = Column(String(2000))
 	
 	teachers = relationship('Advisor', secondary=primary_report_section_teacher_association)
 	strands = relationship('PrimaryReportStrand')
@@ -359,30 +369,30 @@ class PrimaryReportStrand(Base):
 	__tablename__ = PRIMARYREPORTSTRAND
 	id = Column(BigInteger, primary_key=True)
 	primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
-	which = Column(Integer, nullable=True, server_default=None)
+	which = Column(Integer)
 
-	label = Column(String(1000), nullable=True, server_default=None)
-	label_titled = Column(String(1000), nullable=True, server_default=None)
-	selection = Column(String(4), nullable=True, server_default=None)
+	label = Column(String(1000))
+	label_titled = Column(String(1000))
+	selection = Column(String(4))
 	#selection = Column(Enum('', 'W', 'S', 'I', 'E', name = 'selection'))
 
 class PrimaryReportLo(Base):
 	__tablename__ = PRIMARYREPORTLO
 	id = Column(BigInteger, primary_key=True)
 	primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
-	which = Column(Integer, nullable=True, server_default=None)
+	which = Column(Integer)
 
-	heading = Column(String(1000), nullable=True, server_default=None)	
-	label = Column(String(1000), nullable=True, server_default=None)
-	label_titled = Column(String(1000), nullable=True, server_default=None)
-	selection = Column(String(4), nullable=True, server_default=None)
+	heading = Column(String(1000))	
+	label = Column(String(1000))
+	label_titled = Column(String(1000))
+	selection = Column(String(4))
 	#selection = Column(Enum('', 'O', 'G', 'N', name = 'selection'))
 
 class PrimaryTeacherAssignments(Base):
 	__tablename__ = PYPTEACHERASSIGNMENTS
 	id = Column(BigInteger, primary_key=True)
 	teacher_id = Column(ForeignKey(ADVISORS + '.id'))
-	subject_id = Column(BigInteger, nullable=True, server_default=None)
+	subject_id = Column(BigInteger)
 	class_id = Column(ForeignKey(COURSES + '.id'))
 
 class PrimaryStudentAbsences(Base):
@@ -390,23 +400,23 @@ class PrimaryStudentAbsences(Base):
 	id = Column(BigInteger, primary_key=True)
 	student_id = Column(ForeignKey(STUDENTS + '.id'))
 	term_id = Column(ForeignKey(TERMS + '.id'))
-	absences = Column(Integer, nullable=True, server_default=None)
-	total_days = Column(Integer, nullable=True, server_default=None)
+	absences = Column(Integer)
+	total_days = Column(Integer)
 
 class GoogleSignIn(Base):
 	__tablename__ = "GoogleSignIn"   # NOT based on the prefix...
 
 	id = Column(BigInteger, primary_key=True)
-	unique_id = Column(String(1000), nullable=True, server_default=None)
-	auth_code = Column(String(255), nullable=True, server_default=None)
-	access_token = Column(String(255), nullable=True, server_default=None)
-	refresh_token = Column(String(255), nullable=True, server_default=None)
+	unique_id = Column(String(1000))
+	auth_code = Column(String(255))
+	access_token = Column(String(255))
+	refresh_token = Column(String(255))
 
 class UserSettings(Base):
 	__tablename__ = SETTINGS
 
 	id = Column(BigInteger, primary_key=True)
-	unique_id = Column(String(255), nullable=True, server_default=None)
-	icon_size = Column(String(2), nullable=True, server_default=None)
-	new_tab = Column(Boolean, nullable=True, server_default=None)
+	unique_id = Column(String(255))
+	icon_size = Column(String(2))
+	new_tab = Column(Boolean)
 

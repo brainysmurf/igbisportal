@@ -8,10 +8,12 @@ from pyramid.response import Response, FileResponse
 from pyramid.view import view_config
 from pyramid.renderers import render
 
+
 from pyramid.httpexceptions import HTTPFound
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import joinedload, joinedload_all
+from sqlalchemy import inspect
 
 from portal.db import Database, DBSession
 db = Database()
@@ -257,7 +259,7 @@ def mb_homeroom(request):
             data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
 
-@view_config(route_name='api-students', renderer='json')
+@view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
     payload = request.params.get('secret')
     as_multidimentional_arrays = request.params.get('as_multidimentional_arrays')
@@ -268,9 +270,12 @@ def api_students(request):
     with DBSession() as session:
         data = session.query(Students).all()
 
-    data.sort(key=lambda x: (x.first_name, x.last_name))
+    # TODO: Figure out how to make this part of the request
+    data.sort(key=lambda x: x.display_name)
 
-    columns = list(Students.__table__.columns.keys())
+    #columns = list(Students.__table__.columns.keys())
+    # Don't use columns because we have defined stuff at the instance level instead of class level
+    columns = sorted([c.columns[0].name for c in inspect(Students).column_attrs])
 
     if as_multidimentional_arrays:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
