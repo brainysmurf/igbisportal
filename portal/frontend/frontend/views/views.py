@@ -268,6 +268,8 @@ def api_students(request):
     with DBSession() as session:
         data = session.query(Students).all()
 
+    data.sort(key=lambda x: (x.first_name, x.last_name))
+
     columns = list(Students.__table__.columns.keys())
 
     if as_multidimentional_arrays:
