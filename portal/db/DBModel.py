@@ -170,7 +170,7 @@ class Student(Base, User):
 
 	@declared_attr
 	def display_name(cls):
-		return column_property(concat(cls.first_name, cls.last_name).label('display_name')) #+ ' (Grade ' + cast(cls.class_year) + ')')
+		return column_property(concat(cls.first_name, ' ', cls.last_name).label('display_name')) #+ ' (Grade ' + cast(cls.class_year) + ')')
 
 
 class Parent(Base, User):
