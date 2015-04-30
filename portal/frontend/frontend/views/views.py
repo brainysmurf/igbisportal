@@ -15,6 +15,10 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import joinedload, joinedload_all
 from sqlalchemy import inspect
 
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.sql.functions import concat
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from portal.db import Database, DBSession
 db = Database()
 
@@ -261,11 +265,27 @@ def mb_homeroom(request):
 
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
-    payload = request.params.get('secret')
-    as_multidimentional_arrays = request.params.get('as_multidimentional_arrays')
+    # TODO: Detect domain here to remove some of this boilerplate from the ajax request
+
+
+    json_body = request.json_body
+    secret = json_body.get('secret')
+    derived_attr = json_body.get('derived_attr')
+
+    as_multidimentional_arrays = json_body.get('as_multidimentional_arrays')
     data = []
-    if payload != gns.settings.secret:
+    if secret != gns.settings.secret:
         return dict(message="wrong secret", data=data)
+
+    if derived_attr:
+        field_name = derived_attr.get('field')
+        string_pattern = derived_attr.get('string')
+
+        # TODO: validate the pattern...
+
+        if field_name and string_pattern:
+            # Define a new field!
+            setattr(Students, field_name, hybrid_property(lambda self: string_pattern.format(**self.__dict__)))
 
     with DBSession() as session:
         data = session.query(Students).all()
@@ -275,7 +295,14 @@ def api_students(request):
 
     #columns = list(Students.__table__.columns.keys())
     # Don't use columns because we have defined stuff at the instance level instead of class level
-    columns = sorted([c.columns[0].name for c in inspect(Students).column_attrs])
+    column_attrs = [c.columns[0].name for c in inspect(Students).column_attrs]
+    column_attrs.sort()
+
+    if derived_attr:
+        columns = ['lastfirst']
+        columns.extend(column_attrs)
+    else:
+        columns = column_attrs
 
     if as_multidimentional_arrays:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
