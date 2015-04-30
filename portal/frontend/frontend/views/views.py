@@ -300,7 +300,7 @@ def api_students(request):
     column_attrs.sort()
 
     if derived_attr:
-        columns = ['lastfirst']
+        columns = [field_name]
         columns.extend(column_attrs)
     else:
         columns = column_attrs
