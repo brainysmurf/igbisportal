@@ -296,14 +296,16 @@ def api_students(request):
 
     #columns = list(Students.__table__.columns.keys())
     # Don't use columns because we have defined stuff at the instance level instead of class level
-    column_attrs = [c.columns[0].name for c in inspect(Students).column_attrs]
+    # Remove 'id' because we want that at the start
+    column_attrs = [c.columns[0].name for c in inspect(Students).column_attrs if c.columns[0].name != 'student_id']
     column_attrs.sort()
 
     if derived_attr:
-        columns = [field_name]
-        columns.extend(column_attrs)
+        columns = [field_name, 'student_id']
     else:
-        columns = column_attrs
+        columns = ['student_id']
+
+    columns.extend(column_attrs)
 
     if as_multidimentional_arrays:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
