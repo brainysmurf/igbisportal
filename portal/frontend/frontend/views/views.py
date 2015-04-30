@@ -291,7 +291,8 @@ def api_students(request):
         data = session.query(Students).all()
 
     # TODO: Figure out how to make this part of the request
-    data.sort(key=lambda x: x.display_name)
+    if derived_attr:
+        data.sort(key=lambda x: getattr(x, field_name))
 
     #columns = list(Students.__table__.columns.keys())
     # Don't use columns because we have defined stuff at the instance level instead of class level
