@@ -298,7 +298,7 @@ def api_students(request):
             setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.__dict__)))
 
     with DBSession() as session:
-        data = session.query(Students).options(joinedload('parents').options(joinedload('ib_groups'))).all()
+        data = session.query(Students).options(joinedload('parents')).options(joinedload('ib_groups')).all()
 
     # TODO: Figure out how to make this part of the request
     if derived_attr:
