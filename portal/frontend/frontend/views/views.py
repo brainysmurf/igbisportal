@@ -18,6 +18,7 @@ from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql.functions import concat
 from sqlalchemy.ext.hybrid import hybrid_property
+from chameleon import PageTemplate
 
 from portal.db import Database, DBSession
 db = Database()
@@ -281,11 +282,13 @@ def api_students(request):
         field_name = derived_attr.get('field')
         string_pattern = derived_attr.get('string')
 
-        # TODO: validate the pattern...
+        # Now use the awesome chameleon to render it as a templating language!
+        # TODO: validate the pattern, ensuring that ${things} are in __dict__?
+        template = PageTemplate(string_pattern)
 
         if field_name and string_pattern:
             # Define a new field!
-            setattr(Students, field_name, hybrid_property(lambda self: string_pattern.format(**self.__dict__)))
+            setattr(Students, field_name, hybrid_property(lambda self: template.render(**self.__dict__)))
 
     with DBSession() as session:
         data = session.query(Students).all()
