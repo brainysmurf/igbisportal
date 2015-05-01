@@ -18,6 +18,8 @@ from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql.functions import concat
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import HYBRID_PROPERTY
+
 from chameleon import PageTemplate
 
 from portal.db import Database, DBSession
@@ -48,6 +50,7 @@ class ReportIncomplete(Exception):
         self.msg = msg
 
 Students = db.table_string_to_class('student')
+Parents = db.table_string_to_class('parent')
 Teachers = db.table_string_to_class('advisor')
 Enrollments = db.table_string_to_class('enrollment')
 Assignments = db.table_string_to_class('assignment')
@@ -264,6 +267,10 @@ def mb_homeroom(request):
             data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
 
+@view_config(route_name='api-test', renderer='frontend:templates/test_api.pt')
+def api_test(request):
+    return dict(title="test", name="hello", unique=None, first_name="nothing", last_name="nothing", nickname=None, student_id="hey")
+
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
     # TODO: Detect domain here to remove some of this boilerplate from the ajax request
@@ -288,10 +295,10 @@ def api_students(request):
 
         if field_name and string_pattern:
             # Define a new field!
-            setattr(Students, field_name, hybrid_property(lambda self: template.render(**self.__dict__)))
+            setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.__dict__)))
 
     with DBSession() as session:
-        data = session.query(Students).all()
+        data = session.query(Students).options(joinedload('parents')).all()
 
     # TODO: Figure out how to make this part of the request
     if derived_attr:
@@ -300,7 +307,9 @@ def api_students(request):
     #columns = list(Students.__table__.columns.keys())
     # Don't use columns because we have defined stuff at the instance level instead of class level
     # Remove 'id' because we want that at the start
-    column_attrs = [c.columns[0].name for c in inspect(Students).column_attrs if c.columns[0].name != 'student_id']
+    insp = inspect(Students)
+    column_attrs = [c.name for c in insp.columns if c.name != 'student_id']
+    column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
     column_attrs.sort()
 
     if derived_attr:
