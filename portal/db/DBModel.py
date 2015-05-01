@@ -205,7 +205,7 @@ class Student(Base, User):
 		return ""
 
 	@hybrid_property
-	def ib_groups(self):
+	def program(self):
 		return ", ".join([g.program.upper() for g in self.ib_groups])
 
 class Parent(Base, User):
