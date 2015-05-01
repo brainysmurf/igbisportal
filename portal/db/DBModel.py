@@ -204,6 +204,9 @@ class Student(Base, User):
 			return parent.email
 		return ""
 
+	@hybrid_property
+	def ib_groups(self):
+		return ", ".join([g.program.upper() for g in self.ib_groups])
 
 class Parent(Base, User):
 	"""
