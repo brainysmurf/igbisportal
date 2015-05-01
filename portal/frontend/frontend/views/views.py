@@ -267,9 +267,9 @@ def mb_homeroom(request):
             data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
 
-@view_config(route_name='api-test', renderer='frontend:templates/test_api.pt')
-def api_test(request):
-    return dict(title="test", name="hello", unique=None, first_name="nothing", last_name="nothing", nickname=None, student_id="hey")
+#@view_config(route_name='api-test', renderer='frontend:templates/test_api.pt')
+#def api_test(request):
+#    return dict(title="test", name="hello", unique=None, first_name="nothing", last_name="nothing", nickname=None, student_id="hey")
 
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
