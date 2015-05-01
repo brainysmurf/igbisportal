@@ -155,6 +155,7 @@ class DatabaseSetterUpper(object):
 					# Convert any empty string values to None
 					item = {k: v if not v == "" else None for k,v in item.items()}
 
+					print(_type)
 					table_class = self.database.table_string_to_class(_type)
 					instance = table_class()
 					gotcha = False

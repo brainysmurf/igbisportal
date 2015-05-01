@@ -172,6 +172,38 @@ class Student(Base, User):
 	def display_name(cls):
 		return column_property(concat(cls.first_name, ' ', cls.last_name).label('display_name')) #+ ' (Grade ' + cast(cls.class_year) + ')')
 
+	@hybrid_property
+	def parent_name_1(self):
+		parents = self.parents
+		if len(parents) > 0:
+			parent = parents[0]
+			return parent.first_name + ' ' + parent.last_name
+		return ""
+
+	@hybrid_property
+	def parent_name_2(self):
+		parents = self.parents
+		if len(parents) > 1:
+			parent = parents[1]
+			return parent.first_name + ' ' + parent.last_name
+		return ""
+
+	@hybrid_property
+	def parent_email_1(self):
+		parents = self.parents
+		if len(parents) > 0:
+			parent = parents[0]
+			return parent.email
+		return ""
+
+	@hybrid_property
+	def parent_email_2(self):
+		parents = self.parents
+		if len(parents) > 1:
+			parent = parents[1]
+			return parent.email
+		return ""
+
 
 class Parent(Base, User):
 	"""
@@ -200,6 +232,8 @@ class Parent(Base, User):
 	work_city = Column(String(255))
 	work_state = Column(String(255))
 	work_zipcode = Column(String(255))
+
+	email = Column(String(255))
 
 class Advisor(Base, User):
 	"""
