@@ -13,9 +13,11 @@ from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer,
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.ext.hybrid import HYBRID_PROPERTY
 from sqlalchemy.orm import column_property
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql.functions import concat
+from sqlalchemy import inspect
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -27,7 +29,7 @@ Klunky, but lets me debug quickly
 import portal.settings as settings
 PREFIX = settings.get('DATABASE', 'db_prefix')
 if PREFIX is None or PREFIX.upper() is "NONE":
-	PREFIX = ""
+    PREFIX = ""
 USERS = "{}users".format(PREFIX)
 STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)
@@ -55,277 +57,307 @@ SECHRTEACHERS = "{}sec hr teachers".format(PREFIX)
 SETTINGS = "{}settings".format(PREFIX)
 
 class PortalORM(object):
-   def as_dict(self):
+    def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-   def as_array(self):
-   		ret = []
-   		for column in range(len(self.__table__.columns)):
-   			ret[column] = getattr(self, self.__table__.columns[column])
-   		return ret
+    def as_array(self):
+        ret = []
+        for column in range(len(self.__table__.columns)):
+            ret[column] = getattr(self, self.__table__.columns[column])
+        return ret
+
+    @classmethod
+    def columns_and_hybrids(cls, filter_out=None):
+        """
+        FIXME: This doesn't seem to be working
+        filter_out TODO make it so that you can define a lambda
+        """
+        insp = inspect(cls)
+        column_attrs = [c.name for c in insp.columns]
+        column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
+        column_attrs.sort()
+
+        return column_attrs
 
 class User(PortalORM):
-	"""
-	Fields shared by all users
-	TODO: Check this more carefully, bound to need some tweaks
-	"""
-	#__tablename__ = USERS
+    """
+    Fields shared by all users
+    TODO: Check this more carefully, bound to need some tweaks
+    """
+    #__tablename__ = USERS
 
-	type = Column(String(255))
+    type = Column(String(255))
 
-	first_name = Column(String(255))
-	last_name = Column(String(255))
+    first_name = Column(String(255))
+    last_name = Column(String(255))
 
-	gender = Column(String(255))
+    gender = Column(String(255))
 
-	national_id = Column(String(255))   # This is the same as passport ID??  Fix
+    national_id = Column(String(255))   # This is the same as passport ID??  Fix
 
-	nationality1 = Column(String(255))
-	nationality2 = Column(String(255))
-	nationality3 = Column(String(255))
-	nationality4 = Column(String(255))
-	language1 = Column(String(255))
-	language2 = Column(String(255))
-	language3 = Column(String(255))
-	language4 = Column(String(255))
+    nationality1 = Column(String(255))
+    nationality2 = Column(String(255))
+    nationality3 = Column(String(255))
+    nationality4 = Column(String(255))
+    language1 = Column(String(255))
+    language2 = Column(String(255))
+    language3 = Column(String(255))
+    language4 = Column(String(255))
 
-	phone_number = Column(String(255))
-	mobile_phone_number = Column(String(255))
+    phone_number = Column(String(255))
+    mobile_phone_number = Column(String(255))
 
-	street_address = Column(String(255))
-	street_address_ii = Column(String(255))
-	city = Column(String(255))
-	state = Column(String(255))
-	zipcode = Column(String(255))
+    street_address = Column(String(255))
+    street_address_ii = Column(String(255))
+    city = Column(String(255))
+    state = Column(String(255))
+    zipcode = Column(String(255))
 
-	g_plus_unique_id = Column(String(255))
+    g_plus_unique_id = Column(String(255))
 
-	def __str__(self):
-		return (self.first_name or "") + ' ' + (self.last_name or "")
+    def __str__(self):
+        return (self.first_name or "") + ' ' + (self.last_name or "")
 
 """
 Many to many relationships need an association table, this is it for parent/children links
 """
 ParentChildren = Table(
-	PARENTCHILDREN, Base.metadata,
-	Column('parent_id', BigInteger, ForeignKey(PARENTS+'.id'), primary_key=True),
-	Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
-	)
+    PARENTCHILDREN, Base.metadata,
+    Column('parent_id', BigInteger, ForeignKey(PARENTS+'.id'), primary_key=True),
+    Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
+    )
 
 """
 Many to many relationships need an association table, this is it for teacher/course links
 TODO: Haven't checked if this is working and/or correct
 """
 Assignment = Table(
-	ASSIGNMENT, Base.metadata,
-	Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
-	Column('teacher_id', BigInteger, ForeignKey(ADVISORS+'.id'), primary_key=True)
-	)
+    ASSIGNMENT, Base.metadata,
+    Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
+    Column('teacher_id', BigInteger, ForeignKey(ADVISORS+'.id'), primary_key=True)
+    )
 
 """
 Many to many relationships need an association table, this is it for student/course links
 """
 Enrollment = Table(
-	ENROLLMENT, Base.metadata,
-	Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
-	Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
-	)
+    ENROLLMENT, Base.metadata,
+    Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
+    Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
+    )
 
 """
 Many to many relationships need an association table, this is it for IBGroups/members links
 TODO: Wait, can a user be a member of only one IB Group?
 """
 IBGroupMembership = Table(
-	IBGROUPSMEMBERSHIP, Base.metadata,
-	Column('ib_group_id', BigInteger, ForeignKey(IBGROUPS+'.id'), primary_key=True),
-	Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
-	)
+    IBGROUPSMEMBERSHIP, Base.metadata,
+    Column('ib_group_id', BigInteger, ForeignKey(IBGROUPS+'.id'), primary_key=True),
+    Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
+    )
 
 
 class Student(Base, User):
-	"""
-	I am a student in ManageBac
-	"""
-	__tablename__ = STUDENTS
+    """
+    I am a student in ManageBac
+    """
+    __tablename__ = STUDENTS
 
-	id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
-	student_id = Column(String(255))
-	program = Column(String(255))
-	class_year = Column(Integer)
-	email = Column(String(255))
-	nickname = Column(String(255))
+    student_id = Column(String(255))
+    program = Column(String(255))
+    class_year = Column(Integer)
+    email = Column(String(255))
+    nickname = Column(String(255))
 
-	parents = relationship('Parent', secondary=ParentChildren, backref='children')
-	classes = relationship('Course', secondary=Enrollment, backref='students')
-	ib_groups = relationship('IBGroup', secondary=IBGroupMembership, backref='students')
+    parents = relationship('Parent', secondary=ParentChildren, backref='children')
+    classes = relationship('Course', secondary=Enrollment, backref='students')
+    ib_groups = relationship('IBGroup', secondary=IBGroupMembership, backref='students')
 
-	language = Column(String(255))   # only one with language and not languageX  HUH
+    language = Column(String(255))   # only one with language and not languageX  HUH
 
-	attendance_start_date = Column(String(255))
-	birthday = Column(String(255))
+    attendance_start_date = Column(String(255))
+    birthday = Column(String(255))
 
-	open_apply_student_id = Column(String(255))
-	homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
+    open_apply_student_id = Column(String(255))
+    homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
-	@declared_attr
-	def display_name(cls):
-		return column_property(concat(cls.first_name, ' ', cls.last_name).label('display_name')) #+ ' (Grade ' + cast(cls.class_year) + ')')
+    @declared_attr
+    def display_name(cls):
+        return column_property(concat(cls.first_name, ' ', cls.last_name).label('display_name')) #+ ' (Grade ' + cast(cls.class_year) + ')')
 
-	@hybrid_property
-	def parent_name_1(self):
-		parents = self.parents
-		if len(parents) > 0:
-			parent = parents[0]
-			return parent.first_name + ' ' + parent.last_name
-		return ""
+    @hybrid_property
+    def parent_name_1(self):
+        parents = self.parents
+        if len(parents) > 0:
+            parent = parents[0]
+            return parent.first_name + ' ' + parent.last_name
+        return ""
 
-	@hybrid_property
-	def parent_name_2(self):
-		parents = self.parents
-		if len(parents) > 1:
-			parent = parents[1]
-			return parent.first_name + ' ' + parent.last_name
-		return ""
+    @hybrid_property
+    def parent_name_2(self):
+        parents = self.parents
+        if len(parents) > 1:
+            parent = parents[1]
+            return parent.first_name + ' ' + parent.last_name
+        return ""
 
-	@hybrid_property
-	def parent_email_1(self):
-		parents = self.parents
-		if len(parents) > 0:
-			parent = parents[0]
-			return parent.email
-		return ""
+    @hybrid_property
+    def parent_email_1(self):
+        parents = self.parents
+        if len(parents) > 0:
+            parent = parents[0]
+            return parent.email
+        return ""
 
-	@hybrid_property
-	def parent_email_2(self):
-		parents = self.parents
-		if len(parents) > 1:
-			parent = parents[1]
-			return parent.email
-		return ""
+    @hybrid_property
+    def parent_email_2(self):
+        parents = self.parents
+        if len(parents) > 1:
+            parent = parents[1]
+            return parent.email
+        return ""
 
-	@hybrid_property
-	def program(self):
-		return ", ".join([g.program.upper() for g in self.ib_groups])
+    @hybrid_property
+    def program(self):
+        return ", ".join([g.program.upper() for g in self.ib_groups])
+
+    @hybrid_property
+    def teacher_emails(self):
+        lst = []
+        for course in self.classes:
+            for teacher in course.teachers:
+                lst.append(teacher.email)
+        return ", ".join(lst)
+
+    @hybrid_property
+    def teacher_names(self):
+        lst = []
+        for course in self.classes:
+            for teacher in course.teachers:
+                lst.append(teacher.first_name + ' ' + teacher.last_name)
+        return ", ".join(lst)
+
 
 class Parent(Base, User):
-	"""
-	I am a parent in ManageBac
+    """
+    I am a parent in ManageBac
 
-	TODO: Create some glue code that makes a 'work_info' Many-to-one relation
-	"""
-	__tablename__ = PARENTS
+    TODO: Create some glue code that makes a 'work_info' Many-to-one relation
+    """
+    __tablename__ = PARENTS
 
-	id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
-	nickname = Column(String(255))
-	salutation = Column(String(255))
+    nickname = Column(String(255))
+    salutation = Column(String(255))
 
-	employer = Column(String(255))
-	title = Column(String(255))
+    employer = Column(String(255))
+    title = Column(String(255))
 
-	openapply_parent_id = Column(String(255))
-	openapply_student_id = Column(String(255))
+    openapply_parent_id = Column(String(255))
+    openapply_student_id = Column(String(255))
 
-	# children relation made by Student.parents 'backref'
+    # children relation made by Student.parents 'backref'
 
-	# FIXME: This is crazy, why define the work info for each parent??
-	work_street_address = Column(String(255))
-	work_street_address_ii = Column(String(255))
-	work_city = Column(String(255))
-	work_state = Column(String(255))
-	work_zipcode = Column(String(255))
+    # FIXME: This is crazy, why define the work info for each parent??
+    work_street_address = Column(String(255))
+    work_street_address_ii = Column(String(255))
+    work_city = Column(String(255))
+    work_state = Column(String(255))
+    work_zipcode = Column(String(255))
 
-	email = Column(String(255))
+    email = Column(String(255))
 
 class Advisor(Base, User):
-	"""
-	I am a teacher in ManageBac, obviously we call them advisors for legacy reasons
-	"""
+    """
+    I am a teacher in ManageBac, obviously we call them advisors for legacy reasons
+    """
 
-	__tablename__ = ADVISORS
+    __tablename__ = ADVISORS
 
-	id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
-	first_name = Column(String(255))
-	last_name = Column(String(255))
-	national_id = Column(String(255))
-	classes = relationship('Course', secondary=Assignment, backref='teachers')
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    national_id = Column(String(255))
+    classes = relationship('Course', secondary=Assignment, backref='teachers')
 
-	email = Column(String(255))
+    email = Column(String(255))
 
 class Course(Base):
-	"""
-	I am a course/class in ManageBac (class is a reserved word in Python)
-	Includes timetable / period information
-	"""
-	__tablename__ = COURSES
+    """
+    I am a course/class in ManageBac (class is a reserved word in Python)
+    Includes timetable / period information
+    """
+    __tablename__ = COURSES
 
-	id = Column(BigInteger, primary_key=True)
-	type = Column(String(255))
-	name = Column(String(255))
-	grade = Column(String(255))
-	uniq_id = Column(String(255), nullable=True, unique=True, server_default=None)
+    id = Column(BigInteger, primary_key=True)
+    type = Column(String(255))
+    name = Column(String(255))
+    grade = Column(String(255))
+    uniq_id = Column(String(255), nullable=True, unique=True, server_default=None)
 
-	# timetables relation defined by Timetable.course 'backref'
+    # timetables relation defined by Timetable.course 'backref'
 
 class Timetable(Base):
-	"""
-	Composite primary key consisting of course_id (ForeignKey) and day and period info
-	"""
-	__tablename__ = TIMETABLES
+    """
+    Composite primary key consisting of course_id (ForeignKey) and day and period info
+    """
+    __tablename__ = TIMETABLES
 
-	course_id = Column(BigInteger, ForeignKey(COURSES+'.id'), primary_key=True)
-	day = Column(Integer, primary_key=True)
-	period = Column(Integer, primary_key=True)
+    course_id = Column(BigInteger, ForeignKey(COURSES+'.id'), primary_key=True)
+    day = Column(Integer, primary_key=True)
+    period = Column(Integer, primary_key=True)
 
-	course = relationship('Course', backref='timetables')
+    course = relationship('Course', backref='timetables')
 
-	def __str__(self):
-		return str(self.day) + ': ' + str(self.period)
+    def __str__(self):
+        return str(self.day) + ': ' + str(self.period)
 
 
 class IBGroup(Base):
-	"""
-	I am an IBGroup in ManageBac
-	"""
-	__tablename__ = IBGROUPS
+    """
+    I am an IBGroup in ManageBac
+    """
+    __tablename__ = IBGROUPS
 
-	id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
-	grade = Column(String(255))
-	program = Column(String(255))
-	name = Column(String(255))
-	unique_id = Column(String(255))
+    grade = Column(String(255))
+    program = Column(String(255))
+    name = Column(String(255))
+    unique_id = Column(String(255))
 
 class SecondaryHomeroomTeachers(Base):
-	__tablename__ = SECHRTEACHERS
+    __tablename__ = SECHRTEACHERS
 
-	id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
-	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
-	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
+    student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
+    teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
 class AuditLog(Base):
-	__tablename__ = AUDITLOGS
-	id = Column(BigInteger, primary_key=True)
-	date = Column(String(255))
-	target = Column(String(255))
-	administrator = Column(String(255))
-	applicant = Column(String(255))
-	action = Column(String(1000))
+    __tablename__ = AUDITLOGS
+    id = Column(BigInteger, primary_key=True)
+    date = Column(String(255))
+    target = Column(String(255))
+    administrator = Column(String(255))
+    applicant = Column(String(255))
+    action = Column(String(1000))
 
 class Terms(Base):
-	"""
-	TODO: What about academic start date?
-	"""
-	__tablename__ = TERMS
+    """
+    TODO: What about academic start date?
+    """
+    __tablename__ = TERMS
 
-	id = Column(BigInteger, primary_key=True)
-	name = Column(String(255))
-	start_date = Column(String(255), nullable=True, 	server_default=None)
-	end_date = Column(String(255))
-	current = Column(Boolean, default=False, server_default=None)
+    id = Column(BigInteger, primary_key=True)
+    name = Column(String(255))
+    start_date = Column(String(255), nullable=True,     server_default=None)
+    end_date = Column(String(255))
+    current = Column(Boolean, default=False, server_default=None)
 
 comments_association_table = Table(REPORTATLASSOC, Base.metadata,
     Column('report_comment_id', BigInteger, ForeignKey(REPORTCOMMENTS + '.id'), primary_key=True),
@@ -333,127 +365,127 @@ comments_association_table = Table(REPORTATLASSOC, Base.metadata,
 )
 
 class ReportComments(Base):
-	__tablename__ = REPORTCOMMENTS
+    __tablename__ = REPORTCOMMENTS
 
-	id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
-	course_id = Column(BigInteger, ForeignKey(COURSES+'.id'))
-	course = relationship('Course', uselist=False)
-	term_id = Column(BigInteger, ForeignKey(TERMS+'.id'))
-	term = relationship('Terms', uselist=False)
-	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
-	student = relationship('Student', backref="reports", uselist=False)  # userlist makes it just one
+    course_id = Column(BigInteger, ForeignKey(COURSES+'.id'))
+    course = relationship('Course', uselist=False)
+    term_id = Column(BigInteger, ForeignKey(TERMS+'.id'))
+    term = relationship('Terms', uselist=False)
+    student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
+    student = relationship('Student', backref="reports", uselist=False)  # userlist makes it just one
 
-	text = Column(String(1000))
+    text = Column(String(1000))
 
-	# One to one? One to many? Who knows.
-	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
-	teacher = relationship('Advisor')
+    # One to one? One to many? Who knows.
+    teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
+    teacher = relationship('Advisor')
 
-	atl_comments = relationship('AtlComments', secondary=comments_association_table,
+    atl_comments = relationship('AtlComments', secondary=comments_association_table,
                     backref="reports")
 
 class AtlComments(Base):
-	__tablename__ = ATLCOMMENTS
-	id = Column(BigInteger, primary_key=True)
-	label = Column(Enum('Collaboration', 'Communication', 'Organization', 'Affective', 'Reflection', 'Information Literacy', 'Media Literacy', 'Critical Thinking', 'Creative Thinking', 'Transfer' , name='alt_skills'))
-	selection = Column(Enum('EE', 'ME', 'AE', 'BE', name = 'selection'))
+    __tablename__ = ATLCOMMENTS
+    id = Column(BigInteger, primary_key=True)
+    label = Column(Enum('Collaboration', 'Communication', 'Organization', 'Affective', 'Reflection', 'Information Literacy', 'Media Literacy', 'Critical Thinking', 'Creative Thinking', 'Transfer' , name='alt_skills'))
+    selection = Column(Enum('EE', 'ME', 'AE', 'BE', name = 'selection'))
 
 
 class PrimaryReport(Base):
-	__tablename__ = PRIMARYREPORT
+    __tablename__ = PRIMARYREPORT
 
-	id = Column(BigInteger, primary_key=True)   # TODO Use Composite Key?
+    id = Column(BigInteger, primary_key=True)   # TODO Use Composite Key?
 
-	course_id = Column(BigInteger, ForeignKey(COURSES+'.id'))
-	course = relationship('Course', uselist=False)
-	term_id = Column(BigInteger, ForeignKey(TERMS+'.id'))
-	term = relationship('Terms', uselist=False)
-	student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
-	student = relationship('Student', backref="pyp_reports", uselist=False)  # userlist makes it just one
+    course_id = Column(BigInteger, ForeignKey(COURSES+'.id'))
+    course = relationship('Course', uselist=False)
+    term_id = Column(BigInteger, ForeignKey(TERMS+'.id'))
+    term = relationship('Terms', uselist=False)
+    student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
+    student = relationship('Student', backref="pyp_reports", uselist=False)  # userlist makes it just one
 
-	# One to one? One to many? Who knows.
-	teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
-	teacher = relationship('Advisor')
-	sections = relationship('PrimaryReportSection')
+    # One to one? One to many? Who knows.
+    teacher_id = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
+    teacher = relationship('Advisor')
+    sections = relationship('PrimaryReportSection')
 
-	homeroom_comment = Column(String(2000))
+    homeroom_comment = Column(String(2000))
 
-	#section = relationship('PrimaryReportSection')
+    #section = relationship('PrimaryReportSection')
 
 primary_report_section_teacher_association = Table(PRIMARYREPORTSECTIONTEACHERASSOC, Base.metadata,
-	Column('primary_report_section_id', BigInteger, ForeignKey(PRIMARYREPORTSECTION+'.id')),
-	Column('teacher_id', BigInteger, ForeignKey(ADVISORS+'.id'))
-	)
+    Column('primary_report_section_id', BigInteger, ForeignKey(PRIMARYREPORTSECTION+'.id')),
+    Column('teacher_id', BigInteger, ForeignKey(ADVISORS+'.id'))
+    )
 
 class PrimaryReportSection(Base):
-	__tablename__ = PRIMARYREPORTSECTION
+    __tablename__ = PRIMARYREPORTSECTION
 
-	id = Column(BigInteger, primary_key=True)   # TODO Use Composite Key?
+    id = Column(BigInteger, primary_key=True)   # TODO Use Composite Key?
 
-	primary_report_id = Column(ForeignKey(PRIMARYREPORT + '.id'))
-	subject_id = Column(BigInteger)
+    primary_report_id = Column(ForeignKey(PRIMARYREPORT + '.id'))
+    subject_id = Column(BigInteger)
 
-	name = Column(String(500))
-	comment = Column(String(2000))
-	
-	teachers = relationship('Advisor', secondary=primary_report_section_teacher_association)
-	strands = relationship('PrimaryReportStrand')
-	learning_outcomes = relationship('PrimaryReportLo')
+    name = Column(String(500))
+    comment = Column(String(2000))
+    
+    teachers = relationship('Advisor', secondary=primary_report_section_teacher_association)
+    strands = relationship('PrimaryReportStrand')
+    learning_outcomes = relationship('PrimaryReportLo')
 
 
 class PrimaryReportStrand(Base):
-	__tablename__ = PRIMARYREPORTSTRAND
-	id = Column(BigInteger, primary_key=True)
-	primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
-	which = Column(Integer)
+    __tablename__ = PRIMARYREPORTSTRAND
+    id = Column(BigInteger, primary_key=True)
+    primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
+    which = Column(Integer)
 
-	label = Column(String(1000))
-	label_titled = Column(String(1000))
-	selection = Column(String(4))
-	#selection = Column(Enum('', 'W', 'S', 'I', 'E', name = 'selection'))
+    label = Column(String(1000))
+    label_titled = Column(String(1000))
+    selection = Column(String(4))
+    #selection = Column(Enum('', 'W', 'S', 'I', 'E', name = 'selection'))
 
 class PrimaryReportLo(Base):
-	__tablename__ = PRIMARYREPORTLO
-	id = Column(BigInteger, primary_key=True)
-	primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
-	which = Column(Integer)
+    __tablename__ = PRIMARYREPORTLO
+    id = Column(BigInteger, primary_key=True)
+    primary_report_section_id = Column(ForeignKey(PRIMARYREPORTSECTION + '.id'))
+    which = Column(Integer)
 
-	heading = Column(String(1000))	
-	label = Column(String(1000))
-	label_titled = Column(String(1000))
-	selection = Column(String(4))
-	#selection = Column(Enum('', 'O', 'G', 'N', name = 'selection'))
+    heading = Column(String(1000))  
+    label = Column(String(1000))
+    label_titled = Column(String(1000))
+    selection = Column(String(4))
+    #selection = Column(Enum('', 'O', 'G', 'N', name = 'selection'))
 
 class PrimaryTeacherAssignments(Base):
-	__tablename__ = PYPTEACHERASSIGNMENTS
-	id = Column(BigInteger, primary_key=True)
-	teacher_id = Column(ForeignKey(ADVISORS + '.id'))
-	subject_id = Column(BigInteger)
-	class_id = Column(ForeignKey(COURSES + '.id'))
+    __tablename__ = PYPTEACHERASSIGNMENTS
+    id = Column(BigInteger, primary_key=True)
+    teacher_id = Column(ForeignKey(ADVISORS + '.id'))
+    subject_id = Column(BigInteger)
+    class_id = Column(ForeignKey(COURSES + '.id'))
 
 class PrimaryStudentAbsences(Base):
-	__tablename__ = PYPSTUDENTABSENCES
-	id = Column(BigInteger, primary_key=True)
-	student_id = Column(ForeignKey(STUDENTS + '.id'))
-	term_id = Column(ForeignKey(TERMS + '.id'))
-	absences = Column(Integer)
-	total_days = Column(Integer)
+    __tablename__ = PYPSTUDENTABSENCES
+    id = Column(BigInteger, primary_key=True)
+    student_id = Column(ForeignKey(STUDENTS + '.id'))
+    term_id = Column(ForeignKey(TERMS + '.id'))
+    absences = Column(Integer)
+    total_days = Column(Integer)
 
 class GoogleSignIn(Base):
-	__tablename__ = "GoogleSignIn"   # NOT based on the prefix...
+    __tablename__ = "GoogleSignIn"   # NOT based on the prefix...
 
-	id = Column(BigInteger, primary_key=True)
-	unique_id = Column(String(1000))
-	auth_code = Column(String(255))
-	access_token = Column(String(255))
-	refresh_token = Column(String(255))
+    id = Column(BigInteger, primary_key=True)
+    unique_id = Column(String(1000))
+    auth_code = Column(String(255))
+    access_token = Column(String(255))
+    refresh_token = Column(String(255))
 
 class UserSettings(Base):
-	__tablename__ = SETTINGS
+    __tablename__ = SETTINGS
 
-	id = Column(BigInteger, primary_key=True)
-	unique_id = Column(String(255))
-	icon_size = Column(String(2))
-	new_tab = Column(Boolean)
+    id = Column(BigInteger, primary_key=True)
+    unique_id = Column(String(255))
+    icon_size = Column(String(2))
+    new_tab = Column(Boolean)
 

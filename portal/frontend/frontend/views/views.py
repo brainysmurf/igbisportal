@@ -18,7 +18,6 @@ from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql.functions import concat
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.hybrid import HYBRID_PROPERTY
 
 from chameleon import PageTemplate
 
@@ -267,20 +266,18 @@ def mb_homeroom(request):
             data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
 
-#@view_config(route_name='api-test', renderer='frontend:templates/test_api.pt')
-#def api_test(request):
-#    return dict(title="test", name="hello", unique=None, first_name="nothing", last_name="nothing", nickname=None, student_id="hey")
-
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
     # TODO: Detect domain here to remove some of this boilerplate from the ajax request
 
+    if 'Google-Apps_Script' not in request.agent:
+        return dict(message="IGBIS api is not for public consumption!")
 
     json_body = request.json_body
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
 
-    as_multidimentional_arrays = json_body.get('as_multidimentional_arrays')
+    as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
     data = []
     if secret != gns.settings.secret:
         return dict(message="wrong secret", data=data)
@@ -298,7 +295,11 @@ def api_students(request):
             setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.__dict__)))
 
     with DBSession() as session:
-        data = session.query(Students).options(joinedload('parents')).options(joinedload('ib_groups')).all()
+        data = session.query(Students).\
+            options(joinedload('parents')).\
+            options(joinedload('ib_groups')).\
+            options(joinedload_all('classes.teachers')).\
+                all()
 
     # TODO: Figure out how to make this part of the request
     if derived_attr:
@@ -307,17 +308,20 @@ def api_students(request):
     #columns = list(Students.__table__.columns.keys())
     # Don't use columns because we have defined stuff at the instance level instead of class level
     # Remove 'id' because we want that at the start
-    insp = inspect(Students)
-    column_attrs = [c.name for c in insp.columns if c.name != 'student_id']
-    column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
-    column_attrs.sort()
+
+    # insp = inspect(Students)
+    # column_attrs = [c.name for c in insp.columns if c.name != 'student_id']
+    # column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
+    # column_attrs.sort()
+ 
+    column_attrs = Students.columns_and_hybrids();
 
     if derived_attr:
-        columns = [field_name, 'student_id']
+        columns = [field_name, 'student_id', 'email']
     else:
-        columns = ['student_id']
+        columns = ['student_id', 'email']
 
-    columns.extend(column_attrs)
+    columns.extend([c for c in column_attrs if c not in columns])
 
     if as_multidimentional_arrays:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
