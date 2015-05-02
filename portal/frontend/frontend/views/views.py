@@ -268,10 +268,10 @@ def mb_homeroom(request):
 
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
-    # TODO: Detect domain here to remove some of this boilerplate from the ajax request
-
-    if 'Google-Apps_Script' not in request.user_agent:
-        return dict(message="IGBIS api is not for public consumption!")
+ 
+    settings.get('GOOGLE', 'GASUserAgent')
+    if gns.settings.GASUserAgent not in request.user_agent:
+        return dict(message="IGBIS api is not for public consumption!" data=[])
 
     json_body = request.json_body
     secret = json_body.get('secret')
