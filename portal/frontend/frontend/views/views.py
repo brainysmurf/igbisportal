@@ -271,7 +271,7 @@ def api_students(request):
  
     settings.get('GOOGLE', 'GASUserAgent')
     if gns.settings.GASUserAgent not in request.user_agent:
-        return dict(message="IGBIS api is not for public consumption!" data=[])
+        return dict(message="IGBIS api is not for public consumption!", data=[])
 
     json_body = request.json_body
     secret = json_body.get('secret')
