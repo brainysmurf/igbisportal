@@ -270,7 +270,7 @@ def mb_homeroom(request):
 def api_students(request):
     # TODO: Detect domain here to remove some of this boilerplate from the ajax request
 
-    if 'Google-Apps_Script' not in request.agent:
+    if 'Google-Apps_Script' not in request.user_agent:
         return dict(message="IGBIS api is not for public consumption!")
 
     json_body = request.json_body
