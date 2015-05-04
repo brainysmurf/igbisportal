@@ -255,7 +255,7 @@ class Student(Base, User):
 
     @hybrid_property
     def grade(self):
-        return self.class_year - 1
+        return -10 if self.class_year is None else self.class_year - 1
 
 class Parent(Base, User):
     """
