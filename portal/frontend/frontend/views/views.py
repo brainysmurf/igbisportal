@@ -269,18 +269,19 @@ def mb_homeroom(request):
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
  
-    gas_ua = settings.get('GOOGLE', 'GASUserAgent')
-    if gas_ua not in request.user_agent:
-        return dict(message="IGBIS api is not for public consumption!", data=[])
+    #gas_ua = settings.get('GOOGLE', 'GASUserAgent')
+    #if gas_ua not in request.user_agent:
+    #    return dict(message="IGBIS api is not for public consumption!", data=[])
 
     json_body = request.json_body
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
+    filter = json_body.get('filter')
 
     as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
     data = []
     if secret != gns.settings.secret:
-        return dict(message="wrong secret", data=data)
+        return dict(message="IGBIS api is not for public consumption.", data=data)
 
     if derived_attr:
         field_name = derived_attr.get('field')
@@ -295,11 +296,19 @@ def api_students(request):
             setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.__dict__)))
 
     with DBSession() as session:
-        data = session.query(Students).\
+
+        query = session.query(Students).\
             options(joinedload('parents')).\
             options(joinedload('ib_groups')).\
-            options(joinedload_all('classes.teachers')).\
-                all()
+            options(joinedload_all('classes.teachers'))
+
+        if filter == 'filterSecondary':
+            query = query.filter_by(Students.class_year >= 6)
+
+        elif filter == 'filterElementary':
+            query = query.filter_by(Students.class_year < 6)
+
+        data = query.all()
 
     # TODO: Figure out how to make this part of the request
     if derived_attr:
