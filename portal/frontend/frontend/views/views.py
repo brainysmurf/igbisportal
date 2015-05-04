@@ -306,7 +306,7 @@ def api_students(request):
             query = query.filter(Students.class_year >= 7)  # FIXME class_year is NOT grade!
 
         elif filter == 'filterElementary':
-            query = query.filter(Students.grade < 7)
+            query = query.filter(Students.class_year < 7)
 
         data = query.all()
 
