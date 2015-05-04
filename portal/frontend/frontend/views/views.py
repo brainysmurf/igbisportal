@@ -303,10 +303,10 @@ def api_students(request):
             options(joinedload_all('classes.teachers'))
 
         if filter == 'filterSecondary':
-            query = query.filter_by(Students.class_year >= 6)
+            query = query.filter(Students.class_year >= 6)
 
         elif filter == 'filterElementary':
-            query = query.filter_by(Students.class_year < 6)
+            query = query.filter(Students.class_year < 6)
 
         data = query.all()
 
