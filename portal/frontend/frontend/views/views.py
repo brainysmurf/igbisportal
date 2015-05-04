@@ -303,10 +303,10 @@ def api_students(request):
             options(joinedload_all('classes.teachers'))
 
         if filter == 'filterSecondary':
-            query = query.filter(Students.grade >= 6)
+            query = query.filter(Students.class_year >= 7)  # FIXME class_year is NOT grade!
 
         elif filter == 'filterElementary':
-            query = query.filter(Students.grade < 6)
+            query = query.filter(Students.grade < 7)
 
         data = query.all()
 
