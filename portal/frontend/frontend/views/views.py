@@ -293,7 +293,7 @@ def api_students(request):
 
         if field_name and string_pattern:
             # Define a new field!
-            setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.__dict__)))
+            setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.columns_hybrids_dict)))
 
     with DBSession() as session:
 

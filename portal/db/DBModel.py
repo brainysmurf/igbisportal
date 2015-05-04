@@ -76,8 +76,18 @@ class PortalORM(object):
         column_attrs = [c.name for c in insp.columns]
         column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
         column_attrs.sort()
-
         return column_attrs
+
+    @property
+    def columns_hybrids_dict(self):
+        insp = inspect(self.__class__)
+        column_attrs = [c.name for c in insp.columns]
+        column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
+        column_attrs.sort()
+        d = {}
+        for column in column_attrs:
+            d[column] = getattr(self, column)
+        return d
 
 class User(PortalORM):
     """
@@ -183,10 +193,6 @@ class Student(Base, User):
     open_apply_student_id = Column(String(255))
     homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
-    @declared_attr
-    def display_name(cls):
-        return column_property(concat(cls.first_name, ' ', cls.last_name).label('display_name')) #+ ' (Grade ' + cast(cls.class_year) + ')')
-
     @hybrid_property
     def parent_name_1(self):
         parents = self.parents
@@ -240,12 +246,12 @@ class Student(Base, User):
         return ", ".join(lst)
 
     @hybrid_property
-    def first_given_last_studentid(self):
+    def first_nickname_last_studentid(self):
         return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
     @hybrid_property
     def grade_first_nickname_last_studentid(self):
-        return str(self.class_year) + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
+        return str(self.class_year or '<unknowngrade>') + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
 class Parent(Base, User):
     """
