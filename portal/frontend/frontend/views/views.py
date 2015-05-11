@@ -266,6 +266,20 @@ def mb_homeroom(request):
             data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
 
+class dummy_first_row:
+    """
+    Terrible. No good day I am having
+    """
+    def __init__(self):
+        self._columns = []
+
+    def add(self, column, value):
+        self._columns.append(column)
+        setattr(self, column, value)
+
+    def as_dict(self):
+       return {c: getattr(self, c) for c in self._columns}
+
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
  
@@ -277,8 +291,9 @@ def api_students(request):
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
     filter = json_body.get('filter')
+    emergency_information = json_body.get('emergency_information')
 
-    as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
+    as_multidimentional_arrays = False #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
     data = []
     if secret != gns.settings.secret:
         return dict(message="IGBIS api is not for public consumption.", data=data)
@@ -331,6 +346,19 @@ def api_students(request):
         columns = ['student_id', 'email']
 
     columns.extend([c for c in column_attrs if c not in columns])
+
+    if emergency_information:
+        # Add an extra row so that our awesome tables solution works right
+        # boo!
+
+        first_row = dummy_first_row()
+        filter_map = {'display_name': 'CategoryFilter', 'grade': 'CategoryFilter'}
+        for column in columns:
+            value = filter_map.get(column, 'NoFilter')
+            first_row.add(column, value)
+
+        # insert it into the front
+        data.insert(0, first_row)
 
     if as_multidimentional_arrays:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
