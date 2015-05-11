@@ -23,6 +23,19 @@ Base = declarative_base()
 metadata = Base.metadata
 from sqlalchemy.orm import relationship, backref
 
+from collections import defaultdict
+import re
+
+class EmergInfo:
+    def __init__(self, num):
+        self.num = num
+
+    def name(self):
+        return self.first_name + ' ' + self.last_name
+
+    def __str__(self):
+        return "{}: {} {} {}".format(self.num, self.name, self.relationship, self.telephone, self.email_address)
+
 """
 Klunky, but lets me debug quickly
 """
@@ -272,6 +285,21 @@ class Student(Base, User):
                 return "<medical info not avail>"
 
             return med_info.medical_alert
+
+    @hybrid_property
+    def emergency_info(self):
+        from portal.db import DBSession, Database
+        db = Database()
+        from sqlalchemy.orm.exc import NoResultFound
+        MedInfo = db.table_string_to_class('med_info')
+
+        with DBSession() as session:
+            try:
+                med_info = session.query(MedInfo).filter_by(id=self.id).one()
+            except NoResultFound:
+                return "<medical info not avail>"
+
+            return med_info.emergency_info
 
 
 class Parent(Base, User):
@@ -660,11 +688,33 @@ class MedInfo(Base):
     Emergency_Contact_12_Relationship = Column(String(255))
 
     @hybrid_property
-    def medical_alert(self):
+    def emergency_info(self):
+        concat = {}
+        for attr in self.__dict__.keys():
+            if attr.startswith('Emergency_Contact') and getattr(self, attr):
+                num = re.findall('\d+', attr)
+                num = num[0] if num else None
+                if not num:
+                    continue
+                if not num in concat.keys():
+                    concat[num] = EmergInfo(num)
+                    item = concat[num]
+                field = re.findall('\d+_(.*)', attr)
+                field = field[0] if field else None
+                if not field:
+                    continue
+                field = field.lower()
+                setattr(item, field, getattr(self, attr))
 
+        concat_str = ""
+        for key, item in concat.items():
+            concat_str += " " + str(item)
+
+    @hybrid_property
+    def medical_alert(self):
         concat = ""
         for attr in self.__dict__.keys():
-            if not attr.startswith('HealthInformation') and not 'Yes_No' in attr and 'History' in attr:
+            if attr.startswith('Health_Information') and not 'Yes_No' in attr and 'History' in attr:
                 concat += getattr(self, attr)
         return concat
 
