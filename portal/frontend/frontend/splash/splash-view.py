@@ -81,6 +81,9 @@ stndrdbttns = [
         ],
         }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
+    button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
+    button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+
 ]
 
 emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", context_menu=None)
@@ -105,7 +108,19 @@ def splash(request):
     sec_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons.extend([
+        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
+        button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
+        context_menu={
+        'items': [
+            menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
+            menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
+            menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
+        ]}),
         button(name="Reports Hub", url="reports_hub", icon="gavel", context_menu=None),
+        button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
+
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
         emergency_button
         ])
 
@@ -152,7 +167,7 @@ def splash(request):
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
 
-        button(name="Hapara Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
+        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
         button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
         context_menu={
         'items': [
