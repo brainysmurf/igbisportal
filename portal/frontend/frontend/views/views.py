@@ -293,7 +293,7 @@ def api_students(request):
     filter = json_body.get('filter')
     emergency_information = json_body.get('emergency_information')
 
-    as_multidimentional_arrays = False #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
+    as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
     data = []
     if secret != gns.settings.secret:
         return dict(message="IGBIS api is not for public consumption.", data=data)
