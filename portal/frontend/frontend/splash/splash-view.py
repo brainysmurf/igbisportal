@@ -83,6 +83,8 @@ stndrdbttns = [
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
 ]
 
+emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", context_menu=None)
+
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
     if not 'mb_user' in request.session:
@@ -104,6 +106,7 @@ def splash(request):
     elem_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons.extend([
         button(name="Reports Hub", url="reports_hub", icon="gavel", context_menu=None),
+        emergency_button
         ])
 
     with DBSession() as session:
@@ -177,7 +180,9 @@ def splash(request):
         button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
 
-        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+
+        emergency_button
     ])
 
     buttons = OrderedDict()
