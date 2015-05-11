@@ -55,6 +55,7 @@ PYPTEACHERASSIGNMENTS = "{}primary_teacher_assign".format(PREFIX)
 PYPSTUDENTABSENCES = "{}primary_student_absences".format(PREFIX)
 SECHRTEACHERS = "{}sec hr teachers".format(PREFIX)
 SETTINGS = "{}settings".format(PREFIX)
+MEDINFO = "{}medinfo".format(PREFIX)
 
 class PortalORM(object):
     def as_dict(self):
@@ -256,6 +257,22 @@ class Student(Base, User):
     @hybrid_property
     def grade(self):
         return -10 if self.class_year is None else int(self.class_year) - 1
+
+    @hybrid_property
+    def medical_alert(self):
+        from portal.db import DBSession, Database
+        db = Database()
+        from sqlalchemy.orm.exc import NoResultFound
+        MedInfo = db.table_string_to_class('med_info')
+
+        with DBSession() as session:
+            try:
+                med_info = session.query(MedInfo).filter_by(id=self.id).one()
+            except NoResultFound:
+                return "<medical info not avail>"
+
+            return med_info.medical_alert
+
 
 class Parent(Base, User):
     """
@@ -505,4 +522,149 @@ class UserSettings(Base):
     unique_id = Column(String(255))
     icon_size = Column(String(2))
     new_tab = Column(Boolean)
+
+class MedInfo(Base):
+    __tablename__ = MEDINFO
+
+    id = Column(BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
+
+    Health_Information_1_Health_Allergies_Description = Column(String(255))
+    Health_Information_1_Health_Medication_Description = Column(String(255))
+    Health_Information_1_Health_Allergies_Yes_No = Column(String(255))
+    Health_Information_1_Health_Medication_Yes_No = Column(String(255))
+    Health_Information_1_Approved_medications = Column(String(255))
+    Health_Information_1_Health_Treatment_Yes_No = Column(String(255))
+    Health_Information_1_Health_Treatment_Description = Column(String(255))
+    Health_Information_1_Health_Treatment_File = Column(String(255))
+    Health_Information_1_Health_Participation_Yes_No = Column(String(255))
+    Health_Information_1_Health_Participation_Description = Column(String(255))
+    Health_Information_1_Health_Participation_File = Column(String(255))
+    Health_Information_1_Frequent_Headaches = Column(String(255))
+    Health_Information_1_Frequent_Headaches_History = Column(String(255))
+    Health_Information_1_Heart_problems = Column(String(255))
+    Health_Information_1_Heart_problems_history = Column(String(255))
+    Health_Information_1_Asthma = Column(String(255))
+    Health_Information_1_Asthma_history = Column(String(255))
+    Health_Information_1_Stomach_digestion_problems = Column(String(255))
+    Health_Information_1_Stomach_digestion_problems_history = Column(String(255))
+    Health_Information_1_Skin_problems = Column(String(255))
+    Health_Information_1_Skin_problems_history = Column(String(255))
+    Health_Information_1_Diabetes = Column(String(255))
+    Health_Information_1_Diabetes_History = Column(String(255))
+    Health_Information_1_Seizure_disorder_epilepsy = Column(String(255))
+    Health_Information_1_Seizure_History = Column(String(255))
+    Health_Information_1_Psychological_conditions = Column(String(255))
+    Health_Information_1_Psychological_conditions_history = Column(String(255))
+    Health_Information_1_Hearing_Difficulties = Column(String(255))
+    Health_Information_1_Hearing_Difficulties_History = Column(String(255))
+    Health_Information_1_Visual_Difficulties = Column(String(255))
+    Health_Information_1_Visual_Difficulties_History = Column(String(255))
+    Health_Information_1_Other_Health_Problems = Column(String(255))
+    Health_Information_1_Other_Health_Problems_History = Column(String(255))
+    Health_Information_1_Blood_type = Column(String(255))
+    Health_Information_1_Other_Information = Column(String(255))
+    Health_Information_2_Health_Allergies_Description = Column(String(255))
+    Health_Information_2_Health_Medication_Description = Column(String(255))
+    Health_Information_2_Health_Allergies_Yes_No = Column(String(255))
+    Health_Information_2_Health_Medication_Yes_No = Column(String(255))
+    Health_Information_2_Approved_medications = Column(String(255))
+    Health_Information_2_Health_Treatment_Yes_No = Column(String(255))
+    Health_Information_2_Health_Treatment_Description = Column(String(255))
+    Health_Information_2_Health_Treatment_File = Column(String(255))
+    Health_Information_2_Health_Participation_Yes_No = Column(String(255))
+    Health_Information_2_Health_Participation_Description = Column(String(255))
+    Health_Information_2_Health_Participation_File = Column(String(255))
+    Health_Information_2_Frequent_Headaches = Column(String(255))
+    Health_Information_2_Frequent_Headaches_History = Column(String(255))
+    Health_Information_2_Heart_problems = Column(String(255))
+    Health_Information_2_Heart_problems_history = Column(String(255))
+    Health_Information_2_Asthma = Column(String(255))
+    Health_Information_2_Asthma_history = Column(String(255))
+    Health_Information_2_Stomach_digestion_problems = Column(String(255))
+    Health_Information_2_Stomach_digestion_problems_history = Column(String(255))
+    Health_Information_2_Skin_problems = Column(String(255))
+    Health_Information_2_Skin_problems_history = Column(String(255))
+    Health_Information_2_Diabetes = Column(String(255))
+    Health_Information_2_Diabetes_History = Column(String(255))
+    Health_Information_2_Seizure_disorder_epilepsy = Column(String(255))
+    Health_Information_2_Seizure_History = Column(String(255))
+    Health_Information_2_Psychological_conditions = Column(String(255))
+    Health_Information_2_Psychological_conditions_history = Column(String(255))
+    Health_Information_2_Hearing_Difficulties = Column(String(255))
+    Health_Information_2_Hearing_Difficulties_History = Column(String(255))
+    Health_Information_2_Visual_Difficulties = Column(String(255))
+    Health_Information_2_Visual_Difficulties_History = Column(String(255))
+    Health_Information_2_Other_Health_Problems = Column(String(255))
+    Health_Information_2_Other_Health_Problems_History = Column(String(255))
+    Health_Information_2_Blood_type = Column(String(255))
+    Health_Information_2_Other_Information = Column(String(255))
+    Emergency_Contact_1_First_Name = Column(String(255))
+    Emergency_Contact_1_Last_Name = Column(String(255))
+    Emergency_Contact_1_Telephone = Column(String(255))
+    Emergency_Contact_1_Email_Address = Column(String(255))
+    Emergency_Contact_1_Relationship = Column(String(255))
+    Emergency_Contact_2_First_Name = Column(String(255))
+    Emergency_Contact_2_Last_Name = Column(String(255))
+    Emergency_Contact_2_Telephone = Column(String(255))
+    Emergency_Contact_2_Email_Address = Column(String(255))
+    Emergency_Contact_2_Relationship = Column(String(255))
+    Emergency_Contact_3_First_Name = Column(String(255))
+    Emergency_Contact_3_Last_Name = Column(String(255))
+    Emergency_Contact_3_Telephone = Column(String(255))
+    Emergency_Contact_3_Email_Address = Column(String(255))
+    Emergency_Contact_3_Relationship = Column(String(255))
+    Emergency_Contact_4_First_Name = Column(String(255))
+    Emergency_Contact_4_Last_Name = Column(String(255))
+    Emergency_Contact_4_Telephone = Column(String(255))
+    Emergency_Contact_4_Email_Address = Column(String(255))
+    Emergency_Contact_4_Relationship = Column(String(255))
+    Emergency_Contact_5_First_Name = Column(String(255))
+    Emergency_Contact_5_Last_Name = Column(String(255))
+    Emergency_Contact_5_Telephone = Column(String(255))
+    Emergency_Contact_5_Email_Address = Column(String(255))
+    Emergency_Contact_5_Relationship = Column(String(255))
+    Emergency_Contact_6_First_Name = Column(String(255))
+    Emergency_Contact_6_Last_Name = Column(String(255))
+    Emergency_Contact_6_Telephone = Column(String(255))
+    Emergency_Contact_6_Email_Address = Column(String(255))
+    Emergency_Contact_6_Relationship = Column(String(255))
+    Emergency_Contact_7_First_Name = Column(String(255))
+    Emergency_Contact_7_Last_Name = Column(String(255))
+    Emergency_Contact_7_Telephone = Column(String(255))
+    Emergency_Contact_7_Email_Address = Column(String(255))
+    Emergency_Contact_7_Relationship = Column(String(255))
+    Emergency_Contact_8_First_Name = Column(String(255))
+    Emergency_Contact_8_Last_Name = Column(String(255))
+    Emergency_Contact_8_Telephone = Column(String(255))
+    Emergency_Contact_8_Email_Address = Column(String(255))
+    Emergency_Contact_8_Relationship = Column(String(255))
+    Emergency_Contact_9_First_Name = Column(String(255))
+    Emergency_Contact_9_Last_Name = Column(String(255))
+    Emergency_Contact_9_Telephone = Column(String(255))
+    Emergency_Contact_9_Email_Address = Column(String(255))
+    Emergency_Contact_9_Relationship = Column(String(255))
+    Emergency_Contact_10_First_Name = Column(String(255))
+    Emergency_Contact_10_Last_Name = Column(String(255))
+    Emergency_Contact_10_Telephone = Column(String(255))
+    Emergency_Contact_10_Email_Address = Column(String(255))
+    Emergency_Contact_10_Relationship = Column(String(255))
+    Emergency_Contact_11_First_Name = Column(String(255))
+    Emergency_Contact_11_Last_Name = Column(String(255))
+    Emergency_Contact_11_Telephone = Column(String(255))
+    Emergency_Contact_11_Email_Address = Column(String(255))
+    Emergency_Contact_11_Relationship = Column(String(255))
+    Emergency_Contact_12_First_Name = Column(String(255))
+    Emergency_Contact_12_Last_Name = Column(String(255))
+    Emergency_Contact_12_Telephone = Column(String(255))
+    Emergency_Contact_12_Email_Address = Column(String(255))
+    Emergency_Contact_12_Relationship = Column(String(255))
+
+    @hybrid_property
+    def medical_alert(self):
+
+        concat = ""
+        for attr in self.__dict__.keys():
+            if not attr.startswith('HealthInformation') and not 'Yes_No' in attr and 'History' in attr:
+                concat += getattr(self, attr)
+        return concat
 

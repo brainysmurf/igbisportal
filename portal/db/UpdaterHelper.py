@@ -99,13 +99,16 @@ class updater_helper:
 							print('removed {} from {} in collection {}'.format(right_row.id, left_row.id, collection.collection))
 							getattr(left_row, collection.collection).remove(right_row)
 
-	def update_or_add(self, obj):
+	@classmethod
+	def update_or_add(cls, obj):
 		"""
 		@param obj: An SQLAlechemy table instance
 
 		Look at the table information provided by obj
 		If it's not there, add it
 		If it there, update anything that is different
+
+		TODO: Self is not used, should probably be a class method?
 		"""
 		with DBSession() as session:
 			try:
