@@ -3,9 +3,12 @@
 <div metal:fill-slot="additional-css">
   <!-- Launch Google Signin procedures, use defer  -->
   <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/splash.js"></script>
+<script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
 
+  
 </div>
 
 <div metal:fill-slot="additional-buttons">
@@ -43,169 +46,6 @@
 
     <div metal:fill-slot="content">
 
-      <script>
-  
-
-        $("#edit_button").bootstrapSwitch({
-          onText: 'On',
-          offText: '',
-          labelWidth: 80,
-          labelText: '<i class="fa fa-edit"></i>&nbsp;Edit Mode',
-          onColor: 'success',
-          size: 'mini', 
-          inverse: true,
-          onSwitchChange: function (event, state) {
-            $containers = $('.splash_button_container');
-
-            if (state) {  // edit mode on
-
-                // disable jboxes
-              $.each(jbox_array, function (index, value) {
-                value.disable();
-              });
-
-              // enable drag'n'drop
-              $.each($containers, function (index, value) {
-                var $buttons = $(value).find('.splash_button_item');
-                  $(value).packery('bindUIDraggableEvents', $buttons);
-                $buttons.draggable('enable');
-                $buttons.find('.splash_button > a').css('cursor', 'move');  // specificity gets rid of a:-webkit-any-link definition
-                $splash_button_texts = $buttons.find('.splash_button_text');
-                $splash_button_texts.css('cursor', 'text');
-                $splash_button_texts.addClass('editable');
-              });
-            } else {      // edit mode off
-              // jboxes enabled
-              $.each(jbox_array, function (index, value) {
-                value.enable();
-              });
-
-              $.each($containers, function (index, value) {
-                var $buttons = $(value).find('.splash_button_item');
-                $buttons.draggable('disable');
-                $buttons.find('.splash_button > a').css('cursor', 'pointer');
-                $splash_button_texts = $buttons.find('.splash_button_text');
-                $splash_button_texts.removeClass('editable');
-                $splash_button_texts.css('cursor', 'pointer');
-              });
-
-
-            }
-
-          }
-        });
-
-        var jbox_array = [];
-
-        function do_settings_dialog() {
-
-          $('#settingsButton').on('click', function () {
-
-            jbox_array.forEach(function (item, index) { 
-              //console.log(jbox_array[index]);
-              //FIXME this doesn't actually work
-              jbox_array[index].disable();
-            });
-
-            $('#settings_dialog').dialog({
-              dialogClass: "no-close",
-              resizeable: false,
-              hide: "fold",
-              show: "fold",
-              model: true,
-              title: "Settings",
-              height: 250,
-              width: 400,
-              close: false,
-              buttons: {
-                "Done": function () { 
-                  $(this).dialog('close');
-                  //FIXME: check for disabled first?
-                  jbox_array.forEach(function (item, index) {
-                    jbox_array[index].enable();
-                  });
-                }
-              }
-            });
-
-
-          });
-        }
-
-        function do_update() {
-          // FIXME: 
-          // userText = $('#userButton').html();
-          // if (userText.indexOf('add_name_here') != -1) {
-          //   $.ajax({
-          //     type:'POST',
-          //     url: 'user_data',
-          //     contentType: 'application/json; charset=utf-8',
-          //     success: function(result) {
-          //         console.log(result);
-          //         userText.replace('add_name_here', result['data']);
-          //         console.log(userText);
-          //         $("#userButton").replaceWith(userText);
-          //       }
-          //   });
-          // }
-
-          var value = $("#new_tab_checkbox").val();
-          if (value == "1") {
-            $('a').each(function(index, element) {
-              $(this).attr('target', '_blank_'+index);
-            });
-          }
-
-
-          $.ajax({
-            type:'POST',
-            url: 'mb_homeroom',
-            contentType: 'application/json; charset=utf-8',
-            success: function(result) {
-              if (result.hasOwnProperty('data') && result.data.length > 0) {
-                var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Email teachers of:</li>';
-                for (i=0; i < result.data.length; i++) {
-                  link_list += '<li><a href="mailto:' + result.data[i].student_email + '"><i class="fa fa-envelope"></i>&nbsp;' + result.data[i].student_name + '</a></li>';
-                }
-                $('#mb_homeroom').parent().replaceWith(link_list);
-              }
-            }
-          });
-
-          $.ajax({
-            type:'POST',
-            url: 'mb_grade_teachers',
-            contentType: 'application/json; charset=utf-8',
-            success: function(result) {
-              if (result.hasOwnProperty('data') && result.data.length > 0) {
-                var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Email teachers of:</li>';
-                for (i=0; i < result.data.length; i++) {
-                  link_list += '<li><a href="mailto:' + result.data[i].teacher_emails + '"><i class="fa fa-envelope"></i>&nbsp; Grade ' + result.data[i].grade + '</a></li>';
-                }
-              }
-              $('#mb_grade_teachers').parent().replaceWith(link_list);
-            }
-          });
-
-          $.ajax({
-            type:'POST',
-            url: 'mb_courses',
-            contentType: 'application/json; charset=utf-8',
-            success: function(result) {
-              if (result.hasOwnProperty('data') && result.data.length > 0) {
-                var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Your courses:</li>';
-                for (i=0; i < result.data.length; i++) {
-                  if (result.data[i].shortname != null) {
-                    link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '"><i class="fa fa-chevron-circle-right fa-fw"></i>&nbsp;' + result.data[i].shortname + '</a></li>';
-                  }
-                }
-                $('#mb_classes').parent().replaceWith(link_list);
-              }
-            }
-          });
-
-        }
-      </script>
 
       <div id="tabs_holder">
         <ul id="tabs_titlebar">
@@ -215,7 +55,12 @@
        <tal:block tal:define="global counter 0" tal:repeat="key buttons">
         <div id="${key}">
           <tal:block tal:define="items buttons[key]" tal:repeat="button items">
-            <div tal:define="global counter counter+1"  id="jbox_button_${counter}" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}">
+            <div tal:define="global counter counter+1"  
+              data-button-count="${counter}" 
+              data-button-url="${button.url}"
+              data-button-name="${button.name}"
+              data-button-icon="${button.icon}"
+              id="jbox_button_${counter}" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}">
               <a href="${button.url}">
                   <div><i class="fa fa-${button.icon} fa-5x"></i></div>
                   ${button.name}
@@ -303,12 +148,17 @@
 
 
   <tal:block tal:repeat="key buttons" tal:condition="buttons">
-    <tal:block tal:define="global another_counter 0" tal:repeat="button buttons[key]">
-    <tal:block tal:define="global another_counter another_counter+1">
+    <tal:block tal:define="global submenu_counter 0" tal:repeat="button buttons[key]">
+    <tal:block tal:define="global submenu_counter submenu_counter+1">
     <tal:block tal:condition="button.context_menu">
 
-      <ul style="display:none" id="submenus_for_${another_counter}">
+      <ul data-submenu-count="${counter}" style="display:none" class="jbox_submenu" 
+        id="submenus_for_${counter}">
         <li tal:repeat="menu_item button.context_menu.get('items')">
+
+
+          <!-- Submenu buttons can be different kinds -->
+
           <tal:block tal:condition="menu_item.url">
             <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
           </tal:block>
@@ -318,24 +168,12 @@
           <tal:block tal:condition="menu_item.url is None">
             <hr />
           </tal:block>
+
+
+
         </li>
       </ul>
 
-      <script type="text/javascript">
-
-      var jbox = $('#jbox_button_${another_counter}').jBox('Tooltip', {
-          position: {
-              y: 'top',
-          },
-          outside: 'x',
-          title: '<a href="${button.url}"><i class="fa fa-${button.icon} fa-fw"></i>&nbsp;${button.name}</a>',
-          closeOnMouseleave:true,
-          content: $('#submenus_for_${another_counter}')
-      });
-
-      jbox_array.push(jbox);
-
-      </script>
 
     </tal:block>
     </tal:block>
@@ -343,6 +181,24 @@
   </tal:block>
 
     <script>
+
+    $('.jbox_button').each(function (index) {
+      var buttonCount = $(this).get-data('button-count');
+      var buttonURL = $(this).get-data('button-url');
+      var buttonIcon = $(this).get-data('button-icon');
+      var buttonName = $(this).get-data('button-name');
+      var jbox = jBox('Tooltip', {
+          position: {
+              y: 'top',
+          },
+          outside: 'x',
+          title: '<a href="' + buttonURL + '"><i class="fa fa-' + buttonIcon + ' fa-fw"></i>&nbsp;' + buttonName + '</a>',
+          closeOnMouseleave:true,
+          content: $('#submenus_for_'+button_count)
+      });
+    });
+
+    jbox_array.push(jbox);
 
 
     toLiItem = function (id, icon, display) {
