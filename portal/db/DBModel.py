@@ -303,7 +303,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<medical info not avail>"
+                return "<emergency info not avail>"
 
             return med_info.emergency_info
 
@@ -713,7 +713,8 @@ class MedInfo(Base):
                 setattr(item, field, getattr(self, attr))
 
         concat_str = ""
-        for key, item in concat.items():
+        for key in sorted(concat.keys()):
+            item = concat[key]
             concat_str += " " + str(item)
 
         return concat_str
@@ -722,7 +723,7 @@ class MedInfo(Base):
     def medical_alert(self):
         concat = ""
         for attr in self.__dict__.keys():
-            if attr.startswith('Health_Information') and not 'Yes_No' in attr and 'History' in attr:
+            if attr.startswith('Health_Information') and not 'Yes_No' in attr:
                 concat += getattr(self, attr)
         return concat
 
