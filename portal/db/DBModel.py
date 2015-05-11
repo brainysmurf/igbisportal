@@ -29,7 +29,13 @@ import re
 class EmergInfo:
     def __init__(self, num):
         self.num = num
+        self.relationship = ""
+        self.email_address = ""
+        self.first_name = ""
+        self.last_name = ""
+        self.telephone = ""
 
+    @property
     def name(self):
         return self.first_name + ' ' + self.last_name
 
@@ -709,6 +715,8 @@ class MedInfo(Base):
         concat_str = ""
         for key, item in concat.items():
             concat_str += " " + str(item)
+
+        return concat_str
 
     @hybrid_property
     def medical_alert(self):
