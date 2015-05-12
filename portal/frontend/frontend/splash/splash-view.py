@@ -87,6 +87,17 @@ stndrdbttns = [
 ]
 
 emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", context_menu=None)
+intl_day_button = button(name="International Day", url="", 
+        context_menu={
+        'items': [
+            menu_item(icon="folder", display="Google Drive folder", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k"),
+            menu_separator(),
+            menu_item(icon="file-text", display="Cultural Activities & Sports", url="https://docs.google.com/document/d/1UjvgvSdel_gonrq6ONngcZquIh-upTVU64Tw6_FWVKQ/edit")
+            menu_item(icon="file-text", display="Cultural Activities & Sports", url="https://docs.google.com/spreadsheets/d/1qcKr_IFlDaL-4LiF5BswU5xG4aFKkTx096PQbUiVXtg/edit#gid=196206741")
+            menu_separator(),
+            menu_item(icon="file-movie-o", display="Download Students Dancing", url="https://doc-00-5c-docs.googleusercontent.com/docs/securesc/884cabjr1sdneekvn44p41a882r4naec/3n5qsegs0a0651mtt09hhcijticoe6av/1431424800000/02981500850996571698/02981500850996571698/0B2Jx5iFaTuHJM0tfV0JYV2Q4Qjg?h=08807967339938854529&e=download"),
+        ],
+    })
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
@@ -121,7 +132,9 @@ def splash(request):
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
 
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
-        emergency_button
+        intl_day_button,
+        emergency_button,
+
         ])
 
     with DBSession() as session:
@@ -197,6 +210,7 @@ def splash(request):
 
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
 
+        intl_day_button,
         emergency_button
     ])
 
