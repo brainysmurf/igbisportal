@@ -291,7 +291,8 @@ def api_students(request):
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
     filter = json_body.get('filter')
-    emergency_information = json_body.get('emergency_information')
+    emergency_information = json_body.get('emergency_information') or False
+    human_columns = json_body.get('emergency_information') or False
 
     as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
     data = []
@@ -362,9 +363,14 @@ def api_students(request):
 
     if as_multidimentional_arrays:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
-        columns = [[columns[column] for column in range(len(columns))] for row in range(1)]
+        if not human_columns:
+            columns = [[columns[column] for column in range(len(columns))] for row in range(1)]
+        else:
+            columns = [[(columns[column]).replace('_', ' ').title() for column in range(len(columns))] for row in range(1)]
         return dict(message="Success, as array", columns=columns, data=ret)
     else:
+        if human_columns:
+            columns = [c.replace('_', ' ').title() for c in columns]
         return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
 
 
