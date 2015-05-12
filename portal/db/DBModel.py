@@ -704,7 +704,7 @@ class MedInfo(Base):
                     continue
                 if not num in concat.keys():
                     concat[num] = EmergInfo(num)
-                    item = concat[num]
+                item = concat[num]
                 field = re.findall('\d+_(.*)', attr)
                 field = field[0] if field else None
                 if not field:
@@ -723,7 +723,7 @@ class MedInfo(Base):
     def medical_alert(self):
         concat = ""
         for attr in self.__dict__.keys():
-            if attr.startswith('Health_Information') and not 'Yes_No' in attr:
+            if attr.lower().startswith('health_information') and not 'yes_no' in attr.lower():
                 concat += getattr(self, attr)
         return concat
 
