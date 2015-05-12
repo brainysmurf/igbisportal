@@ -87,13 +87,13 @@ stndrdbttns = [
 ]
 
 emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", context_menu=None)
-intl_day_button = button(name="International Day", url="", 
+intl_day_button = button(name="International Day", icon="smile-o", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k", 
         context_menu={
         'items': [
             menu_item(icon="folder", display="Google Drive folder", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k"),
             menu_separator(),
-            menu_item(icon="file-text", display="Cultural Activities & Sports", url="https://docs.google.com/document/d/1UjvgvSdel_gonrq6ONngcZquIh-upTVU64Tw6_FWVKQ/edit")
-            menu_item(icon="file-text", display="Cultural Activities & Sports", url="https://docs.google.com/spreadsheets/d/1qcKr_IFlDaL-4LiF5BswU5xG4aFKkTx096PQbUiVXtg/edit#gid=196206741")
+            menu_item(icon="file-text", display="Cultural Activities and Sports", url="https://docs.google.com/document/d/1UjvgvSdel_gonrq6ONngcZquIh-upTVU64Tw6_FWVKQ/edit"),
+            menu_item(icon="file-text", display="Nationality Lists", url="https://docs.google.com/spreadsheets/d/1qcKr_IFlDaL-4LiF5BswU5xG4aFKkTx096PQbUiVXtg/edit#gid=196206741"),
             menu_separator(),
             menu_item(icon="file-movie-o", display="Download Students Dancing", url="https://doc-00-5c-docs.googleusercontent.com/docs/securesc/884cabjr1sdneekvn44p41a882r4naec/3n5qsegs0a0651mtt09hhcijticoe6av/1431424800000/02981500850996571698/02981500850996571698/0B2Jx5iFaTuHJM0tfV0JYV2Q4Qjg?h=08807967339938854529&e=download"),
         ],
