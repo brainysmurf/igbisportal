@@ -40,7 +40,7 @@ class EmergInfo:
         return self.first_name + ' ' + self.last_name
 
     def __str__(self):
-        return "{}: {} {} {}".format(self.num, self.name, self.relationship, self.telephone, self.email_address)
+        return "({}) {} {} {}".format(self.num, self.name, self.relationship, self.telephone, self.email_address)
 
 """
 Klunky, but lets me debug quickly
@@ -246,6 +246,14 @@ class Student(Base, User):
         return ""
 
     @hybrid_property
+    def parent_contact_info(self):
+        s = ""
+        for p in range(len(self.parents)):
+            parent = self.parents[p]
+            s += "({}) {} {} ".format(p, parent.name, parent.email)
+        return s
+
+    @hybrid_property
     def program(self):
         return ", ".join([g.program.upper() for g in self.ib_groups])
 
@@ -337,6 +345,10 @@ class Parent(Base, User):
     work_zipcode = Column(String(255))
 
     email = Column(String(255))
+
+    @hybrid_property
+    def name(self):
+        return self.first_name + ' ' + self.last_name
 
 class Advisor(Base, User):
     """
@@ -723,9 +735,28 @@ class MedInfo(Base):
     def medical_alert(self):
         concat = ""
         for attr in self.__dict__.keys():
-            if attr.lower().startswith('health_information') and not 'yes_no' in attr.lower():
+            if attr.lower().startswith('health_information') and not attr.lower() in ["yes_no", "medications", "allergies"]:
+                value = getattr(self, attr)
+                if not value.lower() in ["yes", "no", "medications", "alergies"]:
+                    concat += getattr(self, attr)
+        return concat
+
+    @hybrid_property
+    def allergies(self):
+        concat = ""
+        for attr in self.__dict__.keys():
+            if attr.lower().startswith('health_information') and not attr.lower() in ["yes_no"] and attr.lower() in ["allergies"]:
                 value = getattr(self, attr)
                 if not value.lower() in ["yes", "no"]:
                     concat += getattr(self, attr)
         return concat
 
+    @hybrid_property
+    def medications(self):
+        concat = ""
+        for attr in self.__dict__.keys():
+            if attr.lower().startswith('health_information') and not attr.lower() in ["yes", "no"] and attr.lower() in ["medications"]:
+                value = getattr(self, attr)
+                if not value.lower() in ["yes", "no"]:
+                    concat += getattr(self, attr)
+        return concat
