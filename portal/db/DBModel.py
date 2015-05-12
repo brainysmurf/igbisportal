@@ -350,11 +350,11 @@ class Student(Base, User):
         from portal.db import DBSession, Database
         db = Database()
         from sqlalchemy.orm.exc import NoResultFound
-        HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
+        Teachers = db.table_string_to_class('advisor')
 
         with DBSession() as session:
             try:
-                hr_teacher = session.query(HRTeachers).filter_by(id=self.homeroom_advisor).one()
+                hr_teacher = session.query(Teachers).filter_by(id=self.homeroom_advisor).one()
             except NoResultFound:
                 return "<hr teacher not avail>"
 
