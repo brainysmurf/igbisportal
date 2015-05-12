@@ -300,7 +300,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<medical info not avail>"
+                return "<medical alert not avail>"
 
             return med_info.medical_alert
 
@@ -330,7 +330,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<emergency info not avail>"
+                return "<allergy info not avail>"
 
             return med_info.allergies
 
@@ -345,7 +345,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<emergency info not avail>"
+                return "<medication info not avail>"
 
             return med_info.medications
 
