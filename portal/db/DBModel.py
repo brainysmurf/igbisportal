@@ -278,6 +278,10 @@ class Student(Base, User):
         return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
     @hybrid_property
+    def first_nickname_last(self):
+        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name
+
+    @hybrid_property
     def grade_first_nickname_last_studentid(self):
         return str(self.grade or '-10') + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
