@@ -315,6 +315,36 @@ class Student(Base, User):
 
             return med_info.emergency_info
 
+    @hybrid_property
+    def allergies(self):
+        from portal.db import DBSession, Database
+        db = Database()
+        from sqlalchemy.orm.exc import NoResultFound
+        MedInfo = db.table_string_to_class('med_info')
+
+        with DBSession() as session:
+            try:
+                med_info = session.query(MedInfo).filter_by(id=self.id).one()
+            except NoResultFound:
+                return "<emergency info not avail>"
+
+            return med_info.allergies
+
+    @hybrid_property
+    def medications(self):
+        from portal.db import DBSession, Database
+        db = Database()
+        from sqlalchemy.orm.exc import NoResultFound
+        MedInfo = db.table_string_to_class('med_info')
+
+        with DBSession() as session:
+            try:
+                med_info = session.query(MedInfo).filter_by(id=self.id).one()
+            except NoResultFound:
+                return "<emergency info not avail>"
+
+            return med_info.medications
+
 
 class Parent(Base, User):
     """
