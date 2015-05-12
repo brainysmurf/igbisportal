@@ -352,7 +352,7 @@ def api_students(request):
         # boo!
 
         first_row = dummy_first_row()
-        filter_map = {'display_name': 'CategoryFilter', 'grade': 'CategoryFilter'}
+        filter_map = {'display_name': 'StringFilter', 'grade': 'CategoryFilter'}
         for column in columns:
             value = filter_map.get(column, 'NoFilter')
             first_row.add(column, value)
