@@ -345,6 +345,20 @@ class Student(Base, User):
 
             return med_info.medications
 
+    @hybrid_property
+    def homeroom_teacher_email(self):
+        from portal.db import DBSession, Database
+        db = Database()
+        from sqlalchemy.orm.exc import NoResultFound
+        HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
+
+        with DBSession() as session:
+            try:
+                hr_teacher = session.query(HRTeachers).filter_by(id=self.homeroom_advisor).one()
+            except NoResultFound:
+                return "<hr teacher not avail>"
+
+            return hr_teacher.email
 
 class Parent(Base, User):
     """
