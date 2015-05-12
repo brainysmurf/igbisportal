@@ -724,6 +724,8 @@ class MedInfo(Base):
         concat = ""
         for attr in self.__dict__.keys():
             if attr.lower().startswith('health_information') and not 'yes_no' in attr.lower():
-                concat += getattr(self, attr)
+                value = getattr(self, attr)
+                if not value.lower() in ["yes", "no"]:
+                    concat += getattr(self, attr)
         return concat
 
