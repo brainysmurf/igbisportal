@@ -390,7 +390,9 @@ class Parent(Base, User):
     work_street_address_ii = Column(String(255))
     work_city = Column(String(255))
     work_state = Column(String(255))
-    work_zipcode = Column(String(255))
+    mobile_phone = Column(String(255))
+    home_phone = Column(String(255))
+    work_phone = Column(String(255))
 
     email = Column(String(255))
 
