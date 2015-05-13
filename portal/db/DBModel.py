@@ -250,11 +250,11 @@ class Student(Base, User):
         s = ""
         for p in range(len(self.parents)):
             parent = self.parents[p]
-            s += "({}) {} {} ".format(p+1, parent.name, parent.email)
+            s += "({}) {} {} {}".format(p+1, parent.name, parent.email, parent.phone_number, parent.mobile_phone_number, parent.street_address, parent.street_address_ii)
         return s
 
     @hybrid_property
-    def program(self):
+    def program_of_study(self):
         return ", ".join([g.program.upper() for g in self.ib_groups])
 
     @hybrid_property
@@ -300,7 +300,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<medical alert not avail>"
+                return "<>"
 
             return med_info.medical_alert
 
@@ -315,7 +315,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<emergency info not avail>"
+                return "<>"
 
             return med_info.emergency_info
 
@@ -330,7 +330,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<allergy info not avail>"
+                return "<>"
 
             return med_info.allergies
 
@@ -345,7 +345,7 @@ class Student(Base, User):
             try:
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
-                return "<medication info not avail>"
+                return "<>"
 
             return med_info.medications
 
@@ -360,7 +360,7 @@ class Student(Base, User):
             try:
                 hr_teacher = session.query(Teachers).filter_by(id=self.homeroom_advisor).one()
             except NoResultFound:
-                return "<hr teacher not avail>"
+                return "<>"
 
             return hr_teacher.email
 

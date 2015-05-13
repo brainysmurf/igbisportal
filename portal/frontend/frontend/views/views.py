@@ -293,6 +293,7 @@ def api_students(request):
     filter = json_body.get('filter')
     emergency_information = json_body.get('emergency_information') or False
     human_columns = json_body.get('emergency_information') or False
+    passed_columns = json_body.get('columns') or False
 
     as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
     data = []
@@ -346,7 +347,13 @@ def api_students(request):
     else:
         columns = ['student_id', 'email']
 
-    columns.extend([c for c in column_attrs if c not in columns])
+    if not passed_columns:
+        # Add in the extra columns
+        columns.extend([c for c in column_attrs if c not in columns])
+    else:
+        # Just put in the ones that are requested
+        # TODO: Validate, return a useful error
+        columns.extend(passed_columns)
 
     if emergency_information:
         # Add an extra row so that our awesome tables solution works right
