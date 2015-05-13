@@ -68,6 +68,7 @@ stndrdbttns = [
             menu_item(icon="question-circle", display="What else?", url="#")
         ]
         }),
+    button(name="Google Plus", url="https://plus.google.com/", icon="google-plus", context_menu=None),
     button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
         context_menu={
         'items': [
