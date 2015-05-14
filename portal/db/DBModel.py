@@ -778,7 +778,9 @@ class MedInfo(Base):
                     continue
                 key = key[0]
                 value = getattr(self, attr)
-                if value and value.lower().strip() != "no":
+                raw_value = value.lower().strip()
+                raw_value = re.sub('[^a-z]', '', raw_value)
+                if value and not raw_value != "no" and raw_value != 'none':
                     concat += key.replace('_', ' ').replace('description', '').upper() + ": " + value + " "
         return concat
 
