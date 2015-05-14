@@ -98,6 +98,18 @@ class PortalORM(object):
         column_attrs.sort()
         return column_attrs
 
+    @classmethod
+    def hybrids(cls, filter_out=None):
+        """
+        FIXME: This doesn't seem to be working
+        filter_out TODO make it so that you can define a lambda
+        """
+        insp = inspect(cls)
+        #column_attrs = [c.name for c in insp.columns]
+        column_attrs = [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>']
+        column_attrs.sort()
+        return column_attrs
+
     @property
     def columns_hybrids_dict(self):
         insp = inspect(self.__class__)

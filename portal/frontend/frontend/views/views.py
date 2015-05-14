@@ -294,11 +294,7 @@ def api_students(request):
     emergency_information = json_body.get('emergency_information') or False
     human_columns = json_body.get('emergency_information') or False
     passed_columns = json_body.get('columns') or False
-
-    as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
-    data = []
-    if secret != gns.settings.secret:
-        return dict(message="IGBIS api is not for public consumption.", data=data)
+    raw_input(passed_columns)
 
     if derived_attr:
         field_name = derived_attr.get('field')
@@ -311,6 +307,25 @@ def api_students(request):
         if field_name and string_pattern:
             # Define a new field!
             setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.columns_hybrids_dict)))
+
+    if derived_attr:
+        columns = [field_name, 'student_id', 'email']
+    else:
+        columns = ['student_id', 'email']
+
+    if not passed_columns:
+        # Add in the extra columns
+        column_attrs = Students.columns_and_hybrids();
+        columns.extend([c for c in column_attrs if c not in columns])
+    else:
+        # Just put in the ones that are requested
+        # TODO: Validate, return a useful error
+        columns.extend(passed_columns)
+
+    as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
+    data = []
+    if secret != gns.settings.secret:
+        return dict(message="IGBIS api is not for public consumption.", data=data)
 
     with DBSession() as session:
 
@@ -327,10 +342,6 @@ def api_students(request):
 
         data = query.all()
 
-    # TODO: Figure out how to make this part of the request
-    if derived_attr:
-        data.sort(key=lambda x: getattr(x, field_name))
-
     #columns = list(Students.__table__.columns.keys())
     # Don't use columns because we have defined stuff at the instance level instead of class level
     # Remove 'id' because we want that at the start
@@ -340,20 +351,6 @@ def api_students(request):
     # column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
     # column_attrs.sort()
  
-    column_attrs = Students.columns_and_hybrids();
-
-    if derived_attr:
-        columns = [field_name, 'student_id', 'email']
-    else:
-        columns = ['student_id', 'email']
-
-    if not passed_columns:
-        # Add in the extra columns
-        columns.extend([c for c in column_attrs if c not in columns])
-    else:
-        # Just put in the ones that are requested
-        # TODO: Validate, return a useful error
-        columns.extend(passed_columns)
 
     if emergency_information:
         # Add an extra row so that our awesome tables solution works right
@@ -369,7 +366,9 @@ def api_students(request):
         data.insert(0, first_row)
 
     if as_multidimentional_arrays:
+        raw_input('begin ret')
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
+        raw_input('finished')
         if not human_columns:
             columns = [[columns[column] for column in range(len(columns))] for row in range(1)]
         else:
