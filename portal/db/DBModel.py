@@ -289,6 +289,10 @@ class Student(Base, User):
     def first_nickname_last_studentid(self):
         return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
+    @first_nickname_last_studentid.expression
+    def first_nickname_last_studentid(cls):
+        return cls.first_name + (' (' + cls.nickname + ')' if cls.nickname and cls.nickname != cls.first_name else '') + ' ' + cls.last_name + ' [' + str(cls.student_id) + ']'
+
     @hybrid_property
     def first_nickname_last(self):
         return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name
@@ -302,7 +306,7 @@ class Student(Base, User):
         return -10 if self.class_year is None else int(self.class_year) - 1
 
     @hybrid_property
-    def medical_alert(self):
+    def health_information(self):
         from portal.db import DBSession, Database
         db = Database()
         from sqlalchemy.orm.exc import NoResultFound
@@ -314,7 +318,7 @@ class Student(Base, User):
             except NoResultFound:
                 return "<>"
 
-            return med_info.medical_alert
+            return med_info.health_information
 
     @hybrid_property
     def emergency_info(self):
@@ -330,36 +334,6 @@ class Student(Base, User):
                 return "<>"
 
             return med_info.emergency_info
-
-    @hybrid_property
-    def allergies(self):
-        from portal.db import DBSession, Database
-        db = Database()
-        from sqlalchemy.orm.exc import NoResultFound
-        MedInfo = db.table_string_to_class('med_info')
-
-        with DBSession() as session:
-            try:
-                med_info = session.query(MedInfo).filter_by(id=self.id).one()
-            except NoResultFound:
-                return "<>"
-
-            return med_info.allergies
-
-    @hybrid_property
-    def medications(self):
-        from portal.db import DBSession, Database
-        db = Database()
-        from sqlalchemy.orm.exc import NoResultFound
-        MedInfo = db.table_string_to_class('med_info')
-
-        with DBSession() as session:
-            try:
-                med_info = session.query(MedInfo).filter_by(id=self.id).one()
-            except NoResultFound:
-                return "<>"
-
-            return med_info.medications
 
     @hybrid_property
     def homeroom_teacher_email(self):
@@ -794,31 +768,17 @@ class MedInfo(Base):
         return concat_str
 
     @hybrid_property
-    def medical_alert(self):
+    def health_information(self):
         concat = ""
         for attr in self.__dict__.keys():
-            if attr.lower().startswith('health_information') and not attr.lower() in ["yes_no", "medications", "allergies"]:
+            a = attr.lower()
+            if a.startswith('health_information'):
+                key = re.findall('health_information_\d+_(.*)', a)
+                if not key:
+                    continue
+                key = key[0]
                 value = getattr(self, attr)
-                if not value.lower() in ["yes", "no", "medications", "alergies"]:
-                    concat += getattr(self, attr)
+                if value and value.lower().strip() != "no":
+                    concat += key.replace('_', ' ').replace('description', '').upper() + ": " + value + " "
         return concat
 
-    @hybrid_property
-    def allergies(self):
-        concat = ""
-        for attr in self.__dict__.keys():
-            if attr.lower().startswith('health_information') and not attr.lower() in ["yes_no"] and attr.lower() in ["allergies"]:
-                value = getattr(self, attr)
-                if not value.lower() in ["yes", "no"]:
-                    concat += getattr(self, attr)
-        return concat
-
-    @hybrid_property
-    def medications(self):
-        concat = ""
-        for attr in self.__dict__.keys():
-            if attr.lower().startswith('health_information') and not attr.lower() in ["yes", "no"] and attr.lower() in ["medications"]:
-                value = getattr(self, attr)
-                if not value.lower() in ["yes", "no"]:
-                    concat += getattr(self, attr)
-        return concat
