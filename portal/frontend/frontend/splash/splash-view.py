@@ -99,6 +99,7 @@ intl_day_button = button(name="International Day", icon="smile-o", url="https://
             menu_item(icon="file-movie-o", display="Download Students Dancing", url="https://doc-00-5c-docs.googleusercontent.com/docs/securesc/884cabjr1sdneekvn44p41a882r4naec/3n5qsegs0a0651mtt09hhcijticoe6av/1431424800000/02981500850996571698/02981500850996571698/0B2Jx5iFaTuHJM0tfV0JYV2Q4Qjg?h=08807967339938854529&e=download"),
         ],
     })
+ela_button = button(name="ELA Department", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", context_menu=None)
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
@@ -114,7 +115,8 @@ def splash(request):
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        ela_button
     ])
 
     sec_teacher_buttons = stndrdbttns[:]
