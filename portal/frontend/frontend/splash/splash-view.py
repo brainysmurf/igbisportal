@@ -116,7 +116,6 @@ def splash(request):
     student_buttons.extend([
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
-        ela_button
     ])
 
     sec_teacher_buttons = stndrdbttns[:]
@@ -133,8 +132,8 @@ def splash(request):
         button(name="Reports Hub", url="reports_hub", icon="gavel", context_menu=None),
         button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        ela_button,
         intl_day_button,
         emergency_button,
 
@@ -213,6 +212,7 @@ def splash(request):
 
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
 
+        ela_button,
         intl_day_button,
         emergency_button
     ])
