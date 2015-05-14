@@ -294,7 +294,6 @@ def api_students(request):
     emergency_information = json_body.get('emergency_information') or False
     human_columns = json_body.get('emergency_information') or False
     passed_columns = json_body.get('columns') or False
-    raw_input(passed_columns)
 
     if derived_attr:
         field_name = derived_attr.get('field')
@@ -332,7 +331,7 @@ def api_students(request):
         query = session.query(Students).\
             options(joinedload('parents')).\
             options(joinedload('ib_groups')).\
-            options(joinedload_all('classes.teachers'))
+            options(joinedload_all('classes.teachers')).order_by(Students.first_name)
 
         if filter == 'filterSecondary':
             query = query.filter(Students.class_year >= 7)  # FIXME class_year is NOT grade!
@@ -366,9 +365,7 @@ def api_students(request):
         data.insert(0, first_row)
 
     if as_multidimentional_arrays:
-        raw_input('begin ret')
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
-        raw_input('finished')
         if not human_columns:
             columns = [[columns[column] for column in range(len(columns))] for row in range(1)]
         else:
