@@ -100,6 +100,7 @@ intl_day_button = button(name="International Day", icon="smile-o", url="https://
         ],
     })
 ela_button = button(name="ELA Department", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", context_menu=None)
+bookings_button = button(name="Bookings", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", context_menu=None)
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
@@ -133,6 +134,7 @@ def splash(request):
         button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        bookings_button,
         ela_button,
         intl_day_button,
         emergency_button,
@@ -211,7 +213,7 @@ def splash(request):
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
 
         button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
-
+        bookings_button,
         ela_button,
         intl_day_button,
         emergency_button
