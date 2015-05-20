@@ -205,7 +205,7 @@ def splash(request):
             menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
         ]}),
 
-        button(name="Secondary Principal", icon="trophy", url="", 
+        button(name="Secondary Principal", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", 
         context_menu={
         'items': [
             menu_item(icon="warning", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
