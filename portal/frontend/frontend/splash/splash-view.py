@@ -101,6 +101,16 @@ intl_day_button = button(name="International Day", icon="smile-o", url="https://
     })
 ela_button = button(name="ELA Department", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", context_menu=None)
 bookings_button = button(name="Bookings", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", context_menu=None)
+ibo_button = button(name="IBO", url="http://www.ibo.org/", icon="globe", 
+        context_menu={
+        'items': [
+            menu_item(icon="globe", display="PD Events & Workshops", url="http://www.ibo.org/en/professional-development/find-events-and-workshops/"),
+            menu_item(icon="globe", display="IB Answers", url="https://ibanswers.ibo.org/"),
+            menu_item(icon="globe", display="IB Store", url="https://store.ibo.org/"),
+            menu_item(icon="globe", display="IB Blogs", url="http://blogs.ibo.org/")
+        ],
+        }
+    )
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
@@ -122,6 +132,7 @@ def splash(request):
     sec_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons.extend([
+        ibo_button,
         button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
         button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
         context_menu={
@@ -138,7 +149,6 @@ def splash(request):
         ela_button,
         intl_day_button,
         emergency_button,
-
         ])
 
     with DBSession() as session:
@@ -165,6 +175,8 @@ def splash(request):
     homeroom_items.append(menu_placeholder("mb_homeroom"))
 
     sec_teacher_buttons.extend([
+        ibo_button,
+
         button(name="Homeroom", url="notsure", icon="cube", 
         context_menu={
         'items': homeroom_items}),
