@@ -67,6 +67,30 @@ class APIDownloader(object):
 		with open(path, 'w') as _f:
 			json.dump(obj, _f, indent=4)
 
+	def open_apply_download(self, overwrite=False):
+		"""
+		Just testing things out
+		"""
+		#path_to_jsons = gns.settings.path_to_jsons.replace('jsons', 'oa_jsons')
+		api_token = settings.get("OPENAPPLY", 'oa_api_key')
+		settings.get("OPENAPPLY", 'oa_url')
+		url = gns('{settings.oa_url}/{{uri}}')
+
+		url = url.format(uri='students')
+
+		r = requests.get(url, params=dict(
+			auth_token=api_token
+			))
+		try:
+			if not r.ok:
+				self.default_logger('Download request did not return "OK"')
+			json_info = r.json()
+
+		except ValueError:
+			self.default_logger('Invalid json after download. Oops?')
+
+		print(json_info)
+
 	def download(self, overwrite=False):
 		"""
 		Downloads known paths from api and places it onto directories
@@ -157,10 +181,9 @@ class APIDownloader(object):
 
 if __name__ == "__main__":
 
-	go = Downloader()
+	go = APIDownloader()
 
-	go.download(overwrite=False)
-	go.setup_database()
+	go.open_apply_download(overwrite=True)
 
 
 

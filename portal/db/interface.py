@@ -157,17 +157,19 @@ class DatabaseSetterUpper(object):
 
 					table_class = self.database.table_string_to_class(_type)
 					instance = table_class()
-					gotcha = False
 					for item_key in item:
-						if item_key == 'id' and item[item_key] == 10225796:
-							gotcha = True
-						setattr(instance, item_key, item[item_key])
+						try:
+							setattr(instance, item_key, item[item_key])
+						except AttributeError:
+							if item[item_key] is None:
+								continue  # happens when None is put on there
+							else:
+								# print?
+								from IPython import embed
+								embed()
+								exit()
 
-					#if gotcha:
-					#	from IPython import embed; embed();
 					u.update_or_add(instance)
-					#if gotcha:
-					#	exit()
 
 			with u.collection(Student, Parent, 'parents', left_column='student_id') as stu_par:
 

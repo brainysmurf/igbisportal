@@ -68,6 +68,7 @@ stndrdbttns = [
             menu_item(icon="question-circle", display="What else?", url="#")
         ]
         }),
+    button(name="Google Plus", url="https://plus.google.com/", icon="google-plus", context_menu=None),
     button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
         context_menu={
         'items': [
@@ -81,7 +82,35 @@ stndrdbttns = [
         ],
         }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
+    button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
+    button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+
 ]
+
+emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", context_menu=None)
+intl_day_button = button(name="International Day", icon="smile-o", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k", 
+        context_menu={
+        'items': [
+            menu_item(icon="folder", display="Google Drive folder", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k"),
+            menu_separator(),
+            menu_item(icon="file-text", display="Cultural Activities and Sports", url="https://docs.google.com/document/d/1UjvgvSdel_gonrq6ONngcZquIh-upTVU64Tw6_FWVKQ/edit"),
+            menu_item(icon="file-text", display="Nationality Lists", url="https://docs.google.com/spreadsheets/d/1qcKr_IFlDaL-4LiF5BswU5xG4aFKkTx096PQbUiVXtg/edit#gid=196206741"),
+            menu_separator(),
+            menu_item(icon="file-movie-o", display="Download Students Dancing", url="https://doc-00-5c-docs.googleusercontent.com/docs/securesc/884cabjr1sdneekvn44p41a882r4naec/3n5qsegs0a0651mtt09hhcijticoe6av/1431424800000/02981500850996571698/02981500850996571698/0B2Jx5iFaTuHJM0tfV0JYV2Q4Qjg?h=08807967339938854529&e=download"),
+        ],
+    })
+ela_button = button(name="ELA Department", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", context_menu=None)
+bookings_button = button(name="Bookings", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", context_menu=None)
+ibo_button = button(name="IBO", url="http://www.ibo.org/", icon="globe", 
+        context_menu={
+        'items': [
+            menu_item(icon="globe", display="PD Events & Workshops", url="http://www.ibo.org/en/professional-development/find-events-and-workshops/"),
+            menu_item(icon="globe", display="IB Answers", url="https://ibanswers.ibo.org/"),
+            menu_item(icon="globe", display="IB Store", url="https://store.ibo.org/"),
+            menu_item(icon="globe", display="IB Blogs", url="http://blogs.ibo.org/")
+        ],
+        }
+    )
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
@@ -97,13 +126,29 @@ def splash(request):
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
     ])
 
     sec_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons.extend([
+        ibo_button,
+        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
+        button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
+        context_menu={
+        'items': [
+            menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
+            menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
+            menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
+        ]}),
         button(name="Reports Hub", url="reports_hub", icon="gavel", context_menu=None),
+        button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        bookings_button,
+        ela_button,
+        intl_day_button,
+        emergency_button,
         ])
 
     with DBSession() as session:
@@ -130,6 +175,8 @@ def splash(request):
     homeroom_items.append(menu_placeholder("mb_homeroom"))
 
     sec_teacher_buttons.extend([
+        ibo_button,
+
         button(name="Homeroom", url="notsure", icon="cube", 
         context_menu={
         'items': homeroom_items}),
@@ -149,7 +196,7 @@ def splash(request):
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
 
-        button(name="Hapara Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
+        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
         button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
         context_menu={
         'items': [
@@ -158,7 +205,7 @@ def splash(request):
             menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
         ]}),
 
-        button(name="Secondary Principal", icon="trophy", url="", 
+        button(name="Secondary Principal", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", 
         context_menu={
         'items': [
             menu_item(icon="warning", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
@@ -177,7 +224,11 @@ def splash(request):
         button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
         button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
 
-        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        bookings_button,
+        ela_button,
+        intl_day_button,
+        emergency_button
     ])
 
     buttons = OrderedDict()

@@ -8,10 +8,18 @@ from pyramid.response import Response, FileResponse
 from pyramid.view import view_config
 from pyramid.renderers import render
 
+
 from pyramid.httpexceptions import HTTPFound
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import joinedload, joinedload_all
+from sqlalchemy import inspect
+
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.sql.functions import concat
+from sqlalchemy.ext.hybrid import hybrid_property
+
+from chameleon import PageTemplate
 
 from portal.db import Database, DBSession
 db = Database()
@@ -30,6 +38,7 @@ import gns
 settings.get('DIRECTORIES', 'home')
 settings.get('GOOGLE', 'client_id')
 settings.get('GOOGLE', 'data_origin')
+settings.get('API', 'secret')
 
 @view_config(route_name="frontpage")
 def frontpage(request):
@@ -40,6 +49,7 @@ class ReportIncomplete(Exception):
         self.msg = msg
 
 Students = db.table_string_to_class('student')
+Parents = db.table_string_to_class('parent')
 Teachers = db.table_string_to_class('advisor')
 Enrollments = db.table_string_to_class('enrollment')
 Assignments = db.table_string_to_class('assignment')
@@ -240,8 +250,6 @@ def mb_homeroom(request):
     data = []
     with DBSession() as session:
         students = session.query(Students).filter_by(homeroom_advisor=user.id).all()
-        if not students:
-            return dict(message="This teacher was not found in the HR teacher table", data=[])
         for student in students:
             try:
                 teachers = session.query(Teachers.email).\
@@ -257,6 +265,117 @@ def mb_homeroom(request):
             teacher_emails = ",".join(set([t.email for t in teachers]))
             data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
+
+class dummy_first_row:
+    """
+    Terrible. No good day I am having
+    """
+    def __init__(self):
+        self._columns = []
+
+    def add(self, column, value):
+        self._columns.append(column)
+        setattr(self, column, value)
+
+    def as_dict(self):
+       return {c: getattr(self, c) for c in self._columns}
+
+@view_config(route_name='api-students', renderer='json', http_cache=0)
+def api_students(request):
+ 
+    #gas_ua = settings.get('GOOGLE', 'GASUserAgent')
+    #if gas_ua not in request.user_agent:
+    #    return dict(message="IGBIS api is not for public consumption!", data=[])
+
+    json_body = request.json_body
+    secret = json_body.get('secret')
+    derived_attr = json_body.get('derived_attr')
+    filter = json_body.get('filter')
+    emergency_information = json_body.get('emergency_information') or False
+    human_columns = json_body.get('emergency_information') or False
+    passed_columns = json_body.get('columns') or False
+
+    if derived_attr:
+        field_name = derived_attr.get('field')
+        string_pattern = derived_attr.get('string')
+
+        # Now use the awesome chameleon to render it as a templating language!
+        # TODO: validate the pattern, ensuring that ${things} are in __dict__?
+        template = PageTemplate(string_pattern)
+
+        if field_name and string_pattern:
+            # Define a new field!
+            setattr(Students, field_name, hybrid_property(lambda self_: template.render(**self_.columns_hybrids_dict)))
+
+    if derived_attr:
+        columns = [field_name, 'student_id', 'email']
+    else:
+        columns = ['student_id', 'email']
+
+    if not passed_columns:
+        # Add in the extra columns
+        column_attrs = Students.columns_and_hybrids();
+        columns.extend([c for c in column_attrs if c not in columns])
+    else:
+        # Just put in the ones that are requested
+        # TODO: Validate, return a useful error
+        columns.extend(passed_columns)
+
+    as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
+    data = []
+    if secret != gns.settings.secret:
+        return dict(message="IGBIS api is not for public consumption.", data=data)
+
+    with DBSession() as session:
+
+        query = session.query(Students).\
+            options(joinedload('parents')).\
+            options(joinedload('ib_groups')).\
+            options(joinedload_all('classes.teachers')).order_by(Students.first_name)
+
+        if filter == 'filterSecondary':
+            query = query.filter(Students.class_year >= 7)  # FIXME class_year is NOT grade!
+
+        elif filter == 'filterElementary':
+            query = query.filter(Students.class_year < 7)
+
+        data = query.all()
+
+    #columns = list(Students.__table__.columns.keys())
+    # Don't use columns because we have defined stuff at the instance level instead of class level
+    # Remove 'id' because we want that at the start
+
+    # insp = inspect(Students)
+    # column_attrs = [c.name for c in insp.columns if c.name != 'student_id']
+    # column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
+    # column_attrs.sort()
+ 
+
+    if emergency_information:
+        # Add an extra row so that our awesome tables solution works right
+        # boo!
+
+        first_row = dummy_first_row()
+        filter_map = {'student': 'StringFilter', 'grade': 'CategoryFilter'}
+        for column in columns:
+            value = filter_map.get(column.lower(), 'NoFilter')
+            first_row.add(column, value)
+
+        # insert it into the front
+        data.insert(0, first_row)
+
+    if as_multidimentional_arrays:
+        ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
+        if not human_columns:
+            columns = [[columns[column] for column in range(len(columns))] for row in range(1)]
+        else:
+            columns = [[(columns[column]).replace('_', ' ').title() for column in range(len(columns))] for row in range(1)]
+        return dict(message="Success, as array", columns=columns, data=ret)
+    else:
+        if human_columns:
+            columns = [c.replace('_', ' ').title() for c in columns]
+        return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
+
 
 @view_config(route_name="mb_courses", renderer='json')
 def mb_courses(request):
