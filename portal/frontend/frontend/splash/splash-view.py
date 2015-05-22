@@ -5,7 +5,6 @@ from pyramid.renderers import render
 from pyramid.httpexceptions import HTTPFound
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import DBAPIError
-from sqlalchemy.orm import joinedload, joinedload_all
 
 from portal.db import Database, DBSession
 db = Database()
@@ -111,6 +110,7 @@ ibo_button = button(name="IBO", url="http://www.ibo.org/", icon="globe",
         ],
         }
     )
+cashless_button = button(name="Cashless", url="http://cashless.igbis.edu.my/", icon="money", context_menu=None)
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
@@ -149,6 +149,7 @@ def splash(request):
         ela_button,
         intl_day_button,
         emergency_button,
+        cashless_button
         ])
 
     with DBSession() as session:
@@ -228,7 +229,8 @@ def splash(request):
         bookings_button,
         ela_button,
         intl_day_button,
-        emergency_button
+        emergency_button,
+        cashless_button
     ])
 
     buttons = OrderedDict()
