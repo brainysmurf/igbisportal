@@ -17,6 +17,11 @@ Absences = db.table_string_to_class('PrimaryStudentAbsences')
 @view_config(route_name='student_pyp_report_with_opt', http_cache=0)
 @view_config(route_name='student_pyp_report', http_cache=0)
 def pyp_reports(request):
+
+    mb_user = request.session.get('mb_user', None)
+    if not mb_user or mb_user.type != 'Advisors':
+        return HTTPForbidden()
+
     m = request.matchdict
     student_id = m.get('id')
     pdf = m.get('pdf')
@@ -42,37 +47,56 @@ def pyp_reports(request):
         -1: {
             1: dict(title="Who We Are", central_idea="Everyday I can learn about who I am with and through others"),
             2: dict(title="Sharing The Planet", central_idea="We share the environment with a variety of creatures and it is important to respect their lives"),
-            3: dict(title="No such unit", central_idea="Nope"),
+            3: dict(title="How the World Works", central_idea="Understanding the way light works allows us to use it in different ways."),
+            4: dict(title="How We Express Ourselves", central_idea="People create art to express how they think and feel."),
         },
         0: {
             1: dict(title="Who We Are", central_idea="We are part of a community who work, live and learn together"),
             2: dict(title="How We Organise Ourselves", central_idea="People can create products or generate new ideas when they are given the opportunity to think and work independently and in groups"),
             3: dict(title="Where We Are in Place and Time", central_idea="Where and how we live determines what our home is like"),
+            4: dict(title="Sharing the Planet", central_idea="People's choices and actions impact the environment and their community"),
+            5: dict(title="How the World Works", central_idea="Experimenting with the properties of air help us to understanding how it is used in a variety of ways"),
+            6: dict(title="How We Express Ourselves", central_idea="Words on a page are intepreted and modified to entertain an audience")
         },
         1: {
             1: dict(title="How we organize ourselves", central_idea="Humans use maps to understand and organize their environment"),
             2: dict(title="Who we are", central_idea="Exploring different learning styles helps individuals understand each other better"),
             3: dict(title="How we express ourselves", central_idea="Celebrations are an opportunity to reflect and appreciate cultures and beliefs"),
+            4: dict(title="How the World Works", central_idea="Machines have an impact on time and efficienty in our daily lives"),
+            5: dict(title="Sharing the Planet", central_idea="Water is essential to life and is a limited resource to many"),
+            6: dict(title="Where We Are in Place and Time", central_idea="Learning from previous generations helps us to understand the present"),
         },
         2: {
             1: dict(title="Who we are", central_idea="All humans have rights and responsibilities which help them live together"),
             2: dict(title="Sharing The Planet", central_idea="Plants sustain life on earth and play a role in our lives"),
             3: dict(title="Where we are in Place and Time", central_idea="Individuals can influence us by their actions and contributions to society"),
+            4: dict(title="How the World Works", central_idea="Forces affect movement in our daily lives"),
+            5: dict(title="How We Express Ourselves", central_idea="Water is essential to life an dis a limited resource to many"),
+            6: dict(title="How We Organize Ourselves", central_idea="Number system provide a common language we can use to make sense of the world"),
         },
         3: {
             1: dict(title="Sharing the Planet", central_idea="Through our actions and lifestyles  we can improve how we care for the world"),
             2: dict(title="Who We Are", central_idea="Exercise and nutrition have an effect on how our body systems operate"),
             3: dict(title="How We Organise Ourselves", central_idea="Technology changes the way in which people work together"),
+            4: dict(title="How the World Works", central_idea="People and nature change the states of matter"),
+            5: dict(title="Where We are in Place and Time", central_idea="Past civilizations have had an impact on the present"),
+            6: dict(title="How We Express Ourselves", central_idea="Nature can inspire people to express their creativity"),
         },
         4: {
             1: dict(title="Who We Are", central_idea="People's beliefs influence their actions"),
             2: dict(title="How We Express Ourselves", central_idea="Media influences how we think and the choices we make"),
             3: dict(title="Where we Are in Place and Time", central_idea="Exploration leads to discovery and develops new understandings"),
+            4: dict(title="How the World Works", central_idea="The surface of the Earth has formed over time and is still changing"),
+            5: dict(title="How We Organize Ourselves", central_idea="Societies establish systems for trade and commerce to meet needs and wants"),
+            6: dict(title="Sharing the Planet", central_idea="Children should have access to equal opportunities"),
         },
         5: {
             1: dict(title="Sharing The Planet", central_idea="The choices we make during moments of conflict affect our relationships"),
             2: dict(title="Where we are in Place and Time", central_idea="Change affects personal histories and the future"),
             3: dict(title="How we Organise Ourselves", central_idea="Understanding time helps us to plan and organize our lives"),
+            4: dict(title="Who We Are", central_idea="External and internal factors cause changes in our lives"),
+            5: dict(title="How We Express Ourselves", central_idea="Artists seek to evoke an emotional response from their audience"),
+            6: dict(title="How the World Works", central_idea="The way humans use energy impacts people and the environment"),
         },
     }
 
@@ -114,7 +138,7 @@ def pyp_reports(request):
             except NoResultFound:
                 raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
 
-        subject_rank = {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'unit of inquiry 3':4, 'art':5, 'music':6, 'physical education':7, 'bahasa melayu':8, 'chinese':9, 'host nation':10, 'self-management':10000}
+        subject_rank = {'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'unit of inquiry 3':4, 'unit of inquiry 4': 4.1, 'unit of inquiry 5': 4.2, 'unit of inquiry 6': 4.3, 'art':5, 'music':6, 'physical education':7, 'bahasa melayu':8, 'chinese':9, 'host nation':10, 'self-management':10000}
         report.sections = sorted([section for section in report.sections if subject_rank.get(section.name.lower()) < 10000], key=lambda x: subject_rank.get(x.name.lower(), 1000))
 
         # Only output sections that have any data in them
@@ -144,13 +168,13 @@ def pyp_reports(request):
             if section.rank == 9 and student.id in students_chinese_teachers:
                 section.teachers = [students_chinese_teachers.get(student.id)]
 
-            section.append_uoi_table = section.rank in [4]
+            section.append_uoi_table = section.rank == 4.3 if len(uoi_units) == 3 else section.rank == 4.2
             section.display_rotated = section.rank in [0, 1, 2, 5, 8, 9]
 
-            if section.rank == 2:
+            if section.rank == 2 or section.rank == 4.1:
                 section.organization_header = "Units of Inquiry"
                 section.name_after = ""
-            elif section.rank in [3, 4]:
+            elif section.rank in [3, 4, 4.1, 4.2, 4.3]:
                 section.organization_header = 'skip'
                 section.name_after = ""
             else:
@@ -158,7 +182,7 @@ def pyp_reports(request):
                 section.name_after = ' (' + " & ".join([s.first_name + ' ' + s.last_name for s in section.teachers]) + ')'
 
             # Set the unit title if it needs to be
-            if section.rank in [2, 3, 4]:
+            if section.rank in [2, 3, 4, 4.1, 4.2, 4.3]:
                 which_uoi = int(re.sub("[^0-9]", "", section.name))
                 section.name = uoi_table.get(grade_norm)[which_uoi]['title']
 
@@ -171,7 +195,7 @@ def pyp_reports(request):
             section.learning_outcomes = sorted(section.learning_outcomes, key=lambda x: x.which)
 
             # Standardize the headings
-            if section.rank in [2, 3, 4]:
+            if section.rank in [2, 3, 4, 4.1, 4.2, 4.3]:
                 section.name = section.name.title()
                 section.name_after = uoi_table.get(grade_norm)[which_uoi]['central_idea']
 
@@ -239,7 +263,7 @@ def pyp_reports(request):
             except NoResultFound:
                 raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
 
-        subject_rank = {'self-management':-1, 'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'unit of inquiry 3':4, 'art':5, 'music':6, 'physical education':7, 'bahasa melayu':8, 'chinese':9, 'host nation':10}
+        subject_rank = {'self-management':-1, 'language':0, 'mathematics':1, 'unit of inquiry 1':2, 'unit of inquiry 2':3, 'unit of inquiry 3':4, 'unit of inquiry 4': 4.1, 'unit of inquiry 5': 4.2, 'unit of inquiry 6':4.3, 'art':5, 'music':6, 'physical education':7, 'bahasa melayu':8, 'chinese':9, 'host nation':10}
         report.sections = sorted([section for section in report.sections if subject_rank.get(section.name.lower()) < 10000], key=lambda x: subject_rank.get(x.name.lower(), 1000))
 
         # Only output sections that have any data in them
