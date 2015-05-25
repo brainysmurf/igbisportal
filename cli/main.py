@@ -31,7 +31,7 @@ def db_setup(lazy, verbose):
 @click.option('--download/--dontdownload', default=True, help='default is not_lazy')
 @click.option('--setupdb/--dontsetupdb', default=True, help='default is not_lazy')
 @click.pass_obj
-def first_launch(obj, download, setupdb):
+def push(obj, download, setupdb):
     """
     Downloads initial data from ManageBac APIs and via scraping
     """
