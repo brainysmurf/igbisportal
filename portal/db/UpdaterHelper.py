@@ -132,7 +132,7 @@ class updater_helper:
 							where(obj.__table__.c.id == obj.id).\
 							values(**values_statement)
 						session.execute(update_obj)
-						print('{} updated {} column of table {} change from {} to {}'.format(obj, column, row.__table__, left, right))
+						print('{} updated {} column of table {} change from {} to {}'.format(obj, column, row.__table__, left, right.encode('utf-8')))
 
 	def collection(self, left, right, attr, left_column='id', right_column='id'):
 		"""
