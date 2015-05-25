@@ -109,14 +109,14 @@ class updater_helper:
 		If it there, update anything that is different
 
 		TODO: Self is not used, should probably be a class method?
+		TODO: Make a logger so I can track changes
 		"""
 		with DBSession() as session:
 			try:
 				row = session.query(obj.__class__).filter_by(id=obj.id).one()
 			except NoResultFound:
 				session.add(obj)
-				print('Added new {}'.format(obj))
-				return
+				#TODO: Log this
 
 			if row:
 				column_names = [c.name for c in row.__table__.columns if c.name != 'id']
@@ -132,7 +132,7 @@ class updater_helper:
 							where(obj.__table__.c.id == obj.id).\
 							values(**values_statement)
 						session.execute(update_obj)
-						print('{} updated {} column of table {} change from {} to {}'.format(obj, column, row.__table__, left, right.encode('utf-8')))
+						# TODO: Log this
 
 	def collection(self, left, right, attr, left_column='id', right_column='id'):
 		"""
