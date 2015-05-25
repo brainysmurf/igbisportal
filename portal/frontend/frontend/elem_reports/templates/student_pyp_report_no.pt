@@ -1,0 +1,16 @@
+<metal:main use-macro="load: frontend:templates/main2.pt">
+
+<!--   <div metal:fill-slot="tabs_bar">
+    <ul><li><a href="/">Home</a></li><li><a href="/students">Students</a></li></ul>
+  </div>
+ -->
+
+ <div metal:fill-slot="additional-css">
+  <link rel="stylesheet" type="text/css" href="${static_url}css/atl.css" />
+ </div>
+
+  <div metal:fill-slot="content">
+Apologies, but there doesn't seem to be a report for this student (yet).
+</div>
+
+</metal:main>

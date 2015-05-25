@@ -1,0 +1,171 @@
+  <metal:main use-macro="load: pyp_report_main.pt">
+
+<!--   <div metal:fill-slot="tabs_bar">
+    <ul><li><a href="/">Home</a></li><li><a href="/students">Students</a></li></ul>
+  </div>
+ -->
+
+ <div metal:fill-slot="additional-css">
+  <link rel="stylesheet" href="${static_url}css/pyp_ey_reports.css" media="screen">
+  <link rel="stylesheet" href="${static_url}css/pyp_ey_reports_pdf.css" media="print">
+ </div>
+
+  <div metal:fill-slot="content">
+      <!-- The front cover -->
+
+    <div id="frontcover-heading">
+        <div id="frontcover-image">
+            <span id="frontcover-image2"><img style="width: 300px" class="image-header" src="${static_url}images/igbislogo.png" /></span>
+        </div>
+        <div id="frontcover-text">
+          <h1>Elementary School Programme</h1>
+          <h2>Early Years 1 &amp; 2</h2>
+          <h2>Semester One</h2>
+          <h2>February 2015</h2>
+        </div>
+    </div>
+
+    
+
+          <h3 style="margin-top:150px;">Student Information:</h3>
+
+      <table class="table table-student-info">
+        <tr>
+          <td><strong>Student Name:</strong></td>
+          <td>${student.last_name}, ${student.first_name}
+            <tal:block tal:condition="student.nickname">&nbsp;(${student.nickname})</tal:block>
+          </td>
+          <td style="width:100px;background-color:#C0C0C0"><strong>Attendance</strong></td>
+        </tr>
+          <td ><strong>Grade:</strong></td>
+          <td>${report.course.name}</td>
+          <td>${attendance.total_days - attendance.absences} / ${attendance.total_days}</td>
+        <tr>
+          <td><strong>Homeroom Teacher:</strong></td>
+          <td>${report.teacher}</td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+
+      <br />
+      <h3>IGBIS Philosophy:</h3>
+      <ul>
+        <li><strong>Igniting Minds</strong><br />Engaging, enabling, empowering the inquiring minds of IGBIS students. In this way they learn to become confident, knowledgeable, lifelong learners.</li>
+        <li><strong>Impacting Lives</strong><br />Students of IGBIS will impact lives as they learn to understand themselves better, and discover how they can influence and contribute to the wider community. In doing so, they will learn to make a positive difference to their own lives and the lives of others.</li>
+      </ul>
+      <br /><br /><br /><br />
+      <center><img style="width:120px;" src="${static_url}images/logo_no_flame_no_tagline.png" />
+      <p style="margin-top:0px;font-face:Helvetica;font-size:12pt;font-size:9pt;"><span style="color:#EA302B;font-weight:900;">T</span>: +60 3 6145 4688 <span style="color:#EA302B;font-weight:900;">F</span>: +60 3 6145 4600  <span style="color:#EA302B;font-weight:900;">W</span>: <a style="color:#000;text-decoration:none" href="http://www.igbis.edu.my">www.igbis.edu.my</a></p>
+      </center>
+
+
+      <hr />
+
+      <!-- The actual report -->
+
+
+    <br />
+
+      <div tal:repeat="section report.sections">
+
+        <div tal:condition="section.organization_header">
+          <h3 tal:condition="not section.organization_header == 'skip'">${section.organization_header}</h3>
+          <h4>${section.name}: <span style="font-weight:normal;">${section.name_after}</span></h4>
+        </div>
+
+        <th tal:condition="not section.organization_header">
+          <h3>${section.name}${section.name_after}:</h3>
+        </th>
+
+        <table class="table table-header-rotated">
+
+          <tbody>
+            <tal:block tal:repeat="outcome section.learning_outcomes">
+              <tr class="effort" tal:condition="hasattr(outcome, 'effort')">
+                <td><strong>${outcome.heading}</strong>
+                  <nobr><span style="float:right;white-space: nowrap;"><em>Effort:&nbsp;${outcome.effort}</em></span></nobr>
+                </td><td colspan="4">
+                </td>
+              </tr>
+              <tr tal:condition="outcome.label">
+                <td>${structure: outcome.label}</td>
+              </tr>
+            </tal:block>
+          </tbody>
+        </table>
+
+        <table class="table table-student-info" tal:condition="'Who We Are' in section.name">
+          <tr>
+            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Likes and dislikes</li><li>How we are different to others</li><li>How we learn to play together</li></td>
+          </tr>
+        </table>
+
+        <table class="table table-student-info" tal:condition="'Sharing The Planet' in section.name">
+          <tr>
+            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Where creatures live</li><li>What creatures need to survive</li><li>Our repsonsibility to the creatures in our environment</li></td>
+          </tr>
+        </table>
+
+        <div class="report_comment">
+          ${structure: section.comment}
+        </div>
+
+        <hr tal:condition="section.pagination == True"/>
+
+      </div>
+
+      <h2>Overall Homeroom Comment (${report.teacher})</h2>
+      <div class="report_comment">${structure: report.homeroom_comment}</div>
+
+      <h2>IB Learner's Profile</h2>
+      <table class="table table-ib-learners">
+        <tr>
+          <td><strong>Inquirers</strong></td><td>We nurture our curiosity, developing skills for inquiry and research. We know how to learn independently and with others. We learn with enthusiasm and sustain our love of learning throughout life.</td>
+        </tr>
+        <tr>
+          <td><strong>Knowledgeable</strong></td><td>We develop and use conceptual understanding, exploring knowledge across a range of disciplines. We engage with issues and ideas that have local and global significance.</td>
+        </tr>
+        <tr>
+          <td><strong>Thinkers</strong></td><td>We use critical and creative thinking skills to analyse and take responsible action on complex problems. We exercise initiative in making reasoned, ethical decisions.</td>
+        </tr>
+        <tr>
+          <td><strong>Communicators</strong></td><td>We express ourselves confidently and creatively in more than one language and in many ways. We collaborate effectively, listening carefully to the perspectives of other individuals and groups.</td>
+        </tr>
+        <tr>
+          <td><strong>Principled</strong></td><td>We act with integrity and honesty, with a strong sense of fairness and justice, and with respect for the dignity and rights of people everywhere. We take responsibility for our actions and their consequences.</td>
+        </tr>
+        <tr>
+          <td><strong>Open-minded</strong></td><td>We critically appreciate our own cultures and personal histories, as well as the values and traditions of others. We seek and evaluate a range of points of view, and we are willing to grow from the experience.</td>
+        </tr>
+        <tr>
+          <td><strong>Caring</strong></td><td>We show empathy, compassion and respect. We have a commitment to service, and we act to make a positive difference in the lives of others and in the world around us.</td>
+        </tr>
+        <tr>
+          <td><strong>Risk-takers</strong></td><td>We approach uncertainty with forethought and determination; we work independently and cooperatively to explore new ideas and innovative strategies. We are resourceful and resilient in the face of challenges and change.</td>
+        </tr>
+        <tr>
+          <td><strong>Balanced</strong></td><td>We understand the importance of balancing different aspects of our lives &mdash; intellectual, physical, (spiritual) and emotional &mdash; to achieve well-being for ourselves and others. We recognize our interdependence with other people and with the world in which we live.</td>
+        </tr>
+        <tr>
+          <td><strong>Reflective</strong></td><td>We thoughtfully consider the world and our own ideas and experience. We work to understand our strengths and weaknesses in order to support our learning and personal development.</td>
+        </tr>
+      </table>
+
+      <br /><br />
+      <h3>Message from the Principal:</h3>
+      <ul>
+        <li style="list-style-type:none;">
+      Please discuss the report with your child and encourage their development and effort. The report should not be compared to reports of siblings and peers. If you have any questions regarding your child&rsquo;s report please contact their class teacher.
+        </li>
+      </ul>
+      <p style="margin-top: 50px;margin-left:5px;margin-right:5px;">
+      <strong>Teacher:</strong> ${report.teacher.first_name} ${report.teacher.last_name} <span style="float:right;text-align:right"><strong>Elementary School Principal:</strong> Claire McLeod</span>
+    </p><br />
+      <center><img style="width:120px;" src="${static_url}images/logo_no_flame_no_tagline.png" />
+      <p style="margin-top:0px;font-face:Helvetica;font-size:12pt;font-size:9pt;"><span style="color:#EA302B;font-weight:900;">T</span>: +60 3 6145 4688 <span style="color:#EA302B;font-weight:900;">F</span>: +60 3 6145 4600  <span style="color:#EA302B;font-weight:900;">W</span>: <a style="color:#000;text-decoration:none" href="http://www.igbis.edu.my">www.igbis.edu.my</a></p>
+      </center>
+
+
+</div>
+
+</metal:main>
