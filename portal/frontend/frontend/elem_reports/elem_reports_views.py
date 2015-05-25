@@ -4,7 +4,7 @@ from pyramid.renderers import render
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, joinedload_all
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from sqlalchemy.orm.exc import NoResultFound
 db = Database()
 import re
