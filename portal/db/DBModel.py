@@ -136,6 +136,7 @@ class User(PortalORM):
     gender = Column(String(255))
 
     national_id = Column(String(255))   # This is the same as passport ID??  Fix
+    email = Column(String(255))
 
     nationality1 = Column(String(255))
     nationality2 = Column(String(255))
@@ -159,6 +160,10 @@ class User(PortalORM):
 
     def __str__(self):
         return (self.first_name or "") + ' ' + (self.last_name or "")
+
+    @hybrid_property
+    def normalized_email(self):
+        return self.email.lower()
 
 """
 Many to many relationships need an association table, this is it for parent/children links
@@ -210,7 +215,7 @@ class Student(Base, User):
     student_id = Column(String(255))
     program = Column(String(255))
     class_year = Column(Integer)
-    email = Column(String(255))
+
     nickname = Column(String(255))
 
     parents = relationship('Parent', secondary=ParentChildren, backref='children')
@@ -380,8 +385,6 @@ class Parent(Base, User):
     home_phone = Column(String(255))
     work_phone = Column(String(255))
 
-    email = Column(String(255))
-
     @hybrid_property
     def name(self):
         return self.first_name + ' ' + self.last_name
@@ -399,8 +402,6 @@ class Advisor(Base, User):
     last_name = Column(String(255))
     national_id = Column(String(255))
     classes = relationship('Course', secondary=Assignment, backref='teachers')
-
-    email = Column(String(255))
 
 class Course(Base):
     """

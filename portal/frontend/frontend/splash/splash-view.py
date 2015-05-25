@@ -234,7 +234,7 @@ def splash(request):
     ])
 
     buttons = OrderedDict()
-    #FIXME: Why need no spaces?
+    #FIXME: Why need no spaces?    
 
     if logged_in_user:
         account_type = logged_in_user.type

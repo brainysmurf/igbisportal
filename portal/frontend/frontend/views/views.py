@@ -29,6 +29,7 @@ from collections import defaultdict
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 
 import requests
+from sqlalchemy import func
 
 from collections import namedtuple, OrderedDict
 
@@ -80,11 +81,11 @@ def session_user(request):
 
     user = None
     with DBSession() as session:
-        student = session.query(Students).filter_by(email=user_email).options(joinedload('classes')).first()
+        student = session.query(Students).filter(func.lower(Students.email)==user_email.lower()).options(joinedload('classes')).first()
         if student:
             user = student
         if not user:
-            teacher = session.query(Teachers).filter_by(email=user_email).options(joinedload('classes')).first()
+            teacher = session.query(Teachers).filter(func.lower(Teachers.email)==user_email).options(joinedload('classes')).first()
             if teacher:
                 user = teacher
 
