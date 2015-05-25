@@ -116,6 +116,7 @@ class updater_helper:
 				row = session.query(obj.__class__).filter_by(id=obj.id).one()
 			except NoResultFound:
 				session.add(obj)
+				row = None
 				#TODO: Log this
 
 			if row:
