@@ -23,12 +23,15 @@ class PYPTeacherAssignments(PostgresPipeline):
         with DBSession() as session:
             try:
                 exists = session.query(TeacherAssign).filter_by(class_id=class_id, subject_id=subject_id, teacher_id=teacher_id).one()
+                if exists:
+                    print("Already: {}".format(item))
             except NoResultFound:
                 teacher_assign = TeacherAssign(
                         teacher_id = teacher_id,
                         subject_id = subject_id,
                         class_id = class_id
                     )
+                print('Added: {}'.format(item))
                 session.add(teacher_assign)
 
 class ClassReportsPipeline(PostgresPipeline):
