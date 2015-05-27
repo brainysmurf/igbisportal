@@ -15,7 +15,6 @@ Course = db.table_string_to_class('Course')
 IBGroup = db.table_string_to_class('IBGroup')
 
 
-
 class DatabaseSetterUpper(object):
 
 	def __init__(self, lazy=True, verbose=False):
@@ -32,14 +31,6 @@ class DatabaseSetterUpper(object):
 		settings.get('DIRECTORIES', 'path_to_jsons', required=True)
 		settings.get('MANAGEBAC', 'ib_groups_section_url')
 
-		# Uses sqlalchemy tools to poplate...
-
-		# FIXED: Uses alembic to do this now.
-		#self.default_logger("Dropping all tables, so we can make them afresh")
-		#from portal.db import drop_all_tables_and_sequences
-		#drop_all_tables_and_sequences()
-		#from portal.db import metadata, engine
-		#metadata.create_all(engine)
 
 		self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
 

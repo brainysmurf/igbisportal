@@ -25,6 +25,8 @@ def main(global_config, **settings):
 
     config.add_static_view('static', 'static', cache_max_age=3600)
 
+    config.add_route('favicon', '/favicon.ico')
+
     config.add_route('signinCallback', '/signinCallback')
     config.add_route('session_user', '/session_user')
     config.add_route('user_settings', '/user_settings')
