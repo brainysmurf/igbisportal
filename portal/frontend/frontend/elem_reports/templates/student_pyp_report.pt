@@ -172,7 +172,7 @@
         </table>
 
         <div class="report_comment">
-          ${structure: section.comment} (~ ${len(section.comment.split(' '))} words)
+          ${structure: section.comment} ${" ({} characters)".format(len(section.comment)) if not pdf else ''}
         </div>
 
         <div tal:condition="section.append_uoi_table">
@@ -212,7 +212,7 @@
       </div>
 
       <h2>Overall Homeroom Comment (${report.teacher})</h2>
-      <div class="report_comment">${structure: report.homeroom_comment} (~ ${len(report.homeroom_comment.split(' '))} words)</div>
+      <div class="report_comment">${structure: report.homeroom_comment} ${" ({} characters)".format(len(report.homeroom_comment)) if not pdf else ''}</div>
 
       <br />
       <h2>IB Learner's Profile</h2>

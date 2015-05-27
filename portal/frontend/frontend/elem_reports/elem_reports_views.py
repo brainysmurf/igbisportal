@@ -1,5 +1,5 @@
 from portal.db import Database, DBSession
-from pyramid.response import Response
+from pyramid.response import Response, FileResponse
 from pyramid.renderers import render
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, joinedload_all
@@ -8,27 +8,43 @@ from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from sqlalchemy.orm.exc import NoResultFound
 db = Database()
 import re
+import portal.settings as settings
+import gns
 
 PrimaryReport = db.table_string_to_class('primary_report')
 Students = db.table_string_to_class('student')
 Teachers = db.table_string_to_class('advisor')
 Absences = db.table_string_to_class('PrimaryStudentAbsences')
 
+def get_from_matchdict(key, matchdict, default=None):
+    this = matchdict.get(key, default)
+    if this and len(this) == 1:
+        return this[0]
+    return this
+
 @view_config(route_name='student_pyp_report_with_opt', http_cache=0)
 @view_config(route_name='student_pyp_report', http_cache=0)
 def pyp_reports(request):
-
-    mb_user = request.session.get('mb_user', None)
-    if not mb_user or mb_user.type != 'Advisors':
-        return HTTPForbidden()
-
-    m = request.matchdict
-    student_id = m.get('id')
-    pdf = m.get('pdf')
-    if pdf and len(pdf) == 1:
-        pdf = pdf[0]
+    """
+    Construct the data into a format that the report format needs for output
+    """
+    student_id = get_from_matchdict('id', request.matchdict)
+    api_token = request.params.get('api_token')
+    pdf = get_from_matchdict('pdf', request.matchdict)
 
     internal_check = request.params.get('internal_check')
+
+    # Lock down so that only those who are logged in or those that pass that managebac api can access
+    # TODO: shouldn't be done here but in a class somewhere
+
+    if not api_token:
+        mb_user = request.session.get('mb_user', None)
+        if not mb_user or mb_user.type != 'Advisors':
+            return HTTPForbidden()
+    else:
+        if api_token != settings.get('MANAGEBAC', 'mb_api_token'):
+            return HTTPForbidden()
+
     term_id = 27808  # m.get('term_id')
 
     with DBSession() as session:
@@ -143,7 +159,7 @@ def pyp_reports(request):
 
         # Only output sections that have any data in them
         # Comment out during development
-        report.sections = [section for section in report.sections if section.comment]
+        report.sections = [section for section in report.sections if subject_rank.get(section.name.lower()) not in [2, 3, 4]]
 
         if 'Kindergarten' in report.course.grade:
             grade_norm = 0
@@ -152,11 +168,11 @@ def pyp_reports(request):
 
         uoi_units = [r for r in report.sections if 'unit of inquiry' in r.name.lower()]
         if len(uoi_units) == 3:
-            pagination_list = [0, 1, 4, 7, 10]
+            pagination_list = [0, 1, 2, 4.3, 7, 10]
         elif len(uoi_units) == 2:
-            pagination_list = [0, 1, 3, 7, 10]
+            pagination_list = [0, 1, 2, 3, 4.2, 7, 10]
         elif len(uoi_units) == 1:
-            pagination_list = [0, 1, 2, 7, 10]
+            pagination_list = [0, 1, 2, 4, 7, 10]
         else:
             pagination_list = []
 
@@ -268,16 +284,16 @@ def pyp_reports(request):
 
         # Only output sections that have any data in them
         # Comment out during development
-        report.sections = [section for section in report.sections if section.comment]
+        report.sections = [section for section in report.sections if subject_rank.get(section.name.lower()) not in [2, 3, 4]]
 
         grade_norm = -1
 
         uoi_units = [r for r in report.sections if 'unit of inquiry' in r.name.lower()]
 
         if len(uoi_units) == 3:
-            pagination_list = [0, 4, 7, 10]
+            pagination_list = [0, 1, 2, 4.3, 7, 10]
         else:
-            pagination_list = [0, 3, 7, 10]
+            pagination_list = [0, 1, 2, 3, 4.2, 7, 10]
 
         for section in report.sections:
 
@@ -343,7 +359,7 @@ def pyp_reports(request):
                         ),
                     request=request)
  
-        path = '/home/vagrant/igbisportal/pdf-downloads/{}/{}-{}{}-{}.pdf'.format(which_folder, grade_norm, student.first_name.replace(' ', ''), student.last_name.replace(' ', ''), student.id)
+        path = '/home/vagrant/igbisportal/pdf-downloads/{}/{}-{}-{}{}-{}.pdf'.format(which_folder, '27808', grade_norm, student.first_name.replace(' ', ''), student.last_name.replace(' ', ''), student.id)
         pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
         
         if pdf.lower() == "download":

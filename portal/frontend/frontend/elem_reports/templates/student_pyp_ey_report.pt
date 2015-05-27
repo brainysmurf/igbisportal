@@ -107,7 +107,7 @@
         </table>
 
         <div class="report_comment">
-          ${structure: section.comment}
+          ${structure: section.comment} ${" ({} characters)".format(len(section.comment)) if not pdf else ''}
         </div>
 
         <hr tal:condition="section.pagination == True"/>
