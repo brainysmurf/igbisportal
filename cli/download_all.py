@@ -8,9 +8,14 @@ database = Database()
 
 Students = database.table_string_to_class('Student')
 PrimaryReport = database.table_string_to_class('primary_report')
-term_id = 27807
+term_id = 27808
 
-base_url = 'http://localhost:6543/students/{student_id}/pyp_report/download'
+base_url = 'http://localhost:6543/students/{student_id}/pyp_report/download?api_token={api_token}'
+
+import portal.settings as settings
+import gns
+
+api_token = settings.get('MANAGEBAC', 'mb_api_token')
 
 with DBSession() as session:
 
@@ -23,7 +28,7 @@ with DBSession() as session:
 		except NoResultFound:
 			continue
 
-		r = requests.get(base_url.format(student_id=student.id))
+		r = requests.get(base_url.format(student_id=student.id, api_token=api_token))
 
 		if r.status_code != 200:
-			print("Nope: {}".format(student.id))
+			print("Nope: {}, {}".format(student.id, r.status_code))
