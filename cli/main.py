@@ -116,6 +116,12 @@ def serve():
     import subprocess
     subprocess.call(['pserve', '--reload', '/home/vagrant/igbisportal/development.ini'])
 
+@main.command()
+def create_all_tables():
+    from portal.db import metadata, engine
+    metadata.create_all(engine)
+    print('Done: metadata.create_all(engine)')
+
 @click.option('--class_id', default=None)
 @main.command()
 def pyp_reports(class_id):
