@@ -10,6 +10,7 @@ db = Database()
 import re
 import portal.settings as settings
 import gns
+import pdfkit
 
 PrimaryReport = db.table_string_to_class('primary_report')
 Students = db.table_string_to_class('student')
@@ -284,7 +285,7 @@ def pyp_reports(request):
 
         # Only output sections that have any data in them
         # Comment out during development
-        report.sections = [section for section in report.sections if subject_rank.get(section.name.lower()) not in [2, 3, 4]]
+        report.sections = [section for section in report.sections if subject_rank.get(section.name.lower()) not in [2, 3]]
 
         grade_norm = -1
 
@@ -303,7 +304,7 @@ def pyp_reports(request):
             if section.rank == 9 and student.id in students_chinese_teachers:
                 section.teachers = [students_chinese_teachers.get(student.id)]
 
-            if section.rank == 2:
+            if section.rank in [4, 4.1]:
                 section.organization_header = "Units of Inquiry"
                 section.name_after = ""
             elif section.rank in [3, 4]:
@@ -346,8 +347,6 @@ def pyp_reports(request):
         }
 
     if pdf:
-
-        import pdfkit
  
         result = render(template,
                     dict(

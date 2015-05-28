@@ -39,10 +39,7 @@ settings.get('DIRECTORIES', 'home')
 settings.get('GOOGLE', 'client_id')
 settings.get('GOOGLE', 'data_origin')
 settings.get('API', 'secret')
-
-@view_config(route_name="frontpage")
-def frontpage(request):
-    return HTTPFound(location="splash")
+_home = settings.get('DIRECTORIES', 'static_home')
 
 class ReportIncomplete(Exception):
     def __init__(self, msg):
@@ -51,9 +48,11 @@ class ReportIncomplete(Exception):
 Students = db.table_string_to_class('student')
 Parents = db.table_string_to_class('parent')
 Teachers = db.table_string_to_class('advisor')
+Users = db.table_string_to_class('users')
 Enrollments = db.table_string_to_class('enrollment')
 Assignments = db.table_string_to_class('assignment')
 ReportComments = db.table_string_to_class('report_comments')
+PrimaryReport = db.table_string_to_class('primary_report')
 Courses = db.table_string_to_class('course')
 Absences = db.table_string_to_class('PrimaryStudentAbsences')
 HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
@@ -72,6 +71,7 @@ def session_user(request):
         return dict(message="session_user called before session info, you need to use signinCallback (or equiv code) first")
 
     credentials = request.session['credentials']
+    unique_id = credentials.id_token['sub']
     user_email = credentials.id_token.get('email')
 
     access_token = credentials.access_token
@@ -80,6 +80,7 @@ def session_user(request):
         return dict(message="Error: No user email detected?\n{}".format(str(credentials.id_token)))
 
     user = None
+
     with DBSession() as session:
         student = session.query(Students).filter(func.lower(Students.email)==user_email.lower()).options(joinedload('classes')).first()
         if student:
@@ -89,15 +90,42 @@ def session_user(request):
             if teacher:
                 user = teacher
 
-        if not user:
-            return dict(message="Error, could not find email {}".format(user_email))
+        if not user: # authenticated, but not in MB, so just put in users table
 
-        unique_id = credentials.id_token['sub']
-        if user.g_plus_unique_id != unique_id:
-            user.g_plus_unique_id = unique_id
+            gl_user = session.query(Users).filter(func.lower(Users.email)== user_email.lower()).first()
 
-    request.session['mb_user'] = user
-    request.session['g_plus_unique_id'] = unique_id
+            if not gl_user:
+
+                new_user = Users(email=user_email)
+                # TODO: This isn't the best way to get the name info...
+                # Can use scope userinfo.profile
+                handle = re.sub('@.*', '', user_email)
+                if '.' in handle:
+                    new_user.first_name, new_user.last_name = [h.title() for h in handle.split('.')]
+                else:
+                    new_user.first_name, new_user.last_name = ['*Unknown*', 'Name']
+                new_user.type = "Other"
+
+                new_user.g_plus_unique_id = unique_id
+                request.session['mb_user'] = None
+                request.session['gl_user'] = user
+                unique_id = credentials.id_token['sub']
+                request.session['g_plus_unique_id'] = unique_id
+
+                session.add(new_user)
+
+            else:
+                request.session['mb_user'] = None
+                request.session['gl_user'] = gl_user
+
+
+        else:  # found within managebac
+            if user.g_plus_unique_id != unique_id:
+                user.g_plus_unique_id = unique_id
+
+            request.session['mb_user'] = user
+            request.session['gl_user'] = None
+            request.session['g_plus_unique_id'] = unique_id
 
     return dict(message="User found on ManageBac")
 
@@ -494,53 +522,6 @@ def students_ind(request):
 
     return dict(title="Student View", item=student)
 
-button = namedtuple('button', ['name', 'url', 'icon', 'context_menu'])
-
-menu_item = namedtuple('menu_item', ['display', 'url', 'icon'])
-menu_separator = lambda : {'url':None}
-menu_placeholder = lambda x: {'url': False, 'name':x}
-
-stndrdbttns = [
-    button(name="ManageBac", url="https://igbis.managebac.com", icon="fire",
-        context_menu={
-        'items': [
-            menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
-            menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
-            menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee"),
-            menu_placeholder('mb_classes')
-        ],
-        }),
-    button(name="Gmail", url="https://gmail.com", icon="envelope", 
-        context_menu={
-        'items': [
-            menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
-        ]
-        }),
-    button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
-        context_menu={
-        'items': [
-            menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
-            menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
-            menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
-            menu_separator(),
-            menu_item(icon="question-circle", display="What else?", url="#")
-        ]
-        }),
-    button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
-        context_menu={
-        'items': [
-            menu_item(icon="search", display="Elementary Catalog", url="https://igbis.follettdestiny.com/cataloging/servlet/presentadvancedsearchredirectorform.do?l2m=Library%20Search&tm=TopLevelCatalog&l2m=Library+Search"),
-            menu_item(icon="search", display="Secondary Catalog", url="https://igbis.follettdestiny.com/common/servlet/presenthomeform.do?l2m=Home&tm=Home&l2m=Home"),
-            menu_separator(),
-            menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
-            menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
-            menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high"),
-            menu_placeholder('gd_starred')
-        ],
-        }),
-    button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
-]
-
 @view_config(route_name='user_data', renderer='json', http_cache=0)
 def user_data(request):
     if not 'mb_user' in request.session:
@@ -641,20 +622,20 @@ def report_incomplete(request):
     response.status_int = 500
     return response
 
-@view_config(route_name='header-html', renderer='templates/header-html.pt')
+@view_config(route_name='header-html', renderer='frontend:templates/header-html.pt')
 def header_html(request):
     """
     Just return the headers
     """
     return dict()
 
-@view_config(route_name='footer-html', renderer="templates/footer-html.pt")
+@view_config(route_name='footer-html', renderer="frontend:templates/footer-html.pt")
 def footer_html(request):
     """
     Just return the footer
     """
     student_id = request.GET.get('student_id')
-    term_id = 27807
+    term_id = 27808
     with DBSession() as session:
         student = session.query(Students).filter_by(id=student_id).one()
         report  = session.query(PrimaryReport).\

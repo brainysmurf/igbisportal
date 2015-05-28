@@ -114,14 +114,21 @@ cashless_button = button(name="Cashless", url="http://cashless.igbis.edu.my/", i
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
-    if not 'mb_user' in request.session:
+    if not 'mb_user' in request.session and not 'gl_user' in request.session:
         unique = uuid.uuid4()  # random
         request.session['unique_id'] = str(unique)
         user_name = None
     else:
-        user_name = request.session['mb_user'].first_name
+        if request.session.get('mb_user'):
+            user_name = request.session['mb_user'].first_name
+        elif request.session.get('gl_user'):
+            user_name = request.session['gl_user'].first_name
+        else:
+            user_name = ""
         unique = None
     logged_in_user = request.session.get('mb_user', None)
+    if not logged_in_user:
+        logged_in_user = request.session.get('gl_user', None)
 
     student_buttons = stndrdbttns[:]
     student_buttons.extend([

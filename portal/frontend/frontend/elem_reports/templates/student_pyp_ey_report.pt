@@ -77,22 +77,6 @@
           <h3>${section.name}${section.name_after}:</h3>
         </th>
 
-        <table class="table table-header-rotated">
-
-          <tbody>
-            <tal:block tal:repeat="outcome section.learning_outcomes">
-              <tr class="effort" tal:condition="hasattr(outcome, 'effort')">
-                <td><strong>${outcome.heading}</strong>
-                  <nobr><span style="float:right;white-space: nowrap;"><em>Effort:&nbsp;${outcome.effort}</em></span></nobr>
-                </td><td colspan="4">
-                </td>
-              </tr>
-              <tr tal:condition="outcome.label">
-                <td>${structure: outcome.label}</td>
-              </tr>
-            </tal:block>
-          </tbody>
-        </table>
 
         <table class="table table-student-info" tal:condition="'Who We Are' in section.name">
           <tr>
