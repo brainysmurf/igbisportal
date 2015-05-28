@@ -656,7 +656,9 @@ def footer_html(request):
 
     return dict(student=student, report=report)
 
-
+@view_config(route_name='frontpage')
+def frontpage(request):
+    raise HTTPFound(request.route_url("splash"))
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
