@@ -10,7 +10,7 @@ db = Database()
 import re
 import portal.settings as settings
 import gns
-import pdfkit
+
 
 PrimaryReport = db.table_string_to_class('primary_report')
 Students = db.table_string_to_class('student')
@@ -357,7 +357,7 @@ def pyp_reports(request):
                         pdf=True
                         ),
                     request=request)
- 
+        import pdfkit   # import here because installation on server is hard
         path = '/home/vagrant/igbisportal/pdf-downloads/{}/{}-{}-{}{}-{}.pdf'.format(which_folder, '27808', grade_norm, student.first_name.replace(' ', ''), student.last_name.replace(' ', ''), student.id)
         pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
         
