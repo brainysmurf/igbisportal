@@ -17,7 +17,7 @@ from sqlalchemy.ext.hybrid import HYBRID_PROPERTY
 from sqlalchemy.orm import column_property
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql.functions import concat
-from sqlalchemy import inspect
+from sqlalchemy import inspect, func
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -126,8 +126,6 @@ class User(PortalORM):
     Fields shared by all users
     TODO: Check this more carefully, bound to need some tweaks
     """
-    #__tablename__ = USERS
-
     type = Column(String(255))
 
     first_name = Column(String(255))
@@ -161,9 +159,12 @@ class User(PortalORM):
     def __str__(self):
         return (self.first_name or "") + ' ' + (self.last_name or "")
 
-    @hybrid_property
-    def normalized_email(self):
-        return self.email.lower()
+class Users(Base, User):
+    """
+    The basic user information
+    """
+    __tablename__ = USERS
+    id = Column(BigInteger, primary_key=True)
 
 """
 Many to many relationships need an association table, this is it for parent/children links
