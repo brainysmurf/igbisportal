@@ -40,7 +40,7 @@ def pyp_reports(request):
 
     if not api_token:
         mb_user = request.session.get('mb_user', None)
-        if not mb_user or mb_user.type != 'Advisors':
+        if not mb_user or not mb_user.type.startswith('Advisor'):
             return HTTPForbidden()
     else:
         if api_token != settings.get('MANAGEBAC', 'mb_api_token'):
