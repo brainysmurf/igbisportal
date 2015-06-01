@@ -15,13 +15,13 @@
 
     <div id="frontcover-heading">
         <div id="frontcover-image">
-            <span id="frontcover-image2"><img style="width: 300px" class="image-header" src="${static_url}images/igbislogo.png" /></span>
+            <span id="frontcover-image2"></span>
         </div>
         <div id="frontcover-text">
           <h1>Elementary School Programme</h1>
           <h2>Early Years 1 &amp; 2</h2>
-          <h2>Semester One</h2>
-          <h2>February 2015</h2>
+          <h2>Semester Two</h2>
+          <h2>June 2015</h2>
         </div>
     </div>
 
@@ -78,6 +78,24 @@
         </th>
 
 
+        <table class="table table-header-rotated">
+
+          <tbody>
+            <tal:block tal:repeat="outcome section.learning_outcomes">
+              <tr class="effort" tal:condition="hasattr(outcome, 'effort')">
+                <td><strong>${outcome.heading}</strong>
+                  <nobr><span style="float:right;white-space: nowrap;"><em>Effort:&nbsp;${outcome.effort}</em></span>
+                </nobr>
+                </td><td colspan="4">
+                </td>
+              </tr>
+              <tr tal:condition="outcome.label">
+                <td>${structure: outcome.label}</td>
+              </tr>
+            </tal:block>
+          </tbody>
+        </table>
+
         <table class="table table-student-info" tal:condition="'Who We Are' in section.name">
           <tr>
             <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Likes and dislikes</li><li>How we are different to others</li><li>How we learn to play together</li></td>
@@ -87,6 +105,17 @@
         <table class="table table-student-info" tal:condition="'Sharing The Planet' in section.name">
           <tr>
             <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Where creatures live</li><li>What creatures need to survive</li><li>Our repsonsibility to the creatures in our environment</li></td>
+          </tr>
+        </table>
+        <table class="table table-student-info" tal:condition="'How The World Works' in section.name">
+          <tr>
+            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Different kinds of light</li><li>Things that light can do</li><li>The ways we use light in our world</li></td>
+          </tr>
+        </table>
+
+        <table class="table table-student-info" tal:condition="'How We Express Ourselves' in section.name">
+          <tr>
+            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Ways we can identify our ideas and feelings</li><li>Ways we can connect with the ideas and feelings of others</li><li>Ways we can express our ideas and feelings</li></td>
           </tr>
         </table>
 

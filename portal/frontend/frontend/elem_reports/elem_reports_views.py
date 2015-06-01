@@ -29,7 +29,6 @@ def pyp_reports(request):
     """
     Construct the data into a format that the report format needs for output
     """
-    raw_input("here")
     student_id = get_from_matchdict('id', request.matchdict)
     api_token = request.params.get('api_token')
     pdf = get_from_matchdict('pdf', request.matchdict)
@@ -304,17 +303,17 @@ def pyp_reports(request):
             if section.rank == 9 and student.id in students_chinese_teachers:
                 section.teachers = [students_chinese_teachers.get(student.id)]
 
-            if section.rank in [4, 4.1]:
+            if section.rank in [4]:
                 section.organization_header = "Units of Inquiry"
                 section.name_after = ""
-            elif section.rank in [3, 4]:
+            elif section.rank in [4.1]:
                 section.organization_header = 'skip'
                 section.name_after = ""
             else:
                 section.organization_header = None
                 section.name_after = ' (' + " & ".join([s.first_name + ' ' + s.last_name for s in section.teachers]) + ')'
 
-            if section.rank in [2, 3, 4]:
+            if section.rank in [3, 4, 4.1]:
                 which_uoi = int(re.sub("[^0-9]", "", section.name))
                 section.name = uoi_table.get(grade_norm)[which_uoi]['title']
                 section.name_after = ""
@@ -325,7 +324,7 @@ def pyp_reports(request):
             else:
                 section.pagination = False
 
-            if section.rank in [2, 3, 4]:
+            if section.rank in [2, 3, 4, 4.1]:
                 section.name = section.name.title() 
                 section.name_after = uoi_table.get(grade_norm)[which_uoi]['central_idea']
 
