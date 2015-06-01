@@ -29,6 +29,7 @@ def pyp_reports(request):
     """
     Construct the data into a format that the report format needs for output
     """
+    raw_input("here")
     student_id = get_from_matchdict('id', request.matchdict)
     api_token = request.params.get('api_token')
     pdf = get_from_matchdict('pdf', request.matchdict)
@@ -37,7 +38,6 @@ def pyp_reports(request):
 
     # Lock down so that only those who are logged in or those that pass that managebac api can access
     # TODO: shouldn't be done here but in a class somewhere
-
     if not api_token:
         mb_user = request.session.get('mb_user', None)
         if not mb_user or not mb_user.type.startswith('Advisor'):

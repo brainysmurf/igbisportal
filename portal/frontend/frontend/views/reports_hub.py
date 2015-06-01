@@ -25,7 +25,7 @@ def reports_hub(request):
 
 	mb_user = request.session.get('mb_user', None)
 
-	if not mb_user or mb_user.type != 'Advisors':
+	if not mb_user or not mb_user.type.startswith('Advisor'):
 		return HTTPForbidden()
 
 	# Get all the students in elementary:
