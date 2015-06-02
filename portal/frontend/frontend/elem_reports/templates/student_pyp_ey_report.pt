@@ -77,8 +77,7 @@
           <h3>${section.name}${section.name_after}:</h3>
         </th>
 
-
-        <table class="table table-header-rotated">
+        <table tal:condition="len(section.learning_outcomes) > 2" class="table table-header-rotated">
 
           <tbody>
             <tal:block tal:repeat="outcome section.learning_outcomes">
