@@ -14,9 +14,10 @@ html_escape_table = {
 	"<": "&lt;",
 	'>': "&gt;",
 	'/': '&frasl;',
-	'½': '1&frasl;2',
-	'⅓': '1&frasl;3',
-	'¼': '1&frasl;4',
+	u'–': '-',
+	u'½': '1&frasl;2',
+	u'⅓': '1&frasl;3',
+	u'¼': '1&frasl;4',
 }
 
 html_unescape_table = {v:k for k, v in html_escape_table.items()}
@@ -31,7 +32,6 @@ def string_to_entities(the_string):
 
 def entities_to_string(the_string):
 	if the_string:
-		# Don't replace('-', u'\u2013') because not guaranteed
 		return unescape(the_string, html_unescape_table)
 	return the_string
 
