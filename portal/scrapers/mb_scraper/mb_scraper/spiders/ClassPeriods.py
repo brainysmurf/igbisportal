@@ -134,9 +134,6 @@ class ClassReports(ClassLevelManageBac):
     path = '/classes/{}/{}-gradebook/tasks/term-grades?term=27808'
 
     def _initial_query(self):
-        from IPython import embed
-        embed()
-        exit()
         Course = self.db.table_string_to_class('Course')
         with DBSession() as session:
             statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{}%'.format(self.program.upper())))

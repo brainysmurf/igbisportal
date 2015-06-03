@@ -6,6 +6,7 @@ from pyramid.httpexceptions import HTTPNotFound, HTTPForbidden
 from portal.db import Database, DBSession
 db = Database()
 
+from sqlalchemy.orm import joinedload
 import json
 
 Students = db.table_string_to_class('student')
@@ -30,11 +31,11 @@ def reports_hub(request):
 
 	# Get all the students in elementary:
 	with DBSession() as session:
-		statement = session.query(Students).filter(Students.class_year == 0)
-		elementary_students = statement.all()
+		statement = session.query(Students)
+		elementary_students = [s for s in statement.all() if 'PYP' in ",".join([g.program.upper() for g in s.ib_groups])]
 
 	autocomplete_source = \
-		[{'id':student.id, 'value':'{} {} ({})'.format(student.first_name, student.last_name, student.nickname)} \
+		[{'id':student.id, 'value':'{}'.format(student.first_nickname_last)} \
 			for student in elementary_students]
 
 	return dict(

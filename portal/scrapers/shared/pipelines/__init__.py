@@ -60,7 +60,7 @@ class AbstractPipeline(object):
             else:
                 return item
         else:
-            self.spider.warning("This pipeline {} is not allowed to run with spider {}".format(self.__class__.__name__, spider.name))
+            #self.spider.warning("This pipeline {} is not allowed to run with spider {}".format(self.__class__.__name__, spider.name))
             return item
 
 

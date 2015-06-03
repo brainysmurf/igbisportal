@@ -301,7 +301,11 @@ class Student(Base, User):
 
     @hybrid_property
     def first_nickname_last(self):
-        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name
+        return self.first_nickname + ' ' + self.last_name
+
+    @hybrid_property
+    def first_nickname(self):
+        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') 
 
     @hybrid_property
     def grade_first_nickname_last_studentid(self):
@@ -385,6 +389,14 @@ class Parent(Base, User):
     mobile_phone = Column(String(255))
     home_phone = Column(String(255))
     work_phone = Column(String(255))
+
+    @hybrid_property
+    def igbis_username(self):
+        return "{}.{}.parent".format(re.sub('[^0-9a-z]', '', self.first_name.replace(' ', '').lower()), re.sub('[^0-9a-z]', '', self.last_name.replace(' ', '').lower()))
+
+    @hybrid_property
+    def igbis_email_address(self):
+        return self.igbis_username + '@igbis.edu.my'
 
     @hybrid_property
     def name(self):

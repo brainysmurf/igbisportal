@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from portal.db import Database, DBSession  
 
 from portal.scrapers.shared.pipelines import \
@@ -10,6 +11,8 @@ from portal.scrapers.mb_scraper.mb_scraper.items import \
 from sqlalchemy.orm.exc import NoResultFound
 
 from portal.utils import string_to_entities
+
+from scrapy import log
 
 class PYPTeacherAssignments(PostgresPipeline):
     BLANK_TOLERANCE = 1
@@ -236,8 +239,18 @@ class PYPClassReportsPipline(PostgresPipeline):
                         session.add(primary_report_strand)
 
             elif issubclass(item.__class__, PrimaryReportOutcomeItem):
-                outcome_label = string_to_entities(item['outcome_label'])
-                outcome_label_titled = string_to_entities(item['outcome_label'])
+
+                ol = item['outcome_label']
+                outcome_label = string_to_entities(ol)
+                outcome_label_titled = string_to_entities(ol)
+
+                # if 'per cent' in ol:
+                #     if not '-' in outcome_label:
+                #         log.msg('What the feck?: {}'.format(ol), level=log.ERROR)
+                #         from IPython import embed
+                #         embed()
+                #         exit()
+
                 with DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportLo).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
