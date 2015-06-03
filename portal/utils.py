@@ -24,7 +24,7 @@ html_unescape_table = {v:k for k, v in html_escape_table.items()}
 from htmlentitydefs import name2codepoint
 
 def string_to_entities(the_string):
-	the_string = the_string.replace("\n", '').replace("–", "-") if the_string else the_string
+	the_string = the_string.replace("\n", '') if the_string else the_string
 	if the_string:
 		return escape(the_string, html_escape_table)
 	return the_string
