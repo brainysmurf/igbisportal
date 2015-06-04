@@ -78,7 +78,7 @@ def pyp_reports(request):
             1: dict(title="How we organize ourselves", central_idea="Humans use maps to understand and organize their environment"),
             2: dict(title="Who we are", central_idea="Exploring different learning styles helps individuals understand each other better"),
             3: dict(title="How we express ourselves", central_idea="Celebrations are an opportunity to reflect and appreciate cultures and beliefs"),
-            4: dict(title="How the World Works", central_idea="Machines have an impact on time and efficienty in our daily lives"),
+            4: dict(title="How the World Works", central_idea="Machines have an impact on time and efficiency in our daily lives"),
             5: dict(title="Sharing the Planet", central_idea="Water is essential to life and is a limited resource to many"),
             6: dict(title="Where We Are in Place and Time", central_idea="Learning from previous generations helps us to understand the present"),
         },
