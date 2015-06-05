@@ -82,8 +82,9 @@ stndrdbttns = [
         }),
     button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
     button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-    button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None)
+    button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
 
+    button(name="Music Academy", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", context_menu=None)
 ]
 
 emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", context_menu=None)
