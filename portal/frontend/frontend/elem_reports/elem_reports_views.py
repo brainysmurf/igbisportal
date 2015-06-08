@@ -118,7 +118,7 @@ def pyp_reports(request):
 
     chinese_teachers = {
         11131269:     # Anderina
-            [10893375, 10837001, 11080391, 10866875, 10834622, 11080393, 10882226, 10882227, 10834621, 10866876],
+            [10893375, 10837001, 11080391, 10866875, 10834622, 11080393, 10882226, 10882227, 10834621, 10866876, 11153067, 11124218],
         10792613:     # Xiaoping
             [10834635, 10882225, 10834617, 10834649, 10834618, 10836999, 10867797, 10893379, 10986169, 10837002, 10863230, 10867796, 10882159, 10882159, 10868400, 10834632, 10863220, 10863229, 10863228, 10973671],
         10792617:     # Mu Rong
@@ -159,7 +159,7 @@ def pyp_reports(request):
 
         # Only output sections that have any data in them
         # Comment out during development
-        report.sections = [section for section in report.sections if subject_rank.get(section.name.lower()) not in [2, 3, 4]]
+        report.sections = [section for section in report.sections if section.comment and subject_rank.get(section.name.lower()) not in [2, 3, 4]]
 
         if 'Kindergarten' in report.course.grade:
             grade_norm = 0
@@ -284,7 +284,7 @@ def pyp_reports(request):
 
         # Only output sections that have any data in them
         # Comment out during development
-        report.sections = [section for section in report.sections if subject_rank.get(section.name.lower()) not in [2, 3]]
+        report.sections = [section for section in report.sections if section.comment and subject_rank.get(section.name.lower()) not in [2, 3]]
 
         grade_norm = -1
 
@@ -333,6 +333,7 @@ def pyp_reports(request):
 
     options={
         'quiet': '',
+        'encoding': 'utf-8',
         'header-html': 'http://igbisportal.vagrant:6543/header-html',
         'header-spacing': '5',
 
