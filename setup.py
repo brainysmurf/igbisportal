@@ -11,6 +11,7 @@ setup(
     entry_points='''
         [console_scripts]
         portal=cli.main:main
+        pa=cli.parent_accounts:parent_accounts
     ''',
     install_requires = ['sqlalchemy', 'scrapy',
     'pyramid',
