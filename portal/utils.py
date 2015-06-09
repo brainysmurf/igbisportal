@@ -13,7 +13,7 @@ html_escape_table = {
 	u"’": "&rsquo;",
 	"<": "&lt;",
 	'>': "&gt;",
-	'/': '&frasl;',
+	'1/10': '<span style="font-size:70%;"><sup>1</sup>&frasl;<sub>10</sub></span>',
 	u'–': '-',
 	u'½': '1&frasl;2',
 	u'⅓': '1&frasl;3',

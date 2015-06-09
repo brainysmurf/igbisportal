@@ -1,5 +1,4 @@
 import click
-from portal.db import Database, DBSession
 
 class Object(object):
     def __init__(self):
@@ -27,6 +26,7 @@ def db_setup(lazy, verbose):
     from portal.db.interface import DatabaseSetterUpper
     go = DatabaseSetterUpper(lazy=lazy, verbose=verbose)
 
+
 @main.command()
 @click.option('--download/--dontdownload', default=True, help='default is not_lazy')
 @click.option('--setupdb/--dontsetupdb', default=True, help='default is not_lazy')
@@ -44,6 +44,36 @@ def api():
     Commands to download from API and populate database from API
     """
     pass
+
+@main.group()
+def parent_accounts():
+    """
+    Commands to download from API and populate database from API
+    """
+    pass
+
+@parent_accounts.command()
+@click.pass_obj
+def output(obj):
+    from cli.parent_accounts import ParentAccounts
+    parent_accounts = ParentAccounts()
+    parent_accounts.output()
+
+@main.group()
+@click.pass_obj
+def open_apply(obj):
+    pass
+
+@open_apply.command()
+@click.option('path', '--path', type=click.Path(exists=True))
+@click.pass_obj
+def import_medical_info(obj, path=None):
+    if not path:
+        import portal.settings as settings
+        f = settings.get('DIRECTORIES', 'path_to_medical_info')
+    from cli.openapply_importer import OA_Medical_Importer
+    medical_importer = OA_Medical_Importer(f)
+    medical_importer.read_in()
 
 @api.command()
 @click.option('--lazy/--not_lazy', default=False, help='default is not_lazy')

@@ -171,7 +171,6 @@ class ParentAccounts:
     def output(self):
         import gns
 
-
         for gns.family in self.family_accounts:
 
             for gns.parent in gns.family.parents:
