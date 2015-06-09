@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="${static_url}bootstrap/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="${static_url}css/pyp_reports_pdf.css">
   <div metal:define-slot="additional-css"></div>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <div id="wrapper">

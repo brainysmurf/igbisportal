@@ -148,6 +148,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                         exists.comment = comment
                     if name:
                         exists.name = name
+                session.add(exists)
 
                 # Sync the teachers, removing those that are gone, adding if any needed to be added
 
@@ -228,6 +229,8 @@ class PYPClassReportsPipline(PostgresPipeline):
                         exists.label = item['strand_label']
                         exists.label_titled = item['strand_label_titled']
                         exists.selection = item['strand_text']
+                        session.add(exists)
+
                     except NoResultFound:
                         primary_report_strand = PrimaryReportStrand(
                                 primary_report_section_id = primary_report_section_id,
@@ -244,13 +247,6 @@ class PYPClassReportsPipline(PostgresPipeline):
                 outcome_label = string_to_entities(ol)
                 outcome_label_titled = string_to_entities(ol)
 
-                # if 'per cent' in ol:
-                #     if not '-' in outcome_label:
-                #         log.msg('What the feck?: {}'.format(ol), level=log.ERROR)
-                #         from IPython import embed
-                #         embed()
-                #         exit()
-
                 with DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportLo).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
@@ -258,6 +254,8 @@ class PYPClassReportsPipline(PostgresPipeline):
                         exists.label = outcome_label
                         exists.selection = item['outcome_text']
                         exists.label_titled = outcome_label_titled
+                        session.add(exists)
+
                     except NoResultFound:
                         primary_report_outcome = PrimaryReportLo(
                                 primary_report_section_id = primary_report_section_id,
@@ -289,6 +287,7 @@ class PYPStudentAttendance(PostgresPipeline):
                     exists.absences = absences
                 if exists:
                     exists.total_days = total_days
+                session.add(exists)
 
             except NoResultFound:
 

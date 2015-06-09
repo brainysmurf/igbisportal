@@ -156,6 +156,8 @@ class User(PortalORM):
 
     g_plus_unique_id = Column(String(255))
 
+    igbid = Column(BigInteger)
+
     def __str__(self):
         return (self.first_name or "") + ' ' + (self.last_name or "")
 

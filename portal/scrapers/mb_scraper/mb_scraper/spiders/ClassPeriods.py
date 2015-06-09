@@ -581,7 +581,6 @@ class ClassReportsDP(ClassReports):
         self.next()
         return request
 
-
 class ClassPeriods(ManageBacLogin):
     name = "ClassPeriods"
     path = '/classes/{}/edit'
