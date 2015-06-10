@@ -6,7 +6,7 @@
 	</div>
 
 	<div metal:fill-slot="content">
-		<p>(NOTE: The contents of these reports were last updated at 10:10 on Monday. Also note that this is a screen version of the final product, so some minor details may differ. Attendance in particular may not be exactly correct.)
+		<p>(NOTE: The contents of these reports are updated hourly, on the 00, and takes a few minutes each time. Also note that this is a screen version of the final product, so some minor details may differ. In particular, attendance, may not be exactly correct.)
 			<div class="ui-font">Enter any part of the name:</div>
 			<div class="area">
 				<input id="userEnter" type="text" name="userEnter" data-autocomplete-source="${auto_complete_source}" /><button id="userSubmit">Check out report</button><input type="hidden" id="studentID" />
