@@ -150,15 +150,29 @@ class DatabaseSetterUpper(object):
 					instance = table_class()
 					for item_key in item:
 						try:
+							# Set up the instance to have the expected values
 							setattr(instance, item_key, item[item_key])
+
 						except AttributeError:
 							if item[item_key] is None:
 								continue  # happens when None is put on there
 							else:
+								# TODO: Figure this out
 								# print?
-								from IPython import embed
-								embed()
-								exit()
+								# print('here')
+								# from IPython import embed
+								# embed()
+								# exit()
+								pass
+
+					# Filter out things
+					# Don't go ahead unless a studentid has been given
+					# TODO: Shouldn't this really be enforced in the model?
+					# 		Maybe check for constaints? 
+					if _type == "Student":
+						if hasattr(item, 'student_id') and not item['student_id'] is None:
+							print('Student without student_id: {}'.format(item))
+							continue
 
 					u.update_or_add(instance)
 

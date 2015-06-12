@@ -117,13 +117,24 @@ class updater_helper:
 			except NoResultFound:
 				session.add(obj)
 				row = None
+				print('no row')
 				#TODO: Log this
+
+			verbose = False
+			# if row and hasattr(row, 'first_name') and row.first_name == 'Rhys':
+			# 	verbose = True
 
 			if row:
 				column_names = [c.name for c in row.__table__.columns if c.name != 'id']
+ 				if verbose:
+					raw_input(column_names)
 				for column in column_names:
+					if verbose:
+						print(column)
 					left = getattr(row, column)  # has
 					right = getattr(obj, column) # needs
+					if verbose:
+						print('left: {}; right: {}'.format(left, right))
 
 					# If there are some values that are different, construct an update object
 					# and execute with the session obj
@@ -133,7 +144,15 @@ class updater_helper:
 							where(obj.__table__.c.id == obj.id).\
 							values(**values_statement)
 						session.execute(update_obj)
+						if verbose: 
+							print('changed column {} from {} to {}'.format(column, left, right))
 						# TODO: Log this
+					else:
+						if verbose:
+							print('did not change {}, {} is right'.format(column, left))
+			else:
+				if verbose:
+					print('no row?')
 
 	def collection(self, left, right, attr, left_column='id', right_column='id'):
 		"""
