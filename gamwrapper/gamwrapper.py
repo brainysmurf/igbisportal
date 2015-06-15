@@ -15,6 +15,7 @@ import sys
 from cStringIO import StringIO
 import json
 import pprint
+import re
 
 class GamWrapper:
 	def __init__(self, path, verbose=None):
@@ -42,7 +43,7 @@ class GamWrapper:
 	def call_gam(self, cmd):
 		# manually set sys.argv
 		# First command should be "gam" so let's change the path
-		cmd = cmd.replace('gam ', "{} ".format(self.path))
+		cmd = re.sub('^gam ', "{} ".format(self.path), cmd)
 		self.verbose and click.echo(cmd)
 		sys.argv = shlex.split(cmd)
 
