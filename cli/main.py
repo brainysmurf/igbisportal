@@ -26,74 +26,51 @@ def db_setup(lazy, verbose):
     from portal.db.interface import DatabaseSetterUpper
     go = DatabaseSetterUpper(lazy=lazy, verbose=verbose)
 
-
-@main.command()
-@click.option('--download/--dontdownload', default=True, help='default is not_lazy')
-@click.option('--setupdb/--dontsetupdb', default=True, help='default is not_lazy')
-@click.pass_obj
-def push(obj, download, setupdb):
+@main.group()
+def sync():
     """
-    Downloads initial data from ManageBac APIs and via scraping
+    Commands that launches syncing with MB and OA
+    """
+    pass
+
+@sync.command()
+@click.option('--download/--dontdownload', default=True, help='default is --download')
+@click.option('--setupdb/--dontsetupdb', default=True, help='default is --setupdb')
+@click.pass_obj
+def managebac(obj, download, setupdb):
+    """
+    Downloads data from ManageBac APIs, and updates database
     """
     dl(lazy=not download, verbose=obj.verbose)
     db_setup(lazy=not setupdb, verbose=obj.verbose)
 
 @main.group()
-def api():
+def output():
     """
-    Commands to download from API and populate database from API
-    """
-    pass
-
-@main.group()
-def parent_accounts():
-    """
-    Commands to download from API and populate database from API
+    Commands that displays information for reference
     """
     pass
 
-@parent_accounts.command()
+@output.command()
 @click.pass_obj
-def output(obj):
+def parent_accounts(obj):
     from cli.parent_accounts import ParentAccounts
     parent_accounts = ParentAccounts()
     parent_accounts.output()
 
-@main.group()
-@click.pass_obj
-def open_apply(obj):
-    pass
-
-@open_apply.command()
+@sync.command()
 @click.option('path', '--path', type=click.Path(exists=True))
 @click.pass_obj
-def import_medical_info(obj, path=None):
+def openapply(obj, path=None):
+    """
+    Looks at a CSV file and overwrites data in database
+    """
     if not path:
         import portal.settings as settings
         f = settings.get('DIRECTORIES', 'path_to_medical_info')
     from cli.openapply_importer import OA_Medical_Importer
     medical_importer = OA_Medical_Importer(f)
     medical_importer.read_in()
-
-@api.command()
-@click.option('--lazy/--not_lazy', default=False, help='default is not_lazy')
-@click.confirmation_option('--yes', '-y', help='Silence confirmation to delete', expose_value=False, prompt="This operation deletes jsons that may have been previously downloaded. Continue?")
-@click.pass_obj
-def download(obj, lazy):
-    """
-    Downloads from API
-    """
-    dl(lazy, obj.verbose)
-
-@api.command()
-@click.option('--lazy/--not_lazy', default=False, help='default is not_lazy')
-@click.pass_obj
-def populate_database(obj, lazy):
-    """
-    Populates Postgres database from downloaded API
-    """
-    db_setup(lazy, obj.verbose)
-
 
 def run_scraper(spider, subpath):
     from portal.settings import get
@@ -118,42 +95,20 @@ def run_scraper(spider, subpath):
     log.start()
     reactor.run()
 
-@main.command()
-def scrape_pyp_assignments():
-    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPTeacherAssignments
-    run_scraper(PYPTeacherAssignments, 'mb_scraper')
-
-    # os.chdir(gns('{settings.path_to_scrapers}/oa_scraper'))
-    # cmdline.execute(['scrapy', 'crawl', 'AuditLog'])
-
-@main.command()
-def scrape_pyp_reports():
-    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPClassReports
-    run_scraper(PYPClassReports, 'mb_scraper')
-
-@main.command()
+@main.group()
 def scrape():
     """
     Commands to fetch and populate postgres database
     """
-    scrape_all()
+    pass
 
-@main.command()
-def serve():
-    """
-    Launches the webserver for debugging
-    """
-    import subprocess
-    subprocess.call(['pserve', '--reload', '/home/vagrant/igbisportal/development.ini'])
+@scrape.command()
+def pyp_reports():
+    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPClassReports
+    run_scraper(PYPClassReports, 'mb_scraper')
 
-@main.command()
-def create_all_tables():
-    from portal.db import metadata, engine
-    metadata.create_all(engine)
-    print('Done: metadata.create_all(engine)')
-
+@scrape.command()
 @click.option('--class_id', default=None)
-@main.command()
 def pyp_reports(class_id):
     """
     Sets up things for pyp reporting system
@@ -174,3 +129,34 @@ def pyp_reports(class_id):
         from IPython import embed
         embed()
         cmdline.execute(['scrapy', 'crawl', 'PYPClassReports', '-a', 'class_id={}'.format(class_id)])
+
+@scrape.command()
+def pyp_assignments():
+    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPTeacherAssignments
+    run_scraper(PYPTeacherAssignments, 'mb_scraper')
+
+    # os.chdir(gns('{settings.path_to_scrapers}/oa_scraper'))
+    # cmdline.execute(['scrapy', 'crawl', 'AuditLog'])
+
+@main.group()
+def utils():
+    """
+    Commands that form another category
+    """
+    pass
+
+@utils.command()
+def serve():
+    """
+    Launches the webserver for debugging
+    """
+    import subprocess
+    subprocess.call(['pserve', '--reload', '/home/vagrant/igbisportal/development.ini'])
+
+@utils.command()
+def create_all_tables():
+    from portal.db import metadata, engine
+    metadata.create_all(engine)
+    print('Done: metadata.create_all(engine)')
+
+
