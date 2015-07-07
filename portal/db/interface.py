@@ -171,6 +171,7 @@ class DatabaseSetterUpper(object):
 					# 		Maybe check for constaints? 
 					if _type == "Student":
 						if hasattr(item, 'student_id') and not item['student_id'] is None:
+							# TODO: Inform someone?
 							print('Student without student_id: {}'.format(item))
 							continue
 

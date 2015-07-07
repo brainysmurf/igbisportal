@@ -11,7 +11,6 @@ setup(
     entry_points='''
         [console_scripts]
         portal=cli.main:main
-        pa=cli.parent_accounts:parent_accounts
     ''',
     install_requires = ['sqlalchemy', 'scrapy',
     'pyramid',
@@ -25,7 +24,6 @@ setup(
     'waitress',
     'requests',
     'psycopg2',
-    'click'
 ],
     # also requires?
     #'scrapyd', 'lxml', 'w3lib', 'cssselect', 'pysqlite'

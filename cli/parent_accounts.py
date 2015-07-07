@@ -184,7 +184,13 @@ class ParentAccounts:
                     'org Parents '\
                     'type {parent.type} '\
                     'externalid IGBID {parent.igbid} '
-                ) )
+                ))
+
+                # Need to route this to subprocess
+                click.echo( gns(
+                    'gam info user {parent.igbis_email_address} '\
+                    'nogroups noaliases nolicenses noschemas '
+                ))
 
             click.echo( gns(
                 'gam create group '\

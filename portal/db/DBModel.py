@@ -9,7 +9,7 @@ for example national_id not = password_number
 So I guess we'll have to figure that out if we choose to go to production quality
 """
 
-from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey
+from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
@@ -21,6 +21,7 @@ from sqlalchemy import inspect, func
 
 Base = declarative_base()
 metadata = Base.metadata
+import datetime
 from sqlalchemy.orm import relationship, backref
 
 from collections import defaultdict
@@ -234,6 +235,16 @@ class Student(Base, User):
     homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
     @hybrid_property
+    def start_date(self):
+        """
+        Python date object of when the student starts school
+        """
+        str_value = self.attendance_start_date
+        if not str_value:
+            return None
+        return datetime.datetime.strptime(str_value, '%Y-%M-%d')
+
+    @hybrid_property
     def parent_name_1(self):
         parents = self.parents
         if len(parents) > 0:
@@ -403,6 +414,47 @@ class Parent(Base, User):
     @hybrid_property
     def name(self):
         return self.first_name + ' ' + self.last_name
+
+    @hybrid_property
+    def first_child_date_started(self):
+        """
+        Returns date object of student who started first
+        """
+        earliest = None
+        for child in self.children:
+            this_date = child.start_date
+            if not this_date:
+                continue
+            if earliest is None or this_date < earliest:
+                earliest = this_date
+        return earliest
+
+    def google_account_sunset(self, duration):
+        """
+        Return true if this account has been around long enough for them to convert using this domain
+        TODO: Consider putting this in another layer
+        TODO: string interface used for duration could be in a utils function
+
+        @duration string representing how long '1 week, 3 weeks, 3 months'
+        """
+        earliest = self.first_child_date_started
+        if earliest is None:
+            # what do I do?
+            print(self)
+            return
+
+        dur = {
+                '3 weeks': datetime.timedelta(weeks=3),
+                '2 weeks': datetime.timedelta(weeks=2),
+                '1 week': datetime.timedelta(weeks=1),
+                '3 months': datetime.timedelta(weeks=4*3),
+                '2 months': datetime.timedelta(weeks=4*2),
+                '1 month': datetime.timedelta(weeks=4)
+            }\
+            .get(duration.strip().lower(), None)
+
+        ret = datetime.datetime.now() > earliest
+        return ret
 
 class Advisor(Base, User):
     """

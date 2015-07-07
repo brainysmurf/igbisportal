@@ -318,8 +318,8 @@ def api_students(request):
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
     filter = json_body.get('filter')
-    emergency_information = json_body.get('emergency_information') or False
-    human_columns = json_body.get('emergency_information') or False
+    awesome_tables = json_body.get('awesome_tables') or False
+    human_columns = json_body.get('awesome_tables') or False
     passed_columns = json_body.get('columns') or False
 
     if derived_attr:
@@ -378,7 +378,7 @@ def api_students(request):
     # column_attrs.sort()
  
 
-    if emergency_information:
+    if awesome_tables:
         # Add an extra row so that our awesome tables solution works right
         # boo!
 

@@ -118,13 +118,13 @@ def pyp_reports(request):
 
     chinese_teachers = {
         11131269:     # Anderina
-            [10893375, 10837001, 11080391, 10866875, 10834622, 11080393, 10882226, 10882227, 10834621, 10866876],
+            [10893375, 10837001, 11080391, 10866875, 10834622, 11080393, 10882226, 10882227, 10834621, 10866876, 11135112, 11153071, 11124216, ],
         10792613:     # Xiaoping
-            [10834635, 10882225, 10834617, 10834649, 10834618, 10836999, 10867797, 10893379, 10986169, 10837002, 10863230, 10867796, 10882159, 10882159, 10868400, 10834632, 10863220, 10863229, 10863228, 10973671],
+            [10834635, 10882225, 10834617, 10834649, 10834618, 10836999, 10867797, 10893379, 10986169, 10837002, 10863230, 10867796, 10882159, 10882159, 10868400, 10834632, 10863220, 10863229, 10863228, 10973671, 10834652, 11201785, 10882162, 11200870, 11182305, 10893377, 11124226],
         10792617:     # Mu Rong
-            [10834645, 10866873, 10912651, 10834633, 10882155, 10834642, 10866172, 10834661],
+            [10834645, 10866873, 10912651, 10834633, 10882155, 10834642, 10866172, 10834661, 11204605, 11182284, 11153066, 11124219, 11135094, 11080380, 11135103],
         10792610:     # Yu Ri
-            [10834656, 10834637, 10836998, 10856827, 10912650, 10834665, 10882152, 11153067, 11124218]
+            [10834656, 10834637, 10836998, 10856827, 10912650, 10834665, 10882152, 11153067, 11124218, 11153067, 11124218, 11201788]
     }
 
     students_chinese_teachers = {}
@@ -134,6 +134,17 @@ def pyp_reports(request):
             teacher = session.query(Teachers).filter_by(id=teacher_id).one()
             for this_student in student_ids:
                 students_chinese_teachers[this_student] = teacher
+
+    bahasa_teachers = {
+        10872708: [10908165, 10856828],
+    }
+    students_bahasa_teachers = {}
+    for teacher_id, student_ids in bahasa_teachers.items():
+        with DBSession() as session:
+            teacher = session.query(Teachers).filter_by(id=teacher_id).one()
+            for this_student in student_ids:
+                students_bahasa_teachers[this_student] = teacher
+
 
     if 'Grade' in report.course.name or 'Kindergarten' in report.course.name:
         which_folder = 'grades'
@@ -170,7 +181,7 @@ def pyp_reports(request):
         if len(uoi_units) == 3:
             pagination_list = [0, 1, 2, 4.3, 7, 10]
         elif len(uoi_units) == 2:
-            pagination_list = [0, 1, 2, 3, 4.2, 7, 10]
+            pagination_list = [0, 1, 2, 4, 7, 10]
         elif len(uoi_units) == 1:
             pagination_list = [0, 1, 2, 4, 7, 10]
         else:
@@ -184,8 +195,12 @@ def pyp_reports(request):
             if section.rank == 9 and student.id in students_chinese_teachers:
                 section.teachers = [students_chinese_teachers.get(student.id)]
 
+            if section.rank == 8 and student.id in students_bahasa_teachers:
+                # Host Nations? and Bahasa mixed up maybe?
+                section.teachers = [students_bahasa_teachers.get(student.id)]
+
             section.append_uoi_table = section.rank == 4.3 if len(uoi_units) == 3 else section.rank == 4.2
-            section.display_rotated = section.rank in [0, 1, 2, 5, 8, 9]
+            section.display_rotated = section.rank in [0, 1, 4.1, 5, 8, 9]
 
             if section.rank == 2 or section.rank == 4.1:
                 section.organization_header = "Units of Inquiry"
@@ -291,9 +306,14 @@ def pyp_reports(request):
         uoi_units = [r for r in report.sections if 'unit of inquiry' in r.name.lower()]
 
         if len(uoi_units) == 3:
-            pagination_list = [0, 1, 2, 4.3, 7, 10]
+            pagination_list = [0, 1, 4.2, 7, 10]
         else:
-            pagination_list = [0, 1, 2, 3, 4.2, 7, 10]
+            pagination_list = [0, 4.1, 7, 10]
+
+        # One-off 
+        if term_id == 27808 and student.student_id == "20280018":
+            report.teacher.first_name = "Deborah"
+            report.teacher.last_name = "King"
 
         for section in report.sections:
 

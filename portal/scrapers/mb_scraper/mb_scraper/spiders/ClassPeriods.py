@@ -244,7 +244,7 @@ class PYPStudentAttendance(ManageBacLogin):
                 item = PrimaryStudentAbsences()
                 item['student_id'] = user_id
                 item['absences'] = absences
-                item['total_days'] = 94  # HARD-CODED!
+                item['total_days'] = 85  # HARD-CODED!
                 item['term_id'] = 27808
 
                 yield item
