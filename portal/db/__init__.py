@@ -28,10 +28,8 @@ from portal.db.DBModel import Student
 
 metadata = Student.metadata
 
-import portal.settings as settings
 import gns
-
-database_url = settings.get('DATABASE', 'sqlalchemy.url')
+database_url = gns.config.database.sqlalchemy_url
 
 engine =  create_engine(database_url, max_overflow=0, pool_size=100, echo=False)
 

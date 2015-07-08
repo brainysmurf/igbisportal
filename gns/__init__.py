@@ -48,18 +48,18 @@ class GNS(object):
         settings = ConfigParser.ConfigParser()
         results = settings.read(self.config.paths.settings_ini)
 
-        # config.paths is special, so let's process it specially
-        SECTION = 'PATHS'
-        for OPTION in settings.options(SECTION):
-            option = OPTION.lower()
-            if option != 'home':
-                setattr(self.config.paths, option, settings.get(SECTION, OPTION))
-            else:
-                home_value = settings.get(SECTION, OPTION)
-                if home_value != 'auto':
-                    self.config.path.home = home_value
+        # # config.paths is special, so let's process it specially
+        # SECTION = 'PATHS'
+        # for OPTION in settings.options(SECTION):
+        #     option = OPTION.lower()
+        #     if option != 'home':
+        #         setattr(self.config.paths, option, settings.get(SECTION, OPTION))
+        #     else:
+        #         home_value = settings.get(SECTION, OPTION)
+        #         if home_value != 'auto':
+        #             self.config.paths.home = home_value
 
-        for SECTION in [s for s in settings.sections() if s != 'PATHS']:
+        for SECTION in [s for s in settings.sections()]:
             section = SECTION.lower()
             self.set_namespace('config.{}'.format(section))
             for OPTION in settings.options(SECTION):

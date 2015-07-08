@@ -46,8 +46,8 @@ class EmergInfo:
 """
 Klunky, but lets me debug quickly
 """
-import portal.settings as settings
-PREFIX = settings.get('DATABASE', 'db_prefix')
+import gns
+PREFIX = gns.config.database.prefix
 if PREFIX is None or PREFIX.upper() is "NONE":
     PREFIX = ""
 USERS = "{}users".format(PREFIX)
