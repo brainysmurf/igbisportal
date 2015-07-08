@@ -2,6 +2,7 @@
 
 <div metal:fill-slot="additional-css">
   <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/splash/jBox.min.js"></script>
   <script type="text/javascript" src="${static_url}js/splash/splash-header-buttons.js"></script>
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
@@ -73,58 +74,6 @@
     $('#tabs_holder').tabs();
   </script>
 
-  <script type="text/javascript">
-
-  $("input[name=icon_size]:radio").change(function () {
-        var value = $(this).val();
-
-        if ( value == '+1' ) {
-        
-          $(".splash_button").toggleClass('smaller');        
-
-        } else if ( value == '-1' ) {
-
-          $(".splash_button").toggleClass('smaller');
-
-        }
-
-        $.ajax({
-          type:'POST',
-          url: 'user_settings',
-          contentType: 'application/json; charset=utf-8',
-          success: function(result) {
-              console.log(result);
-            },
-          data: JSON.stringify({'icon_size':value})
-        });
-      });
-
-  $("#new_tab_checkbox").change(function () {
-        var value = $(this).val();
-        value = value == "1" ? "0" : "1";
-        $(this).val(value);
-
-        if (value == "1") {
-          $('a').each(function(index) {
-            $(this).attr('target', '_blank_'+index);
-          });
-          console.log('added target');
-        } else {
-          $('a').removeAttr('target');
-          console.log('removed target');
-        }
-
-        $.ajax({
-          type:'POST',
-          url: 'user_settings',
-          contentType: 'application/json; charset=utf-8',
-          success: function(result) {
-              console.log(result);
-            },
-          data: JSON.stringify({'new_tab': value})
-        });
-  });
-  </script>
 
   <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
 
