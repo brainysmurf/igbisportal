@@ -14,12 +14,11 @@ Parent = db.table_string_to_class('Parent')
 Course = db.table_string_to_class('Course')
 IBGroup = db.table_string_to_class('IBGroup')
 
-
 class DatabaseSetterUpper(object):
 
 	def __init__(self, lazy=True, verbose=False):
 		self.database = Database()
-		settings.setup_verbosity(self)
+		gns.setup_verbosity(self)
 		if not lazy:
 			self.setup_database()
 
@@ -27,10 +26,6 @@ class DatabaseSetterUpper(object):
 		"""
 		Reads in file information (made from Go.download) and sets up the database structures
 		"""
-		settings.get('MANAGEBAC', 'sections', required=True)
-		settings.get('DIRECTORIES', 'path_to_jsons', required=True)
-		settings.get('MANAGEBAC', 'ib_groups_section_url')
-
 
 		self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
 
@@ -124,7 +119,7 @@ class DatabaseSetterUpper(object):
 			for gns.section in gns.settings.sections:
 				self.default_logger(gns("Setup {section} on database"))
 
-				with open(gns('{settings.path_to_jsons}/{section}.json')) as _f:
+				with open(gns('{config.paths.jsons}/{section}.json')) as _f:
 					this_json = json.load(_f)
 
 				_map = dict(Classes="Course", Students="Student", Advisors="Advisor", Parents="Parent")
@@ -179,7 +174,7 @@ class DatabaseSetterUpper(object):
 
 			with u.collection(Student, Parent, 'parents', left_column='student_id') as stu_par:
 
-				with open(gns('{settings.path_to_jsons}/users.json')) as _f:
+				with open(gns('{config.paths.jsons}/users.json')) as _f:
 					this_json = json.load(_f)
 
 				self.default_logger("Setting up student-parent relations on database")
@@ -193,16 +188,16 @@ class DatabaseSetterUpper(object):
 
 			with u.collection(Student, IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
 				self.default_logger("Setting up student IB Group membership on database")
-				with open(gns('{settings.path_to_jsons}/ib_groups.json')) as _f:
+				with open(gns('{config.paths.jsons}/ib_groups.json')) as _f:
 					this_json = json.load(_f)
 
 				for ib_group in this_json['ib_groups']:
 					gns.group_id = ib_group.get('id')
 					gns.id = gns.group_id
-					gns.uri = gns.settings.ib_groups_section_url.replace('/', '-')
+					gns.uri = gns.config.managebac.ib_groups_section_url.replace('/', '-')
 
 					# Two gns calls because uri has {id} in it
-					with open(gns(gns('{settings.path_to_jsons}/{uri}.json'))) as _f2:
+					with open(gns(gns('{config.paths.jsons}/{uri}.json'))) as _f2:
 						members_json = json.load(_f2)
 
 					for student_item in members_json['members']:
@@ -213,7 +208,7 @@ class DatabaseSetterUpper(object):
 
 			with u.collection(Teacher, Course, 'classes') as teacher_course:
 				self.default_logger("Setting up teacher class assignments on database")
-				with open(gns('{settings.path_to_jsons}/classes.json')) as _f:
+				with open(gns('{config.paths.jsons}/classes.json')) as _f:
 					this_json = json.load(_f)
 				for clss in this_json['classes']:
 					for teacher in clss.get('teacher'):
@@ -231,7 +226,7 @@ class DatabaseSetterUpper(object):
 						this_json = json.load(_f)
 
 					with DBSession() as session:
-						course_id = re.match(gns('{settings.path_to_jsons}/groups-(\d+)-members.json'), path).group(1)
+						course_id = re.match(gns('{config.paths.jsons}/groups-(\d+)-members.json'), path).group(1)
 						for course in this_json['members']:
 							student_id = course.get('student_id')
 							if student_id is None:

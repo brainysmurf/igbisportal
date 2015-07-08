@@ -17,7 +17,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from collections import defaultdict
 collect_areas = defaultdict(list)
 
-from settings import get_setting
+import gns
 
 class APIDownloader(object, lazy=True):
 	"""
@@ -29,22 +29,17 @@ class APIDownloader(object, lazy=True):
 		Sent in optional params can override settings.ini, useful for debugging
 		"""
 		self.database = Database()
-		if not prefix:
-			self.prefix = get_setting('MANAGEBAC', 'mb_prefix')
-		else:
-			self.prefix = prefix
-		if not api_token:
-			self.api_token = get_setting('MANAGEBAC', 'mb_api_token')
-		else:
-			self.api_token = api_token
+		self.prefix = prefix or gns.config.managebac.prefix
+		self.api_token = api_token or gns.config.managebac.api_token
 
-		self.url = 'https://{}.managebac.com/api/{{}}'.format(self.prefix)
+		self.url = gns('https://{prefix}.managebac.com/api/{{}}', prefix=self.prefix)
 		# TODO: Make this a setting
 		self.sections = ('users', 'classes', 'ib_groups')
 		self.section_urls = {'users': 'users/{}', 'classes': 'groups/{}/members', 'ib_groups': 'groups/{}/members'}
 		self.container = Container()
 
-		self.path_to_jsons = get_setting('DIRECTORIES', 'path_to_jsons', required=True)
+		self.path_to_jsons = gns.config.paths.jsons
+
 		if self.path_to_jsons[-1] != '/':
 			# ensure path has trailing slash
 			self.path_to_jsons += '/'

@@ -1,4 +1,6 @@
 import click
+import gns
+import os
 
 class Object(object):
     def __init__(self):
@@ -65,20 +67,15 @@ def openapply(obj, path=None):
     """
     Looks at a CSV file and overwrites data in database
     """
-    if not path:
-        import portal.settings as settings
-        f = settings.get('DIRECTORIES', 'path_to_medical_info')
     from cli.openapply_importer import OA_Medical_Importer
+
+    f = path or gns.config.paths.medical_info
     medical_importer = OA_Medical_Importer(f)
     medical_importer.read_in()
 
 def run_scraper(spider, subpath):
-    from portal.settings import get
-    import os, gns
 
-    path = get('DIRECTORIES', 'path_to_scrapers', required=True)
-    gns.subpath = subpath
-    os.chdir(gns('{settings.path_to_scrapers}/{subpath}'))
+    os.chdir(gns('{config.paths.scrapers}/{subpath}'))
 
     from twisted.internet import reactor
     from scrapy.crawler import Crawler
@@ -114,10 +111,6 @@ def pyp_reports(class_id):
     Sets up things for pyp reporting system
     """
     from scrapy import cmdline
-    import os
-    from portal.settings import get
-    import gns
-    path = get('DIRECTORIES', 'path_to_scrapers', required=True)
 
     os.chdir(gns('{settings.path_to_scrapers}/mb_scraper'))
 
@@ -126,8 +119,6 @@ def pyp_reports(class_id):
         cmdline.execute(['scrapy', 'crawl', 'PYPClassReports'])
     else:
         cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments', '-a', 'class_id={}'.format(class_id)])
-        from IPython import embed
-        embed()
         cmdline.execute(['scrapy', 'crawl', 'PYPClassReports', '-a', 'class_id={}'.format(class_id)])
 
 @scrape.command()

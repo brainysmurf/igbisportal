@@ -10,11 +10,6 @@ import gns
 from portal.settings import get
 import re
 
-get('MANAGEBAC', 'mb_url')
-get('MANAGEBAC', 'mb_login_url')
-get('MANAGEBAC', 'oa_url')
-get('MANAGEBAC', 'oa_login_url')
-
 FIRSTCAP_RE = re.compile('(.)([A-Z][a-z]+)')
 ALLCAP_RE = re.compile('([a-z0-9])([A-Z])')
 def convert(name):
@@ -35,17 +30,16 @@ class Login(scrapy.Spider):
     username_field = 'login'
     password_field = 'password'
 
+    username = None
+    password = None
+
     def warning(self, log):
         scrapy.log.msg(log, level=scrapy.log.WARNING)
 
     def parse(self, response):
-        get('USER', 'username')
-        get('USER', 'password')
-        self.warning(gns("Logging in user {settings.username}!"))
-
         login_request = scrapy.FormRequest.from_response(
             response,
-            formdata={self.username_field: gns.settings.username, self.password_field: gns.settings.password},
+            formdata={self.username_field: self.username, self.password_field: self.password},
             callback=self.after_login,
             dont_filter=True  # because it's the same form
         )        
@@ -68,18 +62,24 @@ class Login(scrapy.Spider):
 
 class OpenApplyLogin(Login):
     name = "OpenApplyLogin"
-    allowed_domains = [gns.settings.oa_url]
-    start_urls = [gns.settings.oa_login_url]
+    allowed_domains = [gns.config.openapply.url]
+    start_urls = [gns.config.openapply.login_url]
     username_field = 'user[email]'
     password_field = 'user[password]'
 
+    username = gns.config.openapply.admin_username
+    password = gns.config.openapply.admin_password
+
     def path_to_url(self, path):
-        return gns.settings.oa_url + path
+        return gns.config.openapply.url + path
 
 class ManageBacLogin(Login):
     name = "ManageBacLogin"
-    allowed_domains = [gns.settings.mb_url]
-    start_urls = [gns.settings.mb_login_url]
+    allowed_domains = [gns.config.managebac.url]
+    start_urls = [gns.config.managebac.login_url
+
+    username = gns.config.managemabc.admin_username
+    password = gns.config.managemabc.admin_password
 
     def path_to_url(self, path):
-        return gns.settings.mb_url + path
+        return gns.config.managebac.url + path

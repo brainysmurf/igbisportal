@@ -11,11 +11,19 @@ nothing: True
 ; Contains settings pertaining to ManageBac
 ;
 ; This should be school's sub-domain name
-mb_prefix: faria
+prefix: faria
 ; This should be your school's private API code
-mb_api_token: secret
+api_token: secret
+
+admin_username: something@example.com
+admin_password: secret
 ;
 ;
+[OPENAPPLY]
+admin_username: which
+admin_password: secret
+
+
 [DATABASE]
 ; Contains settings pertaining to the (local?) database store
 ;
@@ -35,9 +43,12 @@ db_password: secret
 db_prefix: none
 ;
 ;
-[DIRECTORIES]
+[PATHS]
+; Set for you automatically with 'auto'
+home: auto
 ; Where will all the logging go, ensure vagrant has write access
-path_to_logging: /var/log/igbisportal
+logging: /var/log/igbisportal
+
 ;
 [LOGGING]
 ; Contains settings pertaining to logging
