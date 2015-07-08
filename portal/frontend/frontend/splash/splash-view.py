@@ -12,8 +12,6 @@ db = Database()
 from collections import defaultdict, namedtuple, OrderedDict
 import json, re, uuid
 
-
-import portal.settings as settings
 import gns
 
 
@@ -31,9 +29,6 @@ Absences = db.table_string_to_class('PrimaryStudentAbsences')
 HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 GSignIn = db.table_string_to_class('google_sign_in')
 UserSettings = db.table_string_to_class('user_settings')
-
-settings.get('DIRECTORIES', 'home')
-settings.get('FRONTEND', 'package_name')
 
 button = namedtuple('button', ['name', 'url', 'icon', 'context_menu'])
 
@@ -269,10 +264,10 @@ def splash(request):
                 pass
 
     return dict(
-        client_id=gns.settings.client_id,
+        client_id=gns.config.google.client_id,
         unique=unique,
         name=user_name,
-        data_origin=gns.settings.data_origin,
+        data_origin=gns.config.google.data_origin,
         title="IGBIS Splash Page",
         buttons = buttons,
         settings = settings

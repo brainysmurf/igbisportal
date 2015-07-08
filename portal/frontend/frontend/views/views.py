@@ -33,13 +33,7 @@ from sqlalchemy import func
 
 from collections import namedtuple, OrderedDict
 
-import portal.settings as settings
 import gns
-settings.get('DIRECTORIES', 'home')
-settings.get('GOOGLE', 'client_id')
-settings.get('GOOGLE', 'data_origin')
-settings.get('API', 'secret')
-_home = settings.get('DIRECTORIES', 'static_home')
 
 class ReportIncomplete(Exception):
     def __init__(self, msg):
@@ -133,7 +127,7 @@ def credentials_flow(request, code):
     try:
         oauth_flow = \
             flow_from_clientsecrets(
-                gns('{settings.home}/portal/frontend/client_secret.json'), 
+                gns('{config.paths.frontend_home}/client_secret.json'), 
                 scope="",
                 redirect_uri='postmessage'
             )
@@ -155,7 +149,7 @@ def credentials_flow(request, code):
         result_json = result.json()
 
         if 'issued_to' in result_json:
-            if result_json['issued_to'] != gns.settings.client_id:
+            if result_json['issued_to'] != gns.config.google.client_id:
                 return dict(message='Token does not match application')
         else:
             print('no issued_to in result after API call??')
@@ -310,10 +304,6 @@ class dummy_first_row:
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
  
-    #gas_ua = settings.get('GOOGLE', 'GASUserAgent')
-    #if gas_ua not in request.user_agent:
-    #    return dict(message="IGBIS api is not for public consumption!", data=[])
-
     json_body = request.json_body
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
@@ -350,7 +340,7 @@ def api_students(request):
 
     as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
     data = []
-    if secret != gns.settings.secret:
+    if secret != gns.config.api.secret:
         return dict(message="IGBIS api is not for public consumption.", data=data)
 
     with DBSession() as session:
