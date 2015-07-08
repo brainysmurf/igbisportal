@@ -4,7 +4,10 @@ db/api/jsons/*
 settings.ini
 .vagrant
 *.egg-info
-.DS_Store
+*.DS_Store
 /portal/db/api/jsons
 client_secret.json
 downloads/emergency.csv
+*.ini
+*.log
+*.pid

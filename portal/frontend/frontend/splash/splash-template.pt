@@ -7,6 +7,7 @@
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
 
+  <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
 </div>
 
 <div metal:fill-slot="additional-buttons">
@@ -15,6 +16,8 @@
 </div>
 
 <div metal:fill-slot="dialogs">
+      <div id="unique" style="display:none;" data-unique="${unique or ''}"></div>
+
       <div id="shareable_link_bp" style="display:none;">
         <p>NOTE: Convert "plain" links to links that have our IGBIS username/password embedded.</p><br /><br />
 
@@ -42,40 +45,29 @@
 </div>
 
 
-    <div metal:fill-slot="content">
+<div metal:fill-slot="content">
 
-      <div id="tabs_holder">
-        <ul id="tabs_titlebar">
-        <li tal:repeat="key buttons"><a href="#${key}">${key.replace('+', ' ')}</a></li>
-       </ul>
+  <!-- Stick value of unique into a non-display item -->
 
-       <tal:block tal:define="global counter 0" tal:repeat="key buttons">
-        <div id="${key}">
-          <tal:block tal:define="items buttons[key]" tal:repeat="button items">
-            <div tal:define="global counter counter+1"  id="jbox_button_${counter}" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}">
-              <a href="${button.url}">
-                  <div><i class="fa fa-${button.icon} fa-5x"></i></div>
-                  ${button.name}
-              </a>
-            </div>
-          </tal:block>
-        </div> 
-       </tal:block>
-      </div><!-- /.tabs_holder -->
+  <div id="tabs_holder">
+    <ul id="tabs_titlebar">
+    <li tal:repeat="key buttons"><a href="#${key}">${key.replace('+', ' ')}</a></li>
+   </ul>
 
-  <script tal:condition="not unique">
-    do_settings_dialog();
-    do_update();
-    $('#button_list').attr('style', 'display:block;');
-  </script>
+   <tal:block tal:define="global counter 0" tal:repeat="key buttons">
+    <div id="${key}">
+      <tal:block tal:define="items buttons[key]" tal:repeat="button items">
+        <div tal:define="global counter counter+1"  id="jbox_button_${counter}" class="buttons_for_jbox splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}"  data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+          <a href="${button.url}">
+              <div><i class="fa fa-${button.icon} fa-5x"></i></div>
+              ${button.name}
+          </a>
+        </div>
+      </tal:block>
+    </div> 
+   </tal:block>
+  </div><!-- /.tabs_holder -->
 
-
-  <script type="text/javascript">
-    $('#tabs_holder').tabs();
-  </script>
-
-
-  <script src="http://code.jboxcdn.com/0.3.2/jBox.min.js"></script>
 
   <!-- 
   <script type="text/javascript">    
@@ -92,7 +84,7 @@
     <tal:block tal:define="global another_counter another_counter+1">
     <tal:block tal:condition="button.context_menu">
 
-      <ul style="display:none" id="submenus_for_${another_counter}">
+      <ul style="display:none" id="submenus_for_jbox" data-counter="${another_counter}">
         <li tal:repeat="menu_item button.context_menu.get('items')">
           <tal:block tal:condition="menu_item.url">
             <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
@@ -106,103 +98,11 @@
         </li>
       </ul>
 
-      <script type="text/javascript">
-
-      var jbox = $('#jbox_button_${another_counter}').jBox('Tooltip', {
-          position: {
-              y: 'top',
-          },
-          outside: 'x',
-          title: '<a href="${button.url}"><i class="fa fa-${button.icon} fa-fw"></i>&nbsp;${button.name}</a>',
-          closeOnMouseleave:true,
-          content: $('#submenus_for_${another_counter}')
-      });
-
-      jbox_array.push(jbox);
-
-      </script>
-
     </tal:block>
     </tal:block>
     </tal:block>
   </tal:block>
 
-    <script>
-
-
-    toLiItem = function (id, icon, display) {
-      return '<li id="' + id + '"><a><i class="fa fa-' + icon + '"></i>&nbsp;' + display+'</a></li>';
-    }
-
-    $("#bp_link").parent().replaceWith(toLiItem('bp_link', 'user', 'Shareable Link'));
-    $("#bp_link").on("click", function() {
-      $('#shareable_link_bp').dialog({
-        dialogClass: "no-close",
-        resizeable: false,
-        hide: "fold",
-        show: "fold",
-        model: true,
-        title: "BrainPop Shareable Link",
-        height: 300,
-        width: 400,
-        close: false,
-        buttons: {
-          "Done": function () { 
-            $(this).dialog('close');
-          }
-        }
-      });
-
-      $('#bp_from').change( function () {
-        console.log("on click");
-        $('#bp_to').val($('#bp_from').val());
-      });
-
-      setInterval(function() {
-        $('#bp_to').val($('#bp_from').val());
-      }, 500);      
-    });
-
-    function signInCallback(authResult) {
-      delete authResult['g-oauth-window'];  // it took me forever to find this
-      //http://stackoverflow.com/questions/25065194/google-sign-in-uncaught-securityerror
-      // It's started happening when I serialized the entire authResult object, could just send what I need...
-
-      console.log(authResult); 
-    
-      if (authResult['code']) {
-
-        // Hide the sign-in button now that the user is authorized, for example:
-        
-        $('#signinButton').fadeOut("slow", function () {
-            do_settings_dialog();
-            $('#button_list').fadeIn("slow");
-          });
-
-        $.ajax({
-          type: 'POST',
-          url: 'signinCallback?' + '${unique}',
-          contentType: 'application/json; charset=utf-8',
-          success: function(result) {
-              window.location.reload();   // refresh
-              do_update();
-            },
-          data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
-          });
-      } else if (authResult['error']) {
-        // There was an error.
-        // Possible error codes:
-        //   "access_denied" - User denied access to your app
-        //   "immediate_failed" - Could not automatially log in the user
-        console.log('There was an error: ' + authResult['error']);
-        // do this just in case we have the user anyway
-        do_update();
-      }
-    }
-
-
-    
-    </script>
     </div>
 
 </html>

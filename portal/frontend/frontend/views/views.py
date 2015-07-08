@@ -53,6 +53,10 @@ HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 GSignIn = db.table_string_to_class('google_sign_in')
 UserSettings = db.table_string_to_class('user_settings')
 
+@view_config(route_name="get_session_user", renderer="json")
+def get_session_user(request):
+    return request.session.get('mb_user')
+
 @view_config(route_name="session_user", renderer="json")
 def session_user(request):
     """

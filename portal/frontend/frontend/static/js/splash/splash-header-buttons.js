@@ -158,54 +158,97 @@ function do_update() {
 
 }
 
+function signInCallback(authResult) {
+  delete authResult['g-oauth-window'];  // it took me forever to find this
+  //http://stackoverflow.com/questions/25065194/google-sign-in-uncaught-securityerror
+  // It's started happening when I serialized the entire authResult object, could just send what I need...
+
+  if (authResult['code']) {
+
+    // Hide the sign-in button now that the user is authorized, for example:
+    
+    $('#signinButton').fadeOut("slow", function () {
+        do_settings_dialog();
+        $('#button_list').fadeIn("slow");
+      });
+
+    unique = $('#unique').data('unique');
+
+    $.ajax({
+      type: 'POST',
+      url: 'signinCallback?' + unique,
+      contentType: 'application/json; charset=utf-8',
+      success: function(result) {
+          window.location.reload();   // refresh
+          do_update();
+        },
+      data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
+      });
+  } else if (authResult['error']) {
+    // There was an error.
+    // Possible error codes:
+    //   "access_denied" - User denied access to your app
+    //   "immediate_failed" - Could not automatially log in the user
+    console.log('There was an error: ' + authResult['error']);
+    // do this just in case we have the user anyway
+    do_update();
+  }
+}
+
 
 $("input[name=icon_size]:radio").change(function () {
-      var value = $(this).val();
+  var value = $(this).val();
 
-      if ( value == '+1' ) {
-      
-        $(".splash_button").toggleClass('smaller');        
+  if ( value == '+1' ) {
+  
+    $(".splash_button").toggleClass('smaller');        
 
-      } else if ( value == '-1' ) {
+  } else if ( value == '-1' ) {
 
-        $(".splash_button").toggleClass('smaller');
+    $(".splash_button").toggleClass('smaller');
 
-      }
+  }
 
-      $.ajax({
-        type:'POST',
-        url: 'user_settings',
-        contentType: 'application/json; charset=utf-8',
-        success: function(result) {
-            console.log(result);
-          },
-        data: JSON.stringify({'icon_size':value})
-      });
-    });
-
-$("#new_tab_checkbox").change(function () {
-      var value = $(this).val();
-      value = value == "1" ? "0" : "1";
-      $(this).val(value);
-
-      if (value == "1") {
-        $('a').each(function(index) {
-          $(this).attr('target', '_blank_'+index);
-        });
-        console.log('added target');
-      } else {
-        $('a').removeAttr('target');
-        console.log('removed target');
-      }
-
-      $.ajax({
-        type:'POST',
-        url: 'user_settings',
-        contentType: 'application/json; charset=utf-8',
-        success: function(result) {
-            console.log(result);
-          },
-        data: JSON.stringify({'new_tab': value})
-      });
+  $.ajax({
+    type:'POST',
+    url: 'user_settings',
+    contentType: 'application/json; charset=utf-8',
+    success: function(result) {
+        console.log(result);
+      },
+    data: JSON.stringify({'icon_size':value})
+  });
 });
 
+$("#new_tab_checkbox").change(function () {
+  var value = $(this).val();
+  value = value == "1" ? "0" : "1";
+  $(this).val(value);
+
+  if (value == "1") {
+    $('a').each(function(index) {
+      $(this).attr('target', '_blank_'+index);
+    });
+  } else {
+    $('a').removeAttr('target');
+  }
+
+  $.ajax({
+    type:'POST',
+    url: 'user_settings',
+    contentType: 'application/json; charset=utf-8',
+    success: function(result) {
+        console.log(result);
+      },
+    data: JSON.stringify({'new_tab': value})
+  });
+});
+
+var unique = $('#unique').data('unique');
+console.log(unique);
+if (unique === "") {
+  do_settings_dialog();
+  do_update();
+  console.log("updating...");
+  $('#button_list').attr('style', 'display:block;');
+}
