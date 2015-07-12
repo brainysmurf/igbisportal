@@ -85,22 +85,7 @@ function do_settings_dialog() {
 }
 
 function do_update() {
-  // FIXME: 
-  // userText = $('#userButton').html();
-  // if (userText.indexOf('add_name_here') != -1) {
-  //   $.ajax({
-  //     type:'POST',
-  //     url: 'user_data',
-  //     contentType: 'application/json; charset=utf-8',
-  //     success: function(result) {
-  //         console.log(result);
-  //         userText.replace('add_name_here', result['data']);
-  //         console.log(userText);
-  //         $("#userButton").replaceWith(userText);
-  //       }
-  //   });
-  // }
-
+  
   var value = $("#new_tab_checkbox").val();
   if (value == "1") {
     $('a').each(function(index, element) {
@@ -193,62 +178,4 @@ function signInCallback(authResult) {
     // do this just in case we have the user anyway
     do_update();
   }
-}
-
-
-$("input[name=icon_size]:radio").change(function () {
-  var value = $(this).val();
-
-  if ( value == '+1' ) {
-  
-    $(".splash_button").toggleClass('smaller');        
-
-  } else if ( value == '-1' ) {
-
-    $(".splash_button").toggleClass('smaller');
-
-  }
-
-  $.ajax({
-    type:'POST',
-    url: 'user_settings',
-    contentType: 'application/json; charset=utf-8',
-    success: function(result) {
-        console.log(result);
-      },
-    data: JSON.stringify({'icon_size':value})
-  });
-});
-
-$("#new_tab_checkbox").change(function () {
-  var value = $(this).val();
-  value = value == "1" ? "0" : "1";
-  $(this).val(value);
-
-  if (value == "1") {
-    $('a').each(function(index) {
-      $(this).attr('target', '_blank_'+index);
-    });
-  } else {
-    $('a').removeAttr('target');
-  }
-
-  $.ajax({
-    type:'POST',
-    url: 'user_settings',
-    contentType: 'application/json; charset=utf-8',
-    success: function(result) {
-        console.log(result);
-      },
-    data: JSON.stringify({'new_tab': value})
-  });
-});
-
-var unique = $('#unique').data('unique');
-console.log(unique);
-if (unique === "") {
-  do_settings_dialog();
-  do_update();
-  console.log("updating...");
-  $('#button_list').attr('style', 'display:block;');
 }

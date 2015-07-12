@@ -3,11 +3,14 @@
 <div metal:fill-slot="additional-css">
   <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
   <script type="text/javascript" src="${static_url}js/splash/jBox.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/URI.min.js"></script>
   <script type="text/javascript" src="${static_url}js/splash/splash-header-buttons.js"></script>
+  <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splash-userbuttons.js" defer></script>
+
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
 
-  <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
 </div>
 
 <div metal:fill-slot="additional-buttons">
@@ -18,13 +21,34 @@
 <div metal:fill-slot="dialogs">
       <div id="unique" style="display:none;" data-unique="${unique or ''}"></div>
 
+      <div id="newButtonHolder">
+        <div style="display:none;" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}"  data-counter="0" data-url="#" data-icon="plus-circle" data-name="New Button">
+          <a class="newButton" href="#">
+              <div><i class="fa fa-plus-circle fa-5x"></i></div>
+              <span>New Button</span>
+          </a>
+        </div>
+      </div>
+
+      <div id="newTabDialog" style="display:none;"> 
+        <label for="ntd_from">Enter the Name of the tab:</label><br />
+        <input id="ntd_from" class="full-width" type="text" /><br /><br />
+      </div>
+
+      <div id="newButtonDialog" style="display:none;"> 
+        <label for="nbd_name">Enter the name of the button here:</label><br />
+        <input id="nbd_name" class="full-width" type="text" /><br /><br />
+        <label for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span><br />
+        <input id="nbd_link" class="full-width" type="text" />
+      </div>
+
       <div id="shareable_link_bp" style="display:none;">
         <p>NOTE: Convert "plain" links to links that have our IGBIS username/password embedded.</p><br /><br />
 
         <label for="bp_from">Enter the URL here:</label><br />
-        <input id="bp_from" class="bp_shareable_link_input" type="text" /><br /><br />
+        <input id="bp_from" class="full-width" type="text" /><br /><br />
         <label for="bp_to">Click the box to "copy":</label><br />
-        <input id="bp_to" class="bp_shareable_link_input" type="text" />
+        <input id="bp_to" class="full-width" type="text" />
       </div>
 
       <div id="settings_dialog" style="display:none;">      
@@ -51,16 +75,16 @@
 
   <div id="tabs_holder">
     <ul id="tabs_titlebar">
-    <li tal:repeat="key buttons"><a href="#${key}">${key.replace('+', ' ')}</a></li>
-   </ul>
+      <li tal:repeat="key buttons"><a href="#${key}">${key.replace('_', ' ')}</a></li>
+    </ul>
 
    <tal:block tal:define="global counter 0" tal:repeat="key buttons">
     <div id="${key}">
       <tal:block tal:define="items buttons[key]" tal:repeat="button items">
-        <div tal:define="global counter counter+1"  id="jbox_button_${counter}" class="buttons_for_jbox splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}"  data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+        <div tal:define="global counter counter+1"  id="${button.id}" class="buttons_for_jbox splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}"  data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
           <a href="${button.url}">
               <div><i class="fa fa-${button.icon} fa-5x"></i></div>
-              ${button.name}
+              <span>${button.name}</span>
           </a>
         </div>
       </tal:block>
@@ -79,12 +103,12 @@
   -->
 
 
-  <tal:block tal:repeat="key buttons" tal:condition="buttons">
-    <tal:block tal:define="global another_counter 0" tal:repeat="button buttons[key]">
+  <tal:block tal:define="global another_counter 0" tal:repeat="key buttons" tal:condition="buttons">
+    <tal:block tal:repeat="button buttons[key]">
     <tal:block tal:define="global another_counter another_counter+1">
     <tal:block tal:condition="button.context_menu">
 
-      <ul style="display:none" id="submenus_for_jbox" data-counter="${another_counter}">
+      <ul style="display:none" class="submenus_for_jbox" data-counter="${another_counter}" tal:condition="button.context_menu">
         <li tal:repeat="menu_item button.context_menu.get('items')">
           <tal:block tal:condition="menu_item.url">
             <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>

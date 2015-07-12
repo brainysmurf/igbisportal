@@ -542,7 +542,6 @@ def get_user_settings(request):
     data = {'icon_size':settings.icon_size}
     return dict(message="success", data=data)
 
-
 @view_config(route_name='user_settings', renderer='json')
 def user_settings(request):
     unique_id = request.session.get('g_plus_unique_id')

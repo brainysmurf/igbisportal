@@ -30,14 +30,16 @@ HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 GSignIn = db.table_string_to_class('google_sign_in')
 UserSettings = db.table_string_to_class('user_settings')
 
-button = namedtuple('button', ['name', 'url', 'icon', 'context_menu'])
+button = namedtuple('button', ['name', 'url', 'icon', 'id', 'context_menu'])
 
 menu_item = namedtuple('menu_item', ['display', 'url', 'icon'])
 menu_separator = lambda : {'url':None}
 menu_placeholder = lambda x: {'url': False, 'name':x}
+new_tab = button(name="Define New Tab", url="#", icon="plus-circle", id="newTab", context_menu=None)
+new_button = button(name="Define New Button", url="#", icon="plus-circle", id="newButton", context_menu=None)
 
 stndrdbttns = [
-    button(name="ManageBac", url="https://igbis.managebac.com", icon="fire",
+    button(name="ManageBac", url="https://igbis.managebac.com", icon="fire", id="",
         context_menu={
         'items': [
             menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
@@ -46,13 +48,13 @@ stndrdbttns = [
             menu_placeholder('mb_classes')
         ],
         }),
-    button(name="Gmail", url="https://gmail.com", icon="envelope", 
+    button(name="Gmail", url="https://gmail.com", icon="envelope", id="", 
         context_menu={
         'items': [
             menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
         ]
         }),
-    button(name="Google Drive", url="https://drive.google.com", icon="files-o", 
+    button(name="Google Drive", url="https://drive.google.com", icon="files-o", id="", 
         context_menu={
         'items': [
             menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
@@ -62,8 +64,8 @@ stndrdbttns = [
             menu_item(icon="question-circle", display="What else?", url="#")
         ]
         }),
-    button(name="Google Plus", url="https://plus.google.com/", icon="google-plus", context_menu=None),
-    button(name="Library", url="https://igbis.follettdestiny.com", icon="university", 
+    button(name="Google Plus", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
+    button(name="Library", url="https://igbis.follettdestiny.com", icon="university", id="", 
         context_menu={
         'items': [
             menu_item(icon="search", display="Elementary Catalog", url="https://igbis.follettdestiny.com/cataloging/servlet/presentadvancedsearchredirectorform.do?l2m=Library%20Search&tm=TopLevelCatalog&l2m=Library+Search"),
@@ -75,15 +77,15 @@ stndrdbttns = [
             menu_placeholder('gd_starred')
         ],
         }),
-    button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", context_menu=None),
-    button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-    button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+    button(name="Calendar", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu=None),
+    button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
+    button(name="YouTube", url="http://youtube.com", icon="youtube", id="", context_menu=None),
 
-    button(name="Music Academy", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", context_menu=None)
+    button(name="Music Academy", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
-emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", context_menu=None)
-intl_day_button = button(name="International Day", icon="smile-o", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k", 
+emergency_button = button(name="Emergency Contact", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", id="", context_menu=None)
+intl_day_button = button(name="International Day", icon="smile-o", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k", id="", 
         context_menu={
         'items': [
             menu_item(icon="folder", display="Google Drive folder", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k"),
@@ -94,9 +96,9 @@ intl_day_button = button(name="International Day", icon="smile-o", url="https://
             menu_item(icon="file-movie-o", display="Download Students Dancing", url="https://doc-00-5c-docs.googleusercontent.com/docs/securesc/884cabjr1sdneekvn44p41a882r4naec/3n5qsegs0a0651mtt09hhcijticoe6av/1431424800000/02981500850996571698/02981500850996571698/0B2Jx5iFaTuHJM0tfV0JYV2Q4Qjg?h=08807967339938854529&e=download"),
         ],
     })
-ela_button = button(name="ELA Department", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", context_menu=None)
-bookings_button = button(name="Bookings", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", context_menu=None)
-ibo_button = button(name="IBO", url="http://www.ibo.org/", icon="globe", 
+ela_button = button(name="ELA Department", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", id="", context_menu=None)
+bookings_button = button(name="Bookings", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", id="", context_menu=None)
+ibo_button = button(name="IBO", url="http://www.ibo.org/", icon="globe", id="", 
         context_menu={
         'items': [
             menu_item(icon="globe", display="PD Events & Workshops", url="http://www.ibo.org/en/professional-development/find-events-and-workshops/"),
@@ -106,7 +108,7 @@ ibo_button = button(name="IBO", url="http://www.ibo.org/", icon="globe",
         ],
         }
     )
-cashless_button = button(name="Cashless", url="http://cashless.igbis.edu.my/", icon="money", context_menu=None)
+cashless_button = button(name="Cashless", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu=None)
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
@@ -128,26 +130,26 @@ def splash(request):
 
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
-        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
+        button(name="YouTube", url="http://youtube.com", icon="youtube", id="", context_menu=None),
     ])
 
     sec_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons = stndrdbttns[:]
     elem_teacher_buttons.extend([
         ibo_button,
-        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
-        button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
+        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
+        button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", id="", 
         context_menu={
         'items': [
             menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
             menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
             menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
         ]}),
-        button(name="Reports Hub", url="reports_hub", icon="gavel", context_menu=None),
-        button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
-        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
-        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        button(name="Reports Hub", url="reports_hub", icon="gavel", id="", context_menu=None),
+        button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
+        button(name="YouTube", url="http://youtube.com", icon="youtube", id="", context_menu=None),
         bookings_button,
         ela_button,
         intl_day_button,
@@ -181,18 +183,18 @@ def splash(request):
     sec_teacher_buttons.extend([
         ibo_button,
 
-        button(name="Homeroom", url="notsure", icon="cube", 
+        button(name="Homeroom", url="notsure", icon="cube", id="", 
         context_menu={
         'items': homeroom_items}),
 
-        button(name="Communications", url="dunno", icon="comments",
+        button(name="Communications", url="dunno", icon="comments", id="", 
         context_menu={
         'items': [
             menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
             menu_placeholder('mb_grade_teachers')
         ]}),
 
-        button(name="Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", 
+        button(name="Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", 
         context_menu={
         'items': [
             menu_item(icon="rocket", display="Current Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/current-activities"),
@@ -200,8 +202,8 @@ def splash(request):
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
 
-        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", context_menu=None),
-        button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", 
+        button(name="Teacher Dashboard", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
+        button(name="InterSIS", url="https://igbis.intersis.com", icon="info-circle", id="", 
         context_menu={
         'items': [
             menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
@@ -209,26 +211,26 @@ def splash(request):
             menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
         ]}),
 
-        button(name="Secondary Principal", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", 
+        button(name="Secondary Principal", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
         context_menu={
         'items': [
             menu_item(icon="warning", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
             menu_item(icon="pencil", display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
         ]}),
 
-        button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", context_menu={
+        button(name="OCC", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", id="", context_menu={
         'items':[
             menu_item(icon="gear", display="ATL on the OCC", url="https://xmltwo.ibo.org/publications/DP/Group0/d_0_dpatl_gui_1502_1/static/dpatl/"),
         ]}),
-        button(name="IT Integration", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", context_menu={
+        button(name="IT Integration", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", id="", context_menu={
         'items': [
             menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),
             menu_item(icon="apple", display="An Apple a Day", url="https://sites.google.com/a/igbis.edu.my/plehhcet/an-apple-a-day"),
         ]}),
-        button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", context_menu=None),
-        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", context_menu=None),
+        button(name="IT Help Desk", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
+        button(name="BrainPop", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
 
-        button(name="YouTube", url="http://youtube.com", icon="youtube", context_menu=None),
+        button(name="YouTube", url="http://youtube.com", icon="youtube", id="", context_menu=None),
         bookings_button,
         ela_button,
         intl_day_button,
@@ -242,14 +244,14 @@ def splash(request):
     if logged_in_user:
         account_type = logged_in_user.type
         if account_type == 'Advisors':
-            buttons['Secondary+Teachers'] = sec_teacher_buttons
-            buttons['Elementary+Teachers'] = elem_teacher_buttons
+            buttons['Secondary_Teachers'] = sec_teacher_buttons
+            buttons['Elementary_Teachers'] = elem_teacher_buttons
             #buttons['Students'] = student_buttons  # for debugging
         elif account_type == 'Students':
             buttons['Students'] = student_buttons
         else:
-            buttons['Secondary+Teachers'] = sec_teacher_buttons
-            buttons['Elementary+Teachers'] = elem_teacher_buttons
+            buttons['Secondary_Teachers'] = sec_teacher_buttons
+            buttons['Elementary_Teachers'] = elem_teacher_buttons
             buttons['Students'] = student_buttons            
     else:
         buttons['Students'] = student_buttons
@@ -262,6 +264,8 @@ def splash(request):
                 settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
             except NoResultFound:
                 pass
+
+    buttons['+'] = []
 
     return dict(
         client_id=gns.config.google.client_id,
