@@ -16,6 +16,7 @@ $('.buttons_for_jbox').each(function () {
         position: {
             y: 'top',
         },
+        delayOpen: 400,
         outside: 'x',
         title: '<a href="'+ $(this).data('url') + '"><i class="fa fa-'+ $(this).data('icon') + ' fa-fw"></i>&nbsp;' + $(this).data('name') + '</a>',
         closeOnMouseleave:true,
@@ -60,14 +61,13 @@ $("#bp_link").on("click", function() {
 
 $("input[name=icon_size]:radio").change(function () {
   var value = $(this).val();
-  console.log(value);
   if ( value == '+1' ) {
   
-    $(".splash_button").toggleClass('smaller');        
+    $(".splashButton").removeClass('small').addClass('large');
 
   } else if ( value == '-1' ) {
 
-    $(".splash_button").toggleClass('smaller');
+    $(".splashButton").removeClass('small').addClass('large');
 
   }
 
@@ -76,7 +76,6 @@ $("input[name=icon_size]:radio").change(function () {
     url: 'user_settings',
     contentType: 'application/json; charset=utf-8',
     success: function(result) {
-        console.log(result);
       },
     data: JSON.stringify({'icon_size':value})
   });

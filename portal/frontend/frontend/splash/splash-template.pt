@@ -1,14 +1,19 @@
 <html metal:use-macro="load: frontend:templates/portal_main.pt">
 
 <div metal:fill-slot="additional-css">
+  <script type="text/javascript" src="${static_url}bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
   <script type="text/javascript" src="${static_url}js/splash/jBox.min.js"></script>
   <script type="text/javascript" src="${static_url}js/URI.min.js"></script>
+  <script type="text/javascript" src="${static_url}gridly/javascripts/jquery.gridly.js"></script>
+
   <script type="text/javascript" src="${static_url}js/splash/splash-header-buttons.js"></script>
   <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splash-userbuttons.js" defer></script>
 
+  <link rel="stylesheet" type="text/css" href="${static_url}bootstrap/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}gridly/stylesheets/jquery.gridly.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
 
 </div>
@@ -22,11 +27,13 @@
       <div id="unique" style="display:none;" data-unique="${unique or ''}"></div>
 
       <div id="newButtonHolder">
-        <div style="display:none;" class="splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}"  data-counter="0" data-url="#" data-icon="plus-circle" data-name="New Button">
-          <a class="newButton" href="#">
-              <div><i class="fa fa-plus-circle fa-5x"></i></div>
-              <span>New Button</span>
-          </a>
+        <div style="display:none;" class="splashButtonHolder ${'small' if settings and settings.icon_size == '-1' else 'large'}">
+          <div class="splashButton"  data-counter="0" data-url="#" data-icon="plus-circle" data-name="New Button">
+            <a class="newButton" href="#">
+                <div><i class="fa fa-plus-circle fa-5x"></i></div>
+            </a>
+          </div>
+          <div class="splashButtonTitle">New Button</div>
         </div>
       </div>
 
@@ -80,14 +87,20 @@
 
    <tal:block tal:define="global counter 0" tal:repeat="key buttons">
     <div id="${key}">
-      <tal:block tal:define="items buttons[key]" tal:repeat="button items">
-        <div tal:define="global counter counter+1"  id="${button.id}" class="buttons_for_jbox splash_button ${'smaller' if settings and settings.icon_size == '-1' else ''}"  data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
-          <a href="${button.url}">
-              <div><i class="fa fa-${button.icon} fa-5x"></i></div>
-              <span>${button.name}</span>
-          </a>
-        </div>
-      </tal:block>
+      <div class="grid">
+        <tal:block tal:define="items buttons[key]" tal:repeat="button items">
+
+          <div class="splashButton ${'small' if settings and settings.icon_size == '-1' else 'large'}">
+            <a href="${button.url}">
+              <div tal:define="global counter counter+1"  id="${button.id}" class="buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+                    <div class="buttonIcon"><i class="fa fa-${button.icon}"></i></div>
+              </div>
+              <div class="splashButtonTitle">${button.name}</div>
+            </a>
+          </div>
+
+        </tal:block>
+      </div>
     </div> 
    </tal:block>
   </div><!-- /.tabs_holder -->
@@ -111,7 +124,7 @@
       <ul style="display:none" class="submenus_for_jbox" data-counter="${another_counter}" tal:condition="button.context_menu">
         <li tal:repeat="menu_item button.context_menu.get('items')">
           <tal:block tal:condition="menu_item.url">
-            <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon} fa-fw"></i>&nbsp;${menu_item.display}</a>
+            <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon}"></i>&nbsp;${menu_item.display}</a>
           </tal:block>
           <tal:block tal:condition="menu_item.url is False">
             <div id="${menu_item.name}"><hr /></div>

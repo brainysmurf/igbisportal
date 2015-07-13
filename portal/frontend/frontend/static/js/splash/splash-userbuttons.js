@@ -106,6 +106,8 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 			$("#newButtonDialog > input").val('');
 
 	    	$done.prop("disabled", true).addClass("ui-state-disabled");
+	    	$('#newButtonDialog').find('.js-validate-msg').text('');
+
 		   	$("#newButtonDialog").keyup(function(e) {
 	    		var name = $('#nbd_name').val();
 	    		var link = $('#nbd_link').val();
@@ -158,3 +160,12 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 	e.preventDefault();
 
 });
+
+$('.grid').gridly({
+	base: 40,
+	gutter: 10,
+	columns: 18,
+	draggable: 'off',
+});
+
+

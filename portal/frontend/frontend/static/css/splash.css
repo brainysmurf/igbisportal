@@ -13,6 +13,10 @@ a:visited {
     color: #D22018;
 }
 
+a:-webkit-any-link {
+    text-decoration: none;
+}
+
 a {
     text-decoration: none;
     color: #D22018;
@@ -25,15 +29,14 @@ p {
 
 #wrapper {
     margin: 0 auto;
-    width: 100%;
+    width: 930px;
 }
 
 #contentwrap {
-    width: 85%;
+    width: 930px;
     margin: 0 auto;
     margin-top: 45px;
     margin-bottom: 45px;
-    margin-right: 100px;
 }
 
 #content {
@@ -65,7 +68,13 @@ p {
     color: #999;
 }
 
-.splash_button {
+.grid {
+    position: relative;
+    width: 960px;
+}
+
+.splashButton {
+    display: inline-block;
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
     -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
     box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -87,47 +96,75 @@ p {
     border-bottom-left-radius:9px;
     text-indent:0;
     border:1px solid #cecece;
-    display:inline-block;
     color:#D22018;
     font-family:"Roboto Condensed";
-    font-size:16px;
     font-weight:bold;
     font-style:normal;
-    height:110px;
-    width:140px;
-    line-height:25px;
     text-decoration:none;
     text-align:center;
     text-shadow:1px 1px 0px #ffffff;
-    padding-top:10px;
-    margin-left: 20px;
-    margin-right:20px;
-    margin-bottom:50px;
 }
-.splash_button:hover {
+
+.splashButton.small {
+    font-size: 40pt;
+    width: 90px;
+    height: 100px;
+}
+
+.splashButton.large {
+    font-size: 40pt;
+    width:180px;
+    height:200px;
+}
+
+.splashButton:hover {
     background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
     background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
     background-color:#dfdfdf;
 }
 
-.splash_button:active {
+.splashButton:active {
     position:relative;
     top:1px;
+}
+
+.splashButtonTitle {
+    margin-top:3px;
+    line-height: 14 px;
+    color:#D22018;
+    font-family:"Roboto Condensed";
+    font-size:12px;
+    font-weight:bold;
+    font-style:normal;
+    text-decoration:none;
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.buttonIcon {
+    padding-top: 10px;
 }
 
 .smaller {
     font-size:10px;    
     line-height:25px;
-    padding-top:10px;
-    padding-bottom:10px;
     height:70px;
-    width:100px;
+    width:80px;
+}
 
-    margin-left: 5px;
-    margin-right:5px;
-    margin-bottom:20px;
-    padding-bottom:0px;
+.smallest {
+    font-size:7px;    
+    line-height:20px;
+    height:50px;
+    width:60px;
+}
+
+.tiny {
+    font-size:3px;    
+    line-height:0px;
+    height:30px;
+    width:30px;
 }
 
 .jBox-container {    
@@ -200,7 +237,7 @@ hr {
 } 
 
 #button_list {
-    margin-right:100px;
+    margin-right:160px;
 }
 
 .bootstrap-switch-container {
