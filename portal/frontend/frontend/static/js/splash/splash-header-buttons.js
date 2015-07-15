@@ -79,9 +79,46 @@ function do_settings_dialog() {
         }
       }
     });
-
-
   });
+
+  $('#editButton').on('click', function (e) {
+    obj = $(this);
+    e.preventDefault();
+
+    if (obj.attr('style')) {
+
+      // It's on
+      obj.removeAttr('style');
+      jbox_array.forEach(function (item, index) { 
+        //console.log(jbox_array[index]);
+        //FIXME this doesn't actually work
+        jbox_array[index].enable();
+      });
+
+      $('.splashButton').each(function (item) {
+        $(this).removeClass('editButton');
+      });
+
+
+    } else {
+
+      // It's off
+      obj.css('background', '#999').css('color', '#eee');
+      jbox_array.forEach(function (item, index) { 
+        //console.log(jbox_array[index]);
+        //FIXME this doesn't actually work
+        jbox_array[index].disable();
+      });
+
+     $('.splashButton').each(function (item) {
+        $(item).addClass('editButton');
+      });
+
+      //$('.grid').gridly({dragabble: "on"});
+
+    }
+  });
+
 }
 
 function do_update() {
@@ -100,9 +137,9 @@ function do_update() {
     contentType: 'application/json; charset=utf-8',
     success: function(result) {
       if (result.hasOwnProperty('data') && result.data.length > 0) {
-        var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Email teachers of:</li>';
+        var link_list = '<li><hr /></li><li class="buttonSubHeading">Email teachers of:</li>';
         for (i=0; i < result.data.length; i++) {
-          link_list += '<li><a href="mailto:' + result.data[i].student_email + '"><i class="fa fa-envelope"></i>&nbsp;' + result.data[i].student_name + '</a></li>';
+          link_list += '<li><a href="mailto:' + result.data[i].student_email + '">&nbsp;' + result.data[i].student_name + '</a></li>';
         }
         $('#mb_homeroom').parent().replaceWith(link_list);
       }
@@ -115,9 +152,9 @@ function do_update() {
     contentType: 'application/json; charset=utf-8',
     success: function(result) {
       if (result.hasOwnProperty('data') && result.data.length > 0) {
-        var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Email teachers of:</li>';
+        var link_list = '<li><hr /></li><li class="buttonSubHeading">Email teachers of:</li>';
         for (i=0; i < result.data.length; i++) {
-          link_list += '<li><a href="mailto:' + result.data[i].teacher_emails + '"><i class="fa fa-envelope"></i>&nbsp; Grade ' + result.data[i].grade + '</a></li>';
+          link_list += '<li><a href="mailto:' + result.data[i].teacher_emails + '">&nbsp; Grade ' + result.data[i].grade + '</a></li>';
         }
       }
       $('#mb_grade_teachers').parent().replaceWith(link_list);
@@ -130,10 +167,10 @@ function do_update() {
     contentType: 'application/json; charset=utf-8',
     success: function(result) {
       if (result.hasOwnProperty('data') && result.data.length > 0) {
-        var link_list = '<li><hr /></li><li class="button_sub_heading"><i class="fa fa-fw"></i><i class="fa fa-fw"></i>Your courses:</li>';
+        var link_list = '<li><hr /></li><li class="buttonSubHeading"></i>Your courses:</li>';
         for (i=0; i < result.data.length; i++) {
           if (result.data[i].shortname != null) {
-            link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '"><i class="fa fa-chevron-circle-right fa-fw"></i>&nbsp;' + result.data[i].shortname + '</a></li>';
+            link_list += '<li><a href="' + result.data[i].link + '" title="' + result.data[i].name + '">&nbsp;' + result.data[i].shortname + '</a></li>';
           }
         }
         $('#mb_classes').parent().replaceWith(link_list);

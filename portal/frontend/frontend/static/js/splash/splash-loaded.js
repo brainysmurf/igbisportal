@@ -8,6 +8,13 @@ if (unique === "") {
 
 $('#tabs_holder').tabs();
 
+$('.grid').gridly({
+  base: 40,
+  gutter: 10,
+  columns: 18,
+  draggable: 'off',
+});
+
 $('.buttons_for_jbox').each(function () {
 
   $submenu = $('.submenus_for_jbox[data-counter=' + $(this).data('counter') + ']');
@@ -18,7 +25,7 @@ $('.buttons_for_jbox').each(function () {
         },
         delayOpen: 400,
         outside: 'x',
-        title: '<a href="'+ $(this).data('url') + '"><i class="fa fa-'+ $(this).data('icon') + ' fa-fw"></i>&nbsp;' + $(this).data('name') + '</a>',
+        title: '<a class="submenuTitle" href="'+ $(this).data('url') + '">&nbsp;' + $(this).data('name') + '</a>',
         closeOnMouseleave:true,
         content: $submenu
     });
@@ -28,7 +35,7 @@ $('.buttons_for_jbox').each(function () {
 });
 
 toLiItem = function (id, icon, display) {
-  return '<li id="' + id + '"><a><i class="fa fa-' + icon + '"></i>&nbsp;' + display+'</a></li>';
+  return '<li id="' + id + '"><a>&nbsp;' + display+'</a></li>';
 }
 
 $("#bp_link").parent().replaceWith(toLiItem('bp_link', 'user', 'Shareable Link'));

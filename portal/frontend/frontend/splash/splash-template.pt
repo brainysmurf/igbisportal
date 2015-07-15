@@ -1,58 +1,104 @@
 <html metal:use-macro="load: frontend:templates/portal_main.pt">
 
 <div metal:fill-slot="additional-css">
-  <script type="text/javascript" src="${static_url}bootstrap/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
-  <script type="text/javascript" src="${static_url}js/splash/jBox.min.js"></script>
-  <script type="text/javascript" src="${static_url}js/URI.min.js"></script>
-  <script type="text/javascript" src="${static_url}gridly/javascripts/jquery.gridly.js"></script>
-
-  <script type="text/javascript" src="${static_url}js/splash/splash-header-buttons.js"></script>
-  <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
-  <script type="text/javascript" src="${static_url}js/splash/splash-userbuttons.js" defer></script>
-
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}gridly/stylesheets/jquery.gridly.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}fontawesome-iconpicker/css/fontawesome-iconpicker.min.css" />
+
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}colorselector/css/bootstrap-colorselector.css" />
+
+  <script type="text/javascript" src="${static_url}bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/splash/jBox.min.js"></script>
+  <script type="text/javascript" src="${static_url}colorselector/js/bootstrap-colorselector.js"></script>
+
+  <script type="text/javascript" src="${static_url}fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
+<!--   <script type="text/javascript" src="${static_url}bootstrap-popover-picker/js/picker.js"></script> -->
+  <script type="text/javascript" src="${static_url}js/URI.min.js"></script>
+  <script type="text/javascript" src="${static_url}gridly/javascripts/jquery.gridly.js"></script>
+
+
+  <script type="text/javascript" src="${static_url}js/splash/splash-header-buttons.js"></script>
+
+  <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splash-userbuttons.js" defer></script>
+
 
 </div>
 
 <div metal:fill-slot="additional-buttons">
   <!-- <input data-size="large" id="edit_button" type="checkbox" value="1" /> -->
   <button id="settingsButton" class="nav_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>  
+  <button id="editButton" class="nav_button"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit</button>  
 </div>
 
 <div metal:fill-slot="dialogs">
       <div id="unique" style="display:none;" data-unique="${unique or ''}"></div>
 
+      <div id="newTabHolder">
+        <div>
+          <div class="grid"></div>
+        </div>
+      </div>
+
       <div id="newButtonHolder">
-        <div style="display:none;" class="splashButtonHolder ${'small' if settings and settings.icon_size == '-1' else 'large'}">
-          <div class="splashButton"  data-counter="0" data-url="#" data-icon="plus-circle" data-name="New Button">
-            <a class="newButton" href="#">
-                <div><i class="fa fa-plus-circle fa-5x"></i></div>
-            </a>
-          </div>
-          <div class="splashButtonTitle">New Button</div>
+        <div style="display:none;" class="splashButton ${'small' if settings and settings.icon_size == '-1' else 'large'}">
+          <a class="newButton" href="#">
+            <div>
+                <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
+            </div>
+            <div class="splashButtonTitle">New Button</div>
+          </a>
         </div>
       </div>
 
       <div id="newTabDialog" style="display:none;"> 
-        <label for="ntd_from">Enter the Name of the tab:</label><br />
+        <label for="ntd_from">Enter the name of the tab:</label><br />
         <input id="ntd_from" class="full-width" type="text" /><br /><br />
       </div>
 
       <div id="newButtonDialog" style="display:none;"> 
-        <label for="nbd_name">Enter the name of the button here:</label><br />
+        <label for="nbd_name">Enter the name of the button:</label><br />
         <input id="nbd_name" class="full-width" type="text" /><br /><br />
         <label for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span><br />
-        <input id="nbd_link" class="full-width" type="text" />
+        <input id="nbd_link" class="full-width" type="text" /><br /><br />
+
+        <table class="tg">
+          <tr>
+            <th>
+              <label for="nbd_color">Choose the color:</label>
+              <select id="nbd_color">
+                  <option value="default" data-color="#eeeeeee" selected="selected">default</option>
+                  <option value="yellow" data-color="#F1C40F">yellow</option>
+                  <option value="orange" data-color="#F39C12">orange</option>
+                  <option value="pink" data-color="#ffbbdd">pink</option>
+                  <option value="peach" data-color="#eeaaaa">peach</option>
+                  <option value="red" data-color="#1ABC9C">green</option>
+                  <option value="red" data-color="#C0392B">red</option>
+                  <option value="blue" data-color="#FFB30F">blue</option>
+                  <option value="purple" data-color="#8E44AD">purple</option>
+                  <option value="grey" data-color="#7F8C8D">grey</option>
+              </select><br />
+              
+            </th>
+            <th style="width:50%;">
+              <label for="nbd_icon">Choose the icon:</label><br />
+              <div class="input-group iconpicker-container">
+                  <input id="nbd_icon" data-placement="bottomLeft" class="form-control icp icp-auto iconpicker-element iconpicker-input" value="fa-archive" type="text">
+                  <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+              </div>
+            </th>
+          </tr>
+        </table>
+
       </div>
 
       <div id="shareable_link_bp" style="display:none;">
         <p>NOTE: Convert "plain" links to links that have our IGBIS username/password embedded.</p><br /><br />
 
-        <label for="bp_from">Enter the URL here:</label><br />
+        <label for="bp_from">Enter the URL:</label><br />
         <input id="bp_from" class="full-width" type="text" /><br /><br />
         <label for="bp_to">Click the box to "copy":</label><br />
         <input id="bp_to" class="full-width" type="text" />
@@ -90,9 +136,9 @@
       <div class="grid">
         <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
-          <div class="splashButton ${'small' if settings and settings.icon_size == '-1' else 'large'}">
+          <div class="splashButton ${'small' if settings and settings.icon_size == '-1' else 'large'} buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
             <a href="${button.url}">
-              <div tal:define="global counter counter+1"  id="${button.id}" class="buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+              <div tal:define="global counter counter+1"  id="${button.id}">
                     <div class="buttonIcon"><i class="fa fa-${button.icon}"></i></div>
               </div>
               <div class="splashButtonTitle">${button.name}</div>
@@ -124,7 +170,7 @@
       <ul style="display:none" class="submenus_for_jbox" data-counter="${another_counter}" tal:condition="button.context_menu">
         <li tal:repeat="menu_item button.context_menu.get('items')">
           <tal:block tal:condition="menu_item.url">
-            <a href="${menu_item.url}"><i class="fa fa-${menu_item.icon}"></i>&nbsp;${menu_item.display}</a>
+            <a href="${menu_item.url}">&nbsp;${menu_item.display}</a>
           </tal:block>
           <tal:block tal:condition="menu_item.url is False">
             <div id="${menu_item.name}"><hr /></div>

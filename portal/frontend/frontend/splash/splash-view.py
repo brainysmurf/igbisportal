@@ -176,7 +176,7 @@ def splash(request):
         hroom_emails = ",".join(these_teachers)
         base_display = "Grade {{}} HR {}"
         display = base_display.format("Teachers" if len(these_teachers) > 1 else "Teacher")
-        homeroom_items.append(menu_item(icon="envelope", display=display.format(grade), url="mailto:{}".format(hroom_emails)))
+        homeroom_items.append(menu_item(icon="", display=display.format(grade), url="mailto:{}".format(hroom_emails)))
 
     homeroom_items.append(menu_placeholder("mb_homeroom"))
 

@@ -7,6 +7,7 @@ function isValidURL(url)
     }
     catch (e) {
         // Malformed URI
+        console.log('false');
         return false;
     }
 }
@@ -24,7 +25,7 @@ $('a[href="#+').on('click', function (e) {
 		show: "fade",
 		model: true,
 		title: "Create New Tab",
-		height: 150,
+		height: 200,
 		width: 400,
 	    open: function () {
 	    	var $done = $("#newTabDialog").parent().find(":button:contains('Done')");
@@ -66,15 +67,23 @@ $('a[href="#+').on('click', function (e) {
 				  	var $newButton = $('#newButtonHolder').children().clone();
 				  	$newButton.removeAttr('style');
 
-				  	newTab = $('<div id="' + newTabNameIndex + '"></div>');
-				  	newTab.prepend($newButton);
+				  	$newTab = $('#newTabHolder').children().clone();
+				  	$newTab.attr('id', newTabNameIndex);
 
 				  	var $nextToLastDiv = $tabs.children('div:nth-last-child(2)');
-				  	$nextToLastDiv.after(newTab);
+				  	$nextToLastDiv.after($newTab);
+
+				  	$newTab.find('.grid').append($newButton);
 
 				  	$tabs.tabs("refresh");
 				  	var index = $('#tabs_holder a[href="#'+ newTabNameIndex + '"]').parent().index();
 				  	$tabs.tabs('option', 'active', index);
+					$newTab.find('.grid').gridly({
+					  base: 40,
+					  gutter: 10,
+					  columns: 18,
+					  draggable: 'off',
+					});
 
 				    $(this).dialog('close');
 
@@ -98,10 +107,15 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 		show: "fade",
 		model: true,
 		title: "New Button",
-		height: 300,
-		width: 400,
+		height: 500,
+		width: 600,
 		close: false,
 	    open: function () {
+	    	$('#nbd_color').colorselector();
+	    	$('#nbd_icon').iconpicker({
+	    		placement: 'bottomLeft',
+	    	});
+
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
 			$("#newButtonDialog > input").val('');
 
@@ -142,14 +156,21 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 
 		    	var name = $('#nbd_name').val();
 		    	var link = $('#nbd_link').val();
-		    	$newButton.find('a').find('span').text(name);
+		    	var color = $('#nbd_color').val();
+		    	var icon = $('#nbd_icon').val();
+
+		    	$newButton.find('.splashButtonTitle').text(name);
 		    	$newButton.removeAttr('style');
 
 		    	$newButton.find('a').removeClass('newButton').attr('href', link);
+		    	$newButton.addClass(color);
+		    	$newButton.find('.buttonIcon > i').removeClass('fa-plus-circle').addClass(icon);
 
 			  	index = $tabs.tabs('option', 'active');
 			  	$currentTab = $tabs.children('div div:nth-child('+ (index + 2).toString() + ')');
-			  	$currentTab.append($newButton);
+
+			  	$currentTab.find('.grid').append($newButton);
+			  	$currentTab.find('.grid').gridly();
 
 			    $(this).dialog('close');
 			}
@@ -160,12 +181,4 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 	e.preventDefault();
 
 });
-
-$('.grid').gridly({
-	base: 40,
-	gutter: 10,
-	columns: 18,
-	draggable: 'off',
-});
-
 

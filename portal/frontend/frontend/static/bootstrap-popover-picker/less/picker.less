@@ -1,0 +1,80 @@
+/*!
+ * Bootstrap Popover Picker
+ * http://mjolnic.github.io/bootstrap-popover-picker/
+ *
+ * Originally written by (c) 2012 Stefan Petre
+ * Licensed under the Apache License v2.0
+ * https://github.com/mjolnic/bootstrap-popover-picker/blob/master/LICENSE
+ *
+ */
+@import 'variables.less';
+@import 'popovers.less';
+
+.picker{
+    *{
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+        position: relative;
+    }
+    position: relative;
+    .clearfix();
+    text-align:left;
+    text-shadow:none;
+    line-height:0;
+    display:block;
+    margin:0;
+    overflow:hidden;
+
+    .picker-items{
+        position: relative;
+        .clearfix();
+        clear:both;
+        float:none;
+        padding:@base_spacing 0 0 @base_spacing;
+        background:#fff;
+        //margin:0 -@base_spacing -@base_spacing 0;
+        //width:@picker_width - (@base_spacing*2);
+        margin:0;
+        overflow:hidden;
+        overflow-y: auto;
+        min-height: @row_outer_height;
+        max-height: @row_outer_height * @num_rows;
+    }
+
+    .picker-item{
+        float:left;
+        width:@item_size;
+        height:@item_size;
+        padding: @base_spacing;
+        margin:0 @base_spacing @base_spacing 0;
+        text-align:center;
+        cursor:pointer;
+        border-radius:3px;
+        font-size:@item_size;
+        .outer-border();
+        &:hover:not(.picker-selected){
+            background-color:@hover_bg;
+        }
+        &.picker-selected{
+            box-shadow: none;
+        }
+        i{
+            display: inline-block;
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+        }
+        /*&:nth-child(4n+4) {
+            margin-right: 0;
+        }
+        &:nth-last-child(-n+4) {
+            margin-bottom: 0;
+        }*/
+        //box-shadow:0;
+    }
+}
+
+.picker-component{
+    cursor:pointer;
+}
