@@ -114,43 +114,59 @@ p {
 /*    text-shadow:1px 1px 0px #fff;*/
 }
 
+.splashButton.lightYellow {
+    background: #FFD600;
+}
+
 .splashButton.yellow {
-    background: #F1C40F;
+    background: #D8DC6A;
 }
 
 .splashButton.orange {
     background: #F39C12;
 }
 
-.splashButton.pink {
-    background: #ffbbdd;
-}
-
 .splashButton.peach {
     background: #eeaaaa;
 }
 
+.splashButton.beige {
+    background: #C1BCAC;
+}
+
 .splashButton.green {
-    background: #1ABC9C;
+    background: #2ECC71;
+}
+
+.splashButton.brightGreen {
+    background: #D1DEDE;
+}
+
+.splashButton.aqua {
+    background: #64A6BD;
+}
+
+.splashButton.blue {
+    background: #A9CEF4;
 }
 
 .splashButton.red {
-    background: #C0392B;
+    background: #DF928E;
 }
 
-.splashButton.blue {
-    background: #437F97;
+.splashButton.pink {
+    background: #ffbbdd;
 }
 
-.splashButton.blue {
-    background: #FFB30F;
+.splashButton.darkPink {
+    background: #ffccdd;
 }
 
 .splashButton.purple {
-    background: #8E44AD;
+    background: #ADA7C9;
 }
 
-.splashButton.grey {
+.splashButton.brown {
     background: #888;
 }
 
@@ -306,7 +322,8 @@ hr {
 } 
 
 #button_list {
-    margin-right:160px;
+    width:930px;
+    text-align: right;
 }
 
 .bootstrap-switch-container {
@@ -387,8 +404,12 @@ hr {
 label {
     font-family: "Roboto Condensed";    
     color: #333;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+label.high-margin {
+    margin-top: 20px;
 }
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
@@ -556,13 +577,15 @@ label {
 
 .btn-colorselector {
     border:1pt solid #999;
+    width: 100px;
+    height: 100px;
 }
 
 .color-btn {
     border: 1pt solid #999;
 }
 
-.tg  {border-collapse:collapse;border-spacing:0;width:100%;}
+.tg  {border-collapse:collapse;border-spacing:0;width:100%;margin-top:200px;}
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border:none;word-break:normal;}
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border:none;word-break:normal;}
 
@@ -580,6 +603,28 @@ label {
 }
 
 .iconpicker .iconpicker-item {
-    width: 12px;
-    margin: 0 5px 5px 0;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  font-size: 13pt;
+  padding-top: 3px;
+}
+
+.input-group-addon {
+    height: 100px;
+    width: 100px;
+}
+
+.input-group-addon:first-child {
+    border: 0;
+    font-size: 40pt;
+}
+
+.input-group .form-control, .input-group-addon, .input-group-btn {
+    display:block;
+}
+
+.iconpicker-popover.popover .popover-title {
+    background: #666;
 }

@@ -1,13 +1,13 @@
 <html metal:use-macro="load: frontend:templates/portal_main.pt">
 
-<div metal:fill-slot="additional-css">
+<div metal:fill-slot="additional-css" tal:omit-tag="">
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}gridly/stylesheets/jquery.gridly.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}fontawesome-iconpicker/css/fontawesome-iconpicker.min.css" />
 
-  <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}colorselector/css/bootstrap-colorselector.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
 
   <script type="text/javascript" src="${static_url}bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
@@ -24,11 +24,9 @@
 
   <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splash-userbuttons.js" defer></script>
-
-
 </div>
 
-<div metal:fill-slot="additional-buttons">
+<div metal:fill-slot="additional-buttons" tal:omit-tag="">
   <!-- <input data-size="large" id="edit_button" type="checkbox" value="1" /> -->
   <button id="settingsButton" class="nav_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>  
   <button id="editButton" class="nav_button"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit</button>  
@@ -55,43 +53,37 @@
       </div>
 
       <div id="newTabDialog" style="display:none;"> 
-        <label for="ntd_from">Enter the name of the tab:</label><br />
+        <label class="high-margin" for="ntd_from">Enter the name of the tab:</label><br />
         <input id="ntd_from" class="full-width" type="text" /><br /><br />
       </div>
 
       <div id="newButtonDialog" style="display:none;"> 
-        <label for="nbd_name">Enter the name of the button:</label><br />
-        <input id="nbd_name" class="full-width" type="text" /><br /><br />
-        <label for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span><br />
-        <input id="nbd_link" class="full-width" type="text" /><br /><br />
+        <label class="high-margin" for="nbd_name">Enter the name of the button:</label>
+        <input id="nbd_name" class="full-width" type="text" />
+        <label class="high-margin" for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span>
+        <input id="nbd_link" class="full-width" type="text" />
 
-        <table class="tg">
-          <tr>
-            <th>
-              <label for="nbd_color">Choose the color:</label>
-              <select id="nbd_color">
-                  <option value="default" data-color="#eeeeeee" selected="selected">default</option>
-                  <option value="yellow" data-color="#F1C40F">yellow</option>
-                  <option value="orange" data-color="#F39C12">orange</option>
-                  <option value="pink" data-color="#ffbbdd">pink</option>
-                  <option value="peach" data-color="#eeaaaa">peach</option>
-                  <option value="red" data-color="#1ABC9C">green</option>
-                  <option value="red" data-color="#C0392B">red</option>
-                  <option value="blue" data-color="#FFB30F">blue</option>
-                  <option value="purple" data-color="#8E44AD">purple</option>
-                  <option value="grey" data-color="#7F8C8D">grey</option>
-              </select><br />
-              
-            </th>
-            <th style="width:50%;">
-              <label for="nbd_icon">Choose the icon:</label><br />
-              <div class="input-group iconpicker-container">
-                  <input id="nbd_icon" data-placement="bottomLeft" class="form-control icp icp-auto iconpicker-element iconpicker-input" value="fa-archive" type="text">
-                  <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
-              </div>
-            </th>
-          </tr>
-        </table>
+        <label class="high-margin" for="nbd_color">Choose the color:</label>
+        <select id="nbd_color">
+            <option value="default" data-color="#eeeeeee" selected="selected">default</option>
+            <option value="lightYellow" data-color="#FFD600">lightYellow</option>
+            <option value="yellow" data-color="#D8DC6A">yellow</option>
+            <option value="orange" data-color="#F39C12">orange</option>
+            <option value="peach" data-color="#eeaaaa">peach</option>
+            <option value="beige" data-color="#C1BCAC">beige</option>
+            <option value="green" data-color="#2ECC71">green</option>
+            <option value="brightGreen" data-color="#D1DEDE">brightGreen</option>
+            <option value="blue" data-color="#A9CEF4">blue</option>
+            <option value="red" data-color="#DF928E">red</option>
+            <option value="darkPink" data-color="#ffccdd">darkPink</option>
+            <option value="purple" data-color="#ADA7C9">purple</option>
+        </select>
+        
+        <label class="high-margin" for="nbd_icon">Choose the icon:</label>
+        <div class="input-group iconpicker-container">
+            <div class="input-group-addon"><i class="fa fa-external-link-square"></i></div>
+            <input id="nbd_icon" data-placement="bottomLeft" class="form-control icp icp-auto iconpicker-element iconpicker-input" value="fa-external-link-square" type="text">
+        </div>
 
       </div>
 

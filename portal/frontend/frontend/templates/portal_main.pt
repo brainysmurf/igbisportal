@@ -20,11 +20,13 @@
   <div metal:define-slot="dialogs">
   </div>
 
-  <div id="button_list" style="display:none;">
+  <center>
+    <div id="button_list" style="display:none;">
       <div metal:define-slot="additional-buttons"></div>
       <button id="userButton" class="nav_button" ><i class="fa fa-user"></i>&nbsp;&nbsp;${name or "Logged in!"}</button>
-  </div>
-  <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+  </center>
 
   <div tal:condition="unique" id="signinButton" style="height:36px;">
     <!-- 
