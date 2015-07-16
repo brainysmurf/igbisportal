@@ -119,7 +119,11 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
 
-	    	$done.prop("disabled", true).addClass("ui-state-disabled");
+	    	if (isValidURL($('#nbd_link').val())) {
+		    	$done.prop("disabled", false).removeClass("ui-state-disabled");
+	    	} else {
+		    	$done.prop("disabled", true).addClass("ui-state-disabled");
+		    }
 	    	$('#newButtonDialog').find('.js-validate-msg').text('');
 
 	    	var $preview = $('#newButtonHolder').children().clone();
