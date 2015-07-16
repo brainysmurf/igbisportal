@@ -410,11 +410,15 @@ label {
 
 label.high-margin {
     margin-top: 20px;
+    margin-left: 6px;
 }
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
   font-family: "Roboto Condensed";
   font-size: 1em;
+  color: #111;
+  padding: 5px;
+  border: 1px solid #ccc;
 }
 
 .nav_button {
@@ -576,9 +580,9 @@ label.high-margin {
 }
 
 .btn-colorselector {
-    border:1pt solid #999;
-    width: 100px;
-    height: 100px;
+    border:1pt solid #ccc;
+    width: 100%;
+    height: 30px;
 }
 
 .color-btn {
@@ -611,20 +615,6 @@ label.high-margin {
   padding-top: 3px;
 }
 
-.input-group-addon {
-    height: 100px;
-    width: 100px;
-}
-
-.input-group-addon:first-child {
-    border: 0;
-    font-size: 40pt;
-}
-
-.input-group .form-control, .input-group-addon, .input-group-btn {
-    display:block;
-}
-
-.iconpicker-popover.popover .popover-title {
+/*.iconpicker-popover.popover .popover-title {
     background: #666;
-}
+}*/

@@ -42,7 +42,7 @@
       </div>
 
       <div id="newButtonHolder">
-        <div style="display:none;" class="splashButton ${'small' if settings and settings.icon_size == '-1' else 'large'}">
+        <div style="display:none;" class="splashButton small">
           <a class="newButton" href="#">
             <div>
                 <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
@@ -58,6 +58,8 @@
       </div>
 
       <div id="newButtonDialog" style="display:none;"> 
+        <!-- <label class="high-margin" for="nbd_preview">Preview:</label> -->
+        <div id="nbd_preview"></div>
         <label class="high-margin" for="nbd_name">Enter the name of the button:</label>
         <input id="nbd_name" class="full-width" type="text" />
         <label class="high-margin" for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span>
@@ -81,7 +83,7 @@
         
         <label class="high-margin" for="nbd_icon">Choose the icon:</label>
         <div class="input-group iconpicker-container">
-            <div class="input-group-addon"><i class="fa fa-external-link-square"></i></div>
+            <span class="input-group-addon"><i class="fa fa-external-link-square"></i></span>
             <input id="nbd_icon" data-placement="bottomLeft" class="form-control icp icp-auto iconpicker-element iconpicker-input" value="fa-external-link-square" type="text">
         </div>
 
@@ -128,7 +130,7 @@
       <div class="grid">
         <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
-          <div class="splashButton ${'small' if settings and settings.icon_size == '-1' else 'large'} buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+          <div class="splashButton small buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
             <a href="${button.url}">
               <div tal:define="global counter counter+1"  id="${button.id}">
                     <div class="buttonIcon"><i class="fa fa-${button.icon}"></i></div>

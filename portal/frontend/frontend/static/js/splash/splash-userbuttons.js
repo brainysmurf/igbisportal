@@ -108,20 +108,42 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 		show: "fade",
 		model: true,
 		title: "New Button",
-		height: 550,
+		height: 500,
 		width: 400,
 		close: false,
 	    open: function () {
 	    	$('#nbd_color').colorselector();
 	    	$('#nbd_icon').iconpicker({
-	    		placement: 'topLeft',
+	    		placement: 'topRight',
+	    		hideOnSelect: true,
 	    	});
 
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
-			$("#newButtonDialog > input").val('');
 
 	    	//$done.prop("disabled", true).addClass("ui-state-disabled");
 	    	$('#newButtonDialog').find('.js-validate-msg').text('');
+
+	    	var $preview = $('#newButtonHolder').children().clone();
+	    	$preview.find('a').removeClass('newButton');
+	    	$preview.find('.splashButtonTitle').text('Preview');
+	    	$preview.find('i').removeClass('fa-plus-circle').addClass($('#nbd_icon').val());
+	    	$preview.addClass($('#nbd_color').val());
+	    	$('#nbd_preview').replaceWith($preview);
+	    	$preview.attr('id', 'nbd_preview');
+	    	$preview.on('click', function(e) {
+	    		e.preventDefault();
+	    	});
+	    	$preview.css('display', 'block');
+
+	    	$('#nbd_icon').on('iconpickerSelected', function (e) {
+	    		console.log(e.iconpickerValue);
+	    		$preview.find('i').removeAttr('class').addClass('fa').addClass('fa-'+e.iconpickerValue);
+	    	});
+
+	    	$('#nbd_color').on('change', function (e) {
+	    		color = $('#nbd_color').val();
+	    		$('#nbd_preview').removeAttr('class').addClass('splashButton').addClass('small').addClass(color);
+	    	});
 
 		   	$("#newButtonDialog").keyup(function(e) {
 	    		var name = $('#nbd_name').val();
