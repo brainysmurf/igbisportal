@@ -15,10 +15,8 @@
   <script type="text/javascript" src="${static_url}colorselector/js/bootstrap-colorselector.js"></script>
 
   <script type="text/javascript" src="${static_url}fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
-<!--   <script type="text/javascript" src="${static_url}bootstrap-popover-picker/js/picker.js"></script> -->
   <script type="text/javascript" src="${static_url}js/URI.min.js"></script>
   <script type="text/javascript" src="${static_url}gridly/javascripts/jquery.gridly.js"></script>
-
 
   <script type="text/javascript" src="${static_url}js/splash/splash-header-buttons.js"></script>
 

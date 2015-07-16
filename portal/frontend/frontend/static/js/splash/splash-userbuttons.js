@@ -1,6 +1,5 @@
 function isValidURL(url)
 {
-	return true;
     try {
         var uri = new URI(url);
         // URI has a scheme and a host
@@ -120,7 +119,7 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
 
-	    	//$done.prop("disabled", true).addClass("ui-state-disabled");
+	    	$done.prop("disabled", true).addClass("ui-state-disabled");
 	    	$('#newButtonDialog').find('.js-validate-msg').text('');
 
 	    	var $preview = $('#newButtonHolder').children().clone();
