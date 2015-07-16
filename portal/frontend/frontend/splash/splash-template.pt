@@ -123,7 +123,7 @@
       <li tal:repeat="key buttons"><a href="#${key}">${key.replace('_', ' ')}</a></li>
     </ul>
 
-   <tal:block tal:define="global counter 0" tal:repeat="key buttons">
+   <tal:block tal:define="global counter 1" tal:repeat="key buttons">
     <div id="${key}">
       <div class="grid">
         <tal:block tal:define="items buttons[key]" tal:repeat="button items">
