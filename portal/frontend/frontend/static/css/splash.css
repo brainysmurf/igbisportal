@@ -76,6 +76,10 @@ p {
     width: 960px;
 }
 
+.splashButtonContainer {
+    display: inline-block;
+}
+
 .splashButton {
     position: relative;
     cursor: pointer;
@@ -108,13 +112,14 @@ p {
     font-style:normal;
     text-decoration:none;
     text-align:center;
+    z-index:1;
 /*    text-shadow:1px 1px 0px #fff;*/
 }
 
-/*.splashButton.editButton {
-    opacity: 0.2;
+.buttonIcon.editButton {
+    cursor: move;
 }
-*/
+
 .splashButton.lightYellow {
     background: #FFD600;
 }
@@ -625,11 +630,20 @@ label.high-margin {
     cursor: move;
 }
 
+.onButton:hover {
+    background: #eee;
+}
+
 .sizeOnButton {
     border: 1px solid #eee;
+    -webkit-border-top-right-radius:3px;
+    -moz-border-radius-topright:3px;
+    border-top-right-radius:3px;
     -webkit-border-bottom-left-radius:9px;
     -moz-border-radius-bottomleft:9px;
     border-bottom-left-radius:9px;
+    border-bottom-color: #ccc;
+    border-left-color: #ccc;
     padding: 5px;
     position: absolute;
     cursor: pointer;
@@ -642,10 +656,15 @@ label.high-margin {
 }
 
 .editOnButton {
+    border: 1px solid #eee;
+    -webkit-border-top-left-radius:3px;
+    -moz-border-radius-topleft:3px;
+    border-top-left-radius:3px;
     -webkit-border-bottom-right-radius:9px;
     -moz-border-radius-bottomright:9px;
     border-bottom-right-radius:9px;
-    border: 1px solid #eee;
+    border-bottom-color: #ccc;
+    border-right: ;-color: #ccc;
     padding: 5px;
     position: absolute;
     color: #000;

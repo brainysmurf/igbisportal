@@ -95,14 +95,24 @@ function do_settings_dialog() {
         jbox_array[index].enable();
       });
 
-      $('.splashButton').removeClass('editButton').animate({opacity:1});
-      $('.onButton').animate({opacity: 0});
+      $('.splashButton').find('.buttonIcon').removeClass('editButton')
+      $('.splashButton').animate({opacity:1});
+      $('.onButton').animate({opacity: 0}, {
+          done: function() {
+              $('.onButton').removeAttr('style');
+          }
+      });
       $('#tabs_titlebar').find('li').removeClass('editTab');
       $('#tabs_titlebar').sortable('destroy');
+      $('.splashButton').off('click');
 
     } else {
 
-      // It's off
+      // It's off, turn it on
+
+      $('.splashButton').on('click', function (e) {
+          e.preventDefault();
+      });
 
       obj.css('background', '#999').css('color', '#eee');
 
@@ -114,12 +124,13 @@ function do_settings_dialog() {
       });
 
      // make the buttons editable
-     $('.splashButton').addClass('editButton').animate({opacity: 0.4});
+     $('.splashButton').find('.buttonIcon').addClass('editButton');
+     $('.splashButton').animate({opacity: 0.4});
      $('.onButton').animate({
           opacity: 1,
       }, {
           done: function () {
-              $('onButton').css('z-index', '1');
+              $('.onButton').css('z-index', '2');
           },
       });
      $('#tabs_titlebar').addClass('editTab');
@@ -130,8 +141,8 @@ function do_settings_dialog() {
         opacity: 0.5
      });
 
-     $('.grid').gridly({dragabble: "on"});
-
+     console.log('turn gridly drag on Secondary');
+     $('#Secondary_Teachers').find('.grid').gridly('draggable', "on");
     }
   });
 

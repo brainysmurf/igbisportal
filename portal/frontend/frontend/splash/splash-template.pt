@@ -77,8 +77,6 @@
             <option value="green" data-color="#2ECC71">green</option>
             <option value="brightGreen" data-color="#D1DEDE">brightGreen</option>
             <option value="blue" data-color="#A9CEF4">blue</option>
-            <option value="red" data-color="#DF928E">red</option>
-            <option value="darkPink" data-color="#ffccdd">darkPink</option>
             <option value="purple" data-color="#ADA7C9">purple</option>
         </select>
         

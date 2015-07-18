@@ -8,11 +8,15 @@ if (unique === "") {
 
 $('#tabs_holder').tabs();
 
-$('.grid').gridly({
-  base: 40,
-  gutter: 10,
-  columns: 18,
-  draggable: 'off',
+$(function () {
+  console.log('initing gridly');
+  $('.grid').gridly({
+    base: 40,
+    gutter: 10,
+    columns: 18,
+    draggable: 'off',
+  });
+  console.log('done initing');
 });
 
 $('.buttons_for_jbox').each(function () {
