@@ -16,7 +16,7 @@ $('#newBlah').on('click', function (e) {
 	e.preventDefault();
 });
 
-$('a[href="#+').on('click', function (e) {
+$('#newTabButton').on('click', function (e) {
 
 	$('#newTabDialog').dialog({
 	    dialogClass: "no-close",
@@ -58,22 +58,17 @@ $('a[href="#+').on('click', function (e) {
 		  		if (index != -1) { 
 		  			alert('Tab name have to be unique!');
 		  		} else {
-					var nextToLastLi = $tabs.find('ul > li:nth-last-child(2)');
+					var lastLi = $tabs.find('ul > li:last-child');
 
 				  	// TODO: Add target depending on user setting? to be consistent?
 				  	var newTabTitle = $('<li><a href="#'+ newTabNameIndex + '">' + newTabName + '</a></li>');
-				  	nextToLastLi.after(newTabTitle);
-
-				  	var $newButton = $('#newButtonHolder').children().clone();
-				  	$newButton.removeAttr('style');
+				  	lastLi.after(newTabTitle);
 
 				  	$newTab = $('#newTabHolder').children().clone();
 				  	$newTab.attr('id', newTabNameIndex);
 
-				  	var $nextToLastDiv = $tabs.children('div:nth-last-child(2)');
-				  	$nextToLastDiv.after($newTab);
-
-				  	$newTab.find('.grid').append($newButton);
+				  	var $lastDiv = $tabs.children('div:last-child');
+				  	$lastDiv.after($newTab);
 
 				  	$tabs.tabs("refresh");
 				  	var index = $('#tabs_holder a[href="#'+ newTabNameIndex + '"]').parent().index();
@@ -86,8 +81,6 @@ $('a[href="#+').on('click', function (e) {
 					});
 
 				    $(this).dialog('close');
-
-				  	$newButton.find('a').click();
 				}
 			}
 		  }
@@ -98,8 +91,19 @@ $('a[href="#+').on('click', function (e) {
 
 });
 
-$('#tabs_holder').on('click', '.newButton', function (e) {
+$('#newButtonButton').on('click', function (e) {
 
+	e.preventDefault();
+	newEditButtonDialog();
+
+});
+
+$('.editOnButton').on('click', function (e) {
+	e.preventDefault();
+	newEditButtonDialog();
+});
+
+function newEditButtonDialog() {
 	$('#newButtonDialog').dialog({
 	    dialogClass: "no-close",
 		resizeable: false,
@@ -139,7 +143,6 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 	    	$preview.css('display', 'block');
 
 	    	$('#nbd_icon').on('iconpickerSelected', function (e) {
-	    		console.log(e.iconpickerValue);
 	    		$preview.find('i').removeAttr('class').addClass('fa').addClass('fa-'+e.iconpickerValue);
 	    	});
 
@@ -198,13 +201,11 @@ $('#tabs_holder').on('click', '.newButton', function (e) {
 			  	$currentTab.find('.grid').append($newButton);
 			  	$currentTab.find('.grid').gridly();
 
+			  	$('#newButtonButton').click();
 			    $(this).dialog('close');
 			}
 		  }
 		}
 	});
-
-	e.preventDefault();
-
-});
+}
 

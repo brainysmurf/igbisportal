@@ -76,11 +76,8 @@ p {
     width: 960px;
 }
 
-.editButton {
-    border: 2px solid #eee;
-}
-
 .splashButton {
+    position: relative;
     cursor: pointer;
     display: inline-block;
     /*-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -114,6 +111,10 @@ p {
 /*    text-shadow:1px 1px 0px #fff;*/
 }
 
+/*.splashButton.editButton {
+    opacity: 0.2;
+}
+*/
 .splashButton.lightYellow {
     background: #FFD600;
 }
@@ -174,6 +175,7 @@ p {
     font-size: 40pt;
     width: 90px;
     height: 100px;
+    margin: 0 auto;
 }
 
 .splashButton.large {
@@ -618,3 +620,40 @@ label.high-margin {
 /*.iconpicker-popover.popover .popover-title {
     background: #666;
 }*/
+
+.editTab {
+    cursor: move;
+}
+
+.sizeOnButton {
+    border: 1px solid #eee;
+    -webkit-border-bottom-left-radius:9px;
+    -moz-border-radius-bottomleft:9px;
+    border-bottom-left-radius:9px;
+    padding: 5px;
+    position: absolute;
+    cursor: pointer;
+    color: #000;
+    bottom: 0;
+    left: 0;
+    font-size: 10pt;
+    text-align: center;
+    opacity: 0;
+}
+
+.editOnButton {
+    -webkit-border-bottom-right-radius:9px;
+    -moz-border-radius-bottomright:9px;
+    border-bottom-right-radius:9px;
+    border: 1px solid #eee;
+    padding: 5px;
+    position: absolute;
+    color: #000;
+    cursor: pointer;
+    bottom: 0;
+    right: 0;
+    font-size: 10pt;
+    text-align: center;
+    opacity: 0;
+}
+

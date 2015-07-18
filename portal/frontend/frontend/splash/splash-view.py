@@ -264,9 +264,7 @@ def splash(request):
                 settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
             except NoResultFound:
                 pass
-
-    buttons['+'] = []
-
+                
     return dict(
         client_id=gns.config.google.client_id,
         unique=unique,

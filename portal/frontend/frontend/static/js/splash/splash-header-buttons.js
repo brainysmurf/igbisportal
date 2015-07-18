@@ -95,26 +95,42 @@ function do_settings_dialog() {
         jbox_array[index].enable();
       });
 
-      $('.splashButton').each(function (item) {
-        $(this).removeClass('editButton');
-      });
-
+      $('.splashButton').removeClass('editButton').animate({opacity:1});
+      $('.onButton').animate({opacity: 0});
+      $('#tabs_titlebar').find('li').removeClass('editTab');
+      $('#tabs_titlebar').sortable('destroy');
 
     } else {
 
       // It's off
+
       obj.css('background', '#999').css('color', '#eee');
+
+      // disable the jboxes
       jbox_array.forEach(function (item, index) { 
         //console.log(jbox_array[index]);
         //FIXME this doesn't actually work
         jbox_array[index].disable();
       });
 
-     $('.splashButton').each(function (item) {
-        $(item).addClass('editButton');
+     // make the buttons editable
+     $('.splashButton').addClass('editButton').animate({opacity: 0.4});
+     $('.onButton').animate({
+          opacity: 1,
+      }, {
+          done: function () {
+              $('onButton').css('z-index', '1');
+          },
       });
+     $('#tabs_titlebar').addClass('editTab');
+     $('#tabs_titlebar').sortable({
+        axis: 'x',
+        cursor: 'move',
+        revert: true,
+        opacity: 0.5
+     });
 
-      //$('.grid').gridly({dragabble: "on"});
+     $('.grid').gridly({dragabble: "on"});
 
     }
   });
