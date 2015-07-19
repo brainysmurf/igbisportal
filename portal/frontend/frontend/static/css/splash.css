@@ -454,11 +454,20 @@ label.high-margin {
     -moz-border-radius-bottomleft:9px;
     border-bottom-left-radius:9px;
 }
+
 .nav_button:hover {
   background: #999;
   border: 1px solid #999;
   color: #eee;
+  border: 1px solid #dcdcdc;
   text-decoration: none;
+}
+
+.nav_button[disabled], .navButton[disabled]:hover {
+    opacity: .5;
+    cursor: pointer;
+    background-color: #eee;
+    color: #999;
 }
 
 #signinButton {

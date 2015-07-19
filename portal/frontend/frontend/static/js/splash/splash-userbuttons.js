@@ -21,6 +21,20 @@ function isValidURL(url)
     }
 }
 
+$('#newButtonButton').attr('disabled', true);
+
+$('#tabs_titlebar').on('click', '.draggableTab', function (e) {
+	var index = $('#tabs_holder a[href="' + $(e.target).attr('href') + '"]').parent().index();
+	var howMany = $('.notUserCreated').length;
+	// TODO: Count the number of those provided 
+	if (index > (howMany - 1)) {
+		$('#newButtonButton').attr('disabled', false);		
+	}
+	else {
+		$('#newButtonButton').attr('disabled', true);		
+	}
+});
+
 $('#newTabButton').on('click', function (e) {
 
 	$('#newTabDialog').dialog({
@@ -66,7 +80,7 @@ $('#newTabButton').on('click', function (e) {
 					var lastLi = $tabs.find('ul > li:last-child');
 
 				  	// TODO: Add target depending on user setting? to be consistent?
-				  	var newTabTitle = $('<li><a href="#'+ newTabNameIndex + '">' + newTabName + '</a></li>');
+				  	var newTabTitle = $('<li><a class="draggableTab" href="#'+ newTabNameIndex + '">' + newTabName + '</a></li>');
 				  	lastLi.after(newTabTitle);
 
 				  	$newTab = $('#newTabHolder').children().clone();
@@ -85,6 +99,7 @@ $('#newTabButton').on('click', function (e) {
 					  draggable: 'off',
 					});
 
+					$('#newButtonButton').attr('disabled', false);
 				    $(this).dialog('close');
 				}
 			}
@@ -101,16 +116,24 @@ $('#newButtonButton').on('click', function (e) {
 	e.preventDefault();
 	newEditButtonDialog(e);
 
+	// straight-forward setting
+	$('#nbd_name').val("New Button");
+	$('#nbd_link').val("");
+	//$('#nbd_preview i').attr('class', iconInfo);
+
+	// change both the backend and user-faceing frontend pop-up
+	$("#nbd_color").val('#EEEEEE');
+	$('.btn-colorselector').css('background-color', '#EEEEEE');
 });
 
-$('.editOnButton').on('click', function (e) {
+$('#tabs_holder').on('click', '.editOnButton', function (e) {
 	e.preventDefault();
 	e.stopPropagation();
 	var $parent = $(e.target).parent();
 	var text = $parent.find('.splashButtonTitle').text();
 	var link = $parent.find('a').attr('href');
 	var color = $parent.find('.splashButton').css('backgroundColor');
-	var iconInfo = $parent.find('i').attr('class');
+	var iconInfo = $parent.find('.buttonIcon i').attr('class');
 
 	// get the right color
 	color = hexc(color);
@@ -246,8 +269,6 @@ function newEditButtonDialog(event) {
 				  	index = $tabs.tabs('option', 'active');
 				  	$currentTab = $tabs.children('div div:nth-child('+ (index + 2).toString() + ')');
 
-				  	console.log('new button is ');
-				  	console.log($newButton);
 				  	$currentTab.find('.grid').append($newButton);
 				  	$currentTab.find('.grid').gridly();
 

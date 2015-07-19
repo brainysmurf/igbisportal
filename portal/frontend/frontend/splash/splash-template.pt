@@ -52,6 +52,10 @@
               <div class="splashButtonTitle">New Button</div>
             </a>
           </div>
+
+          <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
+          <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
+
         </div>
       </div>
 
@@ -131,7 +135,7 @@
 
   <div id="tabs_holder">
     <ul id="tabs_titlebar">
-      <li tal:repeat="key buttons"><a class="draggableTab" href="#${key}">${key.replace('_', ' ')}</a></li>
+      <li tal:repeat="key buttons"><a class="notUserCreated draggableTab" href="#${key}">${key.replace('_', ' ')}</a></li>
     </ul> 
 
    <tal:block tal:define="global counter 1" tal:repeat="key buttons">
