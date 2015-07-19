@@ -99,7 +99,7 @@ $('#newTabButton').on('click', function (e) {
 $('#newButtonButton').on('click', function (e) {
 
 	e.preventDefault();
-	newEditButtonDialog();
+	newEditButtonDialog(e);
 
 });
 
@@ -128,7 +128,7 @@ $('.editOnButton').on('click', function (e) {
 });
 
 function newEditButtonDialog(event) {
-	var isOnButton = $(event.target).attr('class').substr('onButton');
+	var isOnButton = $(event.target).attr('class') != 'nav_button';
 	if (isOnButton) {
 		var $targetButton = $(event.target).parent();
 	}
@@ -172,7 +172,7 @@ function newEditButtonDialog(event) {
 				$('#nbd_icon').parent().find('.input-group-addon > i').attr('class', iconInfo);
 				$preview.css('background-color', $('#nbd_color').val());
 	    	} else {
-		    	$preview.find('i').attr('class', $('#nbd_icon').val());
+		    	$preview.find('i').attr('class', $('#nbd_icon').val()).addClass('fa');
 		    }
 	    	$preview.on('click', function(e) {
 	    		e.preventDefault();
@@ -219,8 +219,6 @@ function newEditButtonDialog(event) {
 		  	$(this).dialog('close');
 		  },
 		  "Done": function () { 
-			var $tabs = $('#tabs_holder');
-		  	var $newButton = $('#newButtonHolder').children().clone();
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
 	    	if (!$done.hasClass('ui-state-disabled')) {
 
@@ -235,20 +233,24 @@ function newEditButtonDialog(event) {
 		    		$targetButton.find('.splashButton').css('background-color', color);
 		    		$targetButton.find('.buttonIcon i').attr('class', icon).addClass('fa');
 		    	} else {
+				  	var $newButton = $('#newButtonHolder').children().clone();
+					var $tabs = $('#tabs_holder');
+
 			    	$newButton.find('.splashButtonTitle').text(name);
 			    	$newButton.removeAttr('style');
 
 			    	$newButton.find('a').removeClass('newButton').attr('href', link);
-			    	$newButton.addClass(color);
-			    	$newButton.find('.buttonIcon > i').removeClass('fa-plus-circle').addClass(icon);
+			    	$newButton.find('.splashButton').css('background-color', color);
+			    	$newButton.find('.buttonIcon i').removeClass('fa-plus-circle').addClass(icon);
 
 				  	index = $tabs.tabs('option', 'active');
 				  	$currentTab = $tabs.children('div div:nth-child('+ (index + 2).toString() + ')');
 
+				  	console.log('new button is ');
+				  	console.log($newButton);
 				  	$currentTab.find('.grid').append($newButton);
 				  	$currentTab.find('.grid').gridly();
 
-				  	$('#newButtonButton').click();
 				 }
 
 			    $(this).dialog('close');

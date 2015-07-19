@@ -43,8 +43,8 @@
       </div>
 
       <div id="newButtonHolder">
-        <div class="splashButtonContainer">
-          <div style="display:none;" class="splashButton small">
+        <div style="display:none;" class="splashButtonContainer">
+          <div class="splashButton small">
             <a class="newButton" href="#">
               <div>
                   <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
