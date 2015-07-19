@@ -43,13 +43,15 @@
       </div>
 
       <div id="newButtonHolder">
-        <div style="display:none;" class="splashButton small">
-          <a class="newButton" href="#">
-            <div>
-                <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
-            </div>
-            <div class="splashButtonTitle">New Button</div>
-          </a>
+        <div class="splashButtonContainer">
+          <div style="display:none;" class="splashButton small">
+            <a class="newButton" href="#">
+              <div>
+                  <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
+              </div>
+              <div class="splashButtonTitle">New Button</div>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -60,24 +62,32 @@
 
       <div id="newButtonDialog" style="display:none;"> 
         <!-- <label class="high-margin" for="nbd_preview">Preview:</label> -->
-        <div id="nbd_preview"></div>
+        <div id="nbd_preview" class="splashButton small">
+          <a class="newButton" href="#">
+            <div>
+                <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
+            </div>
+            <div class="splashButtonTitle">Preview</div>
+          </a>
+        </div>
+
         <label class="high-margin" for="nbd_name">Enter the name of the button:</label>
-        <input id="nbd_name" class="full-width" type="text" />
+        <input id="nbd_name" placeholder="Button Name" class="full-width" type="text" />
         <label class="high-margin" for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span>
-        <input id="nbd_link" class="full-width" type="text" />
+        <input id="nbd_link" placeholder="http://example.com" class="full-width" type="text" />
 
         <label class="high-margin" for="nbd_color">Choose the color:</label>
         <select id="nbd_color">
-            <option value="default" data-color="#eeeeeee" selected="selected">default</option>
-            <option value="lightYellow" data-color="#FFD600">lightYellow</option>
-            <option value="yellow" data-color="#D8DC6A">yellow</option>
-            <option value="orange" data-color="#F39C12">orange</option>
-            <option value="peach" data-color="#eeaaaa">peach</option>
-            <option value="beige" data-color="#C1BCAC">beige</option>
-            <option value="green" data-color="#2ECC71">green</option>
-            <option value="brightGreen" data-color="#D1DEDE">brightGreen</option>
-            <option value="blue" data-color="#A9CEF4">blue</option>
-            <option value="purple" data-color="#ADA7C9">purple</option>
+            <option value="#EEEEEE" data-color="#EEEEEE" selected="selected">#EEEEEE</option>
+            <option value="#FFD600" data-color="#FFD600">#FFD600</option>
+            <option value="#D8DC6A" data-color="#D8DC6A">#D8DC6A</option>
+            <option value="#F39C12" data-color="#F39C12">#F39C12</option>
+            <option value="#EEAAAA" data-color="#EEAAAA">#EEAAAA</option>
+            <option value="#C1BCAC" data-color="#C1BCAC">#C1BCAC</option>
+            <option value="#2ECC71" data-color="#2ECC71">#2ECC71</option>
+            <option value="#D1DEDE" data-color="#D1DEDE">#D1DEDE</option>
+            <option value="#A9CEF4" data-color="#A9CEF4">#A9CEF4</option>
+            <option value="#ADA7C9" data-color="#ADA7C9">#ADA7C9</option>
         </select>
         
         <label class="high-margin" for="nbd_icon">Choose the icon:</label>
@@ -130,17 +140,19 @@
         <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
           <div class="splashButtonContainer">
-          <div class="onButton sizeOnButton"><i class="fa fa-expand"></i></div>
-          <div class="onButton editOnButton"><i class="fa fa-pencil"></i></div>
 
-          <div class="splashButton small buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
-            <a href="${button.url}">
-              <div tal:define="global counter counter+1"  id="${button.id}">
-                    <div class="buttonIcon"><i class="fa fa-${button.icon}"></i></div>
-              </div>
-              <div class="splashButtonTitle">${button.name}</div>
-            </a>
-          </div>
+            <div class="splashButton small buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+              <a href="${button.url}">
+                <div tal:define="global counter counter+1"  id="${button.id}">
+                      <div class="buttonIcon"><i class="fa fa-${button.icon}"></i></div>
+                </div>
+                <div class="splashButtonTitle">${button.name}</div>
+              </a>
+            </div>
+
+            <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
+            <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
+
           </div>
 
         </tal:block>

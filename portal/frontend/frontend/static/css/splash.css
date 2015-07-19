@@ -80,7 +80,7 @@ p {
     display: inline-block;
 }
 
-.splashButton {
+.splashButton, .splashButtonPreview {
     position: relative;
     cursor: pointer;
     display: inline-block;
@@ -120,83 +120,83 @@ p {
     cursor: move;
 }
 
-.splashButton.lightYellow {
+.splashButton.lightYellow, .splashButtonPreview.lightYellow {
     background: #FFD600;
 }
 
-.splashButton.yellow {
+.splashButton.yellow, .splashButtonPreview.lightYellow {
     background: #D8DC6A;
 }
 
-.splashButton.orange {
+.splashButton.orange, .splashButtonPreview.orange {
     background: #F39C12;
 }
 
-.splashButton.peach {
+.splashButton.peach, .splashButtonPreview.peach {
     background: #eeaaaa;
 }
 
-.splashButton.beige {
+.splashButton.beige, .splashButtonPreview.beige {
     background: #C1BCAC;
 }
 
-.splashButton.green {
+.splashButton.green, .splashButtonPreview.green {
     background: #2ECC71;
 }
 
-.splashButton.brightGreen {
+.splashButton.brightGreen, .splashButtonPreview.brightGreen {
     background: #D1DEDE;
 }
 
-.splashButton.aqua {
+.splashButton.aqua, .splashButtonPreview.aqua {
     background: #64A6BD;
 }
 
-.splashButton.blue {
+.splashButton.blue, .splashButtonPreview.blue {
     background: #A9CEF4;
 }
 
-.splashButton.red {
+.splashButton.red, .splashButtonPreview.red {
     background: #DF928E;
 }
 
-.splashButton.pink {
+.splashButton.pink, .splashButtonPreview.pink {
     background: #ffbbdd;
 }
 
-.splashButton.darkPink {
+.splashButton.darkPink, .splashButtonPreview.darkPink {
     background: #ffccdd;
 }
 
-.splashButton.purple {
+.splashButton.purple, .splashButtonPreview.purple {
     background: #ADA7C9;
 }
 
-.splashButton.brown {
+.splashButton.brown, .splashButtonPreview.brown {
     background: #888;
 }
 
-.splashButton.small {
+.splashButton.small, .splashButtonPreview.small {
     font-size: 40pt;
     width: 90px;
     height: 100px;
-    margin: 0 auto;
+
 }
 
-.splashButton.large {
+.splashButton.large, .splashButtonPreview.large {
     font-size: 40pt;
     width:180px;
     height:200px;
 }
 
-.splashButton:hover {
+.splashButton:hover, .splashButtonPreview:hover {
 /*    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
     background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');*/
     background-color:#999;
 }
 
-.splashButton:active {
+.splashButton:active, .splashButtonPreview:active {
     position:relative;
     top:1px;
 }
@@ -676,3 +676,6 @@ label.high-margin {
     opacity: 0;
 }
 
+.js-avoidClicks {
+    pointer-events:none;
+}

@@ -115,7 +115,6 @@ Copyright 2015 Kevin Sylvestre
       this.bind('on');
       this.$target = $(event.target).closest(this.$container.find(this.selector));
       this.$target.addClass('dragging');
-      console.log(this.$target);
       this.origin = {
         x: this.coordinate(event).pageX - this.$target.position().left,
         y: this.coordinate(event).pageY - this.$target.position().top

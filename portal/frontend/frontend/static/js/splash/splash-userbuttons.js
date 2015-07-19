@@ -1,3 +1,13 @@
+function hexc(colorval) {
+    var parts = colorval.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    delete(parts[0]);
+    for (var i = 1; i <= 3; ++i) {
+        parts[i] = parseInt(parts[i]).toString(16);
+        if (parts[i].length == 1) parts[i] = '0' + parts[i];
+    }
+    return '#' + parts.join('').toUpperCase();
+}
+
 function isValidURL(url)
 {
     try {
@@ -7,14 +17,9 @@ function isValidURL(url)
     }
     catch (e) {
         // Malformed URI
-        console.log('false');
         return false;
     }
 }
-
-$('#newBlah').on('click', function (e) {
-	e.preventDefault();
-});
 
 $('#newTabButton').on('click', function (e) {
 
@@ -100,10 +105,34 @@ $('#newButtonButton').on('click', function (e) {
 
 $('.editOnButton').on('click', function (e) {
 	e.preventDefault();
-	newEditButtonDialog();
+	e.stopPropagation();
+	var $parent = $(e.target).parent();
+	var text = $parent.find('.splashButtonTitle').text();
+	var link = $parent.find('a').attr('href');
+	var color = $parent.find('.splashButton').css('backgroundColor');
+	var iconInfo = $parent.find('i').attr('class');
+
+	// get the right color
+	color = hexc(color);
+
+	// straight-forward setting
+	$('#nbd_name').val(text);
+	$('#nbd_link').val(link);
+	//$('#nbd_preview i').attr('class', iconInfo);
+
+	// change both the backend and user-faceing frontend pop-up
+	$("#nbd_color").val(color);
+	$('.btn-colorselector').css('background-color', color);
+
+	newEditButtonDialog(e);
 });
 
-function newEditButtonDialog() {
+function newEditButtonDialog(event) {
+	var isOnButton = $(event.target).attr('class').substr('onButton');
+	if (isOnButton) {
+		var $targetButton = $(event.target).parent();
+	}
+
 	$('#newButtonDialog').dialog({
 	    dialogClass: "no-close",
 		resizeable: false,
@@ -115,6 +144,9 @@ function newEditButtonDialog() {
 		width: 400,
 		close: false,
 	    open: function () {
+
+	    	$('#nbd_name').focus();  // TODO: Why doesn't this work?
+
 	    	$('#nbd_color').colorselector();
 	    	$('#nbd_icon').iconpicker({
 	    		placement: 'topRight',
@@ -130,13 +162,18 @@ function newEditButtonDialog() {
 		    }
 	    	$('#newButtonDialog').find('.js-validate-msg').text('');
 
-	    	var $preview = $('#newButtonHolder').children().clone();
-	    	$preview.find('a').removeClass('newButton');
-	    	$preview.find('.splashButtonTitle').text('Preview');
-	    	$preview.find('i').removeClass('fa-plus-circle').addClass($('#nbd_icon').val());
-	    	$preview.addClass($('#nbd_color').val());
-	    	$('#nbd_preview').replaceWith($preview);
-	    	$preview.attr('id', 'nbd_preview');
+	    	$preview = $('#nbd_preview');
+	    	$preview.addClass($('#nbd_color').val()).css('opacity', 1);
+	    	if (isOnButton) {
+				var iconInfo = $targetButton.find('i').attr('class');
+				$preview.find('i').attr('class', iconInfo);
+				$preview.find('.splashButtonTitle').text($('#nbd_name').val());
+				$('#nbd_icon').val(iconInfo);
+				$('#nbd_icon').parent().find('.input-group-addon > i').attr('class', iconInfo);
+				$preview.css('background-color', $('#nbd_color').val());
+	    	} else {
+		    	$preview.find('i').attr('class', $('#nbd_icon').val());
+		    }
 	    	$preview.on('click', function(e) {
 	    		e.preventDefault();
 	    	});
@@ -148,7 +185,11 @@ function newEditButtonDialog() {
 
 	    	$('#nbd_color').on('change', function (e) {
 	    		color = $('#nbd_color').val();
-	    		$('#nbd_preview').removeAttr('class').addClass('splashButton').addClass('small').addClass(color);
+	    		$preview.removeAttr('class').addClass('splashButtonPreview').addClass('small').css('background-color', color);
+	    	});
+
+	    	$('#nbd_name').keyup(function () {
+	    		$preview.find('.splashButtonTitle').text($('#nbd_name').val());
 	    	});
 
 		   	$("#newButtonDialog").keyup(function(e) {
@@ -188,20 +229,28 @@ function newEditButtonDialog() {
 		    	var color = $('#nbd_color').val();
 		    	var icon = $('#nbd_icon').val();
 
-		    	$newButton.find('.splashButtonTitle').text(name);
-		    	$newButton.removeAttr('style');
+		    	if (isOnButton) {
+		    		$targetButton.find('.splashButtonTitle').text(name);
+		    		$targetButton.find('a').attr('href', link);
+		    		$targetButton.find('.splashButton').css('background-color', color);
+		    		$targetButton.find('.buttonIcon i').attr('class', icon).addClass('fa');
+		    	} else {
+			    	$newButton.find('.splashButtonTitle').text(name);
+			    	$newButton.removeAttr('style');
 
-		    	$newButton.find('a').removeClass('newButton').attr('href', link);
-		    	$newButton.addClass(color);
-		    	$newButton.find('.buttonIcon > i').removeClass('fa-plus-circle').addClass(icon);
+			    	$newButton.find('a').removeClass('newButton').attr('href', link);
+			    	$newButton.addClass(color);
+			    	$newButton.find('.buttonIcon > i').removeClass('fa-plus-circle').addClass(icon);
 
-			  	index = $tabs.tabs('option', 'active');
-			  	$currentTab = $tabs.children('div div:nth-child('+ (index + 2).toString() + ')');
+				  	index = $tabs.tabs('option', 'active');
+				  	$currentTab = $tabs.children('div div:nth-child('+ (index + 2).toString() + ')');
 
-			  	$currentTab.find('.grid').append($newButton);
-			  	$currentTab.find('.grid').gridly();
+				  	$currentTab.find('.grid').append($newButton);
+				  	$currentTab.find('.grid').gridly();
 
-			  	$('#newButtonButton').click();
+				  	$('#newButtonButton').click();
+				 }
+
 			    $(this).dialog('close');
 			}
 		  }

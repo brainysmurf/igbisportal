@@ -125,6 +125,7 @@ function do_settings_dialog() {
 
      // make the buttons editable
      $('.splashButton').find('.buttonIcon').addClass('editButton');
+     console.log('opacity of splashButton');
      $('.splashButton').animate({opacity: 0.4});
      $('.onButton').animate({
           opacity: 1,
