@@ -650,12 +650,19 @@ label.high-margin {
     cursor: move;
 }
 
+.onButton {
+    border: 1px solid #999;
+    border-color: #ccc;
+    width:40px;
+    background-color:#eee;
+    height: 25px;
+}
+
 .onButton:hover {
     background: #eee;
 }
 
 .sizeOnButton {
-    border: 1px solid #eee;
     -webkit-border-top-right-radius:9px;
     -moz-border-radius-topright:9px;
     border-top-right-radius:9px;
@@ -664,7 +671,6 @@ label.high-margin {
     border-bottom-left-radius:9px;
     border-bottom-color: #ccc;
     border-left-color: #ccc;
-    border-color: #ccc;
     padding: 5px;
     position: absolute;
     cursor: pointer;
@@ -677,7 +683,6 @@ label.high-margin {
 }
 
 .editOnButton {
-    border: 1px solid #eee;
     -webkit-border-top-left-radius:9px;
     -moz-border-radius-topleft:9px;
     border-top-left-radius:9px;
@@ -686,7 +691,6 @@ label.high-margin {
     border-bottom-right-radius:9px;
     border-bottom-color: #ccc;
     border-right: ;-color: #ccc;
-    border-color: #ccc;
     padding: 5px;
     position: absolute;
     color: #000;

@@ -94,12 +94,19 @@ def session_user(request):
 
             if not gl_user:
 
-                new_user = Users(email=user_email, igbid="")
+                new_user = Users(email=user_email, igbid=0)
                 # TODO: This isn't the best way to get the name info...
                 # Can use scope userinfo.profile
                 handle = re.sub('@.*', '', user_email)
                 if '.' in handle:
-                    new_user.first_name, new_user.last_name = [h.title() for h in handle.split('.')]
+                    hsplit = handle.split('.')
+                    if len(hsplit) == 2:
+                        new_user.first_name, new_user.last_name = [h.title() for h in hsplit]
+                    elif len(hsplit) > 2:
+                        first, extra, last = [h.title() for h in handle.split('.')]
+                    else:
+                        new_user.first_name = handle
+                        new_user.last_name = ""
                 else:
                     new_user.first_name, new_user.last_name = ['*Unknown*', 'Name']
                 new_user.type = "Other"
