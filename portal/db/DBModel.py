@@ -664,6 +664,7 @@ class GoogleSignIn(Base):
     auth_code = Column(String(255))
     access_token = Column(String(255))
     refresh_token = Column(String(255))
+    igbid = Column(BigInteger)
 
 class UserSettings(Base):
     __tablename__ = SETTINGS
