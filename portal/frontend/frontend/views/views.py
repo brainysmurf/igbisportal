@@ -90,11 +90,11 @@ def session_user(request):
 
         if not user: # authenticated, but not in MB, so just put in users table
 
-            gl_user = session.query(Users).filter(func.lower(Users.email)== user_email.lower()).first()
+            gl_user = session.query(Users).filter(func.lower(Users.email) == user_email.lower()).first()
 
             if not gl_user:
 
-                new_user = Users(email=user_email)
+                new_user = Users(email=user_email, igbid="")
                 # TODO: This isn't the best way to get the name info...
                 # Can use scope userinfo.profile
                 handle = re.sub('@.*', '', user_email)
