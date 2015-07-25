@@ -9,6 +9,7 @@
   <link rel="stylesheet" type="text/css" href="${static_url}colorselector/css/bootstrap-colorselector.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
 
+  <!-- scripts with no dependencies -->
   <script type="text/javascript" src="${static_url}bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
   <script type="text/javascript" src="${static_url}js/splash/jBox.min.js"></script>
@@ -18,11 +19,55 @@
   <script type="text/javascript" src="${static_url}js/URI.min.js"></script>
   <script type="text/javascript" src="${static_url}gridly/javascripts/jquery.gridly.js"></script>
   <script type="text/javascript" src="${static_url}sortable.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/mustache.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/jquery.mustache.js"></script>
+  <script type="text/javascript" src="${static_url}js/underscore-min.js"></script>
 
-  <script type="text/javascript" src="${static_url}js/splash/splash-header-buttons.js"></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashCallback.js" defer></script>
 
-  <script type="text/javascript" src="${static_url}js/splash/splash-loaded.js" defer></script>
-  <script type="text/javascript" src="${static_url}js/splash/splash-userbuttons.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashConfig.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashLogin.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashButtons.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashInterface.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashApp.js" defer></script>
+
+
+  <script id="buttonContainerTemplate" type="text/html">
+     <div class="buttonContainer" data-id="{{id}}" data-link="{{link}}" data-icon="{{icon}}" data-name="{{name}}">
+
+        <div class="buttonFace buttons_for_jbox">
+          <a href="{{link}}">
+            <div class="buttonIcon"><i class="fa fa-{{icon}}"></i></div>
+            <div class="buttonTitle">{{name}}</div>
+          </a>
+        </div>
+
+        <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
+        <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
+
+      </div>
+  </script>
+
+  <script id="submenuItemTemplate" type="text/html">
+
+      <ul style="display:none" class="submenus_for_jbox">
+        {{#items}}
+        <li >
+          {{#isKindNormal}}
+            <a href="{{url}}">&nbsp;{{display}}</a>
+          {{/isKindNormal}}
+          {{#isKindPlaceholder}}
+            <div id="{{name}}"><hr /></div>
+          {{/isKindPlaceholder}}
+          {{#isKindDivider}}
+            <hr />
+          {{/isKindDivider}}
+        </li>
+        {{/items}}
+      </ul>
+
+  </script>
+
 </div>
 
 <div metal:fill-slot="additional-buttons" tal:omit-tag="">
@@ -43,18 +88,16 @@
       </div>
 
       <div id="newButtonHolder">
-        <div style="display:none;" class="splashButtonContainer">
-          <div class="splashButton small">
-            <a class="newButton" href="#">
-              <div>
-                  <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
-              </div>
-              <div class="splashButtonTitle">New Button</div>
-            </a>
-          </div>
+         <div class="buttonContainer" style="display:none;" data-link="#" data-icon="" data-name="New Button">
+            <div class="buttonFace buttons_for_jbox">
+              <a href="#">
+                <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
+                <div class="buttonTitle">New Button</div>
+              </a>
+            </div>
 
-          <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
-          <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
+            <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
+            <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
 
         </div>
       </div>
@@ -66,13 +109,15 @@
 
       <div id="newButtonDialog" style="display:none;"> 
         <!-- <label class="high-margin" for="nbd_preview">Preview:</label> -->
-        <div id="nbd_preview" class="splashButton small">
-          <a class="newButton" href="#">
-            <div>
-                <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
-            </div>
-            <div class="splashButtonTitle">Preview</div>
-          </a>
+        <div id="nbd_preview">
+           <div class="buttonContainer previewButton" data-link="#" data-icon="" data-name="New Button">
+              <div class="buttonFace buttons_for_jbox">
+                <a href="#">
+                  <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
+                  <div class="buttonTitle">New Button</div>
+                </a>
+              </div>
+          </div>
         </div>
 
         <label class="high-margin" for="nbd_name">Enter the name of the button:</label>
@@ -135,72 +180,30 @@
 
   <div id="tabs_holder">
     <ul id="tabs_titlebar">
-      <li tal:repeat="key buttons"><a class="notUserCreated draggableTab" href="#${key}">${key.replace('_', ' ')}</a></li>
+      <li data-name="${key}" tal:repeat="key buttons">
+        <a class="notUserCreated draggableTab" href="#${key}">${key.replace('_', ' ')}</a>
+      </li>
     </ul> 
 
-   <tal:block tal:define="global counter 1" tal:repeat="key buttons">
-    <div id="${key}">
-      <div class="grid">
-        <tal:block tal:define="items buttons[key]" tal:repeat="button items">
+    <tal:block tal:repeat="key buttons">
+      <div id="${key}">
+        <div class="grid">
+          <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
-          <div class="splashButtonContainer">
+            <div class="buttonContainer" data-id="${button.id}" data-link="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
 
-            <div class="splashButton small buttons_for_jbox" data-counter="${counter}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
-              <a href="${button.url}">
-                <div tal:define="global counter counter+1"  id="${button.id}">
-                      <div class="buttonIcon"><i class="fa fa-${button.icon}"></i></div>
-                </div>
-                <div class="splashButtonTitle">${button.name}</div>
-              </a>
+              <ul style="display:none" tal:condition="button.context_menu" tal:repeat="menuItem button.context_menu.get('items')">
+                  <li class="splashSubMenu" data-display="${menuItem.display}" data-url="${menuItem.url}" data-name="${menuItem[0]}"></li>
+              </ul>
             </div>
 
-            <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
-            <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
-
-          </div>
-
-        </tal:block>
-      </div>
-    </div> 
-   </tal:block>
+          </tal:block>
+        </div>
+    </div>
+  </tal:block> 
   </div><!-- /.tabs_holder -->
 
-
-  <!-- 
-  <script type="text/javascript">    
-      new jBox('Notice', {
-          content: 'New: Google login, and more features!',
-          color: 'blue'
-      });
-  </script>
-  -->
-
-
-  <tal:block tal:define="global another_counter 0" tal:repeat="key buttons" tal:condition="buttons">
-    <tal:block tal:repeat="button buttons[key]">
-    <tal:block tal:define="global another_counter another_counter+1">
-    <tal:block tal:condition="button.context_menu">
-
-      <ul style="display:none" class="submenus_for_jbox" data-counter="${another_counter}" tal:condition="button.context_menu">
-        <li tal:repeat="menu_item button.context_menu.get('items')">
-          <tal:block tal:condition="menu_item.url">
-            <a href="${menu_item.url}">&nbsp;${menu_item.display}</a>
-          </tal:block>
-          <tal:block tal:condition="menu_item.url is False">
-            <div id="${menu_item.name}"><hr /></div>
-          </tal:block>
-          <tal:block tal:condition="menu_item.url is None">
-            <hr />
-          </tal:block>
-        </li>
-      </ul>
-
-    </tal:block>
-    </tal:block>
-    </tal:block>
-  </tal:block>
-
-    </div>
+  </div>
 
 </html>
 

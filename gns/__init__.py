@@ -1,16 +1,9 @@
 """
-All-purpose library that does a few things
-
-* Provides a global namespace
-* Gives us settings.ini through namespace
-* Gives us logging as well
-
-Common idioms:
-
-gns('{config.paths.home}/here.txt')
+Global Name Space
+Simple way to have global variables defined, used throughout the app
+Reads in settings.ini and provides logging as well
 
 """
-
 
 import contextlib, os, logging
 import ConfigParser

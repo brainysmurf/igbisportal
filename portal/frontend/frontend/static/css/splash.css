@@ -76,21 +76,12 @@ p {
     width: 960px;
 }
 
-.splashButtonContainer {
+.buttonContainer {
     display: inline-block;
-}
+    font-size: 40pt;
+    width: 90px;
+    height: 100px;
 
-.splashButton, .splashButtonPreview {
-    position: relative;
-    cursor: pointer;
-    display: inline-block;
-    /*-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;*/
-    /*box-shadow:inset 0px 1px 0px 0px #ffffff;*/
-/*    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #eee), color-stop(1, #bbb) );
-    background:-moz-linear-gradient( center top, #eee 5%, #bbb 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#eee', endColorstr='#bbb');
-    background-color:#cc3300;*/
     background: #eee;
     -webkit-border-top-left-radius:9px;
     -moz-border-radius-topleft:9px;
@@ -112,96 +103,116 @@ p {
     font-style:normal;
     text-decoration:none;
     text-align:center;
-    z-index:1;
+}
+
+.buttonFace, .buttonFacePreview {
+    cursor: pointer;
+    /*-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;*/
+    /*box-shadow:inset 0px 1px 0px   0px #ffffff;*/
+/*    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #eee), color-stop(1, #bbb) );
+    background:-moz-linear-gradient( center top, #eee 5%, #bbb 100% );
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#eee', endColorstr='#bbb');
+    background-color:#cc3300;*/
+/*    z-index:1;*/
 /*    text-shadow:1px 1px 0px #fff;*/
 }
 
-.buttonIcon.editButton {
+.editButton {
     cursor: move;
 }
 
-.splashButton.lightYellow, .splashButtonPreview.lightYellow {
+.noBorder {
+    border: 1px solid #FFF;
+}
+
+.previewButton {
+    border:1px solid #999;
+    opacity: 1;
+    cursor: pointer;
+}
+
+.buttonFace.lightYellow, .buttonFacePreview.lightYellow {
     background: #FFD600;
 }
 
-.splashButton.yellow, .splashButtonPreview.lightYellow {
+.buttonFace.yellow, .buttonFacePreview.lightYellow {
     background: #D8DC6A;
 }
 
-.splashButton.orange, .splashButtonPreview.orange {
+.buttonFace.orange, .buttonFacePreview.orange {
     background: #F39C12;
 }
 
-.splashButton.peach, .splashButtonPreview.peach {
+.buttonFace.peach, .buttonFacePreview.peach {
     background: #eeaaaa;
 }
 
-.splashButton.beige, .splashButtonPreview.beige {
+.buttonFace.beige, .buttonFacePreview.beige {
     background: #C1BCAC;
 }
 
-.splashButton.green, .splashButtonPreview.green {
+.buttonFace.green, .buttonFacePreview.green {
     background: #2ECC71;
 }
 
-.splashButton.brightGreen, .splashButtonPreview.brightGreen {
+.buttonFace.brightGreen, .buttonFacePreview.brightGreen {
     background: #D1DEDE;
 }
 
-.splashButton.aqua, .splashButtonPreview.aqua {
+.buttonFace.aqua, .buttonFacePreview.aqua {
     background: #64A6BD;
 }
 
-.splashButton.blue, .splashButtonPreview.blue {
+.buttonFace.blue, .buttonFacePreview.blue {
     background: #A9CEF4;
 }
 
-.splashButton.red, .splashButtonPreview.red {
+.buttonFace.red, .buttonFacePreview.red {
     background: #DF928E;
 }
 
-.splashButton.pink, .splashButtonPreview.pink {
+.buttonFace.pink, .buttonFacePreview.pink {
     background: #ffbbdd;
 }
 
-.splashButton.darkPink, .splashButtonPreview.darkPink {
+.buttonFace.darkPink, .buttonFacePreview.darkPink {
     background: #ffccdd;
 }
 
-.splashButton.purple, .splashButtonPreview.purple {
+.buttonFace.purple, .buttonFacePreview.purple {
     background: #ADA7C9;
 }
 
-.splashButton.brown, .splashButtonPreview.brown {
+.buttonFace.brown, .buttonFacePreview.brown {
     background: #888;
 }
 
-.splashButton.small, .splashButtonPreview.small {
+.buttonFace.small, .buttonFacePreview.small {
     font-size: 40pt;
     width: 90px;
     height: 100px;
-
 }
 
-.splashButton.large, .splashButtonPreview.large {
-    font-size: 40pt;
-    width:180px;
-    height:200px;
+.buttonFace.large, .buttonFacePreview.large {
+    font-size: 80pt;
+    width:190px;
+    height:210px;
 }
 
-.splashButton:hover, .splashButtonPreview:hover {
+.buttonContainer:hover, .buttonFacePreview:hover {
 /*    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
     background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');*/
     background-color:#999;
 }
 
-.splashButton:active, .splashButtonPreview:active {
+.buttonFace:active, .buttonFacePreview:active {
     position:relative;
     top:1px;
 }
 
-.splashButtonTitle {
+.buttonTitle {
     margin-top:3px;
     line-height: 14 px;
     color: #111;
@@ -215,11 +226,11 @@ p {
     text-shadow: none;
 }
 
-.splashButtonTitle:hover .splashButtonTitle:visited {
+.buttonTitle:hover .buttonTitle:visited {
     color: #111;
 }
 
-.splashButtonTitle.white, .splashButtonTitle.white:hover, .splashButtonTitle.white:visited {
+.buttonTitle.white, .buttonTitle.white:hover, .buttonTitle.white:visited {
     color: #111;
 }
 
@@ -645,14 +656,15 @@ label.high-margin {
 
 .sizeOnButton {
     border: 1px solid #eee;
-    -webkit-border-top-right-radius:3px;
-    -moz-border-radius-topright:3px;
-    border-top-right-radius:3px;
+    -webkit-border-top-right-radius:9px;
+    -moz-border-radius-topright:9px;
+    border-top-right-radius:9px;
     -webkit-border-bottom-left-radius:9px;
     -moz-border-radius-bottomleft:9px;
     border-bottom-left-radius:9px;
     border-bottom-color: #ccc;
     border-left-color: #ccc;
+    border-color: #ccc;
     padding: 5px;
     position: absolute;
     cursor: pointer;
@@ -666,14 +678,15 @@ label.high-margin {
 
 .editOnButton {
     border: 1px solid #eee;
-    -webkit-border-top-left-radius:3px;
-    -moz-border-radius-topleft:3px;
-    border-top-left-radius:3px;
+    -webkit-border-top-left-radius:9px;
+    -moz-border-radius-topleft:9px;
+    border-top-left-radius:9px;
     -webkit-border-bottom-right-radius:9px;
     -moz-border-radius-bottomright:9px;
     border-bottom-right-radius:9px;
     border-bottom-color: #ccc;
     border-right: ;-color: #ccc;
+    border-color: #ccc;
     padding: 5px;
     position: absolute;
     color: #000;

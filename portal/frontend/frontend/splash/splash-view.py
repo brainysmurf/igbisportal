@@ -33,8 +33,8 @@ UserSettings = db.table_string_to_class('user_settings')
 button = namedtuple('button', ['name', 'url', 'icon', 'id', 'context_menu'])
 
 menu_item = namedtuple('menu_item', ['display', 'url', 'icon'])
-menu_separator = lambda : {'url':None}
-menu_placeholder = lambda x: {'url': False, 'name':x}
+menu_separator = lambda : menu_item(url=None, display='sep', icon=None)
+menu_placeholder = lambda x: menu_item(url=False, display=x, icon=None)
 new_tab = button(name="Define New Tab", url="#", icon="plus-circle", id="newTab", context_menu=None)
 new_button = button(name="Define New Button", url="#", icon="plus-circle", id="newButton", context_menu=None)
 
