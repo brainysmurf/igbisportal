@@ -3,6 +3,30 @@
 Splash.defineTriggers = function () {
 	$('#newButtonButton').attr('disabled', true);
 
+	$("#new_tab_checkbox").change(function () {
+	  var value = $(this).val();
+	  value = value == "1" ? "0" : "1";
+	  $(this).val(value);
+
+	  if (value == "1") {
+	    $('a').each(function(index) {
+	      $(this).attr('target', '_blank_'+index);
+	    });
+	  } else {
+	    $('a').removeAttr('target');
+	  }
+
+	  $.ajax({
+	    type:'POST',
+	    url: 'user_settings',
+	    contentType: 'application/json; charset=utf-8',
+	    success: function(result) {
+	        console.log(result);
+	      },
+	    data: JSON.stringify({'new_tab': value})
+	  });
+	});
+
 	$('#tabs_titlebar').on('click', '.draggableTab', function (e) {
 		var index = $('#tabs_holder a[href="' + $(e.target).attr('href') + '"]').parent().index();
 		var howMany = $('.notUserCreated').length;
