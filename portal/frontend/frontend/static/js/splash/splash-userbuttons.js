@@ -1,7 +1,4 @@
 
-
-
-
 $('#newTabButton').on('click', function (e) {
 
 	$('#newTabDialog').dialog({

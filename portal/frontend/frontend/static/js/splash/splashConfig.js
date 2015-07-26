@@ -5,14 +5,15 @@
 
 // Actually run the loading mechanism and make it available for reference in other areas
 Splash.config = {
+
 	tabsContainer: '#tabs_holder',
 
 	gridly: {
 	    base: 40,
-	    gutter: 10,
-	    columns: 18,
+	    gutter: 20,
+	    columns: 16,
 	    draggable: {
-	    	zIndex: 10,
+	    	zIndex: 800,
 	    	selector: '> .buttonContainer'
 	    }
 	},
@@ -23,21 +24,23 @@ Splash.config = {
 		disabled:false,
 		// event: "mouseover",
 		show: { effect: "fade", duration: 200 }
-	}
+	},
+
+	jbox: {}
 },
+
+Splash.JBoxes = [],
 
 Splash.utils = {
 	// various javascript-specific functions we need
 
-	hexc: function (colorval) {
-	    var parts = colorval.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-	    delete(parts[0]);
-	    for (var i = 1; i <= 3; ++i) {
-	        parts[i] = parseInt(parts[i]).toString(16);
-	        if (parts[i].length == 1) parts[i] = '0' + parts[i];
-	    }
-	    return '#' + parts.join('').toUpperCase();
-	},
+	hexc: function (rgb) {
+		rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+		return (rgb && rgb.length === 4) ? "#" +
+		  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+		  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+		  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+		},
 
 	isValidURL: function (url) {
 	    try {

@@ -33,7 +33,7 @@
 
 
   <script id="buttonContainerTemplate" type="text/html">
-     <div class="buttonContainer" data-id="{{id}}" data-link="{{link}}" data-icon="{{icon}}" data-name="{{name}}">
+     <div class="buttonContainer" id="{{id}}" data-id="{{id}}" data-link="{{link}}" data-icon="{{icon}}" data-name="{{name}}">
 
         <div class="buttonFace buttons_for_jbox">
           <a href="{{link}}">
@@ -50,7 +50,7 @@
 
   <script id="submenuItemTemplate" type="text/html">
 
-      <ul style="display:none" class="submenus_for_jbox">
+      <ul class="submenus_for_jbox">
         {{#items}}
         <li >
           {{#isKindNormal}}
@@ -193,7 +193,7 @@
             <div class="buttonContainer" data-id="${button.id}" data-link="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
 
               <ul style="display:none" tal:condition="button.context_menu" tal:repeat="menuItem button.context_menu.get('items')">
-                  <li class="splashSubMenu" data-display="${menuItem.display}" data-url="${menuItem.url}" data-name="${menuItem[0]}"></li>
+                  <li class="splashSubMenu" data-display="${menuItem.display}" data-url="${menuItem.url}"></li>
               </ul>
             </div>
 

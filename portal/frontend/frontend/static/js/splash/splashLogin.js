@@ -14,11 +14,6 @@ $("#edit_button").bootstrapSwitch({
 
     if (state) {  // edit mode on
 
-        // disable jboxes
-      $.each(jbox_array, function (index, value) {
-        value.disable();
-      });
-
       // enable drag'n'drop
       $.each($containers, function (index, value) {
         var $buttons = $(value).find('.splash_button_item');
@@ -30,10 +25,6 @@ $("#edit_button").bootstrapSwitch({
         $splash_button_texts.addClass('editable');
       });
     } else {      // edit mode off
-      // jboxes enabled
-      $.each(jbox_array, function (index, value) {
-        value.enable();
-      });
 
       $.each($containers, function (index, value) {
         var $buttons = $(value).find('.splash_button_item');
@@ -92,11 +83,8 @@ function do_settings_dialog() {
 
       // It's on
       obj.removeAttr('style');
-      jbox_array.forEach(function (item, index) { 
-        //console.log(jbox_array[index]);
-        //FIXME this doesn't actually work
-        jbox_array[index].enable();
-      });
+
+      Splash.tabs().enableJBoxes();
 
       $('.buttonContainer').removeClass('editButton');
       $('.buttonContainer').find('*').removeClass('editButton');
@@ -115,13 +103,7 @@ function do_settings_dialog() {
       // It's off, turn it on
 
       obj.css('background', '#999').css('color', '#eee');
-
-      // disable the jboxes
-      // jbox_array.forEach(function (item, index) { 
-      //   //console.log(jbox_array[index]);
-      //   //FIXME this doesn't actually work
-      //   jbox_array[index].disable();
-      // });
+      Splash.tabs().disableJBoxes();
 
      // make the buttons editable
      $('.buttonContainer').addClass('editButton');

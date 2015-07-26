@@ -125,6 +125,13 @@ Splash.defineTriggers = function () {
 
 		Splash.newEditButtonDialog(e);
 	});
+
+	$('#tabs_holder').on('click', '.sizeOnButton', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var $parent = $(e.target).parent().toggleClass('large');
+	});
 },
 
 Splash.newEditButtonDialog = function (event) {
