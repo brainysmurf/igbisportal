@@ -187,11 +187,15 @@ p {
     background: #888;
 }
 
-.large {
+.buttonContainer.large {
     font-size: 80pt;
     width:220px;
     height:220px;
     padding-top: 30px;
+}
+
+.buttonTitle.large {
+    font-size:14pt !important;
 }
 
 .buttonContainer:hover {

@@ -54,7 +54,7 @@
         {{#items}}
         <li >
           {{#isKindNormal}}
-            <a href="{{url}}">&nbsp;{{display}}</a>
+            <a href="{{url}}">{{display}}</a>
           {{/isKindNormal}}
           {{#isKindPlaceholder}}
             <div id="{{name}}"><hr /></div>

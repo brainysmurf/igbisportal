@@ -130,7 +130,20 @@ Splash.defineTriggers = function () {
 		e.preventDefault();
 		e.stopPropagation();
 
+		var size;
 		var $parent = $(e.target).parent().toggleClass('large');
+
+		$parent.find('.buttonTitle').css('display', 'none').toggleClass('large');
+
+		if ($parent.hasClass('large')) {
+			size = 220;
+		} else {
+			size = 100;
+		}
+		$parent.data('width', size);
+		$parent.data('height', size);
+		$parent.find('.buttonTitle').removeAttr('style');
+		$('.gridly').gridly('layout');
 	});
 },
 
