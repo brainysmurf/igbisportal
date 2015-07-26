@@ -12,7 +12,7 @@
   <!-- scripts with no dependencies -->
   <script type="text/javascript" src="${static_url}bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="${static_url}bootstrap-switch/js/bootstrap-switch.min.js"></script>
-  <script type="text/javascript" src="${static_url}js/splash/jBox.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/jBox.min.js"></script>
   <script type="text/javascript" src="${static_url}colorselector/js/bootstrap-colorselector.js"></script>
 
   <script type="text/javascript" src="${static_url}fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
@@ -29,13 +29,14 @@
   <script type="text/javascript" src="${static_url}js/splash/splashLogin.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashButtons.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashInterface.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashExtensions.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashApp.js" defer></script>
 
 
   <script id="buttonContainerTemplate" type="text/html">
      <div class="buttonContainer" id="{{id}}" data-id="{{id}}" data-link="{{link}}" data-icon="{{icon}}" data-name="{{name}}">
 
-        <div class="buttonFace buttons_for_jbox">
+        <div class="buttonFace">
           <a href="{{link}}">
             <div class="buttonIcon"><i class="fa fa-{{icon}}"></i></div>
             <div class="buttonTitle">{{name}}</div>
@@ -50,14 +51,14 @@
 
   <script id="submenuItemTemplate" type="text/html">
 
-      <ul class="submenus_for_jbox">
+      <ul style="display:none" class="submenus_for_jbox">
         {{#items}}
         <li >
           {{#isKindNormal}}
             <a href="{{url}}">{{display}}</a>
           {{/isKindNormal}}
           {{#isKindPlaceholder}}
-            <div id="{{name}}"><hr /></div>
+            <div id="{{url}}"></div>
           {{/isKindPlaceholder}}
           {{#isKindDivider}}
             <hr />
@@ -149,7 +150,7 @@
 
       <div id="shareable_link_bp" style="display:none;">
         <p>NOTE: Convert "plain" links to links that have our IGBIS username/password embedded.</p><br /><br />
-
+`
         <label for="bp_from">Enter the URL:</label><br />
         <input id="bp_from" class="full-width" type="text" /><br /><br />
         <label for="bp_to">Click the box to "copy":</label><br />
@@ -157,19 +158,18 @@
       </div>
 
       <div id="settings_dialog" style="display:none;">      
-       <form id="icon_size_form">
-        <br /><strong>Button Size:</strong><br />
-        <input type="radio" name="icon_size" id="larger_icons" value="+1" ${'checked' if (settings and settings.icon_size == '+1') or not settings else ""} />
-        <label for="larger_icons">Larger Icons</label><br />
-
-        <input type="radio" name="icon_size" id="smaller_icons" value="-1" ${'checked' if settings and settings.icon_size == '-1' else ""} />
-        <label for="smaller_icons">Smaller Icons</label>
-       </form>
        <form id="new_tab_form">
         <br /><strong>On Click:</strong><br />
         <input id="new_tab_checkbox" type="checkbox" name="new_tab" ${'value="1" checked="checked"' if settings and settings.new_tab else 'value="0"'}  />
         <label for="new_tab_checkbox">Open in a new tab</label>
        </form>
+
+       <form id="noNamesForm">
+        <br /><strong>Appearence:</strong><br />
+        <input id="noNamesOnButtons" type="checkbox" name="noName" ${'value="1" checked="checked"' if settings and settings.new_tab else 'value="0"'}  />
+        <label for="noNamesOnButtons">No names on buttons</label>
+       </form>
+
     </div>
 </div>
 
@@ -192,8 +192,10 @@
 
             <div class="buttonContainer" data-id="${button.id}" data-link="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
 
-              <ul style="display:none" tal:condition="button.context_menu" tal:repeat="menuItem button.context_menu.get('items')">
-                  <li class="splashSubMenu" data-display="${menuItem.display}" data-url="${menuItem.url}"></li>
+                <ul style="display:none" tal:condition="button.context_menu" >
+                  <tal:block tal:repeat="menuItem button.context_menu.get('items')">
+                    <li class="splashSubMenu" data-display="${menuItem.display}" data-url="${menuItem.url}"></li>
+                  </tal:block>
               </ul>
             </div>
 

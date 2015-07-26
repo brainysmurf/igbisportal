@@ -3,11 +3,13 @@
 Splash.defineTriggers = function () {
 	$('#newButtonButton').attr('disabled', true);
 
+	// settings dialog box
 	$("#new_tab_checkbox").change(function () {
 	  var value = $(this).val();
 	  value = value == "1" ? "0" : "1";
 	  $(this).val(value);
 
+	  // TODO change this to overriding triggers and window.open(url, '_blank')
 	  if (value == "1") {
 	    $('a').each(function(index) {
 	      $(this).attr('target', '_blank_'+index);

@@ -13,21 +13,23 @@ var Button = function (first, second, third) {
 			$sel = $(first);
 		}
 		this.$sel = $sel;
-		this.$subSel = $sel.find('ul');
+		this.$subSel = $sel.find('ul'); // unused...
 		this.name = $sel.data('name');
 		this.id = 'splashButton'+Button.counter++;
+		this.idSelector = '#'+this.id;
 		this.link = $sel.data('link');
 		this.icon = $sel.data('icon');
 		this.count = $sel.data('count');
 
 		// Loop through all the submenus, making items array
 		var items = [];
+		var $liItem, item;
 
 		$sel.find('.splashSubMenu').each(function (index, liItem) {
-			var $liItem = $(liItem);
-			var item = {isKindDiver:false, isKindNormal:false, isKindPlaceholer:false};
+			$liItem = $(liItem);
+			item = {isKindDivider:false, isKindNormal:false, isKindPlaceholer:false};
 			item.display = $liItem.data('display');
-			var url = $liItem.data('url');
+			item.url = $liItem.data('url');
 			if (item.display === 'hr') {
 				item.isKindDivider = true;
 			} else if (item.display === 'placeholder') {
@@ -38,19 +40,8 @@ var Button = function (first, second, third) {
 			items.push(item);
 		});
 
-		if (items.length > 0) {
-			var subMenuItems = $.Mustache.render('submenuItemTemplate', {items:items});
-			
-			// Save it for retrieval later
-			var thisTitle = '<a class="submenuTitle" href="'+ this.link + '">&nbsp;' + this.name + '</a>';
-			var jbox = {
-				content: subMenuItems, 
-				selector: '#' + this.id,
-				title:thisTitle
-			};
+		this.subMenuItems = items;
 
-	    	Splash.JBoxes.push(jbox);
-	    }
 
 	} else if (arguments.length == 3) {
 		this.name = first;
@@ -63,14 +54,37 @@ var Button = function (first, second, third) {
 	}
 }
 
+Button.prototype.processJBox = function () {
+	if (this.subMenuItems.length > 0) {
+		$(this.idSelector).mustache('submenuItemTemplate', {items:this.subMenuItems}, {method:'append'});
+		var thisTitle = '<a class="submenuTitle" href="'+ this.link + '">' + this.name + '</a>';
+
+		// attach jbox to the target element and save in the button object
+		this.jbox = $(this.idSelector).jBox('Tooltip', {
+			constructOnInit: true,
+			position: {
+				y: $(this.idSelector).left,
+				x: $(this.idSelector).right,
+			},
+			delayOpen: 400,
+			outside: 'x',
+			title: thisTitle,
+			closeOnMouseleave: true,
+			content: $(this.idSelector).find('ul'),
+		});
+    } else {
+    	this.jbox = undefined;
+    }
+}
+
 Button.counter = 0;
 
 Button.prototype.left = function () {
-	return parseInt($(this.selector).css("left"),10);
+	return parseInt(this.$idSelector.css("left"), 10);
 }
 
 Button.prototype.right = function () {
-	return parseInt($(this.selector).css("right"),10);
+	return parseInt(this.$idSelector.css("right"), 10);
 }
 
 var Tab = function(first) {
@@ -89,10 +103,20 @@ var Tab = function(first) {
 	var $button;
 
 	this.$gridSelector.find('.buttonContainer').each(function (index, button) {
-		var $button = $(button);
-		this.loadButton(button);
-		$button.remove();
-		this.$gridSelector.mustache('buttonContainerTemplate', new Button(button), {method:'append'})
+		// Make new button object with existing data
+		var newButton = new Button(button);
+
+		// Remove the old button from the DOM
+		$(button).remove();
+
+		// Add newButton to our object structure
+		this.loadButton(newButton);
+
+		// Add newButton to the DOM
+		this.$gridSelector.mustache('buttonContainerTemplate', newButton, {method:'append'});
+
+		// Read in submenu information, jbox processing
+		newButton.processJBox();
 	}.bind(this));
 }
 
@@ -133,10 +157,8 @@ var Tabs = function(first) {
 		tab.updateGrid();
 	});
 
-	// initing tabs last after grid operations works better
+	// initing tabs last aftetr grid operations works better
 	$(Splash.config.tabsContainer).tabs(Splash.config.tabs);
-
-	this.processJBoxes();
 }
 
 Tabs.prototype.forEachTab = function (callback) {
@@ -157,31 +179,40 @@ Tabs.prototype.addNewButtonInTab = function(inTabName, buttonName, buttonLink, b
 	this.getTabByName(inTabName).addButton(button);
 }
 
-Tabs.prototype.processJBoxes = function () {
-	$.each(Splash.JBoxes, function (index, item) {
-		item.jbox = $(item.selector).jBox('Tooltip', {
-			position: {
-				y: item.left,
-				x: item.right,
-			},
-			delayOpen: 400,
-			outside: 'x',
-			title: item.title,
-			closeOnMouseleave: true,
-			content: item.content
+// Tabs.prototype.processJBoxes = function () {
+// 	$.each(Splash.JBoxes, function (index, item) {
+// 		console.log(item);
+// 		item.jbox = item.selector.jBox('Tooltip', {
+// 			position: {
+// 				y: item.left,
+// 				x: item.right,
+// 			},
+// 			delayOpen: 400,
+// 			outside: 'x',
+// 			title: item.title,
+// 			closeOnMouseleave: true,
+// 			content: this.content,
+// 		});
+// 	});
+// }
+
+Tabs.prototype.disableJBoxes = function () {
+	$.each(this.tabs, function (index, tab) {
+		$.each(tab.buttons, function (index, button) {
+			if (button.jbox != undefined) {
+				button.jbox.disable();
+			}
 		});
 	});
 }
 
-Tabs.prototype.disableJBoxes = function () {
-	$.each(Splash.JBoxes, function (index, item) {
-		item.jbox.disable();
-	});
-}
-
 Tabs.prototype.enableJBoxes = function () {
-	$.each(Splash.JBoxes, function (index, item) {
-		item.jbox.enable();
+	$.each(this.tabs, function (index, tab) {
+		$.each(tab.buttons, function (index, button) {
+			if (button.jbox != undefined) {
+				button.jbox.enable();
+			}
+		});
 	});
 }
 
