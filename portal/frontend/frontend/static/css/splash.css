@@ -206,7 +206,8 @@ p {
 /*    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
     background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');*/
-    background-color: rgba(0, 0, 0, .3) !important;
+/*    background-color: rgba(0, 0, 0, .3) !important;*/
+    border: 1px solid #000;
 }
 
 .buttonFace:active, .buttonFacePreview:active {
