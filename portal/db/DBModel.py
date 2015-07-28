@@ -9,6 +9,21 @@ for example national_id not = password_number
 So I guess we'll have to figure that out if we choose to go to production quality
 """
 
+course_abbreviations = {
+    'English Language Acquisition':'ELA',
+    'English Language and Literature':'EL&amp;L',
+    'Physical and Health Education': 'PSHE',
+    'Bahasa Malaysia Language and Literature': 'BML&L',
+    'Bahasa Malaysia Language Acquisition': 'BMLA',
+    'Chinese Langauge and Literature': 'CL&L',
+    'Chinese Language Acquisition': 'CLA',
+    'Host Nation Studies': 'Host Nations',
+    'Spanish Language Acquisition': 'SLA',
+    'French Language Acquisition': 'FLA', 
+    'Individuals and Societies - Integrated Humanities': "I&amp;S",
+}
+
+
 from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
@@ -482,6 +497,11 @@ class Course(Base):
     name = Column(String(255))
     grade = Column(String(255))
     uniq_id = Column(String(255), nullable=True, unique=True, server_default=None)
+
+    @hybrid_property
+    def abbrev_name(self):
+        pattern = re.compile(r'\b(' + '|'.join(course_abbreviations.keys()) + r')\b')
+        return pattern.sub(lambda x: course_abbreviations[x.group()], self.name)
 
     # timetables relation defined by Timetable.course 'backref'
 

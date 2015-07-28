@@ -414,7 +414,7 @@ def mb_courses(request):
         return dict(message="User doesn't have classes?")
     data = []
     for klass in user.classes:
-        data.append( dict(name=klass.name, shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
+        data.append( dict(name=klass.abbrev_name, shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
     return dict(message="Success", data=data)
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')

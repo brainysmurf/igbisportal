@@ -84,7 +84,7 @@ function do_settings_dialog() {
       // It's on
       obj.removeAttr('style');
 
-      Splash.tabs().enableJBoxes();
+      Splash.tabs.enableJBoxes();
 
       $('.buttonContainer').removeClass('editButton');
       $('.buttonContainer').find('*').removeClass('editButton');
@@ -103,7 +103,7 @@ function do_settings_dialog() {
       // It's off, turn it on
 
       obj.css('background', '#999').css('color', '#eee');
-      Splash.tabs().disableJBoxes();
+      Splash.tabs.disableJBoxes();
 
      // make the buttons editable
      $('.buttonContainer').addClass('editButton');

@@ -131,59 +131,63 @@ p {
     cursor: pointer;
 }
 
-.buttonFace.lightYellow {
+.buttonContainer.colorlightYellow {
     background: #FFD600;
 }
 
-.buttonFace.yellow {
+.buttonContainer.coloryellow {
     background: #D8DC6A;
 }
 
-.buttonFace.orange, e {
+.buttonContainer.colororange {
     background: #F39C12;
 }
 
-.buttonFace.peach,  {
+.buttonContainer.colorpeach  {
     background: #eeaaaa;
 }
 
-.buttonFace.beige,  {
+.buttonContainer.colorbeige  {
     background: #C1BCAC;
 }
 
-.buttonFace.green,  {
+.buttonContainer.colorgreen {
     background: #2ECC71;
 }
 
-.buttonFace.brightGreen {
+.buttonContainer.colorbrightGreen {
     background: #D1DEDE;
 }
 
-.buttonFace.aqua, {
+.buttonContainer.coloraqua {
+    background: #D1DEDE;
+}
+
+.buttonContainer.colorcyan {
     background: #64A6BD;
 }
 
-.buttonFace.blue, {
+.buttonContainer.colorblue {
     background: #A9CEF4;
 }
 
-.buttonFace.red {
-    background: #DF928E;
+.buttonContainer.colorred {
+    background: #FF4646;
 }
 
-.buttonFace.pink, {
+.buttonContainer.colorpink {
     background: #ffbbdd;
 }
 
-.buttonFace.darkPink {
+.buttonContainer.colordarkPink {
     background: #ffccdd;
 }
 
-.buttonFace.purple {
+.buttonContainer.colorpurple {
     background: #ADA7C9;
 }
 
-.buttonFace.brown {
+.buttonContainer.colorbrown {
     background: #888;
 }
 

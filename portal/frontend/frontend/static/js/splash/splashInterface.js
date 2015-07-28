@@ -1,6 +1,12 @@
 (function (Splash) {
 
 Splash.defineTriggers = function () {
+	$('draggableTab').on('click', function (event, ui) {
+		// Update the model to let us know which is the current tab
+		// Don't override default behaviour
+		Splash.tabs.currentTabId = $(event.target).attr('id');
+	});
+
 	$('#newButtonButton').attr('disabled', true);
 
 	// settings dialog box
@@ -49,11 +55,12 @@ Splash.defineTriggers = function () {
 		// straight-forward setting
 		$('#nbd_name').val("New Button");
 		$('#nbd_link').val("");
-		//$('#nbd_preview i').attr('class', iconInfo);
 
-		// change both the backend and user-faceing frontend pop-up
-		$("#nbd_color").val('#EEEEEE');
-		$('.btn-colorselector').css('background-color', '#EEEEEE');
+		if (!Splash.newEditButtonDialogInited) {
+			Splash.initNewEditButtonDialog();
+		}
+		$("#nbd_color").colorselector('setValue', 'default');
+		$('#nbd_icon').val('external-link-square');
 	});
 
 	$('#newTabButton').on('click', function (e) {
@@ -98,23 +105,9 @@ Splash.defineTriggers = function () {
 			  		if (index != -1) { 
 			  			alert('Tab name have to be unique!');
 			  		} else {
-						var lastLi = $tabs.find('ul > li:last-child');
+			  			Splash.tabs.addTab(newTabName);
 
-					  	// TODO: Add target depending on user setting? to be consistent?
-					  	var newTabTitle = $('<li><a class="draggableTab" href="#'+ newTabNameIndex + '">' + newTabName + '</a></li>');
-					  	lastLi.after(newTabTitle);
-
-					  	var $newTab = $('#newTabHolder').children().clone();
-					  	$newTab.attr('id', newTabNameIndex);
-
-					  	var $lastDiv = $tabs.children('div:last-child');
-					  	$lastDiv.after($newTab);
-
-					  	$tabs.tabs("refresh");
-					  	var index = $('#tabs_holder a[href="#'+ newTabNameIndex + '"]').parent().index();
-					  	$tabs.tabs('option', 'active', index);
-						$newTab.find('.grid').gridly(Splash.config.gridly);
-
+			  			// make new tab become front, and then ensure disabled
 						$('#newButtonButton').attr('disabled', false);
 					    $(this).dialog('close');
 					}
@@ -132,22 +125,16 @@ Splash.defineTriggers = function () {
 		e.stopPropagation();
 
 		var $parent = $(e.target).parent();
-		var text = $parent.find('.buttonTitle').text();
-		var link = $parent.find('a').attr('href');
-		var color = $parent.css('backgroundColor');
-		var iconInfo = $parent.find('.buttonIcon i').attr('class');
+		var button = Splash.tabs.getButton($parent);
 
-		// get the right color
-		color = Splash.utils.hexc(color);
+		$('#nbd_name').val(button.name);
+		$('#nbd_link').val(button.link);
 
-		// straight-forward setting
-		$('#nbd_name').val(text);
-		$('#nbd_link').val(link);
-		//$('#nbd_preview i').attr('class', iconInfo);
-
-		// change both the backend and user-faceing frontend pop-up
-		$("#nbd_color").val(color);
-		$('.btn-colorselector').css('background-color', color);
+		if (!Splash.newEditButtonDialogInited) {
+			Splash.initNewEditButtonDialog();
+		}
+		$('#nbd_icon').val(button.icon);
+		$('#nbd_color').colorselector('setValue', button.color);
 
 		Splash.newEditButtonDialog(e);
 	});
@@ -173,6 +160,34 @@ Splash.defineTriggers = function () {
 	});
 },
 
+Splash.newEditButtonDialogInited = false,
+
+Splash.initNewEditButtonDialog = function() {
+	Splash.newEditButtonDialogInited = true;
+	var $preview = $('#nbd_preview');
+	$('#nbd_color').colorselector({
+		callback: function (value, color, title) {
+	    	$preview.find('.buttonContainer').alterClass('color*', 'color'+value)
+		}
+	});
+	$('#nbd_icon').iconpicker({
+		placement: 'topRight',
+		hideOnSelect: true,
+	});
+	$('#nbd_icon').on('iconpickerSelected', function (e) {
+		$preview.find('i').alterClass('fa-*', 'fa-'+e.iconpickerValue);
+		$('#nbd_icon').val(e.iconpickerValue);
+	});
+	$('#nbd_icon').val('external-link-square');
+	$('#nbd_name').keyup(function () {
+		$preview.find('.buttonTitle').text($('#nbd_name').val());
+	});
+	$preview.on('click', function(e) {
+		e.preventDefault();
+	});
+	$preview.css('display', 'block');
+}
+
 Splash.newEditButtonDialog = function (event) {
 	var isOnButton = $(event.target).attr('class') != 'nav_button';
 	if (isOnButton) {
@@ -189,15 +204,14 @@ Splash.newEditButtonDialog = function (event) {
 		height: 500,
 		width: 400,
 		close: false,
+
 	    open: function () {
-
-	    	$('#nbd_name').focus();  // TODO: Why doesn't this work?
-
-	    	$('#nbd_color').colorselector();
-	    	$('#nbd_icon').iconpicker({
-	    		placement: 'topRight',
-	    		hideOnSelect: true,
-	    	});
+	    	// Should only have to do some of these things once, correct?
+	    	var $preview = $('#nbd_preview');
+			$preview.find("*").css('opacity', 1);
+	    	$preview.find('.buttonContainer').alterClass('color*', 'color'+$('#nbd_color').val())
+	    	$preview.find('.buttonIcon > i').alterClass('fa-*', 'fa-'+$('#nbd_icon').val());
+	    	$preview.find('.buttonTitle').text($('#nbd_name').val());
 
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
 
@@ -207,36 +221,6 @@ Splash.newEditButtonDialog = function (event) {
 		    	$done.prop("disabled", true).addClass("ui-state-disabled");
 		    }
 	    	$('#newButtonDialog').find('.js-validate-msg').text('');
-
-	    	var $preview = $('#nbd_preview');
-	    	$preview.find("*").css('opacity', 1);
-	    	if (isOnButton) {
-				var iconInfo = $targetButton.find('i').attr('class');
-				$preview.find('i').attr('class', iconInfo);
-				$preview.find('.buttonTitle').text($('#nbd_name').val());
-				$('#nbd_icon').val(iconInfo);
-				$('#nbd_icon').parent().find('.input-group-addon > i').attr('class', iconInfo);
-				$preview.find('.buttonContainer').css('background-color', $('#nbd_color').val());
-	    	} else {
-		    	$preview.find('i').attr('class', $('#nbd_icon').val()).addClass('fa');
-		    }
-	    	$preview.on('click', function(e) {
-	    		e.preventDefault();
-	    	});
-	    	$preview.css('display', 'block');
-
-	    	$('#nbd_icon').on('iconpickerSelected', function (e) {
-	    		$preview.find('i').removeAttr('class').addClass('fa').addClass('fa-'+e.iconpickerValue);
-	    	});
-
-	    	$('#nbd_color').on('change', function (e) {
-	    		var color = $('#nbd_color').val();
-	    		$preview.find('.buttonContainer').css('background-color', color);
-	    	});
-
-	    	$('#nbd_name').keyup(function () {
-	    		$preview.find('.buttonTitle').text($('#nbd_name').val());
-	    	});
 
 		   	$("#newButtonDialog").keyup(function(e) {
 	    		var name = $('#nbd_name').val();
@@ -258,12 +242,17 @@ Splash.newEditButtonDialog = function (event) {
 	    		else if (name == "" && link == "") {
     				$done.prop("disabled", true).addClass("ui-state-disabled");
 	    		}
-    		})
+    		});
+
+	    	$('#nbd_name').select();
     	},
+
 		buttons: {
+
 		  "Cancel": function () {
 		  	$(this).dialog('close');
 		  },
+
 		  "Done": function () { 
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
 	    	if (!$done.hasClass('ui-state-disabled')) {
@@ -274,27 +263,10 @@ Splash.newEditButtonDialog = function (event) {
 		    	var icon = $('#nbd_icon').val();
 
 		    	if (isOnButton) {
-		    		$targetButton.find('.buttonTitle').text(name);
-		    		$targetButton.find('a').attr('href', link);
-		    		$targetButton.css('background-color', color);
-		    		$targetButton.find('.buttonIcon i').attr('class', icon).addClass('fa');
+		    		var button = Splash.tabs.getButton($targetButton);
+		    		button.updateWithValues(name, color, link, icon);
 		    	} else {
-				  	var $newButton = $('#newButtonHolder').children().clone();
-					var $tabs = $('#tabs_holder');
-
-			    	$newButton.find('.buttonTitle').text(name);
-			    	$newButton.removeAttr('style');
-
-			    	$newButton.find('a').removeClass('newButton').attr('href', link);
-			    	$newButton.css('background-color', color);
-			    	$newButton.find('.buttonIcon i').removeClass('fa-plus-circle').addClass(icon);
-
-				  	var index = $tabs.tabs('option', 'active');
-				  	var $currentTab = $tabs.children('div div:nth-child('+ (index + 2).toString() + ')');
-
-				  	$currentTab.find('.grid').append($newButton);
-				  	$currentTab.find('.grid').gridly();
-
+		    		Splash.tabs.addButtonToCurrentTab(name, color, link, icon);
 				 }
 
 			    $(this).dialog('close');

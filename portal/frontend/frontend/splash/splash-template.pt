@@ -22,6 +22,7 @@
   <script type="text/javascript" src="${static_url}js/mustache.min.js"></script>
   <script type="text/javascript" src="${static_url}js/jquery.mustache.js"></script>
   <script type="text/javascript" src="${static_url}js/underscore-min.js"></script>
+  <script type="text/javascript" src="${static_url}js/jquery.alterclass.js"></script>
 
   <script type="text/javascript" src="${static_url}js/splash/splashCallback.js" defer></script>
 
@@ -32,9 +33,8 @@
   <script type="text/javascript" src="${static_url}js/splash/splashExtensions.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashApp.js" defer></script>
 
-
   <script id="buttonContainerTemplate" type="text/html">
-     <div class="buttonContainer" id="{{id}}" data-id="{{id}}" data-link="{{link}}" data-icon="{{icon}}" data-name="{{name}}">
+     <div class="buttonContainer color{{color}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-link="{{link}}" data-icon="{{icon}}" data-name="{{name}}">
 
         <div class="buttonFace">
           <a href="{{link}}">
@@ -47,6 +47,18 @@
         <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
 
       </div>
+  </script>
+
+  <script id="newTabLiTemplate" type="text/html">
+    <li>
+      <a class="draggableTab" href="#{{id}}">{{name}}</a>
+    </li>
+  </script>
+
+  <script id="newTabTemplate" type="text/html">
+    <div id="{{id}}">
+      <div class="grid"></div>
+    </div>
   </script>
 
   <script id="submenuItemTemplate" type="text/html">
@@ -82,27 +94,6 @@
 <div metal:fill-slot="dialogs">
       <div id="unique" style="display:none;" data-unique="${unique or ''}"></div>
 
-      <div id="newTabHolder">
-        <div>
-          <div class="grid"></div>
-        </div>
-      </div>
-
-      <div id="newButtonHolder">
-         <div class="buttonContainer" style="display:none;" data-link="#" data-icon="" data-name="New Button">
-            <div class="buttonFace buttons_for_jbox">
-              <a href="#">
-                <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
-                <div class="buttonTitle">New Button</div>
-              </a>
-            </div>
-
-            <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
-            <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
-
-        </div>
-      </div>
-
       <div id="newTabDialog" style="display:none;"> 
         <label class="high-margin" for="ntd_from">Enter the name of the tab:</label><br />
         <input id="ntd_from" class="full-width" type="text" /><br /><br />
@@ -122,28 +113,29 @@
         </div>
 
         <label class="high-margin" for="nbd_name">Enter the name of the button:</label>
-        <input id="nbd_name" placeholder="Button Name" class="full-width" type="text" />
+        <input id="nbd_name" placeholder="Button Name" class="full-width" type="text" autoFocus/>
         <label class="high-margin" for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span>
         <input id="nbd_link" placeholder="http://example.com" class="full-width" type="text" />
 
         <label class="high-margin" for="nbd_color">Choose the color:</label>
         <select id="nbd_color">
-            <option value="#EEEEEE" data-color="#EEEEEE" selected="selected">#EEEEEE</option>
-            <option value="#FFD600" data-color="#FFD600">#FFD600</option>
-            <option value="#D8DC6A" data-color="#D8DC6A">#D8DC6A</option>
-            <option value="#F39C12" data-color="#F39C12">#F39C12</option>
-            <option value="#EEAAAA" data-color="#EEAAAA">#EEAAAA</option>
-            <option value="#C1BCAC" data-color="#C1BCAC">#C1BCAC</option>
-            <option value="#2ECC71" data-color="#2ECC71">#2ECC71</option>
-            <option value="#D1DEDE" data-color="#D1DEDE">#D1DEDE</option>
-            <option value="#A9CEF4" data-color="#A9CEF4">#A9CEF4</option>
-            <option value="#ADA7C9" data-color="#ADA7C9">#ADA7C9</option>
+            <option value="default" data-color="#EEEEEE" selected="selected">default</option>
+            <option value="yellow" data-color="#D8DC6A">yellow</option>
+            <option value="orange" data-color="#F39C12">orange</option>
+            <option value="red" data-color="#ee3124">red</option>
+            <option value="peach" data-color="#DF928E">peach</option>
+            <option value="beige" data-color="#C1BCAC">beige</option>
+            <option value="green" data-color="#2ECC71">green</option>
+            <option value="aqua" data-color="#D1DEDE">aqua</option>
+            <option value="cyan" data-color="#64A6BD">cyan</option>
+            <option value="blue" data-color="#A9CEF4">blue</option>
+            <option value="purple" data-color="#ADA7C9">purple</option>
         </select>
         
         <label class="high-margin" for="nbd_icon">Choose the icon:</label>
         <div class="input-group iconpicker-container">
             <span class="input-group-addon"><i class="fa fa-external-link-square"></i></span>
-            <input id="nbd_icon" data-placement="bottomLeft" class="form-control icp icp-auto iconpicker-element iconpicker-input" value="fa-external-link-square" type="text">
+            <input id="nbd_icon" data-placement="bottomLeft" class="form-control icp icp-auto iconpicker-element iconpicker-input" value="external-link-square" type="text">
         </div>
 
       </div>
@@ -190,7 +182,7 @@
         <div class="grid">
           <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
-            <div class="buttonContainer" data-id="${button.id}" data-link="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+            <div class="buttonContainer" data-id="${button.id}" data-color="${button.color if button.color else 'default'}" data-link="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
 
                 <ul style="display:none" tal:condition="button.context_menu" >
                   <tal:block tal:repeat="menuItem button.context_menu.get('items')">

@@ -3,7 +3,6 @@
 
 	Splash.app = function () {
 		// set up the app as necessary
-		Splash.tabs();
 		Splash.defineTriggers();
 		Splash.defineExtentions();
 	}
