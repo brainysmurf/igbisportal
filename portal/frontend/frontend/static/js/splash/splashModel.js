@@ -3,30 +3,62 @@
 
 'use strict';
 
-var Button = function (name, color, link, icon) {
+Splash.config.gridly.callbacks = {
+	// reordering: function ($elements) {
+
+	// },
+	reordered: function ($elements) {
+		var id, element, button;
+
+		// Loop through each element and update our model information
+		// Only set dirty to any positions that changed
+		for (var position = 0; position < $elements.length; position++) {
+			element = $($elements[position]);
+			id = element.data('id');
+			button = Splash.tabs.getButtonById(id);
+			if (button.position != position + 1) {
+				button.position = position + 1;
+				button.dirty = true;
+			}
+		}
+	}
+};
+
+Splash.JBoxes = [];
+
+// TODO: Update position when adding manually
+var Button = function (name, color, url, icon) {
+
+	// We do not want to put any objects on here except for values
+	// If user needs jquery obj, use $(button.idSelector)
+	var $sel = undefined;
+
 	if (arguments.length == 1) {
 		if (name instanceof jQuery) {
-			this.$sel = name;
+			$sel = name;
 		} else {
-			this.$sel = $(name);
+			$sel = $(name);
 		}
-		this.name = this.$sel.data('name');
-		if (!this.$sel.attr('id')) {
-			this.id = 'splashButton'+Button.counter++;			
+		this.name = $sel.data('name');
+		if (!$sel.attr('id')) {
+			this.id = 'splashButton'+Button.counter++;
 		} else {
-			this.id = this.$sel.attr('id');
+			this.id = $sel.attr('id');
 		}
 		this.idSelector = '#'+this.id;
-		this.link = this.$sel.data('link');
-		this.icon = this.$sel.data('icon');
-		this.count = this.$sel.data('count');
-		this.color = this.$sel.data('color');
+		this.url = $sel.data('url');
+		this.icon = $sel.data('icon');
+		this.count = $sel.data('count');
+		this.color = $sel.data('color');
+		this.externalid = $sel.data('externalid');
+		this.dirty = false;
+		this.position = undefined;
 
 		// Loop through all the submenus, making items array
 		var items = [];
 		var $liItem, item;
 
-		this.$sel.find('.splashSubMenu').each(function (index, liItem) {
+		$sel.find('.splashSubMenu').each(function (index, liItem) {
 			$liItem = $(liItem);
 			item = {isKindDivider:false, isKindNormal:false, isKindPlaceholer:false};
 			item.display = $liItem.data('display');
@@ -47,22 +79,37 @@ var Button = function (name, color, link, icon) {
 		// It's spelled out, must be a new one
 		this.name = name;
 		this.color = color;
-		this.link = link;
+		this.url = url;
 		this.icon = icon;
-		this.$sel = undefined;
+		$sel = undefined;
 		this.submenuString = undefined;
+		this.externalid = undefined;
 		this.id = 'splashButton'+Button.counter++;
-		this.idSelector = '#'+this.id
+		this.idSelector = '#'+this.id;
+		this.dirty = false;
+		this.position = undefined;
 	}
 };
 
+Button.prototype.toJson = function () {
+	return JSON.stringify({
+		name: this.name,
+		icon: this.icon,
+		url: this.url,
+		position: this.position,
+		color: this.color
+	});
+};
+
 Button.prototype.processJBox = function () {
+	var jbox;
+
 	if (this.subMenuItems.length > 0) {
 		$(this.idSelector).mustache('submenuItemTemplate', {items:this.subMenuItems}, {method:'append'});
-		var thisTitle = '<a class="submenuTitle" href="'+ this.link + '">' + this.name + '</a>';
+		var thisTitle = '<a class="submenuTitle" href="'+ this.url + '">' + this.name + '</a>';
 
 		// attach jbox to the target element and save in the button object
-		this.jbox = $(this.idSelector).jBox('Tooltip', {
+		jbox = $(this.idSelector).jBox('Tooltip', {
 			constructOnInit: true,
 			position: {
 				y: $(this.idSelector).left,
@@ -74,6 +121,7 @@ Button.prototype.processJBox = function () {
 			closeOnMouseleave: true,
 			content: $(this.idSelector).find('ul'),
 		});
+		Splash.JBoxes.push(jbox);
     } else {
     	this.jbox = undefined;
     }
@@ -82,29 +130,31 @@ Button.prototype.processJBox = function () {
 Button.counter = 0;
 
 Button.prototype.left = function () {
-	return parseInt(this.$idSelector.css("left"), 10);
+	return parseInt($(this.idSelector).css("left"), 10);
 };
 
 Button.prototype.right = function () {
-	return parseInt(this.$idSelector.css("right"), 10);
+	return parseInt($(this.idSelector).css("right"), 10);
 };
 
 Button.prototype.updateDom = function () {
 	$(this.idSelector).find('.buttonTitle').text(this.name);
-	$(this.idSelector).find('a').attr('href', this.link);
+	$(this.idSelector).find('a').attr('href', this.url);
 	$(this.idSelector).alterClass('color*', 'color'+this.color);
 	$(this.idSelector).find('.buttonIcon > i').alterClass('fa-*', 'fa-'+this.icon);
 };
 
-Button.prototype.updateWithValues = function (name, color, link, icon) {
+Button.prototype.updateWithValues = function (name, color, url, icon) {
 	this.name = name;
 	this.color = color;
-	this.link = link;
+	this.url = url;
 	this.icon = icon;
+	this.dirty = true;
 	this.updateDom();
 };
 
 var Tab = function(name) {
+	var $sel = undefined;
 	this.buttons = [];
 
 	if (typeof name != "string") {
@@ -114,15 +164,21 @@ var Tab = function(name) {
 			$sel = $(name);
 		}
 		this.name = $sel.data('name');
+		// FIXME: Don't depend on the names!
+		if (this.name == 'Secondary_Teachers' || this.name == 'Elementary_Teachers' || this.name == 'Students') {
+			this.kind = 'systemTab';
+		} else {
+			this.kind = 'userTab';
+		}
 		this.id = this.name.replace(/ /g, '_');
 		this.becameDom();
+		this.dirty = false;
 
-		// Now see about the buttons
-		var $button;
-
-		this.$gridSelector.find('.buttonContainer').each(function (index, button) {
+		var position = 1;  // use 1 as starting point because we use length to calculate on new button
+		$(this.gridSelector).find('.buttonContainer').each(function (index, button) {
 			// Make new button object with existing data
 			var newButton = new Button(button);
+			newButton.position = position++;
 
 			// Remove the old button from the DOM
 			$(button).remove();
@@ -131,24 +187,28 @@ var Tab = function(name) {
 			this.loadButton(newButton);
 
 			// Add newButton to the DOM
-			this.$gridSelector.mustache('buttonContainerTemplate', newButton, {method:'append'});
+			$(this.gridSelector).mustache('buttonContainerTemplate', newButton, {method:'append'});
 
 			// Read in submenu information, jbox processing
 			newButton.processJBox();
 		}.bind(this));
 
 	} else {
-		var $sel = undefined;
 		this.name = name;
-		this.id = this.name.replace(/ /g, '_');		
+		this.id = this.name.replace(/ /g, '_');
+		this.dirty = false;
 	}
 
 };
 
+Tab.prototype.numButtons = function () {
+	return this.buttons.length;
+}
+
+// Called when ensured that we are in the dom
 Tab.prototype.becameDom = function () {
-	// Called when ensured that we are in the dom
-	this.$divSelector = $('#'+this.name);
-	this.$gridSelector = this.$divSelector.find('.grid');
+	this.divSelector = '#'+this.name;
+	this.gridSelector = this.divSelector + ' > .grid';
 };
 
 Tab.prototype.loadButton = function (button) {
@@ -156,25 +216,25 @@ Tab.prototype.loadButton = function (button) {
 	return this;
 };
 
-Tab.prototype.addButton = function (name, color, link, icon) {
+Tab.prototype.addButton = function (name, color, url, icon) {
 	var button;
 	if (arguments == 1) {
 		button = name;
 	} else {
-		button = new Button(name, color, link, icon)
+		button = new Button(name, color, url, icon)
 	}
-	this.$gridSelector.mustache('buttonContainerTemplate', button, {method:'append'});
+	$(this.gridSelector).mustache('buttonContainerTemplate', button, {method:'append'});
 	this.loadButton(button);
 	this.updateGrid();
 };
 
 Tab.prototype.initGrid = function () {
-	this.$gridSelector.gridly(Splash.config.gridly);
-	this.$gridSelector.gridly('draggable', 'off');
+	$(this.gridSelector).gridly(Splash.config.gridly);
+	$(this.gridSelector).gridly('draggable', 'off');
 };
 
 Tab.prototype.updateGrid = function () {
-	this.$gridSelector.gridly('layout');	
+	$(this.gridSelector).gridly('layout');	
 };
 
 var Tabs = function(first) {
@@ -202,7 +262,11 @@ var Tabs = function(first) {
 	$(Splash.config.tabsContainer).tabs(Splash.config.tabs);
 };
 
-Tabs.currentTabId = undefined;  // have to do something at init time to get this
+Tabs.JBoxes = [];
+
+Tabs.prototype.toJson = function() {
+	var ret = "";
+};
 
 Tabs.prototype.forEachTab = function (callback) {
 	this.tabs.forEach(callback);
@@ -217,29 +281,48 @@ Tabs.prototype.getTabByName = function (name) {
 	return _.findWhere(this.tabs, {name: name});
 };
 
+Tabs.prototype.getButtonById = function (id) {
+	var ret = undefined;
+	var button = undefined;
+	this.tabs.forEach(function (tab, index) {
+		if (button =_.findWhere(tab.buttons, {id:id})) {
+			ret = button;
+		}
+	});
+	return ret;
+};
+
 Tabs.prototype.addNewButtonInTab = function(inTabName, buttonName, buttonColor, buttonLink, buttonIcon) {
 	var button = new Button(buttonName, buttonColor, buttonLink, buttonIcon);
 	this.getTabByName(inTabName).addButton(buttonName, buttonColor, buttonLink, buttonIcon);
 };
 
 Tabs.prototype.disableJBoxes = function () {
-	$.each(this.tabs, function (index, tab) {
-		$.each(tab.buttons, function (index, button) {
-			if (button.jbox != undefined) {
-				button.jbox.disable();
-			}
-		});
+	Splash.JBoxes.forEach(function (jbox, index) {
+		jbox.disable();
 	});
+
+	// $.each(this.tabs, function (index, tab) {
+	// 	$.each(tab.buttons, function (index, button) {
+	// 		if (button.jbox != undefined) {
+	// 			button.jbox.disable();
+	// 		}
+	// 	});
+	// });
 };
 
 Tabs.prototype.enableJBoxes = function () {
-	$.each(this.tabs, function (index, tab) {
-		$.each(tab.buttons, function (index, button) {
-			if (button.jbox != undefined) {
-				button.jbox.enable();
-			}
-		});
+	Splash.JBoxes.forEach(function (jbox, index) {
+		jbox.enable();
 	});
+
+	// $.each(this.tabs, function (index, tab) {
+	// 	$.each(tab.buttons, function (index, button) {
+	// 		if (button.jbox != undefined) {
+	// 			button.jbox.enable();
+	// 		}
+	// 	});
+	// });
 };
 
 Tabs.prototype.addTab = function (name) {
@@ -260,20 +343,28 @@ Tabs.prototype.addTab = function (name) {
   	newTab.becameDom();
 
   	this.$tabsContainer.tabs("refresh");
-  	// var index = $('#tabs_holder a[href="#'+ newTabNameIndex + '"]').parent().index();
-  	// $tabs.tabs('option', 'active', index);
 
-	//$newTab.find('.grid').gridly(Splash.config.gridly);  //initGrid?
 	newTab.initGrid();
 	this.loadTab(newTab);
 };
 
-Tabs.prototype.addButtonToCurrentTab = function (name, color, link, icon) {
+Tabs.prototype.addButtonToCurrentTab = function (name, color, url, icon) {
 	// Adds to the current tab...
-	var button = new Button(name, color, link, icon);
+	var button = new Button(name, color, url, icon);
+	button.dirty = true;
 	var tab = this.getCurrentTab();
-	tab.$gridSelector.mustache('buttonContainerTemplate', button, {method:'append'});
+	button.position = tab.numButtons() + 1;
+	$(tab.gridSelector).mustache('buttonContainerTemplate', button, {method:'append'});
 	tab.loadButton(button);
+
+	// TODO: Make this a trigger instead
+    $(button.idSelector).find('*').addClass('editButton');
+    $(button.idSelector).find('*:not(.onButton)').css('opacity', 0.4);
+    $(button.idSelector).addClass('noBorder');
+	$(button.idSelector).find('*:not(.onButton)').addClass('js-avoidClicks')
+	$(button.idSelector).find('.onButton').css('opacity', 1);
+
+
 	tab.updateGrid();
 };
 
@@ -294,10 +385,54 @@ Tabs.prototype.getButton = function ($sel) {
 	return button;
 };
 
+Tabs.prototype.isAnythingDirty = function () {
+	var tabsDirty = false;
+	this.tabs.forEach(function (index, tab) {
+		if (tab.dirty) {
+			tabsDirty = true;
+		}
+	});
+	if (tabsDirty) {
+		return true;
+	}
+	return this.tabs.some(function (tab) { 
+		return tab.buttons.some(function (button) {
+			return button.dirty; 
+		}); 
+	});
+};
+
+Tabs.prototype.buttonsNotDirty = function () {
+	this.tabs.forEach(function (tab) {
+		tab.buttons.forEach(function (button) {
+			button.dirty = false;
+		});
+	});
+};
+
+// TODO: These looping functions could be faster...
+
+// returns dirty buttons and resets flag
+Tabs.prototype.dirtyButtons = function () {
+	var ret = [];
+	this.tabs.forEach(function (tab) {
+		tab.buttons.forEach(function (button) {
+			if (button.dirty) {
+				ret.push(button);
+				button.dirty = false;
+			}
+		});
+	});
+	return ret;
+}
 
 // Actually run the loading mechanism and make it available for reference in other areas
 Splash.singletonTabs = new Tabs(Splash.config.tabsContainer);
 
 Splash.tabs = Splash.singletonTabs;
+
+Splash.state = {
+	isEditing: false,
+};
 
 }(this.Splash));

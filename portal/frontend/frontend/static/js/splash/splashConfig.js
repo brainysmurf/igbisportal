@@ -25,11 +25,7 @@ Splash.config = {
 		// event: "mouseover",
 		show: { effect: "fade", duration: 200 }
 	},
-
-	jbox: {}
 },
-
-Splash.JBoxes = [],
 
 Splash.utils = {
 	// various javascript-specific functions we need
@@ -56,10 +52,8 @@ Splash.utils = {
 
 }
 
-// Initializations
 
 $.Mustache.addFromDom();
-
 
 
 }(this.Splash = {} ));

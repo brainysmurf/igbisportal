@@ -1,13 +1,54 @@
 (function (Splash) {
 
+
 Splash.defineTriggers = function () {
-	$('draggableTab').on('click', function (event, ui) {
+
+
+	$('#newButtonButton').attr('disabled', true);
+	$('#newTabButton').attr('disabled', true);
+	$(".slideOnModify").animate({width:'toggle'},350);
+
+	//Every time we click on a tab, update model so that we know what tab we are on
+	//This is depreciated since we can ask jquery-tabs for this
+	$('#tabs_titlebar').on('click', '.draggableTab', function (e) {
 		// Update the model to let us know which is the current tab
 		// Don't override default behaviour
 		Splash.tabs.currentTabId = $(event.target).attr('id');
+		if (Splash.state.isEditing) {
+			var tab = Splash.tabs.getCurrentTab();
+			console.log(tab);
+			if (tab.kind == 'systemTab') {
+				$('#newButtonButton').prop('disabled', true);
+			} else {
+				$('#newButtonButton').prop('disabled', false);
+			}
+		}
+
+		// var index = $('#tabs_holder a[href="' + $(e.target).attr('href') + '"]').parent().index();
+		// var howMany = $('.notUserCreated').length;
+		// // TODO: Count the number of those provided 
+		// if (index > (howMany - 1)) {
+		// 	$('#newButtonButton').attr('disabled', false);		
+		// }
+		// else {
+		// 	$('#newButtonButton').attr('disabled', true);		
+		// }
 	});
 
-	$('#newButtonButton').attr('disabled', true);
+	// $('.draggableTab').on('click', function (event, ui) {
+	// 	// Update the model to let us know which is the current tab
+	// 	// Don't override default behaviour
+	// 	Splash.tabs.currentTabId = $(event.target).attr('id');
+	// 	if (Splash.state.isEditing) {
+	// 		var tab = Splash.tabs.getCurrentTab();
+	// 		console.log(tab);
+	// 		if (tab.kind == 'systemTab') {
+	// 			$('#newButtonButton').prop('disabled', true);
+	// 		} else {
+	// 			$('#newButtonButton').prop('disabled', false);
+	// 		}
+	// 	}
+	// });
 
 	// settings dialog box
 	$("#new_tab_checkbox").change(function () {
@@ -33,18 +74,6 @@ Splash.defineTriggers = function () {
 	      },
 	    data: JSON.stringify({'new_tab': value})
 	  });
-	});
-
-	$('#tabs_titlebar').on('click', '.draggableTab', function (e) {
-		var index = $('#tabs_holder a[href="' + $(e.target).attr('href') + '"]').parent().index();
-		var howMany = $('.notUserCreated').length;
-		// TODO: Count the number of those provided 
-		if (index > (howMany - 1)) {
-			$('#newButtonButton').attr('disabled', false);		
-		}
-		else {
-			$('#newButtonButton').attr('disabled', true);		
-		}
 	});
 
 	$('#newButtonButton').on('click', function (e) {
@@ -158,6 +187,124 @@ Splash.defineTriggers = function () {
 		$parent.find('.buttonTitle').removeAttr('style');
 		$('.gridly').gridly('layout');
 	});
+
+  $('#editButton').on('click', function (e) {
+    var obj = $(this);
+    e.preventDefault();
+
+	$(".slideOnModify").animate({width:'toggle'},350);
+
+    if (Splash.state.isEditing) {
+
+      // It's on, turn it off
+      // Update to the server
+      // Restore to original state
+
+	  // ensure the new button and new tab are disabled
+	  $('#newButtonButton').prop('disabled', true);
+	  $('#newTabButton').prop('disabled', true);
+
+      // Check for dirty flags, ajax updates to the server, re-enable button on success with success message
+      // on failure, report offline status to the user.
+      if (Splash.tabs.isAnythingDirty()) {
+      	  var savedText = $('#editButton').html();
+
+      	  Splash.tabs.dirtyButtons().forEach(function (button) {
+      	  	  console.log(button);
+			  $.ajax({
+			    type:'PUT',
+			    url: 'updateButtons',
+			    contentType: 'application/json; charset=utf-8',
+			    data: button.toJson(),
+			    beforeSend: function (ignore, ignoreToo) {
+			    	// return false to cancel...?
+		    		$('#editButton').prop('disabled', true);
+			    	$('#editButton').html('<i class="fa fa-clock-o"></i>&nbsp;Saving...');
+			    },
+			    complete: function (ignore, ignoreToo) {
+			    	setTimeout(function () {
+			    		$('#editButton').html(savedText);
+			    		$('#editButton').prop('disabled', false);
+			    	}, 1500);
+			    },
+			    success: function(result) {
+			    	// just echoes at the moment
+			    	console.log(result);
+			    	setTimeout(function () {
+			    		$('#editButton').html('<span style="color:#008000;"><i class="fa fa-thumbs-up"></i>&nbsp;Success!</span>');
+			    	}, 500);
+			    }
+			  });
+			});
+
+        } else {
+		//nothing special
+      }
+
+      obj.removeAttr('style');
+
+      // This stuff makes the buttons appear as normal again
+      // TODO: Implement as trigger instead
+      $('.buttonContainer').removeClass('editButton');
+      $('.buttonContainer').find('*').removeClass('editButton');
+      $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 1});
+      $('.buttonContainer').removeClass('noBorder');
+      $('.onButton').animate({opacity:0});
+
+      // Make the tabs normal again too
+      $('#tabs_titlebar').find('li').removeClass('editTab');
+      $('#tabs_titlebar').sortable('destroy');
+
+      // Make the buttons clickable again!
+      $('.buttonContainer').find('*:not(.onButton)').removeClass('js-avoidClicks');
+
+      // Enable the pop-ups and tell the grid to not to allow dragging
+      Splash.tabs.enableJBoxes();
+      $('.grid').gridly('draggable', 'off');
+      Splash.state.isEditing = false;
+
+    } else if (!Splash.state.isEditing) {
+
+      // It's off, turn it on
+   	  $('#newTabButton').prop('disabled', false);
+      var currentTab = Splash.tabs.getCurrentTab();
+      // Looking at the tab, 
+      // FIXME: Don't rely on the names!
+      if (currentTab.kind == 'systemTab') {
+      		// ensure the new button and new tab are disabled
+      		$('#newButtonButton').prop('disabled', true);
+      } else {
+      		$('#newButtonButton').prop('disabled', false);
+      }
+
+      // Flag that lets us know what is happening
+      obj.css('background', '#999').css('color', '#eee');
+
+      // Disable the pop-ups
+      Splash.tabs.disableJBoxes();
+
+     // Make the button transition to editable state
+     $('.buttonContainer').addClass('editButton');
+     $('.buttonContainer').find('*').addClass('editButton');
+     $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 0.4});
+     $('.buttonContainer').addClass('noBorder');
+     $('.onButton').animate({opacity: 1}, {
+          done: function () {
+              $('.buttonContainer').find('*:not(.onButton)').addClass('js-avoidClicks');
+          },
+      });
+     $('#tabs_titlebar').addClass('editTab');
+     $('#tabs_titlebar').sortable({
+        axis: 'x',
+        cursor: 'move',
+        revert: true,
+        opacity: 0.5
+     });
+
+      $('.grid' ).gridly('draggable', 'on');
+      Splash.state.isEditing = true;
+    }
+  });
 },
 
 Splash.newEditButtonDialogInited = false,
@@ -186,10 +333,10 @@ Splash.initNewEditButtonDialog = function() {
 		e.preventDefault();
 	});
 	$preview.css('display', 'block');
-}
+},
 
 Splash.newEditButtonDialog = function (event) {
-	var isOnButton = $(event.target).attr('class') != 'nav_button';
+	var isOnButton = !$(event.target).hasClass('nav_button');
 	if (isOnButton) {
 		var $targetButton = $(event.target).parent();
 	}

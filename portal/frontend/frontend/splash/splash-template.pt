@@ -17,6 +17,7 @@
 
   <script type="text/javascript" src="${static_url}fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
   <script type="text/javascript" src="${static_url}js/URI.min.js"></script>
+  <script type="text/javascript" src="${static_url}js/modernizr.js"></script>
   <script type="text/javascript" src="${static_url}gridly/javascripts/jquery.gridly.js"></script>
   <script type="text/javascript" src="${static_url}sortable.min.js"></script>
   <script type="text/javascript" src="${static_url}js/mustache.min.js"></script>
@@ -28,16 +29,16 @@
 
   <script type="text/javascript" src="${static_url}js/splash/splashConfig.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashLogin.js" defer></script>
-  <script type="text/javascript" src="${static_url}js/splash/splashButtons.js" defer></script>
+  <script type="text/javascript" src="${static_url}js/splash/splashModel.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashInterface.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashExtensions.js" defer></script>
   <script type="text/javascript" src="${static_url}js/splash/splashApp.js" defer></script>
 
   <script id="buttonContainerTemplate" type="text/html">
-     <div class="buttonContainer color{{color}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-link="{{link}}" data-icon="{{icon}}" data-name="{{name}}">
+     <div class="buttonContainer editButton color{{color}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-url="{{link}}" data-icon="{{icon}}" data-name="{{name}}" data-position="{{position}}" data-externalid="{{externalid}}">
 
         <div class="buttonFace">
-          <a href="{{link}}">
+          <a href="{{url}}">
             <div class="buttonIcon"><i class="fa fa-{{icon}}"></i></div>
             <div class="buttonTitle">{{name}}</div>
           </a>
@@ -87,8 +88,8 @@
   <!-- <input data-size="large" id="edit_button" type="checkbox" value="1" /> -->
   <button id="settingsButton" class="nav_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>  
   <button id="editButton" class="nav_button"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Modify</button>  
-  <button id="newButtonButton" class="nav_button"><i class="fa fa-plus"></i>&nbsp;&nbsp;New Button</button>  
-  <button id="newTabButton" class="nav_button"><i class="fa fa-plus-square"></i>&nbsp;&nbsp;New Tab</button>  
+  <button id="newButtonButton" class="nav_button slideOnModify"><i class="fa fa-plus"></i>&nbsp;&nbsp;New Button</button>  
+  <button id="newTabButton" class="nav_button slideOnModify"><i class="fa fa-plus-square"></i>&nbsp;&nbsp;New Tab</button>  
 </div>
 
 <div metal:fill-slot="dialogs">
@@ -102,7 +103,7 @@
       <div id="newButtonDialog" style="display:none;"> 
         <!-- <label class="high-margin" for="nbd_preview">Preview:</label> -->
         <div id="nbd_preview">
-           <div class="buttonContainer previewButton" data-link="#" data-icon="" data-name="New Button">
+           <div class="buttonContainer previewButton" data-url="#" data-icon="" data-name="New Button">
               <div class="buttonFace buttons_for_jbox">
                 <a href="#">
                   <div class="buttonIcon"><i class="fa fa-plus-circle"></i></div>
@@ -182,7 +183,7 @@
         <div class="grid">
           <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
-            <div class="buttonContainer" data-id="${button.id}" data-color="${button.color if button.color else 'default'}" data-link="${button.url}" data-icon="${button.icon}" data-name="${button.name}">
+            <div class="buttonContainer" data-id="${button.id}" data-color="${button.color if button.color else 'default'}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}" data-externalid="${button.externalid}">
 
                 <ul style="display:none" tal:condition="button.context_menu" >
                   <tal:block tal:repeat="menuItem button.context_menu.get('items')">
