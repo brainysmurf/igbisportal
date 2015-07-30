@@ -41,18 +41,11 @@ $("#edit_button").bootstrapSwitch({
   }
 });
 
-var jbox_array = [];
-
 function do_settings_dialog() {
 
   $('#settingsButton').on('click', function () {
 
-    jbox_array.forEach(function (item, index) { 
-      //console.log(jbox_array[index]);
-      //FIXME this doesn't actually work
-      jbox_array[index].disable();
-    });
-
+    // TODO: Enable and disable jboxes here
     $('#settings_dialog').dialog({
       dialogClass: "no-close",
       resizeable: false,
@@ -66,67 +59,10 @@ function do_settings_dialog() {
       buttons: {
         "Done": function () { 
           $(this).dialog('close');
-          //FIXME: check for disabled first?
-          jbox_array.forEach(function (item, index) {
-            jbox_array[index].enable();
-          });
         }
       }
     });
   });
-
-  $('#editButton').on('click', function (e) {
-    var obj = $(this);
-    e.preventDefault();
-
-    if (obj.attr('style')) {
-
-      // It's on
-      obj.removeAttr('style');
-
-      Splash.tabs.enableJBoxes();
-
-      $('.buttonContainer').removeClass('editButton');
-      $('.buttonContainer').find('*').removeClass('editButton');
-      // $('.buttonContainer').animate({opacity:1});
-      $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 1});
-      $('.buttonContainer').removeClass('noBorder');
-      $('.onButton').animate({opacity:0});
-      $('#tabs_titlebar').find('li').removeClass('editTab');
-      $('#tabs_titlebar').sortable('destroy');
-
-      $('.buttonContainer').find('*:not(.onButton)').removeClass('js-avoidClicks');
-      $('.grid').gridly('draggable', 'off');
-
-    } else {
-
-      // It's off, turn it on
-
-      obj.css('background', '#999').css('color', '#eee');
-      Splash.tabs.disableJBoxes();
-
-     // make the buttons editable
-     $('.buttonContainer').addClass('editButton');
-     $('.buttonContainer').find('*').addClass('editButton');
-     $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 0.4});
-     $('.buttonContainer').addClass('noBorder');
-     $('.onButton').animate({opacity: 1}, {
-          done: function () {
-              $('.buttonContainer').find('*:not(.onButton)').addClass('js-avoidClicks');
-          },
-      });
-     $('#tabs_titlebar').addClass('editTab');
-     $('#tabs_titlebar').sortable({
-        axis: 'x',
-        cursor: 'move',
-        revert: true,
-        opacity: 0.5
-     });
-
-      $('.grid' ).gridly('draggable', 'on');
-    }
-  });
-
 }
 
 var unique = $('#unique').data('unique');
