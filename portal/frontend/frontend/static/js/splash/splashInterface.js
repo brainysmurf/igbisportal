@@ -3,7 +3,6 @@
 
 Splash.defineTriggers = function () {
 
-
 	$('#newButtonButton').attr('disabled', true);
 	$('#newTabButton').attr('disabled', true);
 	$(".slideOnModify").animate({width:'toggle'},350);
@@ -138,6 +137,7 @@ Splash.defineTriggers = function () {
 
 			  			// make new tab become front, and then ensure disabled
 						$('#newButtonButton').attr('disabled', false);
+						$tabs.tabs({active: -1});
 					    $(this).dialog('close');
 					}
 				}
