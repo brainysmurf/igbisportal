@@ -256,23 +256,18 @@ def splash(request):
     g_plus_unique_id = request.session.get('g_plus_unique_id')
     settings = None
     if g_plus_unique_id:
-        if g_plus_unique_id == '109350043391587028929':
-            buttons['Test'] =  [UserDefinedButtons(id=1000, externalid=1, name='1', color="red", size=0, icon="plus", url="http://example.com"), 
-                                UserDefinedButtons(id=1001, externalid=2, name="2", color="pink", size=1, icon="plus", url="http://example.com")
-                                ]
-        else:
-            with DBSession() as session:
-                try:
-                    settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
-                    tabs = session.query(UserDefinedTabs).\
-                        options(joinedload('buttons')).\
-                        filter_by(unique_id=g_plus_unique_id).all()
-                    for tab in tabs:
-                        buttons[tab.name] = tab.buttons
+        with DBSession() as session:
+            try:
+                settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
+                # tabs = session.query(UserDefinedTabs).\
+                #     options(joinedload('buttons')).\
+                #     filter_by(unique_id=g_plus_unique_id).all()
+                # for tab in tabs:
+                #     buttons[tab.name] = tab.buttons
 
-                except NoResultFound:
-                    settings = None
-                    tabs = None
+            except NoResultFound:
+                settings = None
+                tabs = None
 
     return dict(
         client_id=gns.config.google.client_id,
