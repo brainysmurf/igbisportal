@@ -151,7 +151,7 @@ Splash.defineTriggers = function () {
 
 		var $parent = $(e.target).parent();
 		var button = Splash.tabs.getButton($parent);
-		$(button.idSelector).css('display', 'none');   // delete from the DOM
+		$(button.idSelector).remove();   // delete from the DOM
 		Splash.tabs.getCurrentTab().buttons.splice(button.position-1, 1);
 	});
 
