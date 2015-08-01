@@ -286,7 +286,7 @@ Splash.defineTriggers = function () {
       Splash.tabs.disableJBoxes();
 
      // Make the button transition to editable state
-     $('.buttonContainer:not(.systemButton):not(.previewButton').addClass('editButton');
+     $('.buttonContainer:not(.systemButton)').addClass('editButton');
      $('.buttonContainer:not(.systemButton').find('*').addClass('editButton');
      $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 0.4});
      $('.buttonContainer').addClass('noBorder');
@@ -299,7 +299,7 @@ Splash.defineTriggers = function () {
      $('#tabs_titlebar').addClass('editTab');
      $('#tabs_titlebar').sortable(Splash.config.sortable);
 
-      $('.grid' ).gridly('draggable', 'on');
+      $('.grid:not(.systemTab)' ).gridly('draggable', 'on');
       Splash.state.isEditing = true;
     }
   });

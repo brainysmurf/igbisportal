@@ -46,8 +46,6 @@ Splash.config.sortable.stop = function (event, ui) {
 			position = item[1];
 			tab.position = parseInt(position);
 		});
-		// var index = $(Splash.tabs.tabsSelector).tabs('option', 'active');
-	 //  	localStorage.setItem(Splash.config.currentTabKey, index.toString());
 	}
 };
 
@@ -59,6 +57,7 @@ var Button = function (name, color, url, icon) {
 	// We do not want to put any objects on here except for values
 	// If user needs jquery obj, use $(button.idSelector)
 	var $sel = undefined;
+	this.editButton = ""; 
 
 	if (arguments.length == 1) {
 
@@ -429,6 +428,7 @@ Tabs.prototype.addButtonToCurrentTab = function (name, color, url, icon) {
 	button.dirty = true;
 	var tab = this.getCurrentTab();
 	button.position = tab.numButtons() + 1;
+	button.editButton = 'editButton';
 	$(tab.gridSelector).mustache('buttonContainerTemplate', button, {method:'append'});
 	tab.loadButton(button);
 

@@ -35,7 +35,7 @@
   <script type="text/javascript" src="${static_url}js/splash/splashApp.js" defer></script>
 
   <script id="buttonContainerTemplate" type="text/html">
-     <div class="buttonContainer {{size}} {{kind}} editButton color{{color}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-url="{{link}}" data-icon="{{icon}}" data-name="{{name}}" data-kind="{{kind}}" data-size="{{size}}" data-position="{{position}}" data-externalid="{{externalid}}">
+     <div class="buttonContainer {{size}} {{kind}} color{{color}} {{editButton}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-url="{{link}}" data-icon="{{icon}}" data-name="{{name}}" data-kind="{{kind}}" data-size="{{size}}" data-position="{{position}}" data-externalid="{{externalid}}">
 
         <div class="buttonFace">
           <a href="{{url}}">
@@ -58,7 +58,7 @@
 
   <script id="newTabTemplate" type="text/html">
     <div id="{{id}}" data-position="{{position}}">
-      <div class="grid"></div>
+      <div class="grid userTab"></div>
     </div>
   </script>
 
@@ -183,7 +183,7 @@
 
     <tal:block tal:repeat="key buttons">
       <div id="${key}">
-        <div class="grid">
+        <div class="grid systemTab">
           <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
             <div class="buttonContainer ${button.size}" data-id="${button.id}" data-kind="systemButton" data-color="${button.color if button.color else 'default'}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}" data-size="${button.size}" data-externalid="${button.externalid}">
