@@ -1,5 +1,8 @@
+
 (function (Splash) {
 	'use strict';
+
+
 
 	Splash.app = function () {
 

@@ -6,6 +6,10 @@
 // Actually run the loading mechanism and make it available for reference in other areas
 Splash.config = {
 
+	localStorageKey: 'test.igbis.splash.tabs',
+	currentTabKey: 'test.igbis.splash.currentTabId',
+	openInNewWindowKey: 'test.igbis.splash.openNewWindow',
+
 	tabsContainer: '#tabs_holder',
 
 	gridly: {
@@ -25,6 +29,14 @@ Splash.config = {
 		// event: "mouseover",
 		show: { effect: "fade", duration: 200 }
 	},
+
+	sortable: {
+        axis: 'x',
+        cursor: 'move',
+        revert: true,
+        opacity: 0.5,
+        items: ".userTab",   // restricts the tab positioning to just the user-defined ones
+     },
 },
 
 Splash.utils = {
@@ -54,6 +66,7 @@ Splash.utils = {
 
 
 $.Mustache.addFromDom();
-
+var value = $('#openInNewWindowKey').data('value');
+localStorage.setItem(Splash.config.openInNewWindowKey, value);
 
 }(this.Splash = {} ));

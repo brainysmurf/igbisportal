@@ -121,6 +121,14 @@ p {
     cursor: move;
 }
 
+#newButtonButton {
+    color: #008000;
+}
+
+#newTabButton {
+    color: #008000;
+}
+
 .noBorder {
     border: 1px solid #FFF;
 }
@@ -678,8 +686,7 @@ label.high-margin {
     -webkit-border-bottom-left-radius:9px;
     -moz-border-radius-bottomleft:9px;
     border-bottom-left-radius:9px;
-    border-bottom-color: #ccc;
-    border-left-color: #ccc;
+    border-color: #ccc;
     padding: 5px;
     position: absolute;
     cursor: pointer;
@@ -698,8 +705,7 @@ label.high-margin {
     -webkit-border-bottom-right-radius:9px;
     -moz-border-radius-bottomright:9px;
     border-bottom-right-radius:9px;
-    border-bottom-color: #ccc;
-    border-right: ;-color: #ccc;
+    border-color: #ccc;
     padding: 5px;
     position: absolute;
     color: #000;

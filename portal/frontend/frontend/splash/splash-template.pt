@@ -35,7 +35,7 @@
   <script type="text/javascript" src="${static_url}js/splash/splashApp.js" defer></script>
 
   <script id="buttonContainerTemplate" type="text/html">
-     <div class="buttonContainer editButton color{{color}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-url="{{link}}" data-icon="{{icon}}" data-name="{{name}}" data-position="{{position}}" data-externalid="{{externalid}}">
+     <div class="buttonContainer {{size}} {{kind}} editButton color{{color}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-url="{{link}}" data-icon="{{icon}}" data-name="{{name}}" data-kind="{{kind}}" data-size="{{size}}" data-position="{{position}}" data-externalid="{{externalid}}">
 
         <div class="buttonFace">
           <a href="{{url}}">
@@ -51,13 +51,13 @@
   </script>
 
   <script id="newTabLiTemplate" type="text/html">
-    <li>
+    <li class="{{kind}}" data-position="{{position}}" id="_tab{{id}}">
       <a class="draggableTab" href="#{{id}}">{{name}}</a>
     </li>
   </script>
 
   <script id="newTabTemplate" type="text/html">
-    <div id="{{id}}">
+    <div id="{{id}}" data-position="{{position}}">
       <div class="grid"></div>
     </div>
   </script>
@@ -87,7 +87,7 @@
 <div metal:fill-slot="additional-buttons" tal:omit-tag="">
   <!-- <input data-size="large" id="edit_button" type="checkbox" value="1" /> -->
   <button id="settingsButton" class="nav_button"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</button>  
-  <button id="editButton" class="nav_button"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Modify</button>  
+  <button id="editButton" class="nav_button"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Begin Editing</button>  
   <button id="newButtonButton" class="nav_button slideOnModify"><i class="fa fa-plus"></i>&nbsp;&nbsp;New Button</button>  
   <button id="newTabButton" class="nav_button slideOnModify"><i class="fa fa-plus-square"></i>&nbsp;&nbsp;New Tab</button>  
 </div>
@@ -97,7 +97,7 @@
 
       <div id="newTabDialog" style="display:none;"> 
         <label class="high-margin" for="ntd_from">Enter the name of the tab:</label><br />
-        <input id="ntd_from" class="full-width" type="text" /><br /><br />
+        <input id="ntd_from" class="full-width" type="text" placeholder="New tab"/><br /><br />
       </div>
 
       <div id="newButtonDialog" style="display:none;"> 
@@ -113,9 +113,12 @@
           </div>
         </div>
 
+        <div style="display:none;" id="openInNewWindowKey" data-value="${'1' if settings and settings.new_tab else '0'}"></div>
+
+
         <label class="high-margin" for="nbd_name">Enter the name of the button:</label>
         <input id="nbd_name" placeholder="Button Name" class="full-width" type="text" autoFocus/>
-        <label class="high-margin" for="nbd_link">Enter the link:</label>&nbsp;<span class="js-validate-msg warning-text"></span>
+        <label class="high-margin" for="nbd_link">Enter the URL:</label>&nbsp;<span class="js-validate-msg warning-text"></span>
         <input id="nbd_link" placeholder="http://example.com" class="full-width" type="text" />
 
         <label class="high-margin" for="nbd_color">Choose the color:</label>
@@ -157,11 +160,11 @@
         <label for="new_tab_checkbox">Open in a new tab</label>
        </form>
 
-       <form id="noNamesForm">
+       <!-- <form id="noNamesForm">
         <br /><strong>Appearence:</strong><br />
         <input id="noNamesOnButtons" type="checkbox" name="noName" ${'value="1" checked="checked"' if settings and settings.new_tab else 'value="0"'}  />
         <label for="noNamesOnButtons">No names on buttons</label>
-       </form>
+       </form> -->
 
     </div>
 </div>
@@ -173,7 +176,7 @@
 
   <div id="tabs_holder">
     <ul id="tabs_titlebar">
-      <li data-name="${key}" tal:repeat="key buttons">
+      <li data-name="${key}" data-kind="systemTab" tal:repeat="key buttons">
         <a class="notUserCreated draggableTab" href="#${key}">${key.replace('_', ' ')}</a>
       </li>
     </ul> 
@@ -183,7 +186,7 @@
         <div class="grid">
           <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
-            <div class="buttonContainer" data-id="${button.id}" data-color="${button.color if button.color else 'default'}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}" data-externalid="${button.externalid}">
+            <div class="buttonContainer ${button.size}" data-id="${button.id}" data-kind="systemButton" data-color="${button.color if button.color else 'default'}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}" data-size="${button.size}" data-externalid="${button.externalid}">
 
                 <ul style="display:none" tal:condition="button.context_menu" >
                   <tal:block tal:repeat="menuItem button.context_menu.get('items')">

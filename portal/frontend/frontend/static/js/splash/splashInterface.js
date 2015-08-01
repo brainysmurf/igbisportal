@@ -1,21 +1,44 @@
 (function (Splash) {
 
+Splash.editModeHandler = function (e) {
+  (e || window.event).returnValue = "It looks like you are in edit mode.";
+  return "You can save changes or continue and lose the changes you made.";
+}
+
+Splash.changeMade = function () {
+	window.addEventListener("beforeunload", Splash.editModeHandler);
+	$('#editButton').text('Save Changes').css('background', '#008000').css('color', '#FFF');
+	Splash.state.changeMade = true;
+}
+
+Splash.changesMade = function () {
+    window.removeEventListener("beforeunload", Splash.editModeHandler);
+    Splash.state.changeMade = false;
+}
 
 Splash.defineTriggers = function () {
+
+	$('body').on('click', 'a:not(.ui-tabs-anchor)', function (e) {
+		if (localStorage.getItem(Splash.config.openInNewWindowKey) === '1') {
+			e.preventDefault();
+			window.open($(e.target).attr('href'), '_blank');
+		}
+
+		// let the default behaviour happen
+	});
 
 	$('#newButtonButton').attr('disabled', true);
 	$('#newTabButton').attr('disabled', true);
 	$(".slideOnModify").animate({width:'toggle'},350);
 
-	//Every time we click on a tab, update model so that we know what tab we are on
-	//This is depreciated since we can ask jquery-tabs for this
+	//Every time we click on a tab, update interface, and also save for future reference
+
 	$('#tabs_titlebar').on('click', '.draggableTab', function (e) {
-		// Update the model to let us know which is the current tab
-		// Don't override default behaviour
-		Splash.tabs.currentTabId = $(event.target).attr('id');
+		var index = $(Splash.tabs.tabsSelector).tabs('option', 'active');
+	  	localStorage.setItem(Splash.config.currentTabKey, index.toString());
+
 		if (Splash.state.isEditing) {
 			var tab = Splash.tabs.getCurrentTab();
-			console.log(tab);
 			if (tab.kind == 'systemTab') {
 				$('#newButtonButton').prop('disabled', true);
 			} else {
@@ -23,46 +46,14 @@ Splash.defineTriggers = function () {
 			}
 		}
 
-		// var index = $('#tabs_holder a[href="' + $(e.target).attr('href') + '"]').parent().index();
-		// var howMany = $('.notUserCreated').length;
-		// // TODO: Count the number of those provided 
-		// if (index > (howMany - 1)) {
-		// 	$('#newButtonButton').attr('disabled', false);		
-		// }
-		// else {
-		// 	$('#newButtonButton').attr('disabled', true);		
-		// }
 	});
-
-	// $('.draggableTab').on('click', function (event, ui) {
-	// 	// Update the model to let us know which is the current tab
-	// 	// Don't override default behaviour
-	// 	Splash.tabs.currentTabId = $(event.target).attr('id');
-	// 	if (Splash.state.isEditing) {
-	// 		var tab = Splash.tabs.getCurrentTab();
-	// 		console.log(tab);
-	// 		if (tab.kind == 'systemTab') {
-	// 			$('#newButtonButton').prop('disabled', true);
-	// 		} else {
-	// 			$('#newButtonButton').prop('disabled', false);
-	// 		}
-	// 	}
-	// });
 
 	// settings dialog box
 	$("#new_tab_checkbox").change(function () {
 	  var value = $(this).val();
 	  value = value == "1" ? "0" : "1";
+	  localStorage.setItem(Splash.config.openInNewWindowKey, value);
 	  $(this).val(value);
-
-	  // TODO change this to overriding triggers and window.open(url, '_blank')
-	  if (value == "1") {
-	    $('a').each(function(index) {
-	      $(this).attr('target', '_blank_'+index);
-	    });
-	  } else {
-	    $('a').removeAttr('target');
-	  }
 
 	  $.ajax({
 	    type:'POST',
@@ -78,11 +69,10 @@ Splash.defineTriggers = function () {
 	$('#newButtonButton').on('click', function (e) {
 
 		e.preventDefault();
-		Splash.newEditButtonDialog(e);
-
-		// straight-forward setting
-		$('#nbd_name').val("New Button");
+		$('#nbd_name').val("");
 		$('#nbd_link').val("");
+
+		Splash.newEditButtonDialog(e);
 
 		if (!Splash.newEditButtonDialogInited) {
 			Splash.initNewEditButtonDialog();
@@ -137,10 +127,16 @@ Splash.defineTriggers = function () {
 
 			  			// make new tab become front, and then ensure disabled
 						$('#newButtonButton').attr('disabled', false);
+
+						// FIXME:
 						$tabs.tabs({active: -1});
+						var index = $(Splash.tabs.tabsSelector).tabs('option', 'active');
+					  	localStorage.setItem(Splash.config.currentTabKey, index.toString());
+
 					    $(this).dialog('close');
 					}
 				}
+ 			    Splash.changeMade();
 			  }
 			}
 		});
@@ -155,7 +151,6 @@ Splash.defineTriggers = function () {
 
 		var $parent = $(e.target).parent();
 		var button = Splash.tabs.getButton($parent);
-
 		$('#nbd_name').val(button.name);
 		$('#nbd_link').val(button.link);
 
@@ -172,10 +167,14 @@ Splash.defineTriggers = function () {
 		e.preventDefault();
 		e.stopPropagation();
 
-		var size;
-		var $parent = $(e.target).parent().toggleClass('large');
+		console.log('here');
 
-		$parent.find('.buttonTitle').css('display', 'none').toggleClass('large');
+		var size;
+		var $parent = $(e.target).parent();
+
+		$parent.toggleClass('large');
+		var button = Splash.tabs.getButtonById($parent.data('id'));
+		button.size = $parent.hasClass('large') ? "large" : "";
 
 		if ($parent.hasClass('large')) {
 			size = 220;
@@ -184,21 +183,22 @@ Splash.defineTriggers = function () {
 		}
 		$parent.data('width', size);
 		$parent.data('height', size);
-		$parent.find('.buttonTitle').removeAttr('style');
 		$('.gridly').gridly('layout');
 	});
 
+  var savedEditingText = $('#editButton').html();
   $('#editButton').on('click', function (e) {
     var obj = $(this);
     e.preventDefault();
 
-	$(".slideOnModify").animate({width:'toggle'},350);
+	$(".slideOnModify").animate({width:'toggle'}, 350);
 
     if (Splash.state.isEditing) {
 
       // It's on, turn it off
       // Update to the server
       // Restore to original state
+	  $('#editButton').html(savedEditingText);
 
 	  // ensure the new button and new tab are disabled
 	  $('#newButtonButton').prop('disabled', true);
@@ -206,38 +206,39 @@ Splash.defineTriggers = function () {
 
       // Check for dirty flags, ajax updates to the server, re-enable button on success with success message
       // on failure, report offline status to the user.
-      if (Splash.tabs.isAnythingDirty()) {
+      if (Splash.state.changeMade) {
       	  var savedText = $('#editButton').html();
+   		  $('#editButton').prop('disabled', true);
+    	  $('#editButton').html('<i class="fa fa-clock-o"></i>&nbsp;Saving...');
+    	  var serialized = JSON.stringify(Splash.tabs.tabs);
 
-      	  Splash.tabs.dirtyButtons().forEach(function (button) {
-      	  	  console.log(button);
-			  $.ajax({
-			    type:'PUT',
-			    url: 'updateButtons',
-			    contentType: 'application/json; charset=utf-8',
-			    data: button.toJson(),
-			    beforeSend: function (ignore, ignoreToo) {
-			    	// return false to cancel...?
-		    		$('#editButton').prop('disabled', true);
-			    	$('#editButton').html('<i class="fa fa-clock-o"></i>&nbsp;Saving...');
-			    },
-			    complete: function (ignore, ignoreToo) {
-			    	setTimeout(function () {
-			    		$('#editButton').html(savedText);
-			    		$('#editButton').prop('disabled', false);
-			    	}, 1500);
-			    },
-			    success: function(result) {
-			    	// just echoes at the moment
-			    	console.log(result);
-			    	setTimeout(function () {
-			    		$('#editButton').html('<span style="color:#008000;"><i class="fa fa-thumbs-up"></i>&nbsp;Success!</span>');
-			    	}, 500);
-			    }
-			  });
-			});
+    	  localStorage.setItem(Splash.config.localStorageKey, serialized);
 
-        } else {
+    	  // This sends all the tab and button information
+    	  // The server handles all the logic of detecting new buttons, etc.
+
+		  $.ajax({
+		    type:'PUT',
+		    url: 'updateButtons',
+		    contentType: 'application/json; charset=utf-8',
+		    data: JSON.stringify(Splash.tabs.tabs),
+		    complete: function (ignore, ignoreToo) {
+		    	setTimeout(function () {
+		    		$('#editButton').html(savedText);
+		    		$('#editButton').prop('disabled', false);
+		    	}, 1500);
+		    },
+		    success: function(result) {
+		    	// just echoes at the moment
+		    	console.log(result);
+		    	setTimeout(function () {
+		    		$('#editButton').html('<span style="color:#008000;"><i class="fa fa-thumbs-up"></i>&nbsp;Success!</span>');
+		    	}, 500);
+		    }
+		  });
+
+        Splash.changesMade();
+      } else {
 		//nothing special
       }
 
@@ -266,7 +267,9 @@ Splash.defineTriggers = function () {
     } else if (!Splash.state.isEditing) {
 
       // It's off, turn it on
+
    	  $('#newTabButton').prop('disabled', false);
+   	  $('#editButton').text('No changes');
       var currentTab = Splash.tabs.getCurrentTab();
       // Looking at the tab, 
       // FIXME: Don't rely on the names!
@@ -277,29 +280,24 @@ Splash.defineTriggers = function () {
       		$('#newButtonButton').prop('disabled', false);
       }
 
-      // Flag that lets us know what is happening
-      obj.css('background', '#999').css('color', '#eee');
+      obj.css('border-color', '#008000');
 
       // Disable the pop-ups
       Splash.tabs.disableJBoxes();
 
      // Make the button transition to editable state
-     $('.buttonContainer').addClass('editButton');
-     $('.buttonContainer').find('*').addClass('editButton');
+     $('.buttonContainer:not(.systemButton):not(.previewButton').addClass('editButton');
+     $('.buttonContainer:not(.systemButton').find('*').addClass('editButton');
      $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 0.4});
      $('.buttonContainer').addClass('noBorder');
-     $('.onButton').animate({opacity: 1}, {
+     $('.buttonContainer.systemButton > .onButton').css('display', 'none');
+     $('.buttonContainer:not(.systemButton) > .onButton').animate({opacity: 1}, {
           done: function () {
               $('.buttonContainer').find('*:not(.onButton)').addClass('js-avoidClicks');
           },
       });
      $('#tabs_titlebar').addClass('editTab');
-     $('#tabs_titlebar').sortable({
-        axis: 'x',
-        cursor: 'move',
-        revert: true,
-        opacity: 0.5
-     });
+     $('#tabs_titlebar').sortable(Splash.config.sortable);
 
       $('.grid' ).gridly('draggable', 'on');
       Splash.state.isEditing = true;
@@ -336,7 +334,7 @@ Splash.initNewEditButtonDialog = function() {
 },
 
 Splash.newEditButtonDialog = function (event) {
-	var isOnButton = !$(event.target).hasClass('nav_button');
+	var isOnButton = $(event.target).hasClass('onButton');
 	if (isOnButton) {
 		var $targetButton = $(event.target).parent();
 	}
@@ -362,11 +360,11 @@ Splash.newEditButtonDialog = function (event) {
 
 	    	var $done = $("#newButtonDialog").parent().find(":button:contains('Done')");
 
-	    	if (Splash.utils.isValidURL($('#nbd_link').val())) {
-		    	$done.prop("disabled", false).removeClass("ui-state-disabled");
-	    	} else {
-		    	$done.prop("disabled", true).addClass("ui-state-disabled");
-		    }
+	    	// if (Splash.utils.isValidURL($('#nbd_link').val())) {
+		    // 	$done.prop("disabled", false).removeClass("ui-state-disabled");
+	    	// } else {
+		    // 	$done.prop("disabled", true).addClass("ui-state-disabled");
+		    // }
 	    	$('#newButtonDialog').find('.js-validate-msg').text('');
 
 		   	$("#newButtonDialog").keyup(function(e) {
@@ -376,19 +374,19 @@ Splash.newEditButtonDialog = function (event) {
 	    		if (name && link) {
 			    	// Validate link
 			    	if (Splash.utils.isValidURL(link)) {
-						$done.prop("disabled", false).removeClass("ui-state-disabled");
+						//$done.prop("disabled", false).removeClass("ui-state-disabled");
 						$('#newButtonDialog').find('.js-validate-msg').text("");
 			    	} else {
-			    		$done.prop("disabled", true).addClass("ui-state-disabled");
+			    		//$done.prop("disabled", true).addClass("ui-state-disabled");
 						$('#newButtonDialog').find('.js-validate-msg').text('Invalid URL');
 			    	}
 				}
 		    	if (e.keyCode == $.ui.keyCode.ENTER) {
 		        	$done.click();
 	    		}
-	    		else if (name == "" && link == "") {
-    				$done.prop("disabled", true).addClass("ui-state-disabled");
-	    		}
+	    		// else if (name == "" && link == "") {
+    			// 	$done.prop("disabled", true).addClass("ui-state-disabled");
+	    		// }
     		});
 
 	    	$('#nbd_name').select();
@@ -415,6 +413,8 @@ Splash.newEditButtonDialog = function (event) {
 		    	} else {
 		    		Splash.tabs.addButtonToCurrentTab(name, color, link, icon);
 				 }
+
+				 Splash.changeMade();
 
 			    $(this).dialog('close');
 			}

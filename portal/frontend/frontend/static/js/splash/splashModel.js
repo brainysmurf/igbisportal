@@ -21,6 +21,33 @@ Splash.config.gridly.callbacks = {
 				button.dirty = true;
 			}
 		}
+		Splash.changeMade();
+	}
+};
+
+Splash.config.sortable.start = function (event, ui) {
+	Splash.state.tabOrder = $('#tabs_titlebar').sortable("toArray", {attribute:'data-position'});
+};
+
+Splash.config.sortable.stop = function (event, ui) {
+	var newOrder = $('#tabs_titlebar').sortable("toArray", {attribute:'data-position'});
+	if (Splash.state.tabOrder != newOrder) {
+		Splash.changeMade();
+		var dataPositions = $('#tabs_titlebar').sortable("toArray", {attribute:'data-position'});
+		var Ids = $('#tabs_titlebar').sortable("toArray", {attribute:'id'});
+		var tab, position;
+		// Go through the data and change the positions as appropriate
+		var howManyToPrepend = Splash.tabs.tabs.length - $('#tabs_titlebar').sortable("toArray").length
+		for (var i=0; i<howManyToPrepend; i++) {
+			dataPositions.splice(0, 0, "");
+		}
+		_.zip(Splash.tabs.tabs, dataPositions).forEach(function (item, index) {
+			tab = item[0];
+			position = item[1];
+			tab.position = parseInt(position);
+		});
+		// var index = $(Splash.tabs.tabsSelector).tabs('option', 'active');
+	 //  	localStorage.setItem(Splash.config.currentTabKey, index.toString());
 	}
 };
 
@@ -34,46 +61,60 @@ var Button = function (name, color, url, icon) {
 	var $sel = undefined;
 
 	if (arguments.length == 1) {
-		if (name instanceof jQuery) {
-			$sel = name;
-		} else {
-			$sel = $(name);
-		}
-		this.name = $sel.data('name');
-		if (!$sel.attr('id')) {
-			this.id = 'splashButton'+Button.counter++;
-		} else {
-			this.id = $sel.attr('id');
-		}
-		this.idSelector = '#'+this.id;
-		this.url = $sel.data('url');
-		this.icon = $sel.data('icon');
-		this.count = $sel.data('count');
-		this.color = $sel.data('color');
-		this.externalid = $sel.data('externalid');
-		this.dirty = false;
-		this.position = undefined;
 
-		// Loop through all the submenus, making items array
-		var items = [];
-		var $liItem, item;
-
-		$sel.find('.splashSubMenu').each(function (index, liItem) {
-			$liItem = $(liItem);
-			item = {isKindDivider:false, isKindNormal:false, isKindPlaceholer:false};
-			item.display = $liItem.data('display');
-			item.url = $liItem.data('url');
-			if (item.display === 'hr') {
-				item.isKindDivider = true;
-			} else if (item.display === 'placeholder') {
-				item.isKindPlaceholder = true;
+		if (name instanceof HTMLElement || name instanceof jQuery) {
+			if (name instanceof jQuery) {
+				$sel = name;
 			} else {
-				item.isKindNormal = true;
+				$sel = $(name);
 			}
-			items.push(item);
-		});
+			this.name = $sel.data('name');
+			if (!$sel.attr('id')) {
+				this.id = 'splashButton'+Button.counter++;
+			} else {
+				this.id = $sel.attr('id');
+			}
+			this.idSelector = '#'+this.id;
+			this.url = $sel.data('url');
+			this.icon = $sel.data('icon');
+			this.count = $sel.data('count');
+			this.color = $sel.data('color');
+			this.externalid = $sel.data('externalid');
+			this.size = $sel.data('size');
+			this.dirty = false;
+			this.position = undefined;
+			this.kind = $sel.data('kind');
 
-		this.subMenuItems = items;
+			// Loop through all the submenus, making items array
+			var items = [];
+			var $liItem, item;
+
+			$sel.find('.splashSubMenu').each(function (index, liItem) {
+				$liItem = $(liItem);
+				item = {isKindDivider:false, isKindNormal:false, isKindPlaceholer:false};
+				item.display = $liItem.data('display');
+				item.url = $liItem.data('url');
+				if (item.display === 'hr') {
+					item.isKindDivider = true;
+				} else if (item.display === 'placeholder') {
+					item.isKindPlaceholder = true;
+				} else {
+					item.isKindNormal = true;
+				}
+				items.push(item);
+			});
+
+			this.subMenuItems = items;
+		}
+
+		else if (typeof name === 'object') {
+			for (var property in name) {
+				this[property] = name[property];
+			}
+			this.subMenuItems = undefined; // TODO?
+			Button.counter++;  // update our count
+
+		}
 
 	} else if (arguments.length == 4) {
 		// It's spelled out, must be a new one
@@ -88,6 +129,7 @@ var Button = function (name, color, url, icon) {
 		this.idSelector = '#'+this.id;
 		this.dirty = false;
 		this.position = undefined;
+		this.kind = 'userButton';
 	}
 };
 
@@ -157,7 +199,9 @@ var Tab = function(name) {
 	var $sel = undefined;
 	this.buttons = [];
 
-	if (typeof name != "string") {
+	if (name instanceof HTMLElement || name instanceof jQuery) {
+		// We get here when we are looping through our initial markup and see the system-provided buttons and tabs
+
 		if (name instanceof jQuery) {
 			$sel = name;
 		} else {
@@ -165,14 +209,13 @@ var Tab = function(name) {
 		}
 		this.name = $sel.data('name');
 		// FIXME: Don't depend on the names!
-		if (this.name == 'Secondary_Teachers' || this.name == 'Elementary_Teachers' || this.name == 'Students') {
-			this.kind = 'systemTab';
-		} else {
-			this.kind = 'userTab';
-		}
+		this.kind = $sel.data('kind');
+		$sel.addClass(this.kind);
 		this.id = this.name.replace(/ /g, '_');
 		this.becameDom();
 		this.dirty = false;
+		this.position = Tab.counter++;  // not the same as position below!
+		$sel.data('position', this.position);
 
 		var position = 1;  // use 1 as starting point because we use length to calculate on new button
 		$(this.gridSelector).find('.buttonContainer').each(function (index, button) {
@@ -193,13 +236,30 @@ var Tab = function(name) {
 			newButton.processJBox();
 		}.bind(this));
 
-	} else {
+	} else if (typeof name === "string") {
+		// We get here when we create a string from scratch
 		this.name = name;
 		this.id = this.name.replace(/ /g, '_');
+		if (this.name == 'Secondary_Teachers' || this.name == 'Elementary_Teachers' || this.name == 'Students') {
+			this.kind = 'systemTab';
+		} else {
+			this.kind = 'userTab';
+		}
 		this.dirty = false;
-	}
+		this.position = Tab.counter++;
 
+	} else if (typeof name === 'object') {
+		// We get here when we load up user-saved tabs that are available to us as objects (from serialization)
+		// Ironic, we are essentially rebuiliding
+		for (var property in name) {
+			this[property] = name[property];
+		}
+		this.buttons = []; // reset this because we'll build it up later
+		this.position = Tab.counter++;
+	}
 };
+
+Tab.counter = 0;
 
 Tab.prototype.numButtons = function () {
 	return this.buttons.length;
@@ -207,8 +267,8 @@ Tab.prototype.numButtons = function () {
 
 // Called when ensured that we are in the dom
 Tab.prototype.becameDom = function () {
-	this.divSelector = '#'+this.name;
-	this.gridSelector = this.divSelector + ' > .grid';
+	this.idSelector = '#'+this.id;
+	this.gridSelector = this.idSelector + ' > .grid';
 };
 
 Tab.prototype.loadButton = function (button) {
@@ -237,29 +297,61 @@ Tab.prototype.updateGrid = function () {
 	$(this.gridSelector).gridly('layout');	
 };
 
-var Tabs = function(first) {
+// This class effectively loads up all the buttons and tabs
+// We don't want any jquery objects on this class for serialization purposes
+var Tabs = function() {
 
-	// Constructor for Tabs. Kicks off the process of loading up tabs and buttons
-
-	var $sel;
-	if (first instanceof jQuery) {
-		$sel = first;
-	} else {
-		$sel = $(first);
-	}
-	this.$tabsContainer = $sel;
+	this.tabsSelector = Splash.config.tabsContainer;
 	this.tabs = [];
-	$sel.find('ul:first').find('li').each(function (index, item) {
+	$(this.tabsSelector).find('ul:first').find('li').each(function (index, item) {
 		this.loadTab(new Tab(item));
 	}.bind(this));
 
 	// init the grids
+
+	var storage = localStorage.getItem(Splash.config.localStorageKey);
+	if (storage != undefined && storage != "") {
+		var userTabs = JSON.parse(storage);
+		var newTab;
+		_.sortBy(userTabs, function (t) { return t.position; }).forEach(function (tab, index) {
+			if (tab.kind === 'userTab') {
+				newTab = new Tab(tab);
+
+				var $lastLi = $(this.tabsSelector).find('ul > li:last-child');
+			  	$lastLi.mustache('newTabLiTemplate', newTab, {method:'after'});
+
+			  	var $lastDiv = $(this.tabsSelector).children('div:last-child');
+			  	$lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
+
+			  	newTab.becameDom();
+
+				this.loadTab(newTab);
+
+				// Load them up in order of position.
+				_.sortBy(tab.buttons, function (b) { return b.position;} ).forEach(function (button, index) {
+					var newButton = new Button(button);
+
+					newTab.loadButton(newButton);
+
+					$(newTab.gridSelector).mustache('buttonContainerTemplate', newButton, {method:'append'});
+
+					//newButton.processJBox();				
+				}.bind(this));
+			}
+		}.bind(this));
+	}
+
 	this.forEachTab(function (tab) {
 		tab.initGrid();
 	});
 
 	// initing tabs last aftetr grid operations works better
 	$(Splash.config.tabsContainer).tabs(Splash.config.tabs);
+	var currentTab = localStorage.getItem(Splash.config.currentTabKey);
+	console.log(currentTab);
+	if (currentTab != "null" && currentTab != "") {
+		$(Splash.config.tabsContainer).tabs({active: parseInt(currentTab)});
+	}
 };
 
 Tabs.JBoxes = [];
@@ -301,48 +393,31 @@ Tabs.prototype.disableJBoxes = function () {
 	Splash.JBoxes.forEach(function (jbox, index) {
 		jbox.disable();
 	});
-
-	// $.each(this.tabs, function (index, tab) {
-	// 	$.each(tab.buttons, function (index, button) {
-	// 		if (button.jbox != undefined) {
-	// 			button.jbox.disable();
-	// 		}
-	// 	});
-	// });
 };
 
 Tabs.prototype.enableJBoxes = function () {
 	Splash.JBoxes.forEach(function (jbox, index) {
 		jbox.enable();
 	});
-
-	// $.each(this.tabs, function (index, tab) {
-	// 	$.each(tab.buttons, function (index, button) {
-	// 		if (button.jbox != undefined) {
-	// 			button.jbox.enable();
-	// 		}
-	// 	});
-	// });
 };
 
 Tabs.prototype.addTab = function (name) {
 	// Adds to the model and the DOM
 	
-
   	// TODO: Add target depending on user setting? to be consistent?
   	// Make this a template, too, right?
   	// Add the tab in the tab list to the DOM
   	var newTab = new Tab(name);
 
-	var $lastLi = this.$tabsContainer.find('ul > li:last-child');
+	var $lastLi = $(this.tabsSelector).find('ul > li:last-child');
   	$lastLi.mustache('newTabLiTemplate', newTab, {method:'after'});
 
-  	var $lastDiv = this.$tabsContainer.children('div:last-child');
+  	var $lastDiv = $(this.tabsSelector).children('div:last-child');
   	$lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
 
   	newTab.becameDom();
 
-  	this.$tabsContainer.tabs("refresh");
+  	$(this.tabsSelector).tabs("refresh");
 
 	newTab.initGrid();
 	this.loadTab(newTab);
@@ -364,12 +439,12 @@ Tabs.prototype.addButtonToCurrentTab = function (name, color, url, icon) {
 	$(button.idSelector).find('*:not(.onButton)').addClass('js-avoidClicks')
 	$(button.idSelector).find('.onButton').css('opacity', 1);
 
-
 	tab.updateGrid();
 };
 
 Tabs.prototype.getCurrentTab = function () {
-  	var index = this.$tabsContainer.tabs('option', 'active');
+	// this needs to change to position
+  	var index = $(this.tabsSelector).tabs('option', 'active');
   	return this.tabs[index];
 };
 
@@ -426,13 +501,14 @@ Tabs.prototype.dirtyButtons = function () {
 	return ret;
 }
 
-// Actually run the loading mechanism and make it available for reference in other areas
-Splash.singletonTabs = new Tabs(Splash.config.tabsContainer);
+// This kicks off the start up code 
+Splash.singletonTabs = new Tabs();
 
 Splash.tabs = Splash.singletonTabs;
 
 Splash.state = {
 	isEditing: false,
+	changeMade: false,
 };
 
 }(this.Splash));
