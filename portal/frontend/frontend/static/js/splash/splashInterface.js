@@ -78,7 +78,9 @@ Splash.defineTriggers = function () {
 			Splash.initNewEditButtonDialog();
 		}
 		$("#nbd_color").colorselector('setValue', 'default');
+		$('#nbd_icon').iconpicker('icon', 'external-link-square');
 		$('#nbd_icon').val('external-link-square');
+		$('#nbd_preview').find('i').alterClass('fa-*', 'fa-external-link-square');
 	});
 
 	$('#newTabButton').on('click', function (e) {
@@ -132,7 +134,7 @@ Splash.defineTriggers = function () {
 						$tabs.tabs({active: -1});
 						var index = $(Splash.tabs.tabsSelector).tabs('option', 'active');
 					  	localStorage.setItem(Splash.config.currentTabKey, index.toString());
-
+					  	$('.grid:not(.systemTab)').gridly('draggable', 'on');
 					    $(this).dialog('close');
 					}
 				}
@@ -309,7 +311,7 @@ Splash.defineTriggers = function () {
      $('#tabs_titlebar').addClass('editTab');
      $('#tabs_titlebar').sortable(Splash.config.sortable);
 
-      $('.grid:not(.systemTab)' ).gridly('draggable', 'on');
+      $('.grid:not(.systemTab)').gridly('draggable', 'on');
       Splash.state.isEditing = true;
     }
   });
@@ -329,11 +331,15 @@ Splash.initNewEditButtonDialog = function() {
 		placement: 'topRight',
 		hideOnSelect: true,
 	});
+
 	$('#nbd_icon').on('iconpickerSelected', function (e) {
 		$preview.find('i').alterClass('fa-*', 'fa-'+e.iconpickerValue);
 		$('#nbd_icon').val(e.iconpickerValue);
 	});
-	$('#nbd_icon').val('external-link-square');
+
+	$('#nbd_icon').iconpicker('icon', 'external-link-square');
+	$preview.find('i').alterClass('fa-*', 'fa-external-link-square');
+
 	$('#nbd_name').keyup(function () {
 		$preview.find('.buttonTitle').text($('#nbd_name').val());
 	});
