@@ -18,7 +18,7 @@ Splash.changesMade = function () {
 
 Splash.defineTriggers = function () {
 
-	$('body').on('click', 'a:not(.ui-tabs-anchor)', function (e) {
+	$('body').on('click', 'a:not(.ui-tabs-anchor) :not(.btn-colorselector)', function (e) {
 		if (localStorage.getItem(Splash.config.openInNewWindowKey) === '1') {
 			e.preventDefault();
 			window.open($(e.target).attr('href'), '_blank');
