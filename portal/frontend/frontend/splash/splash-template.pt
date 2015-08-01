@@ -44,6 +44,7 @@
           </a>
         </div>
 
+        <div class="onButton deleteOnButton"><i class="fa fa-times js-avoidClicks"></i></div>
         <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
         <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
 
