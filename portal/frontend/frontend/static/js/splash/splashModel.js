@@ -316,25 +316,29 @@ var Tabs = function() {
         url: 'getButtons',
         contentType: 'application/json; charset=utf-8',
         success: function(result) {
-        	var fromServer = JSON.parse(result);
+        	if (typeof result !== 'object') {
+	        	var fromServer = JSON.parse(result);
 
-			if (fromServer != localStorage.getItem(Splash.config.localStorageKey)) {
-				// delete the other stuff from dom and the model...
-				//this.process.Storage();
-				console.log('server and local do NOT match');
-				var tab;
-				for (var i = 0; i < fromServer.length; i++) {
-					tab = fromServer[i];
-					if (tab.kind === 'userTab') {
-						$(tab.idSelector).remove();   // removes from the DOM, if exists
-						this.tabs.splice(i, 1);       // removes from the model if it's there
+				if (fromServer != localStorage.getItem(Splash.config.localStorageKey)) {
+					// delete the other stuff from dom and the model...
+					//this.process.Storage();
+					console.log('server and local do NOT match');
+					var tab;
+					for (var i = 0; i < fromServer.length; i++) {
+						tab = fromServer[i];
+						if (tab.kind === 'userTab') {
+							$(tab.idSelector).remove();   // removes from the DOM, if exists
+							this.tabs.splice(i, 1);       // removes from the model if it's there
+						}
 					}
-				}
-				this.processStorage(fromServer);
-			} else {
-				console.log('server and local match');
-			}
+					this.processStorage(fromServer);
 
+				} else {
+					console.log('server and local match');
+				}
+			} else {
+				console.log(result);
+			}
         }.bind(this),
 
         complete: function (ignore, ignore2) {
