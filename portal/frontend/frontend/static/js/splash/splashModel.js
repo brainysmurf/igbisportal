@@ -111,7 +111,9 @@ var Button = function (name, color, url, icon) {
 				this[property] = name[property];
 			}
 			this.subMenuItems = undefined; // TODO?
-			Button.counter++;  // update our count
+			// We override in case of deletions
+			this.id = 'splashButton'+Button.counter++;
+			this.idSelector = '#' + this.id;
 
 		}
 
@@ -211,7 +213,10 @@ var Tab = function(name) {
 		this.kind = $sel.data('kind');
 		$sel.addClass(this.kind);
 		this.id = this.name.replace(/ /g, '_');
-		this.becameDom();
+
+		this.idSelector = '#'+this.id;
+		this.gridSelector = this.idSelector + ' > .grid';
+
 		this.dirty = false;
 		this.position = Tab.counter++;  // not the same as position below!
 		$sel.data('position', this.position);
@@ -264,12 +269,6 @@ Tab.prototype.numButtons = function () {
 	return this.buttons.length;
 }
 
-// Called when ensured that we are in the dom
-Tab.prototype.becameDom = function () {
-	this.idSelector = '#'+this.id;
-	this.gridSelector = this.idSelector + ' > .grid';
-};
-
 Tab.prototype.loadButton = function (button) {
 	this.buttons.push(button);
 	return this;
@@ -306,54 +305,82 @@ var Tabs = function() {
 		this.loadTab(new Tab(item));
 	}.bind(this));
 
-	// init the grids
-
-	var storage = localStorage.getItem(Splash.config.localStorageKey);
-	if (storage != undefined && storage != "") {
-		var userTabs = JSON.parse(storage);
-		var newTab;
-		_.sortBy(userTabs, function (t) { return t.position; }).forEach(function (tab, index) {
-			if (tab.kind === 'userTab') {
-				newTab = new Tab(tab);
-
-				var $lastLi = $(this.tabsSelector).find('ul > li:last-child');
-			  	$lastLi.mustache('newTabLiTemplate', newTab, {method:'after'});
-
-			  	var $lastDiv = $(this.tabsSelector).children('div:last-child');
-			  	$lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
-
-			  	newTab.becameDom();
-
-				this.loadTab(newTab);
-
-				// Load them up in order of position.
-				_.sortBy(tab.buttons, function (b) { return b.position;} ).forEach(function (button, index) {
-					var newButton = new Button(button);
-
-					newTab.loadButton(newButton);
-
-					$(newTab.gridSelector).mustache('buttonContainerTemplate', newButton, {method:'append'});
-
-					//newButton.processJBox();				
-				}.bind(this));
-			}
-		}.bind(this));
+	var fromLocal = localStorage.getItem(Splash.config.localStorageKey);
+	if (fromLocal != "" && fromLocal != 'undefined') {
+		this.processStorage(JSON.parse(fromLocal));
 	}
 
-	this.forEachTab(function (tab) {
-		tab.initGrid();
-	});
+    $.ajax({
+        type:'GET',
+        url: 'getButtons',
+        contentType: 'application/json; charset=utf-8',
+        success: function(result) {
+        	var fromServer = JSON.parse(result);
+
+			if (fromServer != localStorage.getItem(Splash.config.localStorageKey)) {
+				// delete the other stuff from dom and the model...
+				//this.process.Storage();
+				console.log('server and local do NOT match');
+				var tab;
+				for (var i = 0; i < fromServer.length; i++) {
+					tab = fromServer[i];
+					if (tab.kind === 'userTab') {
+						$(tab.idSelector).remove();   // removes from the DOM, if exists
+						this.tabs.splice(i, 1);       // removes from the model if it's there
+					}
+				}
+
+				this.processStorage(fromServer);
+			} else {
+				console.log('server and local match');
+			}
+
+        }.bind(this),
+
+        complete: function (ignore, ignore2) {
+			this.forEachTab(function (tab) {
+				tab.initGrid();
+			});
+			$(Splash.config.tabsContainer).tabs(Splash.config.tabs);
+			var currentTab = localStorage.getItem(Splash.config.currentTabKey);
+			if (currentTab != "null" && currentTab != "") {
+				$(Splash.config.tabsContainer).tabs({active: parseInt(currentTab)});
+			}
+        }.bind(this)
+    });
 
 	// initing tabs last aftetr grid operations works better
-	$(Splash.config.tabsContainer).tabs(Splash.config.tabs);
-	var currentTab = localStorage.getItem(Splash.config.currentTabKey);
-	console.log(currentTab);
-	if (currentTab != "null" && currentTab != "") {
-		$(Splash.config.tabsContainer).tabs({active: parseInt(currentTab)});
-	}
 };
 
 Tabs.JBoxes = [];
+
+Tabs.prototype.processStorage = function (userTabs) {
+	var newTab;
+	_.sortBy(userTabs, function (t) { return t.position; }).forEach(function (tab, index) {
+		if (tab.kind === 'userTab') {
+			newTab = new Tab(tab);
+
+			var $lastLi = $(this.tabsSelector).find('ul > li:last-child');
+		  	$lastLi.mustache('newTabLiTemplate', newTab, {method:'after'});
+
+		  	var $lastDiv = $(this.tabsSelector).children('div:last-child');
+		  	$lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
+
+			this.loadTab(newTab);
+
+			// Load them up in order of position.
+			_.sortBy(tab.buttons, function (b) { return b.position;} ).forEach(function (button, index) {
+				var newButton = new Button(button);
+
+				newTab.loadButton(newButton);
+
+				$(newTab.gridSelector).mustache('buttonContainerTemplate', newButton, {method:'append'});
+
+				//newButton.processJBox();				
+			});
+		}
+	}.bind(this));
+};
 
 Tabs.prototype.toJson = function() {
 	var ret = "";
@@ -413,8 +440,6 @@ Tabs.prototype.addTab = function (name) {
 
   	var $lastDiv = $(this.tabsSelector).children('div:last-child');
   	$lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
-
-  	newTab.becameDom();
 
   	$(this.tabsSelector).tabs("refresh");
 

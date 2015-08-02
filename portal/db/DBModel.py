@@ -68,6 +68,7 @@ if PREFIX is None or PREFIX.upper() is "NONE":
 TABS = "{}tabs".format(PREFIX)
 BUTTONS = "{}buttons".format(PREFIX)
 SUBMENUS = "{}submenus".format(PREFIX)
+SPLASHJSON = "{}splash_jsons".format(PREFIX)
 USERS = "{}users".format(PREFIX)
 STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)
@@ -140,31 +141,36 @@ class PortalORM(object):
             d[column] = getattr(self, column)
         return d
 
-class UserDefinedTabs(Base):
-    __tablename__ = TABS
-    id = Column(BigInteger, primary_key=True)
-    name = Column(String)
-    g_plus_unique_id = Column(String)
-    buttons = relationship("UserDefinedButtons")
+class UserSplashJson(Base):
+    __tablename__ = SPLASHJSON
+    id = Column(String, primary_key=True)
+    json = Column(Text)
 
-class UserDefinedButtons(Base):
-    __tablename__ = BUTTONS
-    id = Column(BigInteger, primary_key=True)
-    externalid = Column(BigInteger)
-    name = Column(String)
-    color = Column(String)
-    icon = Column(String)
-    size = Column(Integer)
-    url = Column(String)
-    tab = Column(Integer, ForeignKey(TABS+'.id'))
-    context_menu = relationship("UserDefinedSubMenus")
+# class UserDefinedTabs(Base):
+#     __tablename__ = TABS
+#     id = Column(BigInteger, primary_key=True)
+#     name = Column(String)
+#     g_plus_unique_id = Column(String)
+#     buttons = relationship("UserDefinedButtons")
 
-class UserDefinedSubMenus(Base):
-    __tablename__ = SUBMENUS
-    id = Column(BigInteger, primary_key=True)
-    name = Column(String)
-    url = Column(String)    
-    button = Column(Integer, ForeignKey(BUTTONS+'.id'))
+# class UserDefinedButtons(Base):
+#     __tablename__ = BUTTONS
+#     id = Column(BigInteger, primary_key=True)
+#     externalid = Column(BigInteger)
+#     name = Column(String)
+#     color = Column(String)
+#     icon = Column(String)
+#     size = Column(Integer)
+#     url = Column(String)
+#     tab = Column(Integer, ForeignKey(TABS+'.id'))
+#     context_menu = relationship("UserDefinedSubMenus")
+
+# class UserDefinedSubMenus(Base):
+#     __tablename__ = SUBMENUS
+#     id = Column(BigInteger, primary_key=True)
+#     name = Column(String)
+#     url = Column(String)    
+#     button = Column(Integer, ForeignKey(BUTTONS+'.id'))
 
 class User(PortalORM):
     """

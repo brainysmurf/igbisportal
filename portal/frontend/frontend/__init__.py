@@ -70,6 +70,7 @@ def main(global_config, **settings):
     config.add_route('students_program_list', '/students/program/{program}')
 
     config.add_route('updateButtons', '/updateButtons')
+    config.add_route('getButtons', '/getButtons')
 
     config.add_route('splash', '/splash')
     config.add_route('get_session_user', '/get_session_user')

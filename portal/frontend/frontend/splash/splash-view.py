@@ -30,8 +30,9 @@ Absences = db.table_string_to_class('PrimaryStudentAbsences')
 HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 GSignIn = db.table_string_to_class('google_sign_in')
 UserSettings = db.table_string_to_class('user_settings')
-UserDefinedTabs = db.table_string_to_class('user_defined_tabs')
-UserDefinedButtons = db.table_string_to_class('user_defined_buttons')
+# UserDefinedTabs = db.table_string_to_class('user_defined_tabs')
+# UserDefinedButtons = db.table_string_to_class('user_defined_buttons')
+UserSplashJson = db.table_string_to_class('user_splash_json')
 
 button = namedtuple('button', ['externalid', 'name', 'color', 'size', 'url', 'icon', 'id', 'context_menu'])
 
@@ -112,7 +113,30 @@ cashless_button = button(name="Cashless", externalid=-9, size="", color="green",
 
 @view_config(route_name='updateButtons', renderer='json')
 def update_buttons(request):
-    return request.json
+    gplus = request.session.get('g_plus_unique_id')
+    if not gplus:
+        return dict(message="Who let me in?")
+    with DBSession() as session:
+        try:
+            this = session.query(UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
+            this.json = json.dumps(request.json)
+        except NoResultFound:
+            new = UserSplashJson(id=gplus, json=request.body)
+            session.add(new)
+            return request.json
+    return dict(message="Success")
+
+@view_config(route_name='getButtons', renderer='json')
+def get_buttons(request):
+    gplus = request.session.get('g_plus_unique_id')
+    if not gplus:
+        return dict(message="Who let me in?")
+    with DBSession() as session:
+        try:
+            this = session.query(UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
+        except NoResultFound:
+            return dict(message="Nothing!")
+    return this.json
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
 def splash(request):
