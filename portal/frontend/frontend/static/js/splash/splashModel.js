@@ -309,6 +309,7 @@ var Tabs = function() {
 	if (fromLocal != "" && fromLocal != 'undefined') {
 		this.processStorage(JSON.parse(fromLocal));
 	}
+	this.finalInit();
 
     $.ajax({
         type:'GET',
@@ -329,7 +330,6 @@ var Tabs = function() {
 						this.tabs.splice(i, 1);       // removes from the model if it's there
 					}
 				}
-
 				this.processStorage(fromServer);
 			} else {
 				console.log('server and local match');
@@ -338,14 +338,7 @@ var Tabs = function() {
         }.bind(this),
 
         complete: function (ignore, ignore2) {
-			this.forEachTab(function (tab) {
-				tab.initGrid();
-			});
-			$(Splash.config.tabsContainer).tabs(Splash.config.tabs);
-			var currentTab = localStorage.getItem(Splash.config.currentTabKey);
-			if (currentTab != "null" && currentTab != "") {
-				$(Splash.config.tabsContainer).tabs({active: parseInt(currentTab)});
-			}
+        	Splash.finalInit();
         }.bind(this)
     });
 
@@ -353,6 +346,17 @@ var Tabs = function() {
 };
 
 Tabs.JBoxes = [];
+
+Tabs.prototype.finalInit = function () {
+	this.forEachTab(function (tab) {
+		tab.initGrid();
+	});
+	$(Splash.config.tabsContainer).tabs(Splash.config.tabs);
+	var currentTab = localStorage.getItem(Splash.config.currentTabKey);
+	if (currentTab != "null" && currentTab != "") {
+		$(Splash.config.tabsContainer).tabs({active: parseInt(currentTab)});
+	}
+}
 
 Tabs.prototype.processStorage = function (userTabs) {
 	var newTab;

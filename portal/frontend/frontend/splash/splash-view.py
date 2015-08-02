@@ -2,7 +2,7 @@ from pyramid.response import Response, FileResponse
 from pyramid.view import view_config
 from pyramid.renderers import render
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import DBAPIError
 
@@ -115,7 +115,7 @@ cashless_button = button(name="Cashless", externalid=-9, size="", color="green",
 def update_buttons(request):
     gplus = request.session.get('g_plus_unique_id')
     if not gplus:
-        return dict(message="Who let me in?")
+        return HTTPForbidden()
     with DBSession() as session:
         try:
             this = session.query(UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
@@ -130,7 +130,7 @@ def update_buttons(request):
 def get_buttons(request):
     gplus = request.session.get('g_plus_unique_id')
     if not gplus:
-        return dict(message="Who let me in?")
+        return HTTPForbidden()
     with DBSession() as session:
         try:
             this = session.query(UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
