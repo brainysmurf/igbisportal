@@ -309,7 +309,6 @@ var Tabs = function() {
 	if (fromLocal != "" && fromLocal != 'undefined') {
 		this.processStorage(JSON.parse(fromLocal));
 	}
-	this.finalInit();
 
     $.ajax({
         type:'GET',
