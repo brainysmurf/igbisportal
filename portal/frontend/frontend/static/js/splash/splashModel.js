@@ -342,7 +342,7 @@ var Tabs = function() {
         }.bind(this),
 
         complete: function (ignore, ignore2) {
-        	Splash.finalInit();
+        	this.finalInit();
         }.bind(this)
     });
 
