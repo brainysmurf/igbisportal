@@ -665,6 +665,7 @@ label.high-margin {
     text-align: center;
     opacity: 0;
 
+    -webkit-text-stroke: 1px black;
     text-shadow:
     /* Outline 1 */
     -1px -1px 0 #000000,
@@ -704,10 +705,9 @@ label.high-margin {
     left: 0;
 }
 
-.editSubmenuOnButton {
-    width: 20px;
-    top: 0;
-    right: 0;
+.submenuOnButton {
+    left: 20px;
+    bottom: 0;
 }
 
 .deleteOnButton {
