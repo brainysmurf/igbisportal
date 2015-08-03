@@ -305,11 +305,6 @@ var Tabs = function() {
 		this.loadTab(new Tab(item));
 	}.bind(this));
 
-	var fromLocal = localStorage.getItem(Splash.config.localStorageKey);
-	if (fromLocal != "" && fromLocal != 'undefined') {
-		this.processStorage(JSON.parse(fromLocal));
-	}
-
     $.ajax({
         type:'GET',
         url: 'getButtons',
@@ -318,7 +313,9 @@ var Tabs = function() {
         	if (typeof result !== 'object') {
 	        	var fromServer = JSON.parse(result);
 
-				if (fromServer != localStorage.getItem(Splash.config.localStorageKey)) {
+				var fromLocal = localStorage.getItem(Splash.config.localStorageKey);
+
+				if (fromServer != fromLocal) {
 					// delete the other stuff from dom and the model...
 					//this.process.Storage();
 					console.log('server and local do NOT match');
@@ -333,7 +330,7 @@ var Tabs = function() {
 					this.processStorage(fromServer);
 
 				} else {
-					console.log('server and local match');
+					this.processStorage(fromLocal);
 				}
 			} else {
 				console.log(result);
