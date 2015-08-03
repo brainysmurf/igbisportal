@@ -299,12 +299,12 @@ Splash.defineTriggers = function () {
       Splash.tabs.disableJBoxes();
 
      // Make the button transition to editable state
-     $('.buttonContainer:not(.systemButton)').addClass('editButton');
-     $('.buttonContainer:not(.systemButton').find('*').addClass('editButton');
+     $('.buttonContainer').not('.systemButton').addClass('editButton');
+     $('.buttonContainer').not('.systemButton').find('*').addClass('editButton');
      $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 0.4});
      $('.buttonContainer').addClass('noBorder');
      $('.buttonContainer.systemButton > .onButton').css('display', 'none');
-     $('.buttonContainer:not(.systemButton) > .onButton').animate({opacity: 1}, {
+     $('.buttonContainer').not('.systemButton ').find('.onButton').animate({opacity: 1}, {
           done: function () {
               $('.buttonContainer').find('*:not(.onButton)').addClass('js-avoidClicks');
           },
