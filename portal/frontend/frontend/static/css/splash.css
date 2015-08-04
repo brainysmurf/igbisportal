@@ -654,6 +654,10 @@ label.high-margin {
     cursor: move;
 }
 
+#listOfSubmenus { list-style-type: none; margin: 0; padding: 0; }
+#listOfSubmenus li { padding-left: 2em; height: 70px; }
+#listOfSubmenus li span { margin-left: -1.5em; padding-right: 10px;}
+
 .onButton {
     width:30px;
     background-color:transparent;
