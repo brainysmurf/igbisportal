@@ -38,15 +38,16 @@
      <div class="buttonContainer {{size}} {{kind}} color{{color}} {{editButton}}" id="{{id}}" data-id="{{id}}" data-color="{{color}}" data-url="{{link}}" data-icon="{{icon}}" data-name="{{name}}" data-kind="{{kind}}" data-size="{{size}}" data-position="{{position}}" data-externalid="{{externalid}}">
 
         <div class="buttonFace">
-          <a href="{{url}}">
+          <a href="{{url}}" target="blank_">
             <div class="buttonIcon"><i class="fa fa-{{icon}}"></i></div>
             <div class="buttonTitle">{{name}}</div>
           </a>
         </div>
 
         <div class="onButton deleteOnButton"><i class="fa fa-times js-avoidClicks"></i></div>
-        <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
         <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
+        <div class="onButton submenuOnButton"><i class="fa fa-bars js-avoidClicks"></i></div>
+        <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
 
       </div>
   </script>
@@ -69,7 +70,7 @@
         {{#items}}
         <li >
           {{#isKindNormal}}
-            <a href="{{url}}">{{display}}</a>
+            <a href="{{url}}" target="_blank">{{display}}</a>
           {{/isKindNormal}}
           {{#isKindPlaceholder}}
             <div id="{{url}}"></div>
@@ -81,6 +82,14 @@
         {{/items}}
       </ul>
 
+  </script>
+
+  <script id="submenuEntry" type="text/html">
+      <li>
+        <span class="fa fa-arrows-v"></span>
+        <input id="esd_display{{count}}" placeholder="Submenu display name" class="full-width" type="text" value="{{display}}"/>
+        <input id="esd_url{{count}}" placeholder="http://example.com" class="full-width" type="text" value="{{url}}"/>
+      </li>
   </script>
 
 </div>
@@ -99,6 +108,12 @@
       <div id="newTabDialog" style="display:none;"> 
         <label class="high-margin" for="ntd_from">Enter the name of the tab:</label><br />
         <input id="ntd_from" class="full-width" type="text" placeholder="New tab"/><br /><br />
+      </div>
+
+      <div id="editSubmenuDialog" style="display:none;">
+        <br />Each pop-up item needs a display name and a link. Drag and drop to change the order in which they are displayed.<br/><br />
+        <ul id="listOfSubmenus">
+        </ul>
       </div>
 
       <div id="newButtonDialog" style="display:none;"> 
@@ -155,12 +170,13 @@
       </div>
 
       <div id="settings_dialog" style="display:none;">      
-       <form id="new_tab_form">
+        No settings yet. <br /><br /><i>(Note: Last year, there was a button to click for "Open in New Tab", this is the default behaviour and cannot be changed at this time. If there is a need for clicks to NOT open in a new tab, let us know and we'll implement that.)</i>
+<!--        <form id="new_tab_form">
         <br /><strong>On Click:</strong><br />
         <input id="new_tab_checkbox" type="checkbox" name="new_tab" ${'value="1" checked="checked"' if settings and settings.new_tab else 'value="0"'}  />
         <label for="new_tab_checkbox">Open in a new tab</label>
        </form>
-
+ -->
        <!-- <form id="noNamesForm">
         <br /><strong>Appearence:</strong><br />
         <input id="noNamesOnButtons" type="checkbox" name="noName" ${'value="1" checked="checked"' if settings and settings.new_tab else 'value="0"'}  />

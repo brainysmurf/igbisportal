@@ -18,14 +18,13 @@ Splash.changesMade = function () {
 
 Splash.defineTriggers = function () {
 
-	$('body').on('click', 'a:not(.ui-tabs-anchor) :not(.btn-colorselector)', function (e) {
-		if (localStorage.getItem(Splash.config.openInNewWindowKey) === '1') {
-			e.preventDefault();
-			window.open($(e.target).attr('href'), '_blank');
-		}
+	// Depreciated, although may introduce:
+	// TODO: Figure out a better selector
 
-		// let the default behaviour happen
-	});
+	// $('body').on('click', 'a:not(.ui-tabs-anchor) :not(.btn-colorselector)', function (e) {
+	// 	e.preventDefault();
+	// 	window.open($(e.target).attr('href'), '_blank');
+	// });
 
 	$('#newButtonButton').attr('disabled', true);
 	$('#newTabButton').attr('disabled', true);
@@ -176,11 +175,123 @@ Splash.defineTriggers = function () {
 		Splash.newEditButtonDialog(e);
 	});
 
-	$('#tabs_holder').on('click', '.sizeOnButton', function (e) {
+	// Edit Submenu dialogs
+
+	$('#tabs_holder').on('click', '.submenuOnButton', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		console.log('here');
+		var $parent = $(e.target).parent();
+		var button = Splash.tabs.getButton($parent);
+
+		var jbox = _.findWhere(Splash.JBoxes, {splashIdSelector: button.idSelector});
+
+		$('#editSubmenuDialog').dialog({
+		    dialogClass: "no-close",
+			resizeable: false,
+			hide: "fade",
+			show: "fade",
+			model: true,
+			title: "Edit Pop-up items",
+			height: 500,
+			width: 400,
+			close: false,
+
+		    open: function () {
+		    	// Read in any existing submenus for this button
+		    	
+		    	var totalSubmenuItems = 0;
+		    	if (button.subMenuItems) {
+			    	button.subMenuItems.forEach(function (item, count) {
+			    		totalSubmenuItems++;
+			    		item.count = count;
+			    		$('#listOfSubmenus').mustache('submenuEntry', item, {method:'append'});
+			    	});
+			    }
+		    	// One more for something to add
+				$('#listOfSubmenus').mustache('submenuEntry', {
+						count: totalSubmenuItems,
+						display:"", 
+						url:'', 
+						isKindNormal:true
+					}, {method:'append'});
+
+		    	$('#listOfSubmenus').sortable({
+		    		axis: "y",
+		    		opacity: 0.6,
+		    	});
+
+				var $done = $("#editSubmenuDialog").parent().find(":button:contains('Done')");
+			   	$("#editSubmenuDialog").keyup(function(e) {
+			    	if (e.keyCode == $.ui.keyCode.ENTER) {
+			        	$done.click();
+	    			}
+	    		});
+
+	    	},
+
+	    	close: function () {
+	    		$('#listOfSubmenus').find('li').remove();
+	    	},
+
+			buttons: {
+
+			  "Cancel": function () {
+			  	$(this).dialog('close');
+			  },
+
+			  "Add": function () {
+			  	var totalItems = $('#editSubmenuDialog').find('li').length;
+			  	totalItems++;
+			  	var item = {
+			  		count: totalItems,
+			  		display: '',
+			  		url: ''
+			  	}
+				$('#listOfSubmenus').mustache('submenuEntry', item, {method:'append'});
+			  },
+
+			  "Done": function () { 
+
+			  	var name, url, obj;
+			  	var data = [];
+			  	// Read in the data
+				$('#listOfSubmenus').find('li').each(function (index, item) {
+					obj = {};
+					obj.display = $(item).find('input:first').val();
+					obj.url = $(item).find('input:last').val();
+					obj.isKindNormal = true;
+					if (obj.display) {
+						data.push(obj);
+					}
+				});
+
+		  		if (jbox) {
+		  			//Already exists, so first  destory it so we can rebuild from scratch later 
+		  			jbox.detach($(button.idSelector));
+		  			// The following line is not needed, but is here for clarity
+		  			// The ul bit is only present for the initial load
+		  			$(button.idSelector).find('ul').remove();
+		  			Splash.JBoxes.splice(jbox.indexInArray, 1);
+		  		}
+
+		  		// Attach it to the button so we see it
+		  		button.subMenuItems = data;
+		  		var returnedJBox = button.processJBox();
+		  		if (returnedJBox) {
+		  			returnedJBox.disable();
+		  		}
+
+		  		$(this).dialog('close');
+
+			  }
+			}
+		});	
+	});
+
+	$('#tabs_holder').on('click', '.sizeOnButton', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
 
 		var size;
 		var $parent = $(e.target).parent();
@@ -198,6 +309,8 @@ Splash.defineTriggers = function () {
 		$parent.data('height', size);
 		$('.gridly').gridly('layout');
 	});
+
+
 
   var savedEditingText = $('#editButton').html();
   $('#editButton').on('click', function (e) {
@@ -234,7 +347,7 @@ Splash.defineTriggers = function () {
 		    type:'PUT',
 		    url: 'updateButtons',
 		    contentType: 'application/json; charset=utf-8',
-		    data: JSON.stringify(Splash.tabs.tabs),
+		    data: serialized,
 		    complete: function (ignore, ignoreToo) {
 		    	setTimeout(function () {
 		    		$('#editButton').html(savedText);

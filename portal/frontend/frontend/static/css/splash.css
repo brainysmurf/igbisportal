@@ -519,10 +519,6 @@ label.high-margin {
     color: #bbb;
 }
 
-.ui-widget-content a, .ui-widget-content a:visited {
-    color: #111;
-}
-
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
     border-top: 1px solid #eee;
     border-left: 1px solid #eee;

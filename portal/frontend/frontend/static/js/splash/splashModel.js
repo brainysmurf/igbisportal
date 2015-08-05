@@ -110,7 +110,9 @@ var Button = function (name, color, url, icon) {
 			for (var property in name) {
 				this[property] = name[property];
 			}
-			this.subMenuItems = undefined; // TODO?
+			if (!this.subMenuItems) {
+				this.subMenuItems = [];
+			}
 			// We override in case of deletions
 			this.id = 'splashButton'+Button.counter++;
 			this.idSelector = '#' + this.id;
@@ -164,10 +166,14 @@ Button.prototype.processJBox = function () {
 			closeOnMouseleave: true,
 			content: $(this.idSelector).find('ul'),
 		});
+		jbox.splashIdSelector = this.idSelector;
+		jbox.indexInArray = Splash.JBoxes.length;
 		Splash.JBoxes.push(jbox);
     } else {
-    	this.jbox = undefined;
+    	jbox = undefined;
     }
+
+    return jbox;
 };
 
 Button.counter = 0;
@@ -309,9 +315,8 @@ var Tabs = function() {
         type:'GET',
         url: 'getButtons',
         contentType: 'application/json; charset=utf-8',
-        success: function(result) {
+        success: function(fromServer) {
         	if (typeof result !== 'object') {
-	        	var fromServer = JSON.parse(result);
 
 				var fromLocal = localStorage.getItem(Splash.config.localStorageKey);
 
@@ -319,6 +324,7 @@ var Tabs = function() {
 					// delete the other stuff from dom and the model...
 					//this.process.Storage();
 					console.log('server and local do NOT match');
+					debugger;
 					var tab;
 					for (var i = 0; i < fromServer.length; i++) {
 						tab = fromServer[i];
@@ -358,8 +364,9 @@ Tabs.prototype.finalInit = function () {
 	}
 }
 
-Tabs.prototype.processStorage = function (userTabs) {
+Tabs.prototype.processStorage = function (storage) {
 	var newTab;
+	var userTabs = JSON.parse(storage);
 	_.sortBy(userTabs, function (t) { return t.position; }).forEach(function (tab, index) {
 		if (tab.kind === 'userTab') {
 			newTab = new Tab(tab);
@@ -380,7 +387,7 @@ Tabs.prototype.processStorage = function (userTabs) {
 
 				$(newTab.gridSelector).mustache('buttonContainerTemplate', newButton, {method:'append'});
 
-				//newButton.processJBox();				
+				newButton.processJBox();				
 			});
 		}
 	}.bind(this));
