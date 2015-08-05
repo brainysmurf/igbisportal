@@ -189,7 +189,7 @@
 
 <div metal:fill-slot="content">
 
-  <!-- Stick value of unique into a non-display item -->
+ <div id="globalAnnouncement" class="announcement">Please note that this site is in beta mode. </div>
 
   <div id="tabs_holder">
     <ul id="tabs_titlebar">

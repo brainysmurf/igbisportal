@@ -324,7 +324,6 @@ var Tabs = function() {
 					// delete the other stuff from dom and the model...
 					//this.process.Storage();
 					console.log('server and local do NOT match');
-					debugger;
 					var tab;
 					for (var i = 0; i < fromServer.length; i++) {
 						tab = fromServer[i];

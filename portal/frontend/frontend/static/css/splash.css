@@ -720,3 +720,14 @@ label.high-margin {
 .ui-tabs .ui-tabs-panel {
     padding: 20px;
 }
+
+.announcement {
+    margin-bottom: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-top: 5px solid #ddd;
+    border-bottom: 5px solid #ddd;
+    padding-top:10px;
+    padding-bottom: 10px;
+    color: #999;
+}
