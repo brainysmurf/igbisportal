@@ -130,12 +130,12 @@ def update_buttons(request):
 def get_buttons(request):
     gplus = request.session.get('g_plus_unique_id')
     if not gplus:
-        return HTTPForbidden()
+        return "[]"  # fake array
     with DBSession() as session:
         try:
             this = session.query(UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
         except NoResultFound:
-            return dict(message="Nothing!")
+            return "[]" # fake array
     return this.json
 
 @view_config(route_name='splash', renderer='{}:splash/splash-template.pt'.format('frontend'), http_cache=0)
@@ -271,7 +271,7 @@ def splash(request):
         elif account_type == 'Students':
             buttons['Students'] = student_buttons
         else:
-            buttons['id'] = sec_teacher_buttons
+            buttons['Secondary_Teachers'] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons
             buttons['Students'] = student_buttons            
     else:

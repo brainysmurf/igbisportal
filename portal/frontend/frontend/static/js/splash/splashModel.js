@@ -250,11 +250,14 @@ var Tab = function(name) {
 		// We get here when we create a string from scratch
 		this.name = name;
 		this.id = this.name.replace(/ /g, '_');
+		this.idSelector = '#'+this.id;
+		this.gridSelector = this.idSelector + ' > .grid';
 		if (this.name == 'Secondary_Teachers' || this.name == 'Elementary_Teachers' || this.name == 'Students') {
 			this.kind = 'systemTab';
 		} else {
 			this.kind = 'userTab';
 		}
+
 		this.dirty = false;
 		this.position = Tab.counter++;
 
@@ -316,29 +319,24 @@ var Tabs = function() {
         url: 'getButtons',
         contentType: 'application/json; charset=utf-8',
         success: function(fromServer) {
-        	if (typeof result !== 'object') {
+			var fromLocal = localStorage.getItem(Splash.config.localStorageKey);
 
-				var fromLocal = localStorage.getItem(Splash.config.localStorageKey);
-
-				if (fromServer != fromLocal) {
-					// delete the other stuff from dom and the model...
-					//this.process.Storage();
-					console.log('server and local do NOT match');
-					var tab;
-					for (var i = 0; i < fromServer.length; i++) {
-						tab = fromServer[i];
-						if (tab.kind === 'userTab') {
-							$(tab.idSelector).remove();   // removes from the DOM, if exists
-							this.tabs.splice(i, 1);       // removes from the model if it's there
-						}
+			if (fromServer != fromLocal) {
+				// delete the other stuff from dom and the model...
+				//this.process.Storage();
+				console.log('server and local do NOT match');
+				var tab;
+				for (var i = 0; i < fromServer.length; i++) {
+					tab = fromServer[i];
+					if (tab.kind === 'userTab') {
+						$(tab.idSelector).remove();   // removes from the DOM, if exists
+						this.tabs.splice(i, 1);       // removes from the model if it's there
 					}
-					this.processStorage(fromServer);
-
-				} else {
-					this.processStorage(fromLocal);
 				}
+				this.processStorage(fromServer);
+
 			} else {
-				console.log(result);
+				this.processStorage(fromLocal);
 			}
         }.bind(this),
 
@@ -459,12 +457,14 @@ Tabs.prototype.addTab = function (name) {
 
 Tabs.prototype.addButtonToCurrentTab = function (name, color, url, icon) {
 	// Adds to the current tab...
+
 	var button = new Button(name, color, url, icon);
 	button.dirty = true;
 	var tab = this.getCurrentTab();
 	button.position = tab.numButtons() + 1;
 	button.editButton = 'editButton';
 	$(tab.gridSelector).mustache('buttonContainerTemplate', button, {method:'append'});
+	$(button.idSelector).hide().toggle('highlight');	
 	tab.loadButton(button);
 
 	// TODO: Make this a trigger instead
@@ -475,6 +475,7 @@ Tabs.prototype.addButtonToCurrentTab = function (name, color, url, icon) {
 	$(button.idSelector).find('.onButton').css('opacity', 1);
 
 	tab.updateGrid();
+
 };
 
 Tabs.prototype.getCurrentTab = function () {
