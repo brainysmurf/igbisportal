@@ -44,17 +44,18 @@
           </a>
         </div>
 
-        <div class="onButton deleteOnButton"><i class="fa fa-times js-avoidClicks"></i></div>
-        <div class="onButton editOnButton"><i class="fa fa-pencil js-avoidClicks"></i></div>
-        <div class="onButton submenuOnButton"><i class="fa fa-bars js-avoidClicks"></i></div>
-        <div class="onButton sizeOnButton"><i class="fa fa-expand js-avoidClicks"></i></div>
-
+        <div class="onButton deleteOnButton js-avoidClicks"><i class="fa fa-times js-avoidClicks"></i></div>
+        <div class="onButton editOnButton js-avoidClicks"><i class="fa fa-pencil js-avoidClicks"></i></div>
+        <div class="onButton submenuOnButton js-avoidClicks"><i class="fa fa-bars js-avoidClicks"></i></div>
+        <div class="onButton sizeOnButton js-avoidClicks"><i class="fa fa-expand js-avoidClicks"></i></div>
       </div>
   </script>
 
   <script id="newTabLiTemplate" type="text/html">
-    <li class="{{kind}}" data-position="{{position}}" id="_tab{{id}}">
+    <li class="splashTab {{kind}}" data-position="{{position}}" id="_tab{{id}}">
       <a class="draggableTab" href="#{{id}}">{{name}}</a>
+      <div class="onButton deleteTabOnButton js-avoidClicks"><i class="fa fa-times js-avoidClicks"></i></div>
+      <div class="onButton editTabOnButton js-avoidClicks"><i class="fa fa-pencil js-avoidClicks"></i></div>
     </li>
   </script>
 
@@ -104,6 +105,15 @@
 
 <div metal:fill-slot="dialogs">
       <div id="unique" style="display:none;" data-unique="${unique or ''}"></div>
+
+      <div id="deleteTabDialog" style="display:none;">
+          Are you sure you want to delete this tab? Deleting it will also delete all the buttons contained inside!
+      </div>
+
+      <div id="editTabDialog" style="display:none;">
+        <label class="high-margin" for="etd_name">Enter the name of the tab:</label>
+        <input id="etd_name" placeholder="Tab Name" class="full-width" type="text" placeholder="Tab name" autoFocus/>
+      </div>
 
       <div id="newTabDialog" style="display:none;"> 
         <label class="high-margin" for="ntd_from">Enter the name of the tab:</label><br />
@@ -189,11 +199,9 @@
 
 <div metal:fill-slot="content">
 
- <div id="globalAnnouncement" class="announcement">Please note that this site is in beta mode. </div>
-
   <div id="tabs_holder">
     <ul id="tabs_titlebar">
-      <li data-name="${key}" data-kind="systemTab" tal:repeat="key buttons">
+      <li class="splashTab systemTab" data-name="${key}" data-kind="systemTab" tal:repeat="key buttons">
         <a class="notUserCreated draggableTab" href="#${key}">${key.replace('_', ' ')}</a>
       </li>
     </ul> 

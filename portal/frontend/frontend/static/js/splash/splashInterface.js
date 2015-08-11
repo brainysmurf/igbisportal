@@ -18,17 +18,89 @@ Splash.changesMade = function () {
 
 Splash.defineTriggers = function () {
 
-	// Depreciated, although may introduce:
-	// TODO: Figure out a better selector
-
-	// $('body').on('click', 'a:not(.ui-tabs-anchor) :not(.btn-colorselector)', function (e) {
-	// 	e.preventDefault();
-	// 	window.open($(e.target).attr('href'), '_blank');
-	// });
-
+	// First do initial setup on the interface
 	$('#newButtonButton').attr('disabled', true);
 	$('#newTabButton').attr('disabled', true);
-	$(".slideOnModify").animate({width:'toggle'},350);
+	$(".slideOnModify").animate({width:'toggle'}, 350);
+
+
+	$('#tabs_titlebar').on('click', '.editTabOnButton', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var $parent = $(e.target).parent();
+		var position = $parent.data('position');
+		var tab = _.findWhere(Splash.tabs.tabs, {position:position});
+		$("#etd_name").val(tab.name);
+		$("#etd_name").select();
+
+		$('#editTabDialog').dialog({
+		    dialogClass: "no-close",
+			resizeable: false,
+			hide: "fade",
+			show: "fade",
+			model: true,
+			title: "Delete Tab",
+			height: 200,
+			width: 400,
+			close: false,
+		    open: function () {
+				var $done = $("#editTabDialog").parent().find(":button:contains('Done')");
+
+			   	$("#editTabDialog").keyup(function(e) {
+			    	if (e.keyCode == $.ui.keyCode.ENTER) {
+			        	$done.click();
+		    		}
+	    		});
+	    	},
+	    	buttons: {
+			  "Cancel": function () {
+			  	$(this).dialog('close');
+			  },
+			  "Done": function () {
+				//Splash.changeMade();
+				var newName = $('#etd_name').val();
+				tab.name = newName;
+				$parent.find('a').text(newName);
+				$(this).dialog('close');
+				Splash.changeMade();
+
+			  }
+			}
+		});
+
+	});
+
+	$('#tabs_titlebar').on('click', '.deleteTabOnButton', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		$('#deleteTabDialog').dialog({
+		    dialogClass: "no-close",
+			resizeable: false,
+			hide: "fade",
+			show: "fade",
+			model: true,
+			title: "Delete Tab",
+			height: 200,
+			width: 400,
+			close: false,
+			buttons: {
+			  "Do NOT Delete": function () {
+			  	$(this).dialog('close');
+			  },
+			  "Delete!": function () {
+				var $parent = $(e.target).parent();
+				var position = $parent.data('position');
+				var tab = _.findWhere(Splash.tabs.tabs, {position:position});
+				$parent.remove();
+				Splash.tabs.tabs.splice(position, 1);
+				Splash.changeMade();
+				$(this).dialog('close');
+			  }
+			}
+		});
+
+	});
 
 	//Every time we click on a tab, update interface, and also save for future reference
 
@@ -44,7 +116,6 @@ Splash.defineTriggers = function () {
 				$('#newButtonButton').prop('disabled', false);
 			}
 		}
-
 	});
 
 	// settings dialog box
@@ -376,14 +447,24 @@ Splash.defineTriggers = function () {
       $('.buttonContainer').find('*').removeClass('editButton');
       $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 1});
       $('.buttonContainer').removeClass('noBorder');
+
+      $('.buttonContainer').find('.onButton').addClass('js-avoidClicks');
+
+      $('.splashTab').removeClass('editButton');
+      $('.splashTab').find('*').removeClass('editButton');
+      $('.splashTab').find('*:not(.onButton)').animate({opacity: 1});
+
+      $('.splashTab').find('.onButton').addClass('js-avoidClicks');
+
       $('.onButton').animate({opacity:0});
 
       // Make the tabs normal again too
       $('#tabs_titlebar').find('li').removeClass('editTab');
       $('#tabs_titlebar').sortable('destroy');
 
-      // Make the buttons clickable again!
+      // Make the buttons and tabs clickable again!
       $('.buttonContainer').find('*:not(.onButton)').removeClass('js-avoidClicks');
+      $('.splashTab').find('*:not(.onButton)').removeClass('js-avoidClicks');
 
       // Enable the pop-ups and tell the grid to not to allow dragging
       Splash.tabs.enableJBoxes();
@@ -417,11 +498,27 @@ Splash.defineTriggers = function () {
      $('.buttonContainer').find('*:not(.onButton)').animate({opacity: 0.4});
      $('.buttonContainer').addClass('noBorder');
      $('.buttonContainer.systemButton > .onButton').css('display', 'none');
-     $('.buttonContainer').not('.systemButton ').find('.onButton').animate({opacity: 1}, {
+     $('.buttonContainer').not('.systemButton').find('.onButton').animate({opacity: 1}, {
           done: function () {
               $('.buttonContainer').find('*:not(.onButton)').addClass('js-avoidClicks');
           },
       });
+
+     $('.buttonContainer').find('.onButton').removeClass('js-avoidClicks');
+
+     $('.splashTab').not('.systemTab').addClass('editButton');
+     $('.splashTab').not('.systemTab').find('*').addClass('editButton');
+     $('.splashTab').find('*:not(.onButton)').animate({opacity: 0.4});
+     $('.splashTab.systemTab > .onButton').css('display', 'none');
+     $('.splashTab').not('.systemTab').find('.onButton').animate({opacity: 1}, {
+          done: function () {
+              $('.systemTab').find('*:not(.onButton)').addClass('js-avoidClicks');
+          },
+      });
+
+     $('.splashTab').find('.onButton').removeClass('js-avoidClicks');
+
+
      $('#tabs_titlebar').addClass('editTab');
      $('#tabs_titlebar').sortable(Splash.config.sortable);
 

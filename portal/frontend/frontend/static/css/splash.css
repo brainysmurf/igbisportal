@@ -678,6 +678,11 @@ label.high-margin {
   z-index: 800; 
 }
 
+.draggableTab {
+    min-width: 100px;
+    text-align: center;
+}
+
 .draggableTab > a:hover {
     mouse: move;
 }
@@ -702,12 +707,9 @@ label.high-margin {
 }
 
 .deleteOnButton {
+    background: transparent;
     top: 0;
     left: 0;
-}
-
-.deleteOnButton {
-    background: transparent;
 }
 
 .onButton:hover {
@@ -715,6 +717,18 @@ label.high-margin {
 }
 .js-avoidClicks {
     pointer-events:none;
+}
+
+.editTabOnButton {
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.deleteTabOnButton {
+    bottom: 0;
+    left: 0;
+    cursor: pointer;
 }
 
 .ui-tabs .ui-tabs-panel {
