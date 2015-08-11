@@ -41,47 +41,15 @@ menu_separator = lambda : menu_item(url=None, display='hr', icon=None)
 menu_placeholder = lambda x: menu_item(url=x, display='placeholder', icon=None)
 
 stndrdbttns = [
-    button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="",
-        context_menu={
-        'items': [
-            menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
-            menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
-            menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee"),
-            menu_placeholder('mb_classes')
-        ],
-        }),
+    button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
     button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
-        ]
-        }),
-    button(name="Google Drive", externalid=-9, size="", color="purple", url="https://drive.google.com", icon="files-o", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
-            menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
-            menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
-            menu_separator(),
-            menu_item(icon="question-circle", display="What else?", url="#")
-        ]
-        }),
+        context_menu=None),
+    button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
+        context_menu=None),
     button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
-    button(name="Library", externalid=-9, size="", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="search", display="Elementary Catalog", url="https://igbis.follettdestiny.com/cataloging/servlet/presentadvancedsearchredirectorform.do?l2m=Library%20Search&tm=TopLevelCatalog&l2m=Library+Search"),
-            menu_item(icon="search", display="Secondary Catalog", url="https://igbis.follettdestiny.com/common/servlet/presenthomeform.do?l2m=Home&tm=Home&l2m=Home"),
-            menu_separator(),
-            menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
-            menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
-            menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high"),
-            menu_placeholder('gd_starred')
-        ],
-        }),
-    button(name="Calendar", externalid=-9, size="", color="red", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu=None),
+    button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
+        context_menu=None),
     button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
-
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
@@ -99,7 +67,7 @@ emergency_button = button(name="Emergency Contact", externalid=-9, size="", colo
 #     })
 ela_button = button(name="ELA Department", externalid=-9, size="", color="orange", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", id="", context_menu=None)
 bookings_button = button(name="Bookings", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", id="", context_menu=None)
-ibo_button = button(name="IBO", externalid=-9, size="", color="orange", url="http://www.ibo.org/", icon="globe", id="", 
+ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="http://www.ibo.org/", icon="globe", id="", 
         context_menu={
         'items': [
             menu_item(icon="globe", display="PD Events & Workshops", url="http://www.ibo.org/en/professional-development/find-events-and-workshops/"),
@@ -161,8 +129,104 @@ def splash(request):
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
     ])
 
-    sec_teacher_buttons = stndrdbttns[:]
-    elem_teacher_buttons = stndrdbttns[:]
+    sec_teacher_buttons = [
+        button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="",
+            context_menu={
+            'items': [
+                menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
+                menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
+                menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee"),
+                menu_placeholder('mb_classes')
+            ],
+            }),
+        button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+            context_menu={
+            'items': [
+                menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
+            ]
+            }),
+        button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
+            context_menu={
+            'items': [
+                menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
+                menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
+                menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
+                menu_separator(),
+                menu_item(icon="folder", display="MYP IB Recources", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERclEzb3Zpa3dMcjg"),
+                menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc")
+            ]
+            }),
+        button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
+        button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
+            context_menu={
+            'items': [
+                menu_item(icon="search", display="Elementary Catalog", url="https://igbis.follettdestiny.com/cataloging/servlet/presentadvancedsearchredirectorform.do?l2m=Library%20Search&tm=TopLevelCatalog&l2m=Library+Search"),
+                menu_item(icon="search", display="Secondary Catalog", url="https://igbis.follettdestiny.com/common/servlet/presenthomeform.do?l2m=Home&tm=Home&l2m=Home"),
+                menu_separator(),
+                menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
+                menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
+                menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high"),
+                #menu_placeholder('gd_starred')
+            ],
+            }),
+        button(name="Calendar", externalid=-9, size="", color="peach", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu={
+            'items': [
+                menu_item(icon="search", display="Official Website Calendars", url="http://www.igbis.edu.my/index.php/admissions/academic-calendar/"),
+                menu_item(icon="search", display="ManageBac Calendar", url="https://igbis.managebac.com/home"),
+                menu_item(icon="search", display="Google Calendar", url="https://www.google.com/calendar"),
+            ],
+            }),
+        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
+
+        button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
+    ]
+
+
+    elem_teacher_buttons = [
+        button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="",
+            context_menu={
+            'items': [
+                menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
+                menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
+                menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee"),
+                #menu_placeholder('mb_classes')
+            ],
+            }),
+        button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+            context_menu={
+            'items': [
+                menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
+            ]
+            }),
+        button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
+            context_menu={
+            'items': [
+                menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
+                menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
+                menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
+                menu_separator(),
+                menu_item(icon="question-circle", display="What else?", url="#")
+            ]
+            }),
+        button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
+        button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
+            context_menu={
+            'items': [
+                menu_item(icon="search", display="Elementary Catalog", url="https://igbis.follettdestiny.com/cataloging/servlet/presentadvancedsearchredirectorform.do?l2m=Library%20Search&tm=TopLevelCatalog&l2m=Library+Search"),
+                menu_item(icon="search", display="Secondary Catalog", url="https://igbis.follettdestiny.com/common/servlet/presenthomeform.do?l2m=Home&tm=Home&l2m=Home"),
+                menu_separator(),
+                menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
+                menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
+                menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high"),
+                menu_placeholder('gd_starred')
+            ],
+            }),
+        button(name="Calendar", externalid=-9, size="", color="peach", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu=None),
+        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
+
+        button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
+    ]
+
     elem_teacher_buttons.extend([
         ibo_button,
         button(name="Teacher Dashboard", externalid=-9, size="large", color="purple", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
@@ -273,9 +337,9 @@ def splash(request):
         else:
             buttons['Secondary_Teachers'] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons
-            buttons['Students'] = student_buttons            
+            #buttons['Students'] = student_buttons            
     else:
-        buttons['Students'] = student_buttons
+        buttons['Welcome'] = stndrdbttns
 
     g_plus_unique_id = request.session.get('g_plus_unique_id')
     settings = None
