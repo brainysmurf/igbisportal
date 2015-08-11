@@ -528,6 +528,12 @@ label.high-margin {
     color: #bbb;
 }
 
+.topBanner {
+    font-family: "Roboto Condensed";
+    line-height: 1em;
+    text-align:center;
+}
+
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
     color: #eee;
 }
@@ -729,6 +735,10 @@ label.high-margin {
     bottom: 0;
     left: 0;
     cursor: pointer;
+}
+
+.systemTab {
+    color: #000;
 }
 
 .ui-tabs .ui-tabs-panel {
