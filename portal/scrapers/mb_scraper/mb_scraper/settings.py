@@ -7,10 +7,7 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #
 
-from portal.settings import get
 import gns
-
-get('USER', 'username', required=True)
 
 BOT_NAME = 'mb_scraper'
 
@@ -18,7 +15,7 @@ SPIDER_MODULES = ['portal.scrapers.mb_scraper.mb_scraper.spiders']
 NEWSPIDER_MODULE = 'portal.scrapers.mb_scraper.mb_scraper.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = gns.settings.username
+USER_AGENT = gns.config.managebac.admin_username
 
 ITEM_PIPELINES = {
 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classperiods.ClassPeriodsPipeline': 1,
@@ -27,4 +24,8 @@ ITEM_PIPELINES = {
 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.PYPTeacherAssignments': 4,
 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.PYPStudentAttendance': 5,
  		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.SecHRPipeline': 6,
+		'scrapy.pipelines.files.FilesPipeline': 7,
+ 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.GradeBookDump': 8,
 	}
+
+FILES_STORE = "/home/vagrant/data_dump/grade_reports"

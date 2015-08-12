@@ -1,6 +1,7 @@
 import scrapy
 from ordereditem import OrderedItem
 
+
 class AuditLogItem(OrderedItem):
     # define the fields for your item here like:
     # name = scrapy.Field()
@@ -75,3 +76,6 @@ class PrimaryStudentAbsences(scrapy.Item):
 class SecHRItem(scrapy.Item):
     student_id = scrapy.Field()
     teacher_id = scrapy.Field()
+
+class GradeBookDataDumpItem(scrapy.Item):
+    file_urls = scrapy.Field()

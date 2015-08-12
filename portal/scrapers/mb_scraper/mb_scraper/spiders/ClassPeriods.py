@@ -6,7 +6,7 @@ TODO: Course IDs are longs, do they need to be? They print on the terminal that 
 from portal.scrapers.shared.spiders import \
     ManageBacLogin
 from portal.scrapers.mb_scraper.mb_scraper.items import \
-    ClassPeriodItem, ClassReportItem
+    ClassPeriodItem, ClassReportItem, GradeBookDataDumpItem
 from portal.scrapers.mb_scraper.mb_scraper.items import \
     PrimaryReportItem, PrimaryReportStrandItem, \
     PrimaryReportOutcomeItem, PrimaryReportSectionItem, \
@@ -187,6 +187,20 @@ class ClassReports(ClassLevelManageBac):
                 errback=self.error_parsing,
                 dont_filter=True
                 )
+            yield request
+
+class GradeBookDump(ClassReports):
+    name = 'GradeBookDump'
+    path = '/classes/{}/myp-gradebook/tasks/export_to_excel.xml?term=27814'
+
+    def grade_book_dump(self):
+        """
+        Provides the mechanism to loop through courses, called at spider start-up and as a callback in parse_items when ready to move on to next
+        """
+        self.next()
+        if self.current_course_id:
+            item = GradeBookDataDumpItem()
+            item.file_urls = self.path.format(self.current_course_id)
             yield request
 
 class PYPClassReportTemplate(ClassReports):
@@ -566,6 +580,7 @@ class ClassReportsMYP(ClassReports):
         if self.current_course_id:
             method = getattr(self, 'class_reports_{}'.format(self.program.lower()))
             yield method()
+
 
 class ClassReportsDP(ClassReports):
     #name = "ClassReportsDP"

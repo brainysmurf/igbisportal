@@ -449,6 +449,8 @@ Tabs.prototype.addTab = function (name) {
   	var $lastDiv = $(this.tabsSelector).children('div:last-child');
   	$lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
 
+  	//$(newTab.idSelector).addClass('editTab');
+
   	$(this.tabsSelector).tabs("refresh");
 
 	newTab.initGrid();

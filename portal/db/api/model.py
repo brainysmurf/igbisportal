@@ -1,6 +1,5 @@
 from copy import copy
 import weakref
-import portal.settings as settings
 
 class Container(object):
 	students = []
@@ -20,7 +19,7 @@ class Container(object):
 		'classes': self.classes,
 		'ib_groups': self.ib_groups
 		}
-		settings.setup_verbosity(self)
+		#settings.setup_verbosity(self)
 
 	@property
 	def users(self):
@@ -80,7 +79,6 @@ class Abstract(object):
 		"""
 		Puts every item into here
 		"""
-		settings.setup_verbosity(self)
 		self.__dict__ = copy(dictionary)
 
 	@classmethod

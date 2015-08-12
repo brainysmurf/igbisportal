@@ -199,9 +199,8 @@ Splash.defineTriggers = function () {
 
 			  			// make new tab become front, and then ensure disabled
 						$('#newButtonButton').attr('disabled', false);
-
-						// FIXME:
 						$tabs.tabs({active: -1});
+
 						var index = $(Splash.tabs.tabsSelector).tabs('option', 'active');
 					  	localStorage.setItem(Splash.config.currentTabKey, index.toString());
 					  	$('.grid:not(.systemTab)').gridly('draggable', 'on');

@@ -404,8 +404,7 @@ def api_students(request):
             columns = [c.replace('_', ' ').title() for c in columns]
         return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
 
-
-@view_config(route_name="mb_courses", renderer='json')
+@view_config(route_name="mb_courses", renderer='json', http_cache=0)
 def mb_courses(request):
     user = request.session.get('mb_user')
     if not user:

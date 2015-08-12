@@ -1,7 +1,6 @@
 from portal.db import Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
-import portal.settings as settings
 import gns
 import re, json, glob
 
@@ -18,7 +17,7 @@ class DatabaseSetterUpper(object):
 
 	def __init__(self, lazy=True, verbose=False):
 		self.database = Database()
-		gns.setup_verbosity(self)
+		#gns.setup_verbosity(self)
 		if not lazy:
 			self.setup_database()
 
@@ -27,7 +26,7 @@ class DatabaseSetterUpper(object):
 		Reads in file information (made from Go.download) and sets up the database structures
 		"""
 
-		self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
+		#self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
 
 		admins = []
 		admins.append(Teacher(
@@ -116,8 +115,8 @@ class DatabaseSetterUpper(object):
 			for admin in admins:
 				u.update_or_add(admin)
 
-			for gns.section in gns.settings.sections:
-				self.default_logger(gns("Setup {section} on database"))
+			for gns.section in gns.config.managebac.sections.split(','):
+				#self.default_logger(gns("Setup {section} on database"))
 
 				with open(gns('{config.paths.jsons}/{section}.json')) as _f:
 					this_json = json.load(_f)
@@ -177,7 +176,7 @@ class DatabaseSetterUpper(object):
 				with open(gns('{config.paths.jsons}/users.json')) as _f:
 					this_json = json.load(_f)
 
-				self.default_logger("Setting up student-parent relations on database")
+				#self.default_logger("Setting up student-parent relations on database")
 				for user in this_json['users']:
 					_type = user.get('type')
 					if _type == "Students":
@@ -187,7 +186,7 @@ class DatabaseSetterUpper(object):
 								stu_par.append(student_id, parent_id)
 
 			with u.collection(Student, IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
-				self.default_logger("Setting up student IB Group membership on database")
+				#self.default_logger("Setting up student IB Group membership on database")
 				with open(gns('{config.paths.jsons}/ib_groups.json')) as _f:
 					this_json = json.load(_f)
 
@@ -207,7 +206,7 @@ class DatabaseSetterUpper(object):
 						stu_ibgroup.append(gns.student_id, gns.group_id)						
 
 			with u.collection(Teacher, Course, 'classes') as teacher_course:
-				self.default_logger("Setting up teacher class assignments on database")
+				#self.default_logger("Setting up teacher class assignments on database")
 				with open(gns('{config.paths.jsons}/classes.json')) as _f:
 					this_json = json.load(_f)
 				for clss in this_json['classes']:
@@ -220,8 +219,8 @@ class DatabaseSetterUpper(object):
 
 			with u.collection(Student, Course, 'classes', left_column='student_id') as stu_course:
 
-				self.default_logger("Setting up student class enrollments on database")
-				for path in glob.glob(gns('{settings.path_to_jsons}/groups-*-members.json')):
+				#self.default_logger("Setting up student class enrollments on database")
+				for path in glob.glob(gns('{config.paths.jsons}/groups-*-members.json')):
 					with open(path) as _f:
 						this_json = json.load(_f)
 
@@ -237,7 +236,7 @@ class DatabaseSetterUpper(object):
 								pass
 								#print('course_id {} or student_id {} not found'.format(course_id, student_id))
 
-			self.default_logger("Done!")
+			#self.default_logger("Done!")
 
 if __name__ == "__main__":
 

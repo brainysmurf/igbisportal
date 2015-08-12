@@ -12,7 +12,6 @@ import os.path
 import re, sys
 from functools import partial
 import requests
-import portal.settings as settings
 import gns
 
 class APIDownloader(object):
@@ -24,46 +23,40 @@ class APIDownloader(object):
 		"""
 		Sent in optional params can override settings.ini, useful for debugging
 		"""
-		self.debug = False
+		self.debug = True
 
-		if not prefix:
-			settings.get('MANAGEBAC', 'mb_prefix', required=True)
-			self.prefix = gns.settings.mb_prefix
-		else:
-			settings.override('MANAGEBAC', 'mb_prefix', prefix)
+		self.prefix = prefix or gns.config.managebac.prefix
 
-		self.url = gns('https://{settings.mb_prefix}.managebac.com/api/{{uri}}')
-		# TODO: Make this a setting
-		if not api_token:
-			self.api_token = settings.get('MANAGEBAC', 'mb_api_token', required=True)
-		else:
-			settings.override('MANAGEBAC', 'mb_api_token', api_token)
+		self.url = 'https://{prefix}.managebac.com/api/{{uri}}'.format(prefix=self.prefix)
+		self.api_token = api_token or gns.config.managebac.api_token
 
-		settings.get('MANAGEBAC', 'sections', required=True)
-		settings.get('MANAGEBAC', 'sections_with_members', required=True)
+		# settings.get('MANAGEBAC', 'sections', required=True)
+		# settings.get('MANAGEBAC', 'sections_with_members', required=True)
 
 		self.section_urls = {}
-		for gns.section in gns.settings.sections:
-			value = settings.get('MANAGEBAC', gns('{section}_section_url'))
-			if value:
-				self.section_urls[gns.section] = value
+		for section in gns.config.managebac.sections.split(','):
+			try:
+				value = getattr(gns.config.managebac, '{}_section_url'.format(section))
+				if value:
+					self.section_urls[section] = value
+			except AttributeError:
+				pass
 
 		self.container = Container()
-
-		settings.get('DIRECTORIES', 'path_to_jsons', required=True)
-		settings.setup_verbosity(self)
 
 		if not lazy:
 			# Immediately do our thang.
 			self.download(overwrite=True)
 
+	def default_logger(self, *args, **kwargs):
+		print(args)
 
 	def build_json_path(self, *args):
 		"""
 		Pass it a variable number of parameters to build the path to json
 		"""
 		gns.tmp = "".join(args)
-		return gns("{settings.path_to_jsons}/{tmp}")
+		return gns("{config.paths.jsons}/{tmp}")
 
 	def write_to_disk(self, obj, path):
 		self.debug and self.default_logger('Writing to disk @ {}'.format(path))
@@ -109,7 +102,7 @@ class APIDownloader(object):
 			self.debug and self.default_logger('Making the json directory')
 			os.mkdir(self.build_json_path())
 
-		for gns.section in gns.settings.sections:
+		for gns.section in gns.config.managebac.sections.split(','):
 			self.debug and self.default_logger(gns('On section {section}'))
 			file_path = self.build_json_path(gns.section, '.json')
 			fileexists = os.path.isfile(file_path)
@@ -140,7 +133,7 @@ class APIDownloader(object):
 				for item in json_info[gns.section]:
 					self.container.add(item, gns.section)
 
-		for gns.section in gns.settings.sections:
+		for gns.section in gns.config.managebac.sections.split(','):
 			section_url = self.section_urls.get(gns.section)
 			if not section_url:
 				self.debug and self.default_logger(gns('Skipping section {section}'))

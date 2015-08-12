@@ -531,7 +531,7 @@ class Course(Base):
     type = Column(String(255))
     name = Column(String(255))
     grade = Column(String(255))
-    uniq_id = Column(String(255), nullable=True, unique=True, server_default=None)
+    uniq_id = Column(String(255), nullable=True, server_default=None)
 
     @hybrid_property
     def abbrev_name(self):

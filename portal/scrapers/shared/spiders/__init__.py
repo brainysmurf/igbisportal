@@ -7,7 +7,6 @@ Change username_field to something that should break it to test
 import scrapy   
 from scrapy.http.cookies import CookieJar
 import gns
-from portal.settings import get
 import re
 
 FIRSTCAP_RE = re.compile('(.)([A-Z][a-z]+)')
@@ -76,10 +75,10 @@ class OpenApplyLogin(Login):
 class ManageBacLogin(Login):
     name = "ManageBacLogin"
     allowed_domains = [gns.config.managebac.url]
-    start_urls = [gns.config.managebac.login_url
+    start_urls = [gns.config.managebac.login_url]
 
-    username = gns.config.managemabc.admin_username
-    password = gns.config.managemabc.admin_password
+    username = gns.config.managebac.admin_username
+    password = gns.config.managebac.admin_password
 
     def path_to_url(self, path):
         return gns.config.managebac.url + path

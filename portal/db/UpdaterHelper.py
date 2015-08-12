@@ -115,10 +115,9 @@ class updater_helper:
 			try:
 				row = session.query(obj.__class__).filter_by(id=obj.id).one()
 			except NoResultFound:
+				# workaround a thing with managebac where the the uniq_id has not changed, but the course ID has..
 				session.add(obj)
 				row = None
-				print('no row')
-				#TODO: Log this
 
 			verbose = False
 			# if row and hasattr(row, 'first_name') and row.first_name == 'Rhys':
