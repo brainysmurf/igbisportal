@@ -90,8 +90,15 @@ Splash.defineTriggers = function () {
 			  },
 			  "Delete!": function () {
 				var $parent = $(e.target).parent();
+
+				// FIXME: Workaround for bug
+				if (!$parent.hasClass('splashTab')) {
+					$parent = $parent.parent();
+				}
+
 				var position = $parent.data('position');
 				var tab = _.findWhere(Splash.tabs.tabs, {position:position});
+
 				$parent.remove();
 				Splash.tabs.tabs.splice(position, 1);
 				Splash.changeMade();
@@ -193,7 +200,7 @@ Splash.defineTriggers = function () {
 
 			  	if (newTabName) {
 			  		if (index != -1) { 
-			  			alert('Tab name have to be unique!');
+			  			alert('Tab name has to be unique!');
 			  		} else {
 			  			Splash.tabs.addTab(newTabName);
 
@@ -479,7 +486,9 @@ Splash.defineTriggers = function () {
       var currentTab = Splash.tabs.getCurrentTab();
       // Looking at the tab, 
       // FIXME: Don't rely on the names!
-      if (currentTab.kind == 'systemTab') {
+
+      // FIXME: When user deletes tab there is no "current tab" automatically selected
+      if (currentTab != undefined && currentTab.kind == 'systemTab') {
       		// ensure the new button and new tab are disabled
       		$('#newButtonButton').prop('disabled', true);
       } else {

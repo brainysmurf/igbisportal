@@ -737,10 +737,12 @@ label.high-margin {
     cursor: pointer;
 }
 
-.systemTab {
-    color: #000;
+/*.systemTab > .draggableTab {
+    border-top: 5px solid #333;
+    border-left: 5px solid #333;
+    border-right: 5px solid #333;
 }
-
+*/
 .ui-tabs .ui-tabs-panel {
     padding: 20px;
 }

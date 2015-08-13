@@ -444,12 +444,19 @@ Tabs.prototype.addTab = function (name) {
   	var newTab = new Tab(name);
 
 	var $lastLi = $(this.tabsSelector).find('ul > li:last-child');
-  	$lastLi.mustache('newTabLiTemplate', newTab, {method:'after'});
+  	var $save = $lastLi.mustache('newTabLiTemplate', newTab, {method:'after'}).next();
 
   	var $lastDiv = $(this.tabsSelector).children('div:last-child');
-  	$lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
+  	var $thisOne = $lastDiv.mustache('newTabTemplate', newTab, {method:'after'});
 
-  	//$(newTab.idSelector).addClass('editTab');
+  	$save.addClass('editButton');
+  	$save.find('*').addClass('editButton');
+    $save.find('*:not(.onButton)').animate({opacity: 0.4});
+    $save.animate({opacity: 1}, {
+          done: function () {
+              $save.find('.onButton').removeClass('js-avoidClicks');
+          },
+    });
 
   	$(this.tabsSelector).tabs("refresh");
 
