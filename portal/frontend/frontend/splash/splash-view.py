@@ -152,6 +152,8 @@ def splash(request):
                 menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
                 menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
+                menu_item(icon="folder", display="Semester One Timetables", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERbm0zWXV1bWxsb0k"),
+                menu_separator(),
                 menu_item(icon="folder", display="MYP IB Recources", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERclEzb3Zpa3dMcjg"),
                 menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc")
             ]
@@ -189,7 +191,7 @@ def splash(request):
                 menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
                 menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
                 menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee"),
-                #menu_placeholder('mb_classes')
+                menu_placeholder('mb_classes')
             ],
             }),
         button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
