@@ -23,6 +23,9 @@ course_abbreviations = {
     'Individuals and Societies - Integrated Humanities': "I&amp;S",
 }
 
+import unicodedata
+def normalize(this_string): 
+    return unicodedata.normalize('NFKD', this_string).encode('ascii', 'ignore')
 
 from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date
 from sqlalchemy.dialects.postgresql import JSON
@@ -209,6 +212,10 @@ class User(PortalORM):
 
     igbid = Column(BigInteger)
 
+    @property
+    def kind(self):
+        return self.__class__.__name__.lower()
+
     def __str__(self):
         return (self.first_name or "") + ' ' + (self.last_name or "")
 
@@ -218,6 +225,12 @@ class Users(Base, User):
     """
     __tablename__ = USERS
     id = Column(BigInteger, primary_key=True)
+
+    def __repr__(self):
+        return '<User ({})>'.format(self.id)
+
+    def __str__(self):
+        return '<User ({})>'.format(self.id)
 
 """
 Many to many relationships need an association table, this is it for parent/children links
@@ -284,6 +297,12 @@ class Student(Base, User):
     open_apply_student_id = Column(String(255))
     homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
+    def __repr__(self):
+        return '<Student ' + self.first_nickname_last_studentid.encode('utf-8') + '>'
+
+    def __str__(self):
+        return "<Student {}>".format(self.first_nickname_last_studentid)
+
     @hybrid_property
     def start_date(self):
         """
@@ -299,7 +318,7 @@ class Student(Base, User):
         parents = self.parents
         if len(parents) > 0:
             parent = parents[0]
-            return parent.first_name + ' ' + parent.last_name
+            return parent.name
         return ""
 
     @hybrid_property
@@ -307,7 +326,7 @@ class Student(Base, User):
         parents = self.parents
         if len(parents) > 1:
             parent = parents[1]
-            return parent.first_name + ' ' + parent.last_name
+            return parent.name
         return ""
 
     @hybrid_property
@@ -356,7 +375,7 @@ class Student(Base, User):
 
     @hybrid_property
     def first_nickname_last_studentid(self):
-        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
+        return self.first_name.encode('utf-8') + (' (' + self.nickname.encode('utf-8') + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name.encode('utf-8') + ' [' + str(self.student_id) + ']'
 
     @first_nickname_last_studentid.expression
     def first_nickname_last_studentid(cls):
@@ -364,15 +383,15 @@ class Student(Base, User):
 
     @hybrid_property
     def first_nickname_last(self):
-        return self.first_nickname + ' ' + self.last_name
+        return noralize(self.first_nickname + ' ' + self.last_name)
 
     @hybrid_property
     def first_nickname(self):
-        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') 
+        return normalize(self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') )
 
     @hybrid_property
     def grade_first_nickname_last_studentid(self):
-        return str(self.grade or '-10') + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
+        return normalize(str(self.grade or '-10') + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']')
 
     @hybrid_property
     def grade(self):
@@ -463,7 +482,7 @@ class Parent(Base, User):
 
     @hybrid_property
     def name(self):
-        return self.first_name + ' ' + self.last_name
+        return "{} {}".format(normalize(self.first_name), normalize(self.last_name))
 
     @hybrid_property
     def first_child_date_started(self):
@@ -506,6 +525,13 @@ class Parent(Base, User):
         ret = datetime.datetime.now() > earliest
         return ret
 
+    def __repr__(self):
+        return '<Parent ({}) '.format(self.id) + self.name + '>'
+
+    def __str__(self):
+        return '<Parent ({}) '.format(self.id) + self.name + '>'
+
+
 class Advisor(Base, User):
     """
     I am a teacher in ManageBac, obviously we call them advisors for legacy reasons
@@ -539,6 +565,11 @@ class Course(Base):
         return pattern.sub(lambda x: course_abbreviations[x.group()], self.name)
 
     # timetables relation defined by Timetable.course 'backref'
+    def __repr__(self):
+        return '<Class ({}) '.format(self.id) + self.abbrev_name + '>'
+
+    def __str__(self):
+        return '<Class ({}) '.format(self.id) + self.abbrev_name + '>'
 
 class Timetable(Base):
     """
@@ -568,6 +599,13 @@ class IBGroup(Base):
     program = Column(String(255))
     name = Column(String(255))
     unique_id = Column(String(255))
+
+    def __repr__(self):
+        return '<IBGroup ({}) '.format(self.id) + self.name + 'in ' + self.program + '>'
+
+    def __str__(self):
+        return '<IBGroup ({}) '.format(self.id) + self.name + 'in ' + self.program + '>'
+
 
 class SecondaryHomeroomTeachers(Base):
     __tablename__ = SECHRTEACHERS

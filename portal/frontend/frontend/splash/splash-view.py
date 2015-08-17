@@ -129,6 +129,29 @@ def splash(request):
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
     ])
 
+    with DBSession() as session:
+        hroom_teachers = session.query(Teachers.email, Students.class_year).\
+            select_from(Students).\
+            join(Teachers, Teachers.id == Students.homeroom_advisor).\
+            all()
+
+        homeroom_teachers = defaultdict(list)
+        for item in hroom_teachers:
+            if item.class_year and int(item.class_year) >= 6:
+                grade = int(item.class_year) - 1
+                if not item.email in homeroom_teachers[grade]:
+                    homeroom_teachers[grade].append(item.email)
+
+    homeroom_items = []
+    for grade in sorted(homeroom_teachers):
+        these_teachers = homeroom_teachers[grade]
+        hroom_emails = ",".join(these_teachers)
+        base_display = "Grade {{}} HR {}"
+        display = base_display.format("Teachers" if len(these_teachers) > 1 else "Teacher")
+        homeroom_items.append(menu_item(icon="", display=display.format(grade), url="mailto:{}".format(hroom_emails)))
+
+    homeroom_items.append(menu_placeholder("mb_homeroom"))
+
     sec_teacher_buttons = [
         button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="",
             context_menu={
@@ -158,7 +181,9 @@ def splash(request):
                 menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc")
             ]
             }),
-        button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
+        button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
+        context_menu={
+        'items': homeroom_items}),
         button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
             context_menu={
             'items': [
@@ -243,45 +268,24 @@ def splash(request):
         button(name="IT Help Desk", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         bookings_button,
+        button(name="Communications", externalid=-9, size="", color="cyan", url="#", icon="comments", id="", context_menu={
+            'items': [
+                menu_item(icon="user", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
+            ]}),
         ela_button,
         emergency_button,
         cashless_button
         ])
 
-    with DBSession() as session:
-        hroom_teachers = session.query(Teachers.email, Students.class_year).\
-            join(HRTeachers, HRTeachers.teacher_id == Teachers.id).\
-            join(Students, Students.id == HRTeachers.student_id).\
-            all()
-
-        homeroom_teachers = defaultdict(list)
-        for item in hroom_teachers:
-            if item.class_year and int(item.class_year) >= 6:
-                grade = int(item.class_year) - 1
-                if not item.email in homeroom_teachers[grade]:
-                    homeroom_teachers[grade].append(item.email)
-
-    homeroom_items = []
-    for grade in sorted(homeroom_teachers):
-        these_teachers = homeroom_teachers[grade]
-        hroom_emails = ",".join(these_teachers)
-        base_display = "Grade {{}} HR {}"
-        display = base_display.format("Teachers" if len(these_teachers) > 1 else "Teacher")
-        homeroom_items.append(menu_item(icon="", display=display.format(grade), url="mailto:{}".format(hroom_emails)))
-
-    homeroom_items.append(menu_placeholder("mb_homeroom"))
 
     sec_teacher_buttons.extend([
         ibo_button,
 
-        button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
-        context_menu={
-        'items': homeroom_items}),
-
-        button(name="Communications", externalid=-9, size="", color="cyan", url="dunno", icon="comments", id="", 
+        button(name="Communications", externalid=-9, size="", color="cyan", url="#", icon="comments", id="", 
         context_menu={
         'items': [
             menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
+            menu_item(icon="venus-mars", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
             menu_placeholder('mb_grade_teachers')
         ]}),
 
@@ -319,7 +323,6 @@ def splash(request):
             menu_item(icon="apple", display="An Apple a Day", url="https://sites.google.com/a/igbis.edu.my/plehhcet/an-apple-a-day"),
         ]}),
         button(name="IT Help Desk", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
-
         bookings_button,
         ela_button,
         emergency_button,
