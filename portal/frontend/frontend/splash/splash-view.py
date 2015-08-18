@@ -27,7 +27,6 @@ ReportComments = db.table_string_to_class('report_comments')
 PrimaryReport = db.table_string_to_class('primary_report')
 Courses = db.table_string_to_class('course')
 Absences = db.table_string_to_class('PrimaryStudentAbsences')
-HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
 GSignIn = db.table_string_to_class('google_sign_in')
 UserSettings = db.table_string_to_class('user_settings')
 # UserDefinedTabs = db.table_string_to_class('user_defined_tabs')
@@ -146,7 +145,7 @@ def splash(request):
     for grade in sorted(homeroom_teachers):
         these_teachers = homeroom_teachers[grade]
         hroom_emails = ",".join(these_teachers)
-        base_display = "Grade {{}} HR {}"
+        base_display = "Email Grade {{}} HR {}"
         display = base_display.format("Teachers" if len(these_teachers) > 1 else "Teacher")
         homeroom_items.append(menu_item(icon="", display=display.format(grade), url="mailto:{}".format(hroom_emails)))
 

@@ -257,6 +257,10 @@ def mb_grade_teachers(request):
                 grade = int(g)
                 if grade < 6:
                     continue
+                if record.email.startswith('superadmin'):
+                    continue
+                if record.email.startswith('abena'):
+                    continue
                 raw_data[grade].append(record.email)
 
     data = []
@@ -295,7 +299,8 @@ def mb_homeroom(request):
                 continue
 
             teacher_emails = ",".join(set([t.email for t in teachers]))
-            data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
+            if teacher_emails:
+                data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
     return dict(message="Success", data=data)
 
 class dummy_first_row:
