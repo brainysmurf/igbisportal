@@ -426,7 +426,7 @@ def mb_courses(request):
         else:
             grade_str = ""
         data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
-    return dict(message="Success", data=sorted(data, key= lambda x: x['sortby'], reverse=True)
+    return dict(message="Success", data=sorted(data, key= lambda x: x['sortby'], reverse=True))
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
 def auditlog(request):
