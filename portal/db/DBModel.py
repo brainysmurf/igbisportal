@@ -13,6 +13,7 @@ course_abbreviations = {
     'English Language Acquisition':'ELA',
     'English Language and Literature':'EL&amp;L',
     'Physical and Health Education': 'PSHE',
+    'Korean Language and Literature': 'Kor Lang & Lit',
     'Bahasa Malaysia Language and Literature': 'BML&L',
     'Bahasa Malaysia Language Acquisition': 'BMLA',
     'Chinese Langauge and Literature': 'CL&L',
