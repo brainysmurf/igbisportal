@@ -1,5 +1,5 @@
 from portal.db import Database, DBSession
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from collections import defaultdict
 
 # Makes an object so we can use dot notation
@@ -56,7 +56,16 @@ class collection_obj:
 
 			ti = self._parse_table_info(left, right)
 
-			left_row = session.query(ti.left.table).filter_by(**ti.left.by).one()
+			try:
+				left_row = session.query(ti.left.table).filter_by(**ti.left.by).one()
+			except MultipleResultsFound:
+				# FIXME: Check for constraint on database...
+				print('Multiple Results Found: You passed {} as the primary ID to use in the table {}, is it unique?'.format(self.left_column, self.left_table))
+				return
+			except NoResultFound:
+				print('Lookup {} does not exist'.format(ti.left.by))
+				return
+
 			right_row = session.query(ti.right.table).filter_by(**ti.right.by).one()
 
 			# Keeps a record of everything that has been appended
@@ -65,11 +74,14 @@ class collection_obj:
 				self._collection_list[left_row.id].append(right_row.id)
 
 			if right_row.id in [item.id for item in getattr(left_row, self.collection)]:
-				return # already there, don't do anything
+				try:
+					print(" {} is already present as {} in {}".format(right_row, self.collection, left_row))
+				except UnicodeEncodeError:
+					from IPython import embed;embed()
 			else:
 				# This actually emits the sql:
 				getattr(left_row, self.collection).append(right_row)
-				print("Added {} to {} into {} collection".format(right_row.id, left_row.id, self.collection))
+				print("+ Added {} to {} into {} collection".format(right_row, left_row, self.collection))
 
 class updater_helper:
 	def __init__(self):

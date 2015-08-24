@@ -49,7 +49,8 @@ class APIDownloader(object):
 			self.download(overwrite=True)
 
 	def default_logger(self, *args, **kwargs):
-		print(args)
+		#print(args)   # uncomment this line
+		pass
 
 	def build_json_path(self, *args):
 		"""

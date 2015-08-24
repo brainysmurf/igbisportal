@@ -384,7 +384,7 @@ class Student(Base, User):
 
     @hybrid_property
     def first_nickname_last(self):
-        return noralize(self.first_nickname + ' ' + self.last_name)
+        return normalize(self.first_nickname + ' ' + self.last_name)
 
     @hybrid_property
     def first_nickname(self):

@@ -180,10 +180,9 @@ class DatabaseSetterUpper(object):
 				for user in this_json['users']:
 					_type = user.get('type')
 					if _type == "Students":
-						student_id = user.get('student_id')
-						if student_id:
-							for parent_id in user.get('parents_ids'):
-								stu_par.append(student_id, parent_id)
+						student_id = user.get('student_id')	
+						for parent_id in user.get('parents_ids'):
+							stu_par.append(student_id, parent_id)
 
 			with u.collection(Student, IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
 				#self.default_logger("Setting up student IB Group membership on database")
