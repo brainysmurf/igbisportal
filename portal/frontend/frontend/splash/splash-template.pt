@@ -106,8 +106,6 @@
 <div metal:fill-slot="dialogs">
       <div id="unique" style="display:none;" data-unique="${unique or ''}"></div>
 
-      <div class="alert alert-success topBanner">Welcome to the IGBIS Splash page. If you have any questions or problems, please see Mr Derry or Mr Morris.</div>
-
       <div id="deleteTabDialog" style="display:none;">
           Are you sure you want to delete this tab? Deleting it will also delete all the buttons contained inside!
       </div>
