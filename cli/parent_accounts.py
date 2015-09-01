@@ -4,6 +4,7 @@ db = Database()
 Students = db.table_string_to_class('student')
 from sqlalchemy.orm import joinedload
 from collections import defaultdict
+import gns
 
 class Family:
     """
@@ -23,7 +24,7 @@ class Family:
         else:
             ret = " & ".join([s.first_nickname_last for s in self.students])
 
-        return "Parents of " + ret
+        return "Parents of {}".format(ret)
 
     @property
     def email(self):
@@ -40,6 +41,7 @@ class ParentAccounts:
     """
     parent_links = defaultdict(list)    # data construct: a hash with each item an array
     families = defaultdict(list)        # data construct: a hash with each item an array
+    groups = {}
 
     students = {}                       # hash of all the students
     parents = {}                        # hash of all the parents
@@ -71,6 +73,15 @@ class ParentAccounts:
         # TODO: command-line verbosity
         verbose = False
 
+        # First do the groups
+
+        for group in ['Secondary', 'Elementary', 'Whole School', 'Grade 12', 'Grade 11', "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kindergarten", "Early Years 1", "Early Years 2"]:
+            ParentAccounts.groups[group] = type('Parents Group', (), {})
+            ParentAccounts.groups[group].name = "Parents of " + group
+            ParentAccounts.groups[group].email = group.lower().replace(' ', '') + '.parents' + '@igbis.edu.my'
+            ParentAccounts.groups[group].list = []
+
+
         with DBSession() as session: # this opens a connection to the database
 
             # Emit SQL to get all all the students, and join with parent information
@@ -79,6 +90,9 @@ class ParentAccounts:
             # loop through each student, which has parent info and other model information
             # in the end we'll have a data construct with parent links
             for student in statement.all():
+
+                grade_level_group = student.grade_string
+                #homeroom_level_group = student.homeroom_string  FIXME: need to get the database to have a homeroom
 
                 # save the student information, we'll grab this later
                 ParentAccounts.students[str(student.id)] = student
@@ -92,6 +106,22 @@ class ParentAccounts:
                     # Guaranteed to work because the parent info are just links to the same database entry
                     # So even if they change their name, or anything, still all good
                     ParentAccounts.make_parent_link(parent, student)
+
+                    if grade_level_group is not None:
+                        ParentAccounts.groups[grade_level_group].list.append(parent.igbis_email_address)
+                        ParentAccounts.groups['Whole School'].list.append(parent.igbis_email_address)
+                        if student.grade is not None:
+                            if student.grade >= 6:
+                                ParentAccounts.groups['Secondary'].list.append(parent.igbis_email_address)
+                            else:
+                                ParentAccounts.groups['Elementary'].list.append(parent.igbis_email_address)
+
+                    else:
+                        pass
+                        # FIXME ugh
+                        #raw_input("Student without a grade level {}".format(student))
+
+            #from IPython import embed;embed();exit()
 
             # loop through each of the parent links, making a new data construct (families)
             # this time the keys is the student ids as a string concated, with "+"" as delimiter
@@ -169,7 +199,13 @@ class ParentAccounts:
                     click.echo("\t{} {}".format(ParentAccounts.make_family_id(student, parent), parent))
 
     def output(self):
-        import gns
+
+        for group in ParentAccounts.groups:
+            gns.group = ParentAccounts.groups[group]
+            click.echo( gns(
+                    'gam create group \'{group.email}\' '\
+                    'name \'{group.name}\''\
+                ))
 
         for gns.family in self.family_accounts:
 
@@ -182,26 +218,37 @@ class ParentAccounts:
                     'changepassword on '\
                     'gal off '\
                     'org Parents '\
-                    'type {parent.type} '\
                     'externalid IGBID {parent.igbid} '
                 ))
 
                 # Need to route this to subprocess
-                click.echo( gns(
-                    'gam info user {parent.igbis_email_address} '\
-                    'nogroups noaliases nolicenses noschemas '
-                ))
+                # click.echo( gns(
+                #     'gam info user \'{parent.igbis_email_address}\' '\
+                #     'nogroups noaliases nolicenses noschemas '
+                # ))
 
-            click.echo( gns(
-                'gam create group '\
-                '{family.email} '\
-                'name "{family.group_name}" '\
-                'description "{family.group_name}" '
-            ))
+            # click.echo( gns(
+            #     'gam create group '\
+            #     '\'{family.email}\' '\
+            #     'name "{family.group_name}" '\
+            #     'description "{family.group_name}" '
+            # ))
 
-            for gns.parent in gns.family.parents:
+            # for gns.parent in gns.family.parents:
+            #     click.echo( gns(
+            #         'gam update group '\
+            #         '\'{family.email}\' '\
+            #         'add member user \'{parent.igbis_email_address}\''
+            #     ))
+
+
+        for group in ParentAccounts.groups:
+            gns.group = ParentAccounts.groups[group]            
+            for gns.parent_email in gns.group.list:
                 click.echo( gns(
                     'gam update group '\
-                    '{family.email} '\
-                    'add member user \'{parent.igbis_email_address}\''
-                ))
+                    '\'{group.email}\' '\
+                    'add member user \'{parent_email}\''
+                    )
+                )
+

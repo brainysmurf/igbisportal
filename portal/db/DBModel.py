@@ -399,6 +399,13 @@ class Student(Base, User):
         return -10 if self.class_year is None else int(self.class_year) - 1
 
     @hybrid_property
+    def grade_string(self):
+        return {
+            -10: None, 12: 'Grade 12', 11: 'Grade 11', 10: 'Grade 10', 9: 'Grade 9', 
+            8: 'Grade 8', 7: 'Grade 7', 6: 'Grade 6', 5: 'Grade 5', 4: 'Grade 4', 3: 'Grade 3',
+            2: 'Grade 2', 1: 'Grade 1', 0:'Kindergarten', -1:'Early Years 1', -2: 'Early Years 2'}.get(self.grade)
+
+    @hybrid_property
     def health_information(self):
         from portal.db import DBSession, Database
         db = Database()
