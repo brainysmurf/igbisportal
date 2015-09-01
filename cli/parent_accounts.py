@@ -207,6 +207,8 @@ class ParentAccounts:
                     'name \'{group.name}\''\
                 ))
 
+        click.echo('commit-batch')
+
         for gns.family in self.family_accounts:
 
             for gns.parent in gns.family.parents:
@@ -214,7 +216,7 @@ class ParentAccounts:
                     'gam create user \'{parent.igbis_email_address}\' '\
                     'firstname "{parent.first_name}" '\
                     'lastname "{parent.last_name}" '\
-                    'password defaultpassword '\
+                    'password \'igbis\' '\
                     'changepassword on '\
                     'gal off '\
                     'org Parents '\
@@ -242,6 +244,8 @@ class ParentAccounts:
             #     ))
 
 
+        click.echo('commit-batch')
+                
         for group in ParentAccounts.groups:
             gns.group = ParentAccounts.groups[group]            
             for gns.parent_email in gns.group.list:
