@@ -105,6 +105,17 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
         }
     )
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu=None)
+counselor_button_students = button(name="Counselor", externalid=-9, size="", color="aqua", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
+    'items': [
+        menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form")         
+    ]
+    })
+counselor_button_not_students = button(name="Counselor", externalid=-9, size="", color="aqua", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
+    'items': [
+        menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
+        menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
+    ]
+    })
 
 @view_config(route_name='updateButtons', renderer='json')
 def update_buttons(request):
@@ -154,6 +165,7 @@ def splash(request):
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
+        counselor_button_students
     ])
 
     with DBSession() as session:
@@ -235,7 +247,6 @@ def splash(request):
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
     ]
 
-
     elem_teacher_buttons = [
         button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="",
             context_menu={
@@ -301,6 +312,7 @@ def splash(request):
             ]}),
         ela_button,
         emergency_button,
+        counselor_button_not_students,
         cashless_button
         ])
 
@@ -353,6 +365,7 @@ def splash(request):
         bookings_button,
         ela_button,
         emergency_button,
+        counselor_button_not_students,
         cashless_button
     ])
 
@@ -363,6 +376,7 @@ def splash(request):
         if account_type == 'Advisors':
             buttons['Secondary_Teachers'] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons
+            buttons['Students'] = student_buttons
             buttons['Parents'] = parent_buttons
         elif account_type == 'Students':
             buttons['Students'] = student_buttons
