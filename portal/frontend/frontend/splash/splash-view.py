@@ -76,6 +76,7 @@ parent_buttons = [
                 menu_item(icon="globe", display="Grade 5J (Coming Soon)", url=""),
             ]
         }),
+    button(name="Activities & Sports", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu=None),
     button(name="More to come...", externalid=-9, size="", color="", url="", icon="circle", id="", context_menu=None),
 ]
 
