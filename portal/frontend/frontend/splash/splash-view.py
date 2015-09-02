@@ -88,7 +88,7 @@ counselor_button_not_students = button(name="Counselor", externalid=-9, size="",
         menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
         menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
     ]
-    })
+    })  
 parent_buttons = [
     button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
     button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
@@ -386,9 +386,7 @@ def splash(request):
             buttons['Parents'] = parent_buttons
             buttons['Students'] = student_buttons
         else:
-            buttons['Secondary_Teachers'] = sec_teacher_buttons
-            buttons['Elementary_Teachers'] = elem_teacher_buttons
-            #buttons['Students'] = student_buttons            
+            buttons['Welcome'] = stndrdbttns
     else:
         buttons['Welcome'] = stndrdbttns
 
