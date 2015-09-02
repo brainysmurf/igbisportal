@@ -77,6 +77,7 @@ parent_buttons = [
             ]
         }),
     button(name="Activities & Sports", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu=None),
+    counselor_button_not_students,
     button(name="More to come...", externalid=-9, size="", color="", url="", icon="circle", id="", context_menu=None),
 ]
 
@@ -104,6 +105,7 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
         ],
         }
     )
+
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu=None)
 counselor_button_students = button(name="Counselor", externalid=-9, size="", color="aqua", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
@@ -383,6 +385,7 @@ def splash(request):
             buttons['Parents'] = parent_buttons
         elif account_type == 'Parents':
             buttons['Parents'] = parent_buttons
+            buttons['Students'] = student_buttons
         else:
             buttons['Secondary_Teachers'] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons
