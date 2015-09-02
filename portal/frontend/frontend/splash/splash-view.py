@@ -52,6 +52,33 @@ stndrdbttns = [
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
+parent_buttons = [
+    button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
+    button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+        context_menu=None),
+    button(name="Google Drive", externalid=-9, size="", color="aqua", url="https://drive.google.com", icon="files-o", id="", 
+        context_menu=None),
+    button(name="Library", externalid=-9, size="", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
+        context_menu=None),
+    button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
+    button(name="Classes", externalid=-9, size="large", color="orange", url="https://igbis.managebac.com", icon="star", id="", context_menu={
+            'items': [
+                menu_item(icon="globe", display="Early Years (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Kindergarten H (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Kindergarten M", url="https://sites.google.com/a/igbis.edu.my/kgm/"),
+                menu_item(icon="globe", display="Grade 1", url="https://sites.google.com/a/igbis.edu.my/g1b/"),
+                menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/2k/"),
+                menu_item(icon="globe", display="Grade 3O (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Grade 3H (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Grade 4H", url="https://sites.google.com/a/igbis.edu.my/4h_igbis/"),
+                menu_item(icon="globe", display="Grade 4T", url="https://sites.google.com/a/igbis.edu.my/grade-4t-with-ms-kari/"),
+                menu_item(icon="globe", display="Grade 5M", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
+                menu_item(icon="globe", display="Grade 5J (Coming Soon)", url=""),
+            ]
+        }),
+    button(name="More to come...", externalid=-9, size="", color="", url="", icon="circle", id="", context_menu=None),
+]
+
 emergency_button = button(name="Emergency Contact", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", id="", context_menu=None)
 # intl_day_button = button(name="International Day", color=None, icon="smile-o", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k", id="", 
 #         context_menu={
@@ -338,6 +365,8 @@ def splash(request):
             #buttons['Students'] = student_buttons  # for debugging
         elif account_type == 'Students':
             buttons['Students'] = student_buttons
+        elif account_type == 'Parents':
+            buttons['Parents'] = parent_buttons
         else:
             buttons['Secondary_Teachers'] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons

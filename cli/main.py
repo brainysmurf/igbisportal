@@ -58,7 +58,18 @@ def output():
 def parent_accounts(obj):
     from cli.parent_accounts import ParentAccounts
     parent_accounts = ParentAccounts()
-    parent_accounts.output()
+    parent_accounts.output_()
+
+@output.command()
+@click.pass_obj
+def contact_information(obj):
+    """
+    Spits out what is needed for geoff to contact the parents
+    """
+    from cli.parent_accounts import ParentAccounts
+    parent_accounts = ParentAccounts()
+    parent_accounts.output_for_email()
+
 
 @sync.command()
 @click.option('path', '--path', type=click.Path(exists=True))

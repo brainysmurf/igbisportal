@@ -198,6 +198,37 @@ class ParentAccounts:
                 for parent in student.parents:
                     click.echo("\t{} {}".format(ParentAccounts.make_family_id(student, parent), parent))
 
+    def output_for_email(self):
+
+        click.echo( gns(
+                'Parent First Name'\
+                '{COMMA}'\
+                'Parent Last Name'\
+                '{COMMA}'\
+                'Children'\
+                '{COMMA}'\
+                'Parent Registered Email'
+                '{COMMA}'\
+                'Parent IGBIS Email'
+            ))
+
+        for gns.family in self.family_accounts:
+
+            for gns.parent in gns.family.parents:
+                gns.children = " and ".join([s.first_nickname_last_studentid for s in gns.family.students])
+                click.echo( gns(
+                    '{parent.first_name}'\
+                    '{COMMA}'\
+                    '{parent.last_name}'\
+                    '{COMMA}'\
+                    '{children}'
+                    '{COMMA}'\
+                    '{parent.email}'\
+                    '{COMMA}'\
+                    '{parent.igbis_email_address}'\
+                    '{COMMA}'\
+                ))
+
     def output(self):
 
         for group in ParentAccounts.groups:
@@ -245,7 +276,7 @@ class ParentAccounts:
 
 
         click.echo('commit-batch')
-                
+
         for group in ParentAccounts.groups:
             gns.group = ParentAccounts.groups[group]            
             for gns.parent_email in gns.group.list:

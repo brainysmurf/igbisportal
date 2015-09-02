@@ -183,6 +183,8 @@ class User(PortalORM):
     """
     type = Column(String(255))
 
+    domain = '@igbis.edu.my'
+
     first_name = Column(String(255))
     last_name = Column(String(255))
 
@@ -487,6 +489,14 @@ class Parent(Base, User):
     @hybrid_property
     def igbis_email_address(self):
         return self.igbis_username + '@igbis.edu.my'
+
+    @igbis_username.expression
+    def igbis_username_expression(cls):
+        return func.regexp_replace(func.concat(cls.first_name, '.', cls.last_name, '.parent'), cls.domain, '[^0-9a-z]')
+
+    @igbis_email_address.expression
+    def igbis_email_address_expression(cls):
+        return func.lower(func.concat(cls.igbis_username_expression, cls.domain))
 
     @hybrid_property
     def name(self):

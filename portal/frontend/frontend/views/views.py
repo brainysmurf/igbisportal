@@ -87,6 +87,10 @@ def session_user(request):
             teacher = session.query(Teachers).filter(func.lower(Teachers.email)==user_email).options(joinedload('classes')).first()
             if teacher:
                 user = teacher
+        if not user:
+            parent = session.query(Parents).filter(func.lower(Parents.igbis_email_address)==user_email).first()
+            if parent:
+                user = parent
 
         if not user: # authenticated, but not in MB, so just put in users table
 
