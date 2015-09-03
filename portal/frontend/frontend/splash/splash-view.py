@@ -206,6 +206,8 @@ def splash(request):
             context_menu={
             'items': [
                 menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
+                menu_placeholder('mb_classes'),
+                menu_item(icon="pencil", display="Compose", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit"),
             ]
             }),
         button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
