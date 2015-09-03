@@ -206,8 +206,6 @@ def splash(request):
             context_menu={
             'items': [
                 menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
-                menu_placeholder('mb_classes'),
-                menu_item(icon="pencil", display="Compose", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit"),
             ]
             }),
         button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
@@ -220,7 +218,8 @@ def splash(request):
                 menu_item(icon="folder", display="Semester One Timetables", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERbm0zWXV1bWxsb0k"),
                 menu_separator(),
                 menu_item(icon="folder", display="MYP IB Recources", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERclEzb3Zpa3dMcjg"),
-                menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc")
+                menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc"),
+                menu_item(icon="folder", display="MYP Subject Overviews 2015-16", url="https://docs.google.com/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit#gid=0")             
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
