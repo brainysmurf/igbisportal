@@ -492,7 +492,7 @@ class Parent(Base, User):
 
     @igbis_username.expression
     def igbis_username_expression(cls):
-        return func.lower(func.regexp_replace(func.concat(cls.first_name, '.', cls.last_name, '.parent'), '[^0-9A-Za-z]', ''))
+        return func.lower(func.regexp_replace(func.concat(cls.first_name, '.', cls.last_name, '.parent'), '[^0-9A-Za-z.]', ''))
 
     @igbis_email_address.expression
     def igbis_email_address_expression(cls):
