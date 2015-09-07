@@ -90,7 +90,7 @@ counselor_button_not_students = button(name="Counselor", externalid=-9, size="",
     ]
     })  
 parent_buttons = [
-    button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
+    button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
     button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="", color="aqua", url="https://drive.google.com", icon="files-o", id="", 
@@ -98,7 +98,7 @@ parent_buttons = [
     button(name="Library", externalid=-9, size="", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
         context_menu=None),
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
-    button(name="Classes", externalid=-9, size="large", color="orange", url="https://igbis.managebac.com", icon="star", id="", context_menu={
+    button(name="Classes", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="star", id="", context_menu={
             'items': [
                 menu_item(icon="globe", display="Early Years (Coming Soon)", url=""),
                 menu_item(icon="globe", display="Kindergarten H (Coming Soon)", url=""),
@@ -107,7 +107,7 @@ parent_buttons = [
                 menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/2k/"),
                 menu_item(icon="globe", display="Grade 3O (Coming Soon)", url=""),
                 menu_item(icon="globe", display="Grade 3H (Coming Soon)", url=""),
-                menu_item(icon="globe", display="Grade 4H", url="https://sites.google.com/a/igbis.edu.my/4h_igbis/"),
+                menu_item(icon="globe", display="Grade 4H", url="https://sites.google.com/a/igbis.edu.my/g4-igbis/"),
                 menu_item(icon="globe", display="Grade 4T", url="https://sites.google.com/a/igbis.edu.my/grade-4t-with-ms-kari/"),
                 menu_item(icon="globe", display="Grade 5M", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
                 menu_item(icon="globe", display="Grade 5J (Coming Soon)", url=""),
@@ -215,6 +215,7 @@ def splash(request):
                 menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
                 menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
+                menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
                 menu_item(icon="folder", display="Semester One Timetables", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERbm0zWXV1bWxsb0k"),
                 menu_separator(),
                 menu_item(icon="folder", display="MYP IB Recources", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERclEzb3Zpa3dMcjg"),
@@ -272,7 +273,7 @@ def splash(request):
                 menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
                 menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
-                menu_item(icon="question-circle", display="What else?", url="#")
+                menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
             ]
             }),
         button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
