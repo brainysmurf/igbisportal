@@ -330,7 +330,7 @@ def api_students(request):
     derived_attr = json_body.get('derived_attr')
     filter = json_body.get('filter')
     awesome_tables = json_body.get('awesome_tables') or False
-    human_columns = json_body.get('awesome_tables') or False
+    human_columns = json_body.get('human_columns') or False
     passed_columns = json_body.get('columns') or False
 
     if derived_attr:
@@ -426,10 +426,11 @@ def mb_courses(request):
         grade_str = re.search('\((.*?)\)', klass.name)
         if grade_str:
             str = grade_str.group(1)
-            grade_str = {'Grade 10': 10, 'Grade 11': 11, 'Grade 12': 12}.get(str, int(re.sub('[^0-9]', '', str)))
+            grade_str = {0:None, 'Grade 10': 10, 'Grade 11': 11, 'Grade 12': 12}.get(str, int(re.sub('[^0-9]', '', str) or 0))
         else:
             grade_str = ""
-        data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
+        if grade_str is not None:
+            data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
     return dict(message="Success", data=sorted(data, key= lambda x: x['sortby'], reverse=True))
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
