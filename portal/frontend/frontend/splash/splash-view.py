@@ -388,10 +388,10 @@ def splash(request):
             buttons['Parents'] = parent_buttons
             buttons['Students'] = student_buttons
         else:
-            buttons['Secondary_Teachers'] = sec_teacher_buttons
+            buttons["Welcome!"] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons
     else:
-        buttons['Welcome'] = stndrdbttns
+        buttons['Welcome'] = parent_buttons
 
     g_plus_unique_id = request.session.get('g_plus_unique_id')
     settings = None

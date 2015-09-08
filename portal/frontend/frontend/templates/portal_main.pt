@@ -31,11 +31,14 @@
   <div tal:condition="unique" id="signinButton" style="height:36px;">
     <!-- 
       data-approvalprompt="force" 
+      data-scope="openid email profile"
+      data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
       https://developers.google.com/+/web/signin/reference 
     -->
     <div id="button_list" style="float:right;">
       <div id="userButton" style="height:200px;" class="g-signin"
-      data-scope="openid email profile https://www.googleapis.com/auth/plus.login"
+
+      data-scope="openid email profile"
       data-clientid="${client_id}"
       data-redirecturi="postmessage"
       data-accesstype="offline"
