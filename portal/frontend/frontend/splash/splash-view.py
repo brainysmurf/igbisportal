@@ -117,6 +117,8 @@ parent_buttons = [
     button(name="More to come...", externalid=-9, size="", color="", url="", icon="circle", id="", context_menu=None),
 ]
 
+bus_admin_buttons = stndrdbttns
+
 @view_config(route_name='updateButtons', renderer='json')
 def update_buttons(request):
     gplus = request.session.get('g_plus_unique_id')
@@ -387,6 +389,12 @@ def splash(request):
         elif account_type == 'Parents':
             buttons['Parents'] = parent_buttons
             buttons['Students'] = student_buttons
+        elif account_type == 'BusAdmin':
+            buttons['Bus & Admin'] = bus_admin_buttons
+            buttons['Secondary_Teachers'] = sec_teacher_buttons
+            buttons['Elementary_Teachers'] = elem_teacher_buttons
+            buttons['Students'] = student_buttons
+            buttons['Parents'] = parent_buttons
         else:
             buttons["Welcome!"] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons

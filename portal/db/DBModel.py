@@ -78,6 +78,7 @@ STUDENTS = "{}students".format(PREFIX)
 PARENTS = "{}parents".format(PREFIX)
 ADVISORS = "{}teachers".format(PREFIX)
 COURSES = "{}courses".format(PREFIX)
+BUSADMIN = "{}busadmin".format(PREFIX)
 PARENTCHILDREN = "{}parentchildren".format(PREFIX)
 ASSIGNMENT = "{}assignment".format(PREFIX)
 ENROLLMENT = "{}enrollment".format(PREFIX)
@@ -221,6 +222,10 @@ class User(PortalORM):
 
     def __str__(self):
         return (self.first_name or "") + ' ' + (self.last_name or "")
+
+class BusAdmin(Base, User):
+    __tablename__ = BUSADMIN
+    id = Column(BigInteger, primary_key=True)
 
 class Users(Base, User):
     """

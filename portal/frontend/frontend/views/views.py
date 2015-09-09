@@ -42,6 +42,7 @@ class ReportIncomplete(Exception):
 Students = db.table_string_to_class('student')
 Parents = db.table_string_to_class('parent')
 Teachers = db.table_string_to_class('advisor')
+BusAdmin = db.table_string_to_class('BusAdmin')
 Users = db.table_string_to_class('users')
 Enrollments = db.table_string_to_class('enrollment')
 Assignments = db.table_string_to_class('assignment')
@@ -87,6 +88,10 @@ def session_user(request):
             teacher = session.query(Teachers).filter(func.lower(Teachers.email)==user_email).options(joinedload('classes')).first()
             if teacher:
                 user = teacher
+        if not user:
+            busadmin = session.query(BusAdmin).filter(func.lower(BusAdmin.email)==user_email).options(joinedload('classes')).first()
+            if busadmin:
+                user = busadmin
         if not user:
             parent = session.query(Parents).filter(func.lower(Parents.igbis_email_address)==user_email).first()
             if parent:
