@@ -101,14 +101,13 @@ parent_buttons = [
     button(name="Classes", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="star", id="", context_menu={
             'items': [
                 menu_item(icon="globe", display="Early Years (Coming Soon)", url=""),
-                menu_item(icon="globe", display="Kindergarten H (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Kindergarten H", url="https://sites.google.com/a/igbis.edu.my/kgh/"),
                 menu_item(icon="globe", display="Kindergarten M", url="https://sites.google.com/a/igbis.edu.my/kgm/"),
                 menu_item(icon="globe", display="Grade 1", url="https://sites.google.com/a/igbis.edu.my/g1b/"),
                 menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/2k/"),
                 menu_item(icon="globe", display="Grade 3O (Coming Soon)", url=""),
                 menu_item(icon="globe", display="Grade 3H (Coming Soon)", url=""),
-                menu_item(icon="globe", display="Grade 4H", url="https://sites.google.com/a/igbis.edu.my/g4-igbis/"),
-                menu_item(icon="globe", display="Grade 4T", url="https://sites.google.com/a/igbis.edu.my/grade-4t-with-ms-kari/"),
+                menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/a/igbis.edu.my/g4-igbis/"),
                 menu_item(icon="globe", display="Grade 5M", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
                 menu_item(icon="globe", display="Grade 5J (Coming Soon)", url=""),
             ]
