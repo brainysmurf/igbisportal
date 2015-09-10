@@ -85,6 +85,8 @@ counselor_button_students = button(name="Counselor", externalid=-9, size="", col
     })
 counselor_button_not_students = button(name="Counselor", externalid=-9, size="", color="aqua", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
+        menu_item(icon="globe", display="Counselling Appointments Reference", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
+        menu_separator(),
         menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
         menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
     ]
