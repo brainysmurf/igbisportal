@@ -89,7 +89,7 @@ def session_user(request):
             if teacher:
                 user = teacher
         if not user:
-            busadmin = session.query(BusAdmin).filter(func.lower(BusAdmin.email)==user_email).options(joinedload('classes')).first()
+            busadmin = session.query(BusAdmin).filter(func.lower(BusAdmin.email)==user_email).first()
             if busadmin:
                 user = busadmin
         if not user:

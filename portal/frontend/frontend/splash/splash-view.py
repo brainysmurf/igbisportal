@@ -90,8 +90,9 @@ counselor_button_not_students = button(name="Counselor", externalid=-9, size="",
     ]
     })  
 parent_buttons = [
+    button(name="Camp Information", externalid=-9, size="large", color="blue", url="https://docs.google.com/document/d/1CVZbFS5u5SUqOjPC7HO5QywdhB4Wmg84U4JwVHV_a4Q/pub", icon="tree", id="", context_menu=None),
     button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
-    button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+    button(name="Gmail", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="", color="aqua", url="https://drive.google.com", icon="files-o", id="", 
         context_menu=None),
@@ -114,10 +115,22 @@ parent_buttons = [
         }),
     button(name="Activities & Sports", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu=None),
     counselor_button_not_students,
-    button(name="More to come...", externalid=-9, size="", color="", url="", icon="circle", id="", context_menu=None),
 ]
 
-bus_admin_buttons = stndrdbttns
+administration_buttons = [
+
+    button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
+        context_menu={
+        'items': [
+            menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
+            menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
+
+            menu_separator(),
+            menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
+        ]
+        }),
+
+]
 
 @view_config(route_name='updateButtons', renderer='json')
 def update_buttons(request):
@@ -308,6 +321,11 @@ def splash(request):
             menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
         ]}),
         button(name="Reports Hub", externalid=-9, size="", color="orange", url="reports_hub", icon="gavel", id="", context_menu=None),
+        button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", id="", context_menu={
+        'items': [
+            menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),
+            menu_item(icon="apple", display="An Apple a Day", url="https://sites.google.com/a/igbis.edu.my/plehhcet/an-apple-a-day"),
+        ]}),
         button(name="IT and Facilities Help Desk", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         bookings_button,
@@ -390,14 +408,13 @@ def splash(request):
             buttons['Parents'] = parent_buttons
             buttons['Students'] = student_buttons
         elif account_type == 'BusAdmin':
-            buttons['Bus & Admin'] = bus_admin_buttons
+            buttons['Administration'] = administration_buttons
             buttons['Secondary_Teachers'] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons
             buttons['Students'] = student_buttons
             buttons['Parents'] = parent_buttons
         else:
-            buttons["Welcome!"] = sec_teacher_buttons
-            buttons['Elementary_Teachers'] = elem_teacher_buttons
+            buttons["Welcome!"] = parent_buttons
     else:
         buttons['Welcome'] = parent_buttons
 
