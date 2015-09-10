@@ -24,6 +24,7 @@ setup(
     'waitress',
     'requests',
     'psycopg2',
+    'python-dateutil'
 ],
     # also requires?
     #'scrapyd', 'lxml', 'w3lib', 'cssselect', 'pysqlite'

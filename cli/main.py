@@ -55,10 +55,28 @@ def output():
 
 @output.command()
 @click.pass_obj
+def who_does_not_have_parents(obj):
+    import json
+    from cli.parent_accounts import ParentAccounts
+    results = []
+    users = gns('{config.paths.jsons}/users.json')
+    user_json = None
+    with open(users) as f:
+        raw = f.read()
+        user_json = json.loads(raw)
+    for user in user_json['users']:
+        if user['type'] == 'Students' and not user.get('parents_ids'):
+            print(user['email'])
+            results.append(user)
+    print(len(results))
+
+
+@output.command()
+@click.pass_obj
 def parent_accounts(obj):
     from cli.parent_accounts import ParentAccounts
     parent_accounts = ParentAccounts()
-    parent_accounts.output_()
+    parent_accounts.output()
 
 @output.command()
 @click.pass_obj

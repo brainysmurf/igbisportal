@@ -74,10 +74,8 @@ class collection_obj:
 				self._collection_list[left_row.id].append(right_row.id)
 
 			if right_row.id in [item.id for item in getattr(left_row, self.collection)]:
-				try:
-					print(" {} is already present as {} in {}".format(right_row, self.collection, left_row))
-				except UnicodeEncodeError:
-					from IPython import embed;embed()
+				pass
+				#print(" {} is already present as {} in {}".format(right_row, self.collection, left_row))
 			else:
 				# This actually emits the sql:
 				getattr(left_row, self.collection).append(right_row)
@@ -108,7 +106,7 @@ class updater_helper:
 						# Look for items that are in ids_on_db but not in ids_appended, because that means we should delete them
 						for id_to_delete in set(ids_on_db) - set(ids_appended):
 							right_row = session.query(collection.right_table).filter_by(id=id_to_delete).one()
-							print('removed {} from {} in collection {}'.format(right_row.id, left_row.id, collection.collection))
+							print('- Removed {} from {} in collection {}'.format(right_row.id, left_row.id, collection.collection))
 							getattr(left_row, collection.collection).remove(right_row)
 
 	@classmethod

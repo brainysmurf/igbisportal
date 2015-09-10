@@ -173,20 +173,22 @@ class AuditReport(object):
 
 		# This is the analyzation stage
 		for doc in self.doc_manager.touched:
+			header = False
 			for event in doc.sorted_event_descriptions:
-				if event.with_link or event.public:
+				if (event.with_link or event.public) and not header:
 					print('----------------------------------')
+					print(doc.title[-1])
+					print('http://drive.google.com/open?id={}'.format(doc.document_id))
+					header = True
 				if event.with_link:
-					print('Accessible with link:')
+					print('Made accessible with link:')
 				if event.public:
-					print('Accessible publicly:')
+					print('Made accessible publicly:')
 				if event.with_link or event.public:
 					print(' Who: {}'.format(event.who))
 					print('From: {}'.format(event.from_))
 					print('  To: {}'.format(event.to_))
-					print(doc.title[-1])
-					print('http://drive.google.com/open?id={}'.format(doc.document_id))
-					print(event.date)
+					print('When: {}'.format(event.date.strftime('%b %d %Y')))
 
 report = AuditReport('/Users/adam.morris/Downloads/AuditReport-20150905-2022.csv')
 print('finished')
