@@ -31,6 +31,7 @@ class DatabaseSetterUpper(object):
 
 		busadmins = []
 		busadmins.append(BusAdmin(first_name="Anne", last_name="Fowles", type="BusAdmin", email="anne.fowles@igbis.edu.my"))
+		busadmins.append(BusAdmin(first_name="Amanda", last_name="Clarke", type="BusAdmin", email="amanda.clarke@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="ShuhailaBinti", last_name="MadNasir", type="BusAdmin", email="shuhaila.nasir@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="MDZain", last_name="Mohd", type="BusAdmin", email="md.zain@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Danny", last_name="Yin", type="BusAdmin", email="danny.chan@igbis.edu.my"))
