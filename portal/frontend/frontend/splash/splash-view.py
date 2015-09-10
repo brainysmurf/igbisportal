@@ -414,7 +414,7 @@ def splash(request):
             buttons['Students'] = student_buttons
             buttons['Parents'] = parent_buttons
         else:
-            buttons["Welcome!"] = parent_buttons
+            buttons["Welcome_{}".format(account_type)] = parent_buttons
     else:
         buttons['Welcome'] = parent_buttons
 
