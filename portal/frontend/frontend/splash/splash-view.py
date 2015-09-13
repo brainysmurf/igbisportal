@@ -92,7 +92,6 @@ counselor_button_not_students = button(name="Counselor", externalid=-9, size="",
     ]
     })  
 parent_buttons = [
-    button(name="Camp Information", externalid=-9, size="large", color="blue", url="https://docs.google.com/document/d/1CVZbFS5u5SUqOjPC7HO5QywdhB4Wmg84U4JwVHV_a4Q/pub", icon="tree", id="", context_menu=None),
     button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
     button(name="Gmail", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
@@ -133,7 +132,6 @@ administration_buttons = [
             menu_item(icon="folder", display="SS Camps", url="https://docs.google.com/spreadsheets/d/1l4rF_xnyy3hjKOGftBaOfnACq-PIz2hgT2uIR_Jyd2g/edit#gid=798482198"),
         ]
         }),
-
 ]
 
 @view_config(route_name='updateButtons', renderer='json')
