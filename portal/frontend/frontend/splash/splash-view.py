@@ -100,18 +100,18 @@ parent_buttons = [
     button(name="Library", externalid=-9, size="", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
         context_menu=None),
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
-    button(name="Classes", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="star", id="", context_menu={
+    button(name="Classes", externalid=-9, size="", color="orange", url="", icon="star", id="", context_menu={
             'items': [
-                menu_item(icon="globe", display="Early Years (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
+                menu_item(icon="globe", display="Early Years R", url="https://sites.google.com/a/igbis.edu.my/eyri/"),
+                menu_item(icon="globe", display="Early Years W", url="https://sites.google.com/a/igbis.edu.my/eywa/"),
                 menu_item(icon="globe", display="Kindergarten H", url="https://sites.google.com/a/igbis.edu.my/kgh/"),
                 menu_item(icon="globe", display="Kindergarten M", url="https://sites.google.com/a/igbis.edu.my/kgm/"),
                 menu_item(icon="globe", display="Grade 1", url="https://sites.google.com/a/igbis.edu.my/g1b/"),
                 menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/2k/"),
-                menu_item(icon="globe", display="Grade 3O (Coming Soon)", url=""),
-                menu_item(icon="globe", display="Grade 3H (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/a/igbis.edu.my/3h-blog/"),
                 menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/a/igbis.edu.my/g4-igbis/"),
-                menu_item(icon="globe", display="Grade 5M", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
-                menu_item(icon="globe", display="Grade 5J (Coming Soon)", url=""),
+                menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
             ]
         }),
     button(name="Activities & Sports", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu=None),
