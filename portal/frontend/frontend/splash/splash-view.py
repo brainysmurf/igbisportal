@@ -94,6 +94,12 @@ counselor_button_not_students = button(name="Student Services & Counseling", ext
         menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
     ]
     })  
+counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="aqua", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
+    'items': [
+        menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
+        menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
+    ]
+    })
 parent_buttons = [
     button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
     button(name="Gmail", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
@@ -118,7 +124,7 @@ parent_buttons = [
             ]
         }),
     button(name="Activities & Sports", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu=None),
-    counselor_button_not_students,
+    counselor_button_parents,
 ]
 
 administration_buttons = [
