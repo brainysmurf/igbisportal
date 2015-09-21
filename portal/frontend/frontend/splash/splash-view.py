@@ -83,8 +83,11 @@ counselor_button_students = button(name="Counselor", externalid=-9, size="", col
         menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form")         
     ]
     })
-counselor_button_not_students = button(name="Counselor", externalid=-9, size="", color="aqua", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
+counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="", color="aqua", url="https://sites.google.com/a/igbis.edu.my/sst", icon="heart", id="", context_menu={
     'items': [
+        menu_item(icon="globe", display="Student Services Site", url="https://sites.google.com/a/igbis.edu.my/sst"),
+        menu_item(icon="globe", display="Counselling Site", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
+        menu_separator(),
         menu_item(icon="globe", display="Counselling Appointments Reference", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
         menu_separator(),
         menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
