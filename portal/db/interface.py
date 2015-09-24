@@ -126,6 +126,14 @@ class DatabaseSetterUpper(object):
 			))
 
 		admins.append(Teacher(
+			id = 10754286,
+			first_name="Claire",
+			last_name= "McCleod",
+			email="Claire.McCleod@igbis.edu.my",
+			type="Advisor"
+			))
+
+		admins.append(Teacher(
 			id = 10754285,
 			first_name="Lennox",
 			last_name="Meldrum",
