@@ -10,9 +10,9 @@
 
   <link rel="stylesheet" type="text/css" href="${static_url}fonts/fonts.css">
 
-  <div metal:define-slot="additional-css"></div>
-
-  <script src="https://apis.google.com/js/client:platform.js?onload=start" defer></script>
+  <div metal:define-slot="additional-head"></div>
+  <script src="https://apis.google.com/js/client:platform.js?onload=initApp" async defer></script>
+  <meta name="google-signin-client_id" content="${client_id}.apps.googleusercontent.com">
 
 </head>
 <body>
@@ -36,7 +36,7 @@
       https://developers.google.com/+/web/signin/reference 
     -->
     <div id="button_list" style="float:right;">
-      <div id="userButton" style="height:200px;" class="g-signin"
+      <div id="googleSignInButton" style="height:200px;" class="g-signin"
 
       data-scope="openid email profile"
       data-clientid="${client_id}"

@@ -16,6 +16,35 @@ Splash.changesMade = function () {
     Splash.state.changeMade = false;
 }
 
+Splash.initGoogle = function () {
+	gapi.load('auth2', function() {
+		auth2 = gapi.auth2.init({
+		  client_id: $('meta[name=google-signin-client_id]').attr("content"),
+		});
+	});
+}
+
+Splash.makeStarredButtons = function () {
+	// Build the google drive request and make the buttons accordingly
+
+	var request = gapi.client.drive.files.list({
+		'starred': true,
+		'trashed': false
+	});
+
+	request.execute(function(resp) {
+	    var files = resp.items;
+	    if (files && files.length > 0) {
+	      for (var i = 0; i < files.length; i++) {
+	        var file = files[i];
+	        console.log(file.title + ' (' + file.id + ')');
+	      }
+	    } else {
+	      console.log(resp);
+	    }
+	  });
+}
+
 Splash.defineTriggers = function () {
 
 	// First do initial setup on the interface
@@ -23,6 +52,10 @@ Splash.defineTriggers = function () {
 	$('#newTabButton').attr('disabled', true);
 	$(".slideOnModify").animate({width:'toggle'}, 350);
 
+	// At this point we have the system tabs set up, so we can add a tab
+	// Let's do the star thang, pass false so that it just adds but doesn't refresh
+	Splash.tabs.addTab('Starred');
+	gapi.client.load('drive', 'v2', Splash.makeStarredButtons);
 
 	$('#tabs_titlebar').on('click', '.editTabOnButton', function (e) {
 		e.preventDefault();

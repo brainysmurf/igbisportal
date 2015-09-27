@@ -252,7 +252,7 @@ var Tab = function(name) {
 		this.id = this.name.replace(/ /g, '_');
 		this.idSelector = '#'+this.id;
 		this.gridSelector = this.idSelector + ' > .grid';
-		if (this.name == 'Secondary_Teachers' || this.name == 'Elementary_Teachers' || this.name == 'Students') {
+		if (this.name == 'Secondary_Teachers' || this.name == 'Elementary_Teachers' || this.name == 'Students' || this.name == 'Starred') {
 			this.kind = 'systemTab';
 		} else {
 			this.kind = 'userTab';
@@ -435,13 +435,20 @@ Tabs.prototype.enableJBoxes = function () {
 	});
 };
 
-Tabs.prototype.addTab = function (name) {
+Tabs.prototype.addTab = function (name, refresh) {
 	// Adds to the model and the DOM
 	
   	// TODO: Add target depending on user setting? to be consistent?
   	// Make this a template, too, right?
   	// Add the tab in the tab list to the DOM
   	var newTab = new Tab(name);
+
+  	// Pass false to refresh if adding tab at initation time
+  	// Would be improved if Splash had a boolean somewhere indicating what status we are
+  	// And then checking that instead
+  	if (refresh === undefined) {
+	  	refresh = true;
+	}
 
 	var $lastLi = $(this.tabsSelector).find('ul > li:last-child');
   	var $save = $lastLi.mustache('newTabLiTemplate', newTab, {method:'after'}).next();
@@ -458,7 +465,9 @@ Tabs.prototype.addTab = function (name) {
           },
     });
 
-  	$(this.tabsSelector).tabs("refresh");
+    if (refresh) {
+  		$(this.tabsSelector).tabs("refresh");
+  	}
 
 	newTab.initGrid();
 	this.loadTab(newTab);

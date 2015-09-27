@@ -1,6 +1,6 @@
 <html metal:use-macro="load: frontend:templates/portal_main.pt">
 
-<div metal:fill-slot="additional-css" tal:omit-tag="">
+<div metal:fill-slot="additional-head" tal:omit-tag="">
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css" />
   <link rel="stylesheet" type="text/css" href="${static_url}gridly/stylesheets/jquery.gridly.css" />
@@ -91,6 +91,12 @@
         <input id="esd_display{{count}}" placeholder="Submenu display name" class="full-width" type="text" value="{{display}}"/>
         <input id="esd_url{{count}}" placeholder="http://example.com" class="full-width" type="text" value="{{url}}"/>
       </li>
+  </script>
+
+  <script>
+    function initApp() {    
+      this.Splash.app();
+    }
   </script>
 
 </div>

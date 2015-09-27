@@ -71,6 +71,8 @@ def session_user(request):
 
     credentials = request.session['credentials']
     unique_id = credentials.id_token['sub']
+
+    # We need to use lowercase because in some places the email is uppercase'd and other places it is lowercase'd
     user_email = credentials.id_token.get('email', '').lower()
 
     access_token = credentials.access_token
