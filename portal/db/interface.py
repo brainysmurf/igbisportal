@@ -129,7 +129,7 @@ class DatabaseSetterUpper(object):
 			id = 10754286,
 			first_name="Claire",
 			last_name= "McCleod",
-			email="Claire.McCleod@igbis.edu.my",
+			email="claire.mcleod@igbis.edu.my",
 			type="Advisor"
 			))
 

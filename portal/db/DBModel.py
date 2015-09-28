@@ -28,7 +28,7 @@ import unicodedata
 def normalize(this_string): 
     return unicodedata.normalize('NFKD', this_string).encode('ascii', 'ignore')
 
-from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date
+from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date, case
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
@@ -36,8 +36,8 @@ from sqlalchemy.ext.hybrid import HYBRID_PROPERTY
 from sqlalchemy.orm import column_property
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql.functions import concat
+from sqlalchemy.sql.expression import case
 from sqlalchemy import inspect, func
-
 Base = declarative_base()
 metadata = Base.metadata
 import datetime
@@ -290,6 +290,8 @@ class Student(Base, User):
     student_id = Column(String(255))
     program = Column(String(255))
     class_year = Column(Integer)
+    class_grade = Column(String)
+    archived = Column(Boolean)
 
     nickname = Column(String(255))
 
@@ -304,6 +306,8 @@ class Student(Base, User):
 
     open_apply_student_id = Column(String(255))
     homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
+
+
 
     def __repr__(self):
         return '<Student ' + self.first_nickname_last_studentid.encode('utf-8') + '>'
@@ -320,6 +324,18 @@ class Student(Base, User):
         if not str_value:
             return None
         return datetime.datetime.strptime(str_value, '%Y-%M-%d')
+
+    @hybrid_property
+    def is_archived(self):
+        return bool(self.archived)
+
+    @is_archived.expression
+    def is_archived_expression(cls):
+        return case([
+                (cls.archived == True, True),
+                (cls.archived == False, False)
+            ],
+            else_ = False)
 
     @hybrid_property
     def parent_name_1(self):
@@ -403,14 +419,44 @@ class Student(Base, User):
 
     @hybrid_property
     def grade(self):
-        return -10 if self.class_year is None else int(self.class_year) - 1
-
-    @hybrid_property
-    def grade_string(self):
         return {
-            -10: None, 12: 'Grade 12', 11: 'Grade 11', 10: 'Grade 10', 9: 'Grade 9', 
-            8: 'Grade 8', 7: 'Grade 7', 6: 'Grade 6', 5: 'Grade 5', 4: 'Grade 4', 3: 'Grade 3',
-            2: 'Grade 2', 1: 'Grade 1', 0:'Kindergarten', -1:'Early Years 1', -2: 'Early Years 2'}.get(self.grade)
+                'Grade 12':12, 
+                'Grade 11':11, 
+                'Grade 10':10, 
+                'Grade 9': 9, 
+                'Grade 8': 8, 
+                'Grade 7': 7, 
+                'Grade 6': 6, 
+                'Grade 5': 5, 
+                'Grade 4': 4, 
+                'Grade 3': 3, 
+                'Grade 2': 2, 
+                'Grade 1': 1, 
+                'Early Years 1':-2, 
+                'Early Years 2':-1, 
+                'Kindergarten': 0
+            }.get(self.class_grade, -10)
+
+    @grade.expression
+    def grade_expression(cls):
+        return case([
+                (cls.class_grade == 'Early Years 1', -2), 
+                (cls.class_grade == 'Early Years 2', -1), 
+                (cls.class_grade == 'Kindergarten', 0), 
+                (cls.class_grade == 'Grade 1', 1), 
+                (cls.class_grade == 'Grade 2', 2), 
+                (cls.class_grade == 'Grade 3', 3), 
+                (cls.class_grade == 'Grade 4', 4), 
+                (cls.class_grade == 'Grade 5', 5), 
+                (cls.class_grade == 'Grade 6', 6), 
+                (cls.class_grade == 'Grade 7', 7), 
+                (cls.class_grade == 'Grade 8', 8), 
+                (cls.class_grade == 'Grade 9', 9), 
+                (cls.class_grade == 'Grade 10', 10), 
+                (cls.class_grade == 'Grade 11', 11), 
+                (cls.class_grade == 'Grade 12', 12),
+            ],
+            else_ = -10)
 
     @hybrid_property
     def health_information(self):
@@ -568,6 +614,15 @@ class Advisor(Base, User):
     last_name = Column(String(255))
     national_id = Column(String(255))
     classes = relationship('Course', secondary=Assignment, backref='teachers')
+
+    @hybrid_property
+    def username_handle(self):
+        u, _ = self.email.split('@')
+        return u.lower()
+
+    @username_handle.expression
+    def username_handle_expression(self):
+        return func.lower(func.regexp_replace(self.email, '@.*$', ''))
 
 class Course(Base):
     """
