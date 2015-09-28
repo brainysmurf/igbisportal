@@ -25,6 +25,9 @@ class dummy_first_row:
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
  
+    from IPython import embed
+    embed()
+
     json_body = request.json_body
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
