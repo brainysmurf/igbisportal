@@ -5,6 +5,8 @@ from pyramid.view import view_config
 from pyramid.renderers import render
 from sqlalchemy.ext.hybrid import hybrid_property
 
+from chameleon import PageTemplate
+
 db = Database()
 Students = db.table_string_to_class('student')
 
@@ -25,9 +27,6 @@ class dummy_first_row:
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
  
-    from IPython import embed
-    embed()
-
     json_body = request.json_body
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
