@@ -6,6 +6,7 @@ from pyramid.renderers import render
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from chameleon import PageTemplate
+import gns
 
 db = Database()
 Students = db.table_string_to_class('student')
