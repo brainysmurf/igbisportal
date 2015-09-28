@@ -7,6 +7,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from chameleon import PageTemplate
 import gns
+from sqlalchemy.orm import joinedload
 
 db = Database()
 Students = db.table_string_to_class('student')
