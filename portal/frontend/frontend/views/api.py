@@ -73,13 +73,15 @@ def api_students(request):
         query = session.query(Students).\
             options(joinedload('parents')).\
             options(joinedload('ib_groups')).\
-            options(joinedload_all('classes.teachers')).order_by(Students.first_name)
+            options(joinedload_all('classes.teachers')).\
+            filter(Students.is_archived==False).\
+            order_by(Students.first_name)
 
         if filter == 'filterSecondary':
-            query = query.filter(Students.class_year >= 7)  # FIXME class_year is NOT grade!
+            query = query.filter(Students.grade >= 7)
 
         elif filter == 'filterElementary':
-            query = query.filter(Students.class_year < 7)
+            query = query.filter(Students.grade < 7)
 
         data = query.all()
 

@@ -374,7 +374,7 @@ class Student(Base, User):
         s = ""
         for p in range(len(self.parents)):
             parent = self.parents[p]
-            s += "({}) {} {} {}".format(p+1, parent.name, parent.email, parent.phone_number, parent.mobile_phone_number, parent.street_address, parent.street_address_ii)
+            s += "({}) {} {} {} {} {} {} ".format(p+1, parent.name or "", parent.email or "", parent.phone_number or "", parent.mobile_phone_number or "", parent.street_address or "", parent.street_address_ii or "")
         return s
 
     @hybrid_property
