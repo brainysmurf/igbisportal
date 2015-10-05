@@ -340,7 +340,7 @@ def splash(request):
         button(name="IT and Facilities Help Desk", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         bookings_button,
-        button(name="Communications", externalid=-9, size="", color="cyan", url="#", icon="comments", id="", context_menu={
+        button(name="Communications", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
             'items': [
                 menu_item(icon="user", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
             ]}),
@@ -354,7 +354,7 @@ def splash(request):
     sec_teacher_buttons.extend([
         ibo_button,
 
-        button(name="Communications", externalid=-9, size="", color="cyan", url="#", icon="comments", id="", 
+        button(name="Communications", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", 
         context_menu={
         'items': [
             menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
