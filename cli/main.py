@@ -1,6 +1,7 @@
 import click
 import gns
 import os
+import requests, json
 
 class Object(object):
     def __init__(self):
@@ -212,6 +213,85 @@ def teacher_classes(ctx, id):
             data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
         for item in sorted(data, key=lambda x: x['sortby'], reverse=True):
             print(item['name'])
+
+@main.group()
+def test():
+    pass
+
+@test.command('inspect_student')
+@click.pass_obj
+def inspect_student(obj):
+    from portal.db import Database, DBSession
+    from sqlalchemy.orm import joinedload, joinedload_all
+
+    db = Database()
+    Students = db.table_string_to_class('student')
+
+    with DBSession() as session:
+
+        query = session.query(Students).\
+            options(joinedload('parents')).\
+            options(joinedload('ib_groups')).\
+            options(joinedload_all('classes.teachers')).\
+            filter(Students.student_id=='20220018').\
+            order_by(Students.first_name)
+
+        result = query.one()
+
+        from IPython import embed;embed()
+
+
+@test.command('api_students')
+@click.pass_obj
+def test_api_students(obj):
+    options = json.dumps({
+        'secret': 'phillies',
+        'derived_attr': {
+            'field': 'student',
+            'string': '${first_nickname_last}',
+        },
+        'awesome_tables': True,
+        'human_columns': True,
+        'columns': ['grade', 'health_information', 'parent_contact_info', 'emergency_info']
+    }),
+
+    url = 'http://igbisportal.vagrant:6543/api/students'
+    result = requests.post(url, params=options)
+
+@main.group()
+@click.pass_context
+def update(ctx):
+    print('here')
+
+@update.command('igbis_email_transition')
+@click.pass_obj
+def igbis_email_transition(obj):
+
+    with DBSession() as session:
+
+        parents = session.query(Parents)
+
+        for parent in parents.all():
+ 
+            # Set up to the url to use the user id
+            # ... and also the authorization token which will be passed to requests module
+            gns.user_id = parent.id
+            params = {'auth_token': gns.config.managebac.api_token}
+            url = gns('{config.managebac.url}/api/users/{user_id}')
+
+            # Save the old email
+            old_email = user.get('email')
+
+            # Check that we haven't already changed this
+            if not '.parent@igbis.edu.my' in old_email:
+                # ... keep going then
+                new = {}
+                new['email'] = parent.igbis_email_address
+
+                # We lose the previous work_email...
+                new['work_email'] = old_email
+
+                result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user':new})
 
 
 
