@@ -130,16 +130,19 @@ class updater_helper:
 				row = None
 
 			verbose = False
-			# if row and hasattr(row, 'first_name') and row.first_name == 'Rhys':
-			# 	verbose = True
+			if row and row.id == 10834670:
+				verbose = True
 
 			if row:
 				column_names = [c.name for c in row.__table__.columns if c.name != 'id']
- 				if verbose:
-					raw_input(column_names)
+
+				if verbose:
+					print(column_names)
+					from IPython import embed;embed()
+
 				for column in column_names:
 					if verbose:
-						print(column)
+						print('Column {}'.format(column))
 					left = getattr(row, column)  # has
 					right = getattr(obj, column) # needs
 					if verbose:

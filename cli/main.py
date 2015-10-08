@@ -264,8 +264,12 @@ def update(ctx):
     print('here')
 
 @update.command('igbis_email_transition')
+@click.option('--dry/--wet', default=True, help="dry run by default only outputs")
 @click.pass_obj
-def igbis_email_transition(obj):
+def igbis_email_transition(obj, dry):
+    from portal.db import Database, DBSession
+    db = Database()
+    Parents = db.table_string_to_class('parent')
 
     with DBSession() as session:
 
@@ -280,7 +284,7 @@ def igbis_email_transition(obj):
             url = gns('{config.managebac.url}/api/users/{user_id}')
 
             # Save the old email
-            old_email = user.get('email')
+            old_email = parent.email or ''
 
             # Check that we haven't already changed this
             if not '.parent@igbis.edu.my' in old_email:
@@ -291,7 +295,17 @@ def igbis_email_transition(obj):
                 # We lose the previous work_email...
                 new['work_email'] = old_email
 
-                result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user':new})
+                if not parent.work_email:
+                    pass
+                    #print("Updated {} from {} to {}".format(parent, parent.email, parent.igbis_email_address))
+                else:
+                    print("{} Parent of {{{}}} has this email {} and this work_email: {}".format(parent, ", ".join([c.first_nickname_last_studentid for c in parent.children]), parent.email, parent.work_email))
+                if not dry:
+                    result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user':new})
+            else:
+                pass 
+                #print("Did not update {} because it is already updated".format(parent))
+
 
 
 

@@ -532,6 +532,7 @@ class Parent(Base, User):
     mobile_phone = Column(String(255))
     home_phone = Column(String(255))
     work_phone = Column(String(255))
+    work_email = Column(String(255))
 
     @hybrid_property
     def igbis_username(self):
