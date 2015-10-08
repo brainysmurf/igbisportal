@@ -344,6 +344,13 @@ def splash(request):
             'items': [
                 menu_item(icon="user", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
             ]}),
+        button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", 
+        context_menu={
+        'items': [
+            menu_item(icon="rocket", display="Current Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/current-activities"),
+            menu_item(icon="plus-circle", display="Sign-up", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up"),
+            menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
+        ]}),
         ela_button,
         emergency_button,
         counselor_button_not_students,
