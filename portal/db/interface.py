@@ -181,6 +181,8 @@ class DatabaseSetterUpper(object):
 			for admin in admins:
 				u.update_or_add(admin)
 
+			# Section refers to users, groups, etc
+
 			for gns.section in gns.config.managebac.sections.split(','):
 				#self.default_logger(gns("Setup {section} on database"))
 
@@ -188,8 +190,14 @@ class DatabaseSetterUpper(object):
 					this_json = json.load(_f)
 
 				_map = dict(Classes="Course", Students="Student", Advisors="Advisor", Parents="Parent")
+				if gns.section == "users":
+					# We need to process the advisors first, otherwise potentially we'll get foreign key constraint errors
+					# If we process student before advisor has been created
+					items = sorted(this_json[gns.section], key=lambda x: x.get('type'))
+				else:
+					items = this_json[gns.section]
 
-				for item in this_json[gns.section]:
+				for item in items:
 					_type = item.get('type', None)
 					_type = _map.get(_type, _type)
 					if not _type:
