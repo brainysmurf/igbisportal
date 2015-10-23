@@ -2,9 +2,22 @@ import click
 from portal.db import Database, DBSession
 db = Database()
 Students = db.table_string_to_class('student')
+Teachers = db.table_string_to_class('advisor')
 from sqlalchemy.orm import joinedload
+from sqlalchemy.orm.exc import NoResultFound
 from collections import defaultdict
 import gns
+
+class Error(Exception):
+    def __str__(self):
+        return self.msg
+
+class NotFoundError(Error):
+    pass
+
+class NoHomeroomTeacherFound(NotFoundError):
+    def __init__(self, msg=""):
+        self.msg = msg
 
 class Family:
     """
@@ -63,6 +76,13 @@ class ParentAccounts:
     def make_parent_link(cls, parent, student):
         ParentAccounts.parent_links[parent.id].append(student)
 
+    def make_parent_group(self, group, email=None):
+        ParentAccounts.groups[group] = type('Parents Group', (), {})
+        ParentAccounts.groups[group].name = "Parents of " + group
+        ParentAccounts.groups[group].email = group if email is None else email
+        ParentAccounts.groups[group].email += '.parents@igbis.edu.my'
+        ParentAccounts.groups[group].list = []
+
     def build(self):
         """
         Builds self.parents and self.families based on Database.
@@ -72,32 +92,103 @@ class ParentAccounts:
 
         # TODO: command-line verbosity
         verbose = False
+        gns.suffix = '.parent'
+        gns.domain = '@igbis.edu.my'
+        homeroom_mapping = {
+            'rachel.fluery':(6, '6'),
+            'tim.bartle': (7, '7'),
+            'sheena.kelly': (7, '7'), 
+            'benjamin.wylie': (8, '8'),
+            'emily.heys': (8, '8'),
+            'dean.watters':(9, '9'),
+            'glen.fleury': (9, '9'),
+            'marcus.wetherell': (10, '10'),
+            'diane.douglas': (10, '10'),
+            'paul.skadsen': (11, '11'),
+            'nathalie.chotard': (11, '11'),
+            'gabriel.evans': (11, '11'),
+            'michael.hawkes': (12, '12'),
+            'mary.richards': (-9, 'EY{}R'),
+            'deborah.king': (-9, 'EY{}K'),
+            'sally.davidson': (-9, 'EY{}W'),
+            'leanne.harvey':(0, 'KH'),
+            'lisa.mcclurg': (0, 'KM'),
+            'shireen.blakeway': (1, '1B'),
+            'kath.kummerow': (2, '2K'),
+            'michelle.ostiguy': (3, '3O'),
+            'marshall.hudson': (3, '3H'),
+            'kari.twedt': (4, '4T'),
+            'steven.harvey': (4, '4H'),
+            'katherine.mckenzie': (5, '5M'),
+            'yolaine.johanson': (5, '5J'),
+            }
 
         # First do the groups
 
         for group in ['Secondary', 'Elementary', 'Whole School', 'Grade 12', 'Grade 11', "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kindergarten", "Early Years 1", "Early Years 2"]:
-            ParentAccounts.groups[group] = type('Parents Group', (), {})
-            ParentAccounts.groups[group].name = "Parents of " + group
-            ParentAccounts.groups[group].email = group.lower().replace(' ', '') + '.parents' + '@igbis.edu.my'
-            ParentAccounts.groups[group].list = []
+            self.make_parent_group(group, group.lower().replace(' ', ''))
 
+        for username, _ in homeroom_mapping.items():
+            grade, homeroom = _
+            if grade >= 6:
+                group = 'homeroom.' + homeroom + (username.split('.')[1][0]).lower()
+            elif grade >= -2:
+                group = 'homeroom.' + homeroom
+            elif grade == -9:
+                for i in [1, 2]:
+                    self.make_parent_group('homeroom.'+ homeroom.format(i))
+
+            if grade >= -2:
+                self.make_parent_group(group)
 
         with DBSession() as session: # this opens a connection to the database
 
             # Emit SQL to get all all the students, and join with parent information
-            statement = session.query(Students).options(joinedload('parents')).order_by(Students.student_id)
+            statement = session.query(Students).options(joinedload('parents')).filter(Students.is_archived==False).order_by(Students.student_id)
 
             # loop through each student, which has parent info and other model information
             # in the end we'll have a data construct with parent links
             for student in statement.all():
 
-                grade_level_group = student.grade_string
-                #homeroom_level_group = student.homeroom_string  FIXME: need to get the database to have a homeroom
-
                 # save the student information, we'll grab this later
                 ParentAccounts.students[str(student.id)] = student
 
+                if student.grade != -10:
+                    # Filter out students who do not have a grade assigned.
+                    # ... those are probably students that are enrolled in a grade but don't have a homeroom assigned
+                    # ... sometimes happens, could be an error?
+                    try:
+                        teacher = session.query(Teachers).filter(Teachers.id==student.homeroom_advisor).one()
+                    except NoResultFound:
+                        teacher = None
+                        NoHomeroomTeacherFound(msg='{} student has {} for homeroom teacher id but cannot find in table'.format(student, student.homeroom_advisor))
+
+                    if teacher:
+                        grade, homeroom = homeroom_mapping.get(teacher.username_handle, (None, None))
+                        if grade is None or homeroom is None:
+                            continue
+                            #from IPython import embed;embed();exit()
+
+                        if grade >= 6:
+                            homeroom_level_group = 'homeroom.' + homeroom + (teacher.username_handle.split('.')[1][0]).lower()
+                        elif grade >= -2:
+                            homeroom_level_group = 'homeroom.' + homeroom
+                        elif grade == -9:
+                            for i in [1, 2]:
+                                homeroom_level_group = 'homeroom.' + homeroom.format(i)
+                                for parent in student.parents:
+                                    ParentAccounts.groups[homeroom_level_group].list.append(parent.igbis_email_address)
+
+                        if grade >= -2:
+                            try:
+                                for parent in student.parents:
+                                    ParentAccounts.groups[homeroom_level_group].list.append(parent.igbis_email_address)
+                            except KeyError:
+                                from IPython import embed;embed();exit()
+
                 for parent in student.parents:
+                    # Add the more global ones whole school and school-based ones
+
 
                     # save the parent inforamtion, we'll grab this later
                     ParentAccounts.parents[parent.id] = parent
@@ -107,8 +198,8 @@ class ParentAccounts:
                     # So even if they change their name, or anything, still all good
                     ParentAccounts.make_parent_link(parent, student)
 
-                    if grade_level_group is not None:
-                        ParentAccounts.groups[grade_level_group].list.append(parent.igbis_email_address)
+                    if student.class_grade is not None:
+                        ParentAccounts.groups[student.class_grade].list.append(parent.igbis_email_address)
                         ParentAccounts.groups['Whole School'].list.append(parent.igbis_email_address)
                         if student.grade is not None:
                             if student.grade >= 6:
@@ -168,7 +259,6 @@ class ParentAccounts:
                         # second line actually emits update sql
                         _pid = "{}{}".format(family_id, parent_index)
                         parent.igbid = _pid
-
 
                         # now append the parent, but not if already in there
                         if parent not in fam.parents:

@@ -129,7 +129,7 @@ class DatabaseSetterUpper(object):
 			id = 10754286,
 			first_name="Claire",
 			last_name= "McCleod",
-			email="Claire.McCleod@igbis.edu.my",
+			email="claire.mcleod@igbis.edu.my",
 			type="Advisor"
 			))
 
@@ -221,7 +221,8 @@ class DatabaseSetterUpper(object):
 
 						except AttributeError:
 							if item[item_key] is None:
-								continue  # happens when None is put on there
+								raw_input("Class {} does not have attribute {}".format(table_class, item_key))
+								
 							else:
 								# TODO: Figure this out
 								# print?
@@ -229,7 +230,7 @@ class DatabaseSetterUpper(object):
 								# from IPython import embed
 								# embed()
 								# exit()
-								pass
+								raw_input("Class {} does not have attribute {}".format(table_class, item_key))
 
 					# Filter out things
 					# Don't go ahead unless a studentid has been given
