@@ -192,6 +192,7 @@ def splash(request):
     student_buttons.extend([
         button(name="Activities", externalid=-9, size="large", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up", icon="rocket", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
+        button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
         counselor_button_students
     ])
 
