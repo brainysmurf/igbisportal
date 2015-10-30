@@ -95,7 +95,7 @@ class ParentAccounts:
         gns.suffix = '.parent'
         gns.domain = '@igbis.edu.my'
         homeroom_mapping = {
-            'rachel.fluery':(6, '6'),
+            'rachel.fleury':(6, '6'),
             'tim.bartle': (7, '7'),
             'sheena.kelly': (7, '7'), 
             'benjamin.wylie': (8, '8'),
@@ -110,7 +110,7 @@ class ParentAccounts:
             'michael.hawkes': (12, '12'),
             'mary.richards': (-9, 'EY{}R'),
             'deborah.king': (-9, 'EY{}K'),
-            'sally.davidson': (-9, 'EY{}W'),
+            'sally.watters': (-9, 'EY{}W'),
             'leanne.harvey':(0, 'KH'),
             'lisa.mcclurg': (0, 'KM'),
             'shireen.blakeway': (1, '1B'),
@@ -119,7 +119,7 @@ class ParentAccounts:
             'marshall.hudson': (3, '3H'),
             'kari.twedt': (4, '4T'),
             'steven.harvey': (4, '4H'),
-            'katherine.mckenzie': (5, '5M'),
+            'kathy.mckenzie': (5, '5M'),
             'yolaine.johanson': (5, '5J'),
             }
 
