@@ -416,10 +416,6 @@ def test_managebac_put(obj, _id):
 @click.argument('_id', default=27943)  #10875405
 @click.pass_obj
 def test_openapply_get(obj, _id):
-    from portal.db import Database, DBSession
-    db = Database()
-    Students = db.table_string_to_class('student')
-
 
     # Set up to the url to use the user id
     # ... and also the authorization token which will be passed to requests module
@@ -428,7 +424,7 @@ def test_openapply_get(obj, _id):
     url = gns('{config.openapply.url}/api/v1/students/{user_id}')
 
     result = requests.get(url, params={'auth_token': gns.config.openapply.api_token})
-    #from IPython import embed;embed()
+    from IPython import embed;embed()
     print(result.json())
     print(result.json()['student']['status'])
 
