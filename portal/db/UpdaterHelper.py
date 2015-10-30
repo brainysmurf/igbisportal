@@ -129,9 +129,7 @@ class updater_helper:
 				session.add(obj)
 				row = None
 
-			verbose = False
-			if row and row.id == 10834670:
-				verbose = True
+			verbose = True
 
 			if row:
 				column_names = [c.name for c in row.__table__.columns if c.name != 'id']

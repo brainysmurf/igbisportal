@@ -74,9 +74,10 @@ class OA_Medical_Importer:
         # First call the API to get students who are currently enrolled
         initial_params = {
             'auth_token': gns.config.openapply.api_token, 
-            'count': 1000,
+            'count': 1000,    # we have less than 1000 enrolled, so this should be okay for now
             'status': 'enrolled'
             }
+
         url = gns('{config.openapply.url}/api/v1/students/')
         result = requests.get(url, params=initial_params)
 
@@ -84,7 +85,7 @@ class OA_Medical_Importer:
 
             # Get the full information
             gns.user_id = student['id']
-            gns.health_info = 'Health_Information_'
+            gns.health_info = 'health_information'
             url = gns('{config.openapply.url}/api/v1/students/{user_id}')
             this_params = {
                 'auth_token': gns.config.openapply.api_token, 
@@ -99,17 +100,19 @@ class OA_Medical_Importer:
             obj.id = student['managebac_student_id']  # This is the managebac primary id, not the student_id (which is a custom field)
 
             for index in range(len(health_info)):
-                gns.index = index
-    
+                gns.index = index + 1
+                print('index')
+                from IPython import embed;embed()
                 for field in health_info[index].keys():
                     gns.field = field
                     this_field = gns('{health_info}_{index}_{field}')
 
-                    setattr(obj, this_field, health_info[field])
+                    setattr(obj, this_field, health_info[index].get(this_field))
+
+            updater(obj)
 
             from IPython import embed;embed();exit()
 
-            updater(obj)
 
     def read_in(self):
         if self.path:
