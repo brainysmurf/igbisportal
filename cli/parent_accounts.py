@@ -137,7 +137,7 @@ class ParentAccounts:
             'marshall.hudson': (3, '3H'),
             'kari.twedt': (4, '4T'),
             'steven.harvey': (4, '4H'),
-            'katherine.mckenzie': (5, '5M'),
+            'kathy.mckenzie': (5, '5M'),
             'yolaine.johanson': (5, '5J'),
             }
 

@@ -285,7 +285,7 @@ def test_api_students(obj):
 @main.group()
 @click.pass_context
 def update(ctx):
-    print('here')
+    pass
 
 @update.command('igbis_email_transition')
 @click.option('--dry/--wet', default=True, help="dry run by default only outputs")
@@ -297,7 +297,7 @@ def igbis_email_transition(obj, dry):
 
     with DBSession() as session:
 
-        parents = session.query(Parents)
+        parents = session.query(Parents) #.filter(Parents.id==10882228)
 
         for parent in parents.all():
  
@@ -306,6 +306,7 @@ def igbis_email_transition(obj, dry):
             gns.user_id = parent.id
             params = {'auth_token': gns.config.managebac.api_token}
             url = gns('{config.managebac.url}/api/users/{user_id}')
+            #url = gns('{config.managebac.url}/api/v1/users/{user_id}/')
 
             # Save the old email
             old_email = parent.email or ''
@@ -317,18 +318,137 @@ def igbis_email_transition(obj, dry):
                 new['email'] = parent.igbis_email_address
 
                 # We lose the previous work_email...
-                new['work_email'] = old_email
-
                 if not parent.work_email:
-                    pass
-                    #print("Updated {} from {} to {}".format(parent, parent.email, parent.igbis_email_address))
+                    new['work_email'] = old_email
                 else:
-                    print("{} Parent of {{{}}} has this email {} and this work_email: {}".format(parent, ", ".join([c.first_nickname_last_studentid for c in parent.children]), parent.email, parent.work_email))
-                if not dry:
+                    if parent.work_email != old_email:
+                        new['work_email'] = old_email + ',' + parent.work_email
+                    else:
+                        new['work_email'] = old_email
+
+                if dry:
+                    if new['work_email']:
+                        print("{},{}".format(new['email'], new['work_email']))
+                    else:
+                        pass
+                        #print("Changed email to {}".format(new['email']))
+                else:
                     result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user':new})
+                    print('{} {}'.format(result.status_code, result.url))
+                    # result = requests.put(url, headers={'auth_token': gns.config.openapply.api_token}, json={'user':new})
+                    # from IPython import embed
+                    # embed()
             else:
-                pass 
+                pass
                 #print("Did not update {} because it is already updated".format(parent))
 
+@main.group()
+@click.pass_context
+def test_api(ctx):
+    pass
 
 
+@test_api.command('managebac')
+@click.argument('_id', default=10882228, )
+@click.argument('field', default="")
+@click.argument('value', default="")
+@click.pass_obj
+def test_managebac_api(obj, _id, field, value):
+    from portal.db import Database, DBSession
+    db = Database()
+    Parents = db.table_string_to_class('parent')
+
+    with DBSession() as session:
+
+        parents = session.query(Parents).filter(Parents.id==_id)
+
+        for parent in parents.all():
+ 
+            # Set up to the url to use the user id
+            # ... and also the authorization token which will be passed to requests module
+            gns.user_id = parent.id
+            params = {'auth_token': gns.config.managebac.api_token}
+            url = gns('{config.managebac.url}/api/users/{user_id}')
+            #url = gns('{config.managebac.url}/api/v1/users/{user_id}/')
+
+            result = requests.get(url, params=params)
+            print(result.json())
+
+
+@test_api.command('managebac_get')
+@click.argument('_id', default=10868315)  #10875405
+@click.pass_obj
+def test_managebac_get(obj, _id):
+    from portal.db import Database, DBSession
+    db = Database()
+
+    # Set up to the url to use the user id
+    # ... and also the authorization token which will be passed to requests module
+    gns.user_id = _id
+    params = {'auth_token': gns.config.managebac.api_token}
+    url = gns('{config.managebac.url}/api/users/{user_id}')
+
+    result = requests.get(url, params=params)
+    from IPython import embed;embed()
+
+    print(result.json())
+
+@test_api.command('managebac_put')
+@click.argument('_id', default=10868315)  #10875405
+@click.pass_obj
+def test_managebac_put(obj, _id):
+    from portal.db import Database, DBSession
+    db = Database()
+
+    # Set up to the url to use the user id
+    # ... and also the authorization token which will be passed to requests module
+    gns.user_id = _id
+    params = {'auth_token': gns.config.managebac.api_token}
+    url = gns('{config.managebac.url}/api/users/{user_id}')
+
+    new = {'work_phone': 'success'}   #Magical Era (M) Sdn Bhd
+
+    result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user':new})
+
+    print(result.json())
+
+@test_api.command('openapply_get')
+@click.argument('_id', default=27943)  #10875405
+@click.pass_obj
+def test_openapply_get(obj, _id):
+    from portal.db import Database, DBSession
+    db = Database()
+    Students = db.table_string_to_class('student')
+
+
+    # Set up to the url to use the user id
+    # ... and also the authorization token which will be passed to requests module
+    gns.user_id = _id
+    params = {'auth_token': gns.config.openapply.api_token}
+    url = gns('{config.openapply.url}/api/v1/students/{user_id}')
+
+    result = requests.get(url, params={'auth_token': gns.config.openapply.api_token})
+    #from IPython import embed;embed()
+    print(result.json())
+    print(result.json()['student']['status'])
+
+@test_api.command('openapply_put')
+@click.argument('_id', default=27943)
+@click.pass_obj
+def test_openapply_put(obj, _id):
+    from portal.db import Database, DBSession
+    db = Database()
+    Parents = db.table_string_to_class('parent')
+
+    # Set up to the url to use the user id
+    # ... and also the authorization token which will be passed to requests module
+    gns.user_id = _id
+    url = gns('{config.openapply.url}/api/v1/students/{user_id}/status')
+
+    new = {}
+    new['status'] = 60
+   
+    result = requests.put(url, params={'auth_token': gns.config.openapply.api_token}, json=new)
+    from IPython import embed;embed()
+    print(result.json())
+    print(result.json()['student']['status'])
