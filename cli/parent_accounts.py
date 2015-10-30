@@ -5,8 +5,11 @@ Students = db.table_string_to_class('student')
 Teachers = db.table_string_to_class('advisor')
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import func
 from collections import defaultdict
+from sqlalchemy import and_
 import gns
+import datetime
 
 class Error(Exception):
     def __str__(self):
@@ -63,7 +66,9 @@ class ParentAccounts:
 
     family_accounts = {}                # hash of all the family accounts 
 
-    def __init__(self):
+    def __init__(self, since=None):
+        self._since = since
+        self._tomorrow = datetime.datetime.now().date() + datetime.timedelta(days=1)
         self.build()
 
     @classmethod
@@ -83,6 +88,19 @@ class ParentAccounts:
         ParentAccounts.groups[group].email += '.parents@igbis.edu.my'
         ParentAccounts.groups[group].list = []
 
+    def build_query(self, session):
+        if not self._since:
+            return session.query(Students).options(joinedload('parents')).order_by(Students.student_id)
+        else:
+            # TODO: attendance_start_date REALLY needs to be a freaking date column
+            return session.query(Students).options(joinedload('parents')).\
+                filter(and_(
+                    Students.is_archived==False, 
+                    func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") >= self._since, 
+                    func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") <= self._tomorrow
+                    )
+                ).order_by(Students.student_id)
+
     def build(self):
         """
         Builds self.parents and self.families based on Database.
@@ -95,7 +113,7 @@ class ParentAccounts:
         gns.suffix = '.parent'
         gns.domain = '@igbis.edu.my'
         homeroom_mapping = {
-            'rachel.fluery':(6, '6'),
+            'rachel.fleury':(6, '6'),
             'tim.bartle': (7, '7'),
             'sheena.kelly': (7, '7'), 
             'benjamin.wylie': (8, '8'),
@@ -110,7 +128,7 @@ class ParentAccounts:
             'michael.hawkes': (12, '12'),
             'mary.richards': (-9, 'EY{}R'),
             'deborah.king': (-9, 'EY{}K'),
-            'sally.davidson': (-9, 'EY{}W'),
+            'sally.watters': (-9, 'EY{}W'),
             'leanne.harvey':(0, 'KH'),
             'lisa.mcclurg': (0, 'KM'),
             'shireen.blakeway': (1, '1B'),
@@ -144,12 +162,11 @@ class ParentAccounts:
         with DBSession() as session: # this opens a connection to the database
 
             # Emit SQL to get all all the students, and join with parent information
-            statement = session.query(Students).options(joinedload('parents')).filter(Students.is_archived==False).order_by(Students.student_id)
+            statement = self.build_query(session)
 
             # loop through each student, which has parent info and other model information
             # in the end we'll have a data construct with parent links
             for student in statement.all():
-
                 # save the student information, we'll grab this later
                 ParentAccounts.students[str(student.id)] = student
 
@@ -166,8 +183,8 @@ class ParentAccounts:
                     if teacher:
                         grade, homeroom = homeroom_mapping.get(teacher.username_handle, (None, None))
                         if grade is None or homeroom is None:
+                            print('grade is None or homeroom is None')
                             continue
-                            #from IPython import embed;embed();exit()
 
                         if grade >= 6:
                             homeroom_level_group = 'homeroom.' + homeroom + (teacher.username_handle.split('.')[1][0]).lower()
@@ -184,7 +201,8 @@ class ParentAccounts:
                                 for parent in student.parents:
                                     ParentAccounts.groups[homeroom_level_group].list.append(parent.igbis_email_address)
                             except KeyError:
-                                from IPython import embed;embed();exit()
+                                print("Key Error: {}".format(homeroom_level_group))
+                                #from IPython import embed;embed()
 
                 for parent in student.parents:
                     # Add the more global ones whole school and school-based ones
@@ -208,9 +226,7 @@ class ParentAccounts:
                                 ParentAccounts.groups['Elementary'].list.append(parent.igbis_email_address)
 
                     else:
-                        pass
-                        # FIXME ugh
-                        #raw_input("Student without a grade level {}".format(student))
+                        print("Student without a grade level {}".format(student))
 
             #from IPython import embed;embed();exit()
 
@@ -269,6 +285,8 @@ class ParentAccounts:
 
                 self.family_accounts.append(fam)
 
+        # print('here')
+        # from IPython import embed;embed()
         # end of with statement:
         # SQL is emitted here, and database connection closes
 

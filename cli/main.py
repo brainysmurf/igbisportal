@@ -1,7 +1,8 @@
 import click
 import gns
-import os
+import os, datetime
 import requests, json
+import re
 
 class Object(object):
     def __init__(self):
@@ -73,10 +74,20 @@ def who_does_not_have_parents(obj):
 
 
 @output.command()
+@click.option('--since', default=None, help="today for 'today'")
 @click.pass_obj
-def parent_accounts(obj):
+def parent_accounts(obj, since):
     from cli.parent_accounts import ParentAccounts
-    parent_accounts = ParentAccounts()
+    if since=='today':
+        since = datetime.datetime.now().date()
+        parent_accounts = ParentAccounts(since=since)
+    elif since:
+        how_many = int(re.sub('[^0-9]', '', since))
+        since = (datetime.datetime.now() - datetime.timedelta(days=how_many)).date()
+        parent_accounts = ParentAccounts(since=since)
+    else:
+        parent_accounts = ParentAccounts()
+
     parent_accounts.output()
 
 @output.command()
@@ -93,14 +104,27 @@ def contact_information(obj):
 @sync.command()
 @click.option('path', '--path', type=click.Path(exists=True))
 @click.pass_obj
-def openapply(obj, path=None):
+def openapply_from_file(obj, path=None):
     """
     Looks at a CSV file and overwrites data in database
     """
     from cli.openapply_importer import OA_Medical_Importer
 
     f = path or gns.config.paths.medical_info
-    medical_importer = OA_Medical_Importer(f)
+    medical_importer = OA_Medical_Importer.from_file(f)
+    medical_importer.read_in()
+
+@sync.command()
+@click.option('path', '--path', type=click.Path(exists=True))
+@click.pass_obj
+def openapply_from_api(obj, path=None):
+    """
+    Looks at a CSV file and overwrites data in database
+    """
+    from cli.openapply_importer import OA_Medical_Importer
+
+    f = path or gns.config.paths.medical_info
+    medical_importer = OA_Medical_Importer.from_api()
     medical_importer.read_in()
 
 def run_scraper(spider, subpath):
@@ -305,7 +329,6 @@ def igbis_email_transition(obj, dry):
             else:
                 pass 
                 #print("Did not update {} because it is already updated".format(parent))
-
 
 
 
