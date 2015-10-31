@@ -77,7 +77,10 @@ def api_students(request):
             options(joinedload('parents')).\
             options(joinedload('ib_groups')).\
             options(joinedload_all('classes.teachers')).\
-            filter(Students.is_archived==False).\
+            filter(and_(
+                    Students.is_archived==False,
+                    Students.grade != -10
+                )).\
             order_by(Students.first_name)
 
         if filter == 'filterSecondary':
