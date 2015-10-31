@@ -134,21 +134,18 @@ class updater_helper:
 			if row:
 				column_names = [c.name for c in row.__table__.columns if c.name != 'id']
 
-				if verbose:
-					print(column_names)
-					from IPython import embed;embed()
-
 				for column in column_names:
 					if verbose:
 						print('Column {}'.format(column))
 					left = getattr(row, column)  # has
 					right = getattr(obj, column) # needs
 					if verbose:
-						print('left: {}; right: {}'.format(left, right))
+						print('has (left): {}; needs (right): {}'.format(left, right))
 
 					# If there are some values that are different, construct an update object
 					# and execute with the session obj
-					if right and left != right:
+					# Second boolean discovers cases where field was cleared
+					if (right and left != right) or (right is None and (left or None) != (right or None)):
 						values_statement = {column: right}
 						update_obj = obj.__table__.update().\
 							where(obj.__table__.c.id == obj.id).\
@@ -159,7 +156,7 @@ class updater_helper:
 						# TODO: Log this
 					else:
 						if verbose:
-							print('did not change {}, {} is right'.format(column, left))
+							print('did not change, {} is right'.format(left or "<None>"))
 			else:
 				if verbose:
 					print('no row?')
