@@ -8,6 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from chameleon import PageTemplate
 import gns
 from sqlalchemy.orm import joinedload, joinedload_all
+from sqlalchemy import and_
 
 db = Database()
 Students = db.table_string_to_class('student')
@@ -70,6 +71,8 @@ def api_students(request):
 
     with DBSession() as session:
 
+        # TODO: Make database function that allows for filtering out students who
+        # are both enrolled and fall within the start date
         query = session.query(Students).\
             options(joinedload('parents')).\
             options(joinedload('ib_groups')).\

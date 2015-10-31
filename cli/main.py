@@ -100,7 +100,6 @@ def contact_information(obj):
     parent_accounts = ParentAccounts()
     parent_accounts.output_for_email()
 
-
 @sync.command()
 @click.option('path', '--path', type=click.Path(exists=True))
 @click.pass_obj
@@ -120,7 +119,7 @@ def openapply_from_file(obj, path=None):
 def openapply_from_api(obj, path=None):
     """
     Looks at a CSV file and overwrites data in database
-    """
+    """ 
     from cli.openapply_importer import OA_Medical_Importer
 
     f = path or gns.config.paths.medical_info
@@ -268,7 +267,7 @@ def inspect_student(obj):
 @test.command('api_students')
 @click.pass_obj
 def test_api_students(obj):
-    options = json.dumps({
+    options = {
         'secret': 'phillies',
         'derived_attr': {
             'field': 'student',
@@ -277,10 +276,11 @@ def test_api_students(obj):
         'awesome_tables': True,
         'human_columns': True,
         'columns': ['grade', 'health_information', 'parent_contact_info', 'emergency_info']
-    }),
+    }
 
-    url = 'http://igbisportal.vagrant:6543/api/students'
-    result = requests.post(url, params=options)
+    url = 'http://portal.igbis.edu.my/api/students'
+    result = requests.post(url, json=options)
+    from IPython import embed;embed()
 
 @main.group()
 @click.pass_context
