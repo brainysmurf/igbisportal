@@ -129,10 +129,12 @@ class updater_helper:
 				session.add(obj)
 				row = None
 
-			verbose = True
+			verbose = False
 
 			if row:
+				# Get list of columns that the object possesses and are available in the database
 				column_names = [c.name for c in row.__table__.columns if c.name != 'id']
+				column_names = [c for c in column_names if hasattr(obj, c)]
 
 				for column in column_names:
 					if verbose:
