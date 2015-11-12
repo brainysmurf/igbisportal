@@ -362,7 +362,23 @@ class Student(Base, User):
         return ""
 
     @hybrid_property
+    def parent_work_email_1(self):
+        parents = self.parents
+        if len(parents) > 0:
+            parent = parents[0]
+            return parent.work_email
+        return ""
+
+    @hybrid_property
     def parent_email_2(self):
+        parents = self.parents
+        if len(parents) > 1:
+            parent = parents[1]
+            return parent.email
+        return ""
+
+    @hybrid_property
+    def parent_work_email_2(self):
         parents = self.parents
         if len(parents) > 1:
             parent = parents[1]
