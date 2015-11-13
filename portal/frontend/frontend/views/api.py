@@ -107,7 +107,7 @@ def api_students(request):
 
         second_row = dummy_row()
         for column in columns:
-            value = awesome_table_filter.get(column.lower(), 'NoFilter')
+            value = awesome_table_filters.get(column.lower(), 'NoFilter')
             second_row.add(column, value)
         # insert it into the front
         data.insert(0, second_row)
