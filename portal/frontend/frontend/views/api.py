@@ -33,7 +33,7 @@ def api_students(request):
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
     filter = json_body.get('filter')
-    awesome_table_filters = json_body.get('awesome_tables_filters') or {}
+    awesome_table_filters = json_body.get('awesome_table_filters') or {}
     google_sheets_format = json_body.get('google_sheets_format') or True
     column_map = json_body.get('column_map') or {}
     human_columns = json_body.get('human_columns') or True
