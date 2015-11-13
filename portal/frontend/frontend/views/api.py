@@ -54,7 +54,7 @@ def api_students(request):
     if derived_attr:
         columns = [field_name, 'student_id', 'email']
     else:
-        columns = ['student_id', 'email']
+        columns = []
 
     if not passed_columns:
         # Add in the extra columns
