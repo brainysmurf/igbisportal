@@ -13,7 +13,7 @@ from sqlalchemy import and_
 db = Database()
 Students = db.table_string_to_class('student')
 
-class dummy_first_row:
+class dummy_row:
     """
     Terrible. No good day I am having
     """
@@ -29,13 +29,14 @@ class dummy_first_row:
        
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
- 
     json_body = request.json_body
     secret = json_body.get('secret')
     derived_attr = json_body.get('derived_attr')
     filter = json_body.get('filter')
-    awesome_tables = json_body.get('awesome_tables') or False
-    human_columns = json_body.get('human_columns') or False
+    awesome_table_filters = json_body.get('awesome_tables_filters') or {}
+    google_sheets_format = json_body.get('google_sheets_format') or True
+    column_map = json_body.get('column_map') or {}
+    human_columns = json_body.get('human_columns') or True
     passed_columns = json_body.get('columns') or False
 
     if derived_attr:
@@ -64,7 +65,7 @@ def api_students(request):
         # TODO: Validate, return a useful error
         columns.extend(passed_columns)
 
-    as_multidimentional_arrays = True #'Google-Apps-Script' in request.agent or json_body.get('as_multidimentional_arrays') or 
+    google_sheets_format = True #'Google-Apps-Script' in request.agent or json_body.get('google_sheets_format') or 
     data = []
     if secret != gns.config.api.secret:
         return dict(message="IGBIS api is not for public consumption.", data=data)
@@ -99,29 +100,30 @@ def api_students(request):
     # column_attrs = [c.name for c in insp.columns if c.name != 'student_id']
     # column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
     # column_attrs.sort()
- 
 
-    if awesome_tables:
+    if awesome_table_filters:
         # Add an extra row so that our awesome tables solution works right
         # boo!
 
-        first_row = dummy_first_row()
-        filter_map = {'student': 'StringFilter', 'grade': 'CategoryFilter'}
+        second_row = dummy_row()
         for column in columns:
-            value = filter_map.get(column.lower(), 'NoFilter')
-            first_row.add(column, value)
-
+            value = awesome_table_filter.get(column.lower(), 'NoFilter')
+            second_row.add(column, value)
         # insert it into the front
-        data.insert(0, first_row)
+        data.insert(0, second_row)
 
-    if as_multidimentional_arrays:
+    if google_sheets_format:
         ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
         if not human_columns:
-            columns = [[columns[column] for column in range(len(columns))] for row in range(1)]
+            columns = [[column_map.get(columns[column]) or columns[column] for column in range(len(columns))] for row in range(1)]
         else:
-            columns = [[(columns[column]).replace('_', ' ').title() for column in range(len(columns))] for row in range(1)]
+            columns = [[column_map.get(columns[column]).replace('_', '').title() if column_map.get(columns[column]) else columns[column].replace('_', ' ').title() for column in range(len(columns))] for row in range(1)]
         return dict(message="Success, as array", columns=columns, data=ret)
     else:
         if human_columns:
             columns = [c.replace('_', ' ').title() for c in columns]
+        else:
+            columns = [column_map.get(c) for c in columns]
         return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
+
+
