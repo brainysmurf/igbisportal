@@ -307,6 +307,7 @@ class Student(Base, User):
     open_apply_student_id = Column(String(255))
     homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
+    profile_photo = Column(String(1000))
 
 
     def __repr__(self):
