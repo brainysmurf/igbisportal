@@ -1003,7 +1003,7 @@ class MedInfo(Base):
     def emergency_info(self):
         concat = {}
         for attr in self.__dict__.keys():
-            if attr.startswith('Emergency_Contact') and getattr(self, attr):
+            if attr.startswith('emergency_contact') and getattr(self, attr):
                 num = re.findall('\d+', attr)
                 num = num[0] if num else None
                 if not num:
