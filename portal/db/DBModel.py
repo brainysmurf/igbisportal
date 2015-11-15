@@ -432,7 +432,7 @@ class Student(Base, User):
 
     @hybrid_property
     def grade_first_nickname_last_studentid(self):
-        return normalize(str(self.grade or '-10') + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']')
+        return normalize(str(self.abbrev_grade) + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']')
 
     @hybrid_property
     def grade(self):
@@ -472,6 +472,47 @@ class Student(Base, User):
                 (cls.class_grade == 'Grade 10', 10), 
                 (cls.class_grade == 'Grade 11', 11), 
                 (cls.class_grade == 'Grade 12', 12),
+            ],
+            else_ = -10)
+
+    @hybrid_property
+    def abbrev_grade(self):
+        return {
+                'Grade 12':'12', 
+                'Grade 11':'11', 
+                'Grade 10':'10', 
+                'Grade 9': '9', 
+                'Grade 8': '8', 
+                'Grade 7': '7', 
+                'Grade 6': '6', 
+                'Grade 5': '5', 
+                'Grade 4': '4', 
+                'Grade 3': '3', 
+                'Grade 2': '2', 
+                'Grade 1': '1', 
+                'Early Years 1':'EY1', 
+                'Early Years 2':'EY2', 
+                'Kindergarten': 'KG'
+            }.get(self.class_grade, '<ng>')
+
+    @abbrev_grade.expression
+    def abbrev_grade_expression(cls):
+        return case([
+                (cls.class_grade == 'Early Years 1', 'EY1'), 
+                (cls.class_grade == 'Early Years 2', 'EY2'), 
+                (cls.class_grade == 'Kindergarten', 'KG'), 
+                (cls.class_grade == 'Grade 1', '1'), 
+                (cls.class_grade == 'Grade 2', '2'), 
+                (cls.class_grade == 'Grade 3', '3'), 
+                (cls.class_grade == 'Grade 4', '4'), 
+                (cls.class_grade == 'Grade 5', '5'), 
+                (cls.class_grade == 'Grade 6', '6'), 
+                (cls.class_grade == 'Grade 7', '7'), 
+                (cls.class_grade == 'Grade 8', '8'), 
+                (cls.class_grade == 'Grade 9', '9'), 
+                (cls.class_grade == 'Grade 10', '10'), 
+                (cls.class_grade == 'Grade 11', '11'), 
+                (cls.class_grade == 'Grade 12', '12'),
             ],
             else_ = -10)
 
