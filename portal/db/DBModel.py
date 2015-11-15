@@ -415,8 +415,16 @@ class Student(Base, User):
         return ", ".join(lst)
 
     @hybrid_property
+    def last_first_nickname_studentid(self):
+        return self.last_name + ', ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' [' + str(self.student_id) + ']'
+
+    @hybrid_property
+    def grade_last_first_nickname_studentid(self):
+        return str(self.abbrev_grade) + ': ' + self.last_name + ', ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' [' + str(self.student_id) + ']'
+
+    @hybrid_property
     def first_nickname_last_studentid(self):
-        return self.first_name.encode('utf-8') + (' (' + self.nickname.encode('utf-8') + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name.encode('utf-8') + ' [' + str(self.student_id) + ']'
+        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
     @first_nickname_last_studentid.expression
     def first_nickname_last_studentid(cls):

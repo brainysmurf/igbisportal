@@ -59,7 +59,7 @@ def api_students(request):
 
     if not passed_columns:
         # Add in the extra columns
-        column_attrs = Students.columns_and_hybrids();
+        column_attrs = Students.columns_and_hybrids()
         columns.extend([c for c in column_attrs if c not in columns])
     else:
         # Just put in the ones that are requested
@@ -82,14 +82,20 @@ def api_students(request):
             filter(and_(
                     Students.is_archived==False,
                     Students.grade != -10
-                )).\
-            order_by(Students.first_name)
+                ))
 
         if filter == 'filterSecondary':
-            query = query.filter(Students.grade >= 7)
+            query = query.filter(Students.grade >= 6)
 
         elif filter == 'filterElementary':
-            query = query.filter(Students.grade < 7)
+            query = query.filter(Students.grade < 6)
+
+        if columns[0] == 'grade_first_nickname_last_studentid':
+            query = query.order_by(Students.grade, Students.first_name)
+        elif columns[0] == 'grade_last_first_nickname_studentid':
+            query = query.order_by(Students.grade, Students.last_name)
+        else:
+            query = query.order_by(getattr(Students, columns[0]))
 
         data = query.all()
 
