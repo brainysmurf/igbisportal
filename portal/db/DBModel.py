@@ -642,6 +642,17 @@ class Advisor(Base, User):
     def username_handle_expression(self):
         return func.lower(func.regexp_replace(self.email, '@.*$', ''))
 
+    @hybrid_property
+    def grades_taught(self):
+        ret = []
+        for class_ in self.classes:
+            ret.append(class_.grade)
+        return ",".join(set(ret))
+
+    @hybrid_property
+    def name(self):
+        return self.first_name + ' ' + self.last_name
+
 class Course(Base):
     """
     I am a course/class in ManageBac (class is a reserved word in Python)
