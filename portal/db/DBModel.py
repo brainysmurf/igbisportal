@@ -339,6 +339,13 @@ class Student(Base, User):
             else_ = False)
 
     @hybrid_property
+    def parent_emails(self):
+        ret = []
+        for parent in self.parents:
+            ret.append(parent.email)
+        return ",".join(set(ret))
+
+    @hybrid_property
     def parent_name_1(self):
         parents = self.parents
         if len(parents) > 0:
