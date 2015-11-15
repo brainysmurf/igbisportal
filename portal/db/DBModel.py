@@ -403,8 +403,8 @@ class Student(Base, User):
         lst = []
         for course in self.classes:
             for teacher in course.teachers:
-                lst.append(teacher.email)
-        return ", ".join(lst)
+                lst.append(teacher.email.lower())
+        return ",".join(set(lst))
 
     @hybrid_property
     def teacher_names(self):
