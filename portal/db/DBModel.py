@@ -439,15 +439,15 @@ class Student(Base, User):
 
     @hybrid_property
     def first_nickname_last(self):
-        return normalize(self.first_nickname + ' ' + self.last_name)
+        return self.first_nickname + u' ' + self.last_name
 
     @hybrid_property
     def first_nickname(self):
-        return normalize(self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') )
+        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else u'')
 
     @hybrid_property
     def grade_first_nickname_last_studentid(self):
-        return normalize(str(self.abbrev_grade) + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']')
+        return str(self.abbrev_grade) + ': ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
     @hybrid_property
     def grade(self):
@@ -625,7 +625,7 @@ class Parent(Base, User):
 
     @hybrid_property
     def name(self):
-        return "{} {}".format(normalize(self.first_name), normalize(self.last_name))
+        return "{} {}".format(self.first_name, self.last_name)
 
     @hybrid_property
     def first_child_date_started(self):
