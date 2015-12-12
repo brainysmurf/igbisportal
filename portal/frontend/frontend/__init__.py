@@ -35,6 +35,7 @@ def main(global_config, **settings):
 
     config.add_route('api-students', '/api/students')
     config.add_route('api-teachers', '/api/teachers')
+    config.add_route('api-lastlogins', '/api/lastlogins')
     #config.add_route('api-test', '/api-test')
 
     config.add_route('mb_courses', '/mb_courses')

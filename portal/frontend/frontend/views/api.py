@@ -1,4 +1,4 @@
-import json
+import json, csv, datetime
 
 from portal.db import Database, DBSession
 from pyramid.view import view_config
@@ -28,10 +28,39 @@ class dummy_row:
     def as_dict(self):
        return {c: getattr(self, c) for c in self._columns}
        
+# @view_config(route_name='', renderer='json', http_cache=0)
+# def api_student_fields(request):
+#     pass
+
+@view_config(route_name='api-lastlogins', renderer='json', http_cache=0)
+def api_lastlogins(request):
+    json_body = request.json_body
+    secret = json_body.get('secret')
+    if secret != gns.config.api.secret:
+        return dict(message="IGBIS api is not for public consumption.", data=[])
+    data = []
+    with open(gns.config.api.lastloginpath) as f:
+        readin = csv.reader(f, delimiter=',')
+        for row in readin:
+            username = row[0]
+            this_date = row[1]
+            if this_date == 'lastLoginTime':
+                data.append(['Username', 'Lastlogin'])
+                continue
+            if this_date == 'Never':
+                d = 'Never'
+            else:
+                dte = datetime.datetime.strptime(this_date, '%Y-%m-%dT%H:%M:%S.000Z')
+                d = datetime.datetime.strftime(dte, '%A %B %d, %Y @ %I:%M %p')
+            data.append([username, d])
+    return dict(message="Success", data=data)
+
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
     json_body = request.json_body
     secret = json_body.get('secret')
+    if secret != gns.config.api.secret:
+        return dict(message="IGBIS api is not for public consumption.", data=[])
     derived_attr = json_body.get('derived_attr')
     filter = json_body.get('filter')
     awesome_table_filters = json_body.get('awesome_table_filters') or {}
@@ -68,8 +97,6 @@ def api_students(request):
 
     google_sheets_format = True #'Google-Apps-Script' in request.agent or json_body.get('google_sheets_format') or 
     data = []
-    if secret != gns.config.api.secret:
-        return dict(message="IGBIS api is not for public consumption.", data=data)
 
     with DBSession() as session:
 
@@ -137,6 +164,8 @@ def api_students(request):
 def api_teachers(request):
     json_body = request.json_body
     secret = json_body.get('secret')
+    if secret != gns.config.api.secret:
+        return dict(message="IGBIS api is not for public consumption.", data=[])
     awesome_table_filters = json_body.get('awesome_table_filters') or {}
     google_sheets_format = json_body.get('google_sheets_format') or True
     column_map = json_body.get('column_map') or {}
@@ -156,8 +185,6 @@ def api_teachers(request):
 
     google_sheets_format = True #'Google-Apps-Script' in request.agent or json_body.get('google_sheets_format') or 
     data = []
-    if secret != gns.config.api.secret:
-        return dict(message="IGBIS api is not for public consumption.", data=data)
 
     with DBSession() as session:
 

@@ -2,7 +2,7 @@ import click
 import gns
 import os, datetime
 import requests, json
-import re
+import re, csv
 
 class Object(object):
     def __init__(self):
@@ -57,6 +57,15 @@ def output():
 
 @output.command()
 @click.pass_obj
+def student_columns(obj):
+    from portal.db import Database, DBSession
+    db = Database()
+    Students = db.table_string_to_class('student')
+    from IPython import embed;embed()
+    click.echo(Students.columns)
+
+@output.command()
+@click.pass_obj
 def who_does_not_have_parents(obj):
     import json
     from cli.parent_accounts import ParentAccounts
@@ -71,7 +80,6 @@ def who_does_not_have_parents(obj):
             print(user['email'])
             results.append(user)
     print(len(results))
-
 
 @output.command()
 @click.option('--since', default=None, help="today for 'today'")
@@ -269,18 +277,49 @@ def inspect_student(obj):
 def test_api_students(obj):
     options = {
         'secret': 'phillies',
-        'derived_attr': {
-            'field': 'student',
-            'string': '${first_nickname_last}',
-        },
-        'awesome_tables': True,
+        'awesome_table_filters': {'student': 'StringFilter', 'grade': 'CategoryFilter'},
         'human_columns': True,
-        'columns': ['grade', 'health_information', 'parent_contact_info', 'emergency_info']
+        'google_sheets_format': True,
+        'column_map': {'health_information': 'Health Info!'}, 
+        'columns': ['nickname_last_studentid', 'grade', 'first_nickname_last', 'parent_names', 'teacher_usernames']   # 'health_information', 'parent_contact_info', 'emergency_info',
     }
 
-    url = 'http://portal.igbis.edu.my/api/students'
+    #url = 'http://portal.igbis.edu.my/api/students'
+    url = 'http://localhost:6543/api/students'
     result = requests.post(url, json=options)
+    print(result.json())
     from IPython import embed;embed()
+
+@test.command('api_lastlogins')
+@click.pass_obj
+def test_api_lastlogins(obj):
+    options = {
+        'secret': 'phillies',
+    }
+
+    #url = 'http://portal.igbis.edu.my/api/students'
+    url = 'http://localhost:6543/api/lastlogins'
+    result = requests.post(url, json=options)
+    print(result.json())
+    from IPython import embed;embed()
+
+@test.command('api_teachers')
+@click.pass_obj
+def test_api_teachers(obj):
+    options = {
+        'secret': 'phillies',
+        'human_columns': True,
+        'google_sheets_format': True,
+        'column_map': {},
+        'columns': ['email', 'grades_taught']
+    }
+
+    #url = 'http://portal.igbis.edu.my/api/students'
+    url = 'http://localhost:6543/api/teachers'
+    result = requests.post(url, json=options)
+    print(result.json())
+    from IPython import embed;embed()
+
 
 @main.group()
 @click.pass_context
@@ -376,7 +415,7 @@ def test_managebac_api(obj, _id, field, value):
 
 
 @test_api.command('managebac_get')
-@click.argument('_id', default=10868315)  #10875405
+@click.argument('_id', default=11286952)  #11286952 = DongJune #10875405
 @click.pass_obj
 def test_managebac_get(obj, _id):
     from portal.db import Database, DBSession
