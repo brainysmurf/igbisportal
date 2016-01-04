@@ -131,7 +131,7 @@ class SecondaryHomeroomAdvisors(ClassLevelManageBac):
 class ClassReports(ClassLevelManageBac):
     #name = 'no name because I don't want this to run separetly'
     program = '#'  # myp, dp, or pyp
-    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=27808'
+    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=27809'
 
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
@@ -212,7 +212,7 @@ class PYPClassReportTemplate(ClassReports):
 
 class PYPStudentAttendance(ManageBacLogin):
     name = "PYPStudentAttendance"
-    path = '/admin/reports/attendance/cumulative?program=pyp&term=27808&grade={}&cumulative_view=homeroom'
+    path = '/admin/reports/attendance/cumulative?program=pyp&term=27809&grade={}&cumulative_view=homeroom'
 
     def __init__(self, *args, **kwargs):
         self.grades = [-2, -1, 0, 1, 2, 3, 4, 5]
@@ -259,7 +259,7 @@ class PYPStudentAttendance(ManageBacLogin):
                 item['student_id'] = user_id
                 item['absences'] = absences
                 item['total_days'] = 85  # HARD-CODED!
-                item['term_id'] = 27808
+                item['term_id'] = 27809
 
                 yield item
 
@@ -330,7 +330,7 @@ class PYPTeacherAssignments(PYPClassReportTemplate):
 class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inheritence?
     name = "PYPClassReports"
     program = 'pyp'
-    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=27808'
+    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=27809'
 
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
