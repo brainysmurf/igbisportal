@@ -108,7 +108,8 @@ def api_students(request):
             options(joinedload_all('classes.teachers')).\
             filter(and_(
                     not Students.is_archived==True,
-                    Students.grade != -10
+                    Students.grade != -10,
+                    Students.idnumber != ''
                 ))
 
         if filter == 'filterSecondary':
