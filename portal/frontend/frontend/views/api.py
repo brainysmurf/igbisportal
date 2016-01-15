@@ -109,7 +109,7 @@ def api_students(request):
             filter(and_(
                     not Students.is_archived==True,
                     Students.grade != -10,
-                    Students.idnumber != ''
+                    Students.student_id != ''
                 ))
 
         if filter == 'filterSecondary':
