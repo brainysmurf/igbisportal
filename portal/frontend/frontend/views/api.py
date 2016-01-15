@@ -107,7 +107,7 @@ def api_students(request):
             options(joinedload('ib_groups')).\
             options(joinedload_all('classes.teachers')).\
             filter(and_(
-                    Students.is_archived==False,
+                    not Students.is_archived==True,
                     Students.grade != -10
                 ))
 
