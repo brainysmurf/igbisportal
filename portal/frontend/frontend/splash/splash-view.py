@@ -304,17 +304,7 @@ def splash(request):
             }),
         button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
         button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
-            context_menu={
-            'items': [
-                menu_item(icon="search", display="Elementary Catalog", url="https://igbis.follettdestiny.com/cataloging/servlet/presentadvancedsearchredirectorform.do?l2m=Library%20Search&tm=TopLevelCatalog&l2m=Library+Search"),
-                menu_item(icon="search", display="Secondary Catalog", url="https://igbis.follettdestiny.com/common/servlet/presenthomeform.do?l2m=Home&tm=Home&l2m=Home"),
-                menu_separator(),
-                menu_item(icon="star", display='Elementary Britannica', url="http://school.eb.com.au/levels/elementary"),
-                menu_item(icon="star", display='Middle Britannica', url="http://school.eb.com.au/levels/middle"),
-                menu_item(icon="star", display='High Britannica', url="http://school.eb.com.au/levels/high"),
-                menu_placeholder('gd_starred')
-            ],
-            }),
+            context_menu=None),
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu=None),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
 
