@@ -27,6 +27,10 @@ class Family:
     A family built from parent_accounts
     TODO: Make this part of the model more formally?
     """
+
+    def __repr__(self):
+        return "<#: {}, {}>".format(len(self.students), self.students[0].grade)
+
     @property
     def group_name(self):
         ret = "Parents of "
@@ -61,6 +65,7 @@ class ParentAccounts:
 
     students = {}                       # hash of all the students
     parents = {}                        # hash of all the parents
+    classes = {}
 
     family_id_index = 0
 
@@ -88,14 +93,24 @@ class ParentAccounts:
         ParentAccounts.groups[group].email += '.parents@igbis.edu.my'
         ParentAccounts.groups[group].list = []
 
+    def make_class_group(self, group, email=None):
+        if not group in ParentAccounts.classes:
+            ParentAccounts.classes[group] = type("Parents Classes Group", (), {})
+            ParentAccounts.classes[group].name = "Parents of children enrolled in classs " + group
+            ParentAccounts.classes[group].email = group if email is None else email
+            ParentAccounts.classes[group].list = []
+
     def build_query(self, session):
         if not self._since:
-            return session.query(Students).options(joinedload('parents')).order_by(Students.student_id)
+            return session.query(Students).options(joinedload('parents'),joinedload('classes')).\
+                filter(
+                        Students.is_archived==False
+                    ).order_by(Students.student_id)
         else:
             # TODO: attendance_start_date REALLY needs to be a freaking date column
-            return session.query(Students).options(joinedload('parents')).\
+            return session.query(Students).options(joinedload('parents'),joinedload('parents')).\
                 filter(and_(
-                    Students.is_archived==False, 
+                    not Students.is_archived==True, 
                     func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") >= self._since, 
                     func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") <= self._tomorrow
                     )
@@ -163,10 +178,11 @@ class ParentAccounts:
 
             # Emit SQL to get all all the students, and join with parent information
             statement = self.build_query(session)
+            students = statement.all()
 
             # loop through each student, which has parent info and other model information
             # in the end we'll have a data construct with parent links
-            for student in statement.all():
+            for student in students:
                 # save the student information, we'll grab this later
                 ParentAccounts.students[str(student.id)] = student
 
@@ -203,6 +219,12 @@ class ParentAccounts:
                             except KeyError:
                                 print("Key Error: {}".format(homeroom_level_group))
                                 #from IPython import embed;embed()
+
+                for class_ in student.classes:
+                    if class_.uniq_id:
+                        self.make_class_group(class_.uniq_id)
+                        for parent in student.parents:
+                            ParentAccounts.classes[class_.uniq_id].list.append(parent.email)
 
                 for parent in student.parents:
                     # Add the more global ones whole school and school-based ones
@@ -286,7 +308,7 @@ class ParentAccounts:
                 self.family_accounts.append(fam)
 
         # print('here')
-        # from IPython import embed;embed()
+        #from IPython import embed;embed()
         # end of with statement:
         # SQL is emitted here, and database connection closes
 
@@ -394,4 +416,15 @@ class ParentAccounts:
                     'add member user \'{parent_email}\''
                     )
                 )
+
+        for class_ in ParentAccounts.classes:
+            gns.group = ParentAccounts.classes[class_]
+            for gns.parent_email in gns.group.list:
+                click.echo( gns(
+                    'gam update group '
+                    '\'{group.email}\' '
+                    'add member user \'{parent_email}\''
+                    )
+                )
+
 

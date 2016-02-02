@@ -11,9 +11,6 @@ class Object(object):
 
     # define common methods here
 
-#
-# Define global options here
-#
 @click.group()
 @click.option('--verbose/--not_verbose', default=False, help="Outputs loads more info")
 @click.pass_context
@@ -54,6 +51,19 @@ def output():
     Commands that displays information for reference
     """
     pass
+
+@output.command()
+@click.pass_obj
+def family_info(obj):
+    from cli.parent_accounts import ParentAccounts
+    parent = ParentAccounts()
+    click.echo('-----')
+    for family in parent.family_accounts:
+        for student in family.students:
+            click.echo('{}\t{}'.format(student.email, family.family_id))
+        for parent in family.parents:
+            click.echo('{}\t{}'.format(parent.igbis_email_address, family.family_id))
+    from IPython import embed;embed()
 
 @output.command()
 @click.pass_obj
@@ -223,7 +233,6 @@ def teacher_classes(ctx, id):
         id = 10792610
     from portal.db import Database, DBSession
     db = Database()
-    import re
 
     Teachers = db.table_string_to_class('advisor')
 
@@ -271,7 +280,6 @@ def inspect_student(obj):
 
         from IPython import embed;embed()
 
-
 @test.command('api_students')
 @click.pass_obj
 def test_api_students(obj):
@@ -287,7 +295,8 @@ def test_api_students(obj):
     #url = 'http://portal.igbis.edu.my/api/students'
     url = 'http://localhost:6543/api/students'
     result = requests.post(url, json=options)
-    print(result.json())
+    json = result.json()
+    print(len(json['data']))
     from IPython import embed;embed()
 
 @test.command('api_lastlogins')
@@ -487,3 +496,53 @@ def test_openapply_put(obj, _id):
     from IPython import embed;embed()
     print(result.json())
     print(result.json()['student']['status'])
+
+@main.group()
+@click.pass_obj
+def status(obj):
+    pass
+
+@status.command('compare')
+@click.pass_obj
+def compare(obj):
+    from portal.db import Database, DBSession
+    db = Database()
+    from sqlalchemy.orm import joinedload
+
+    Parents = db.table_string_to_class('parent')
+    Students = db.table_string_to_class('student')
+    google_users = []
+    with open('/home/vagrant/igbisportal/lastlogins.txt') as f:
+        reader = csv.reader(f)
+        headers = reader.next()
+        for row in reader:
+            google_users.append(row[0])
+    google_parents = [p for p in google_users if 'parent@' in p]
+
+    mb_parents = []
+    with DBSession() as session:
+        students = session.query(Students).\
+            options(joinedload('parents')).\
+            filter(not Students.archived==True).\
+            all()
+        for student in students:
+            parents = student.parents
+            for parent in parents:
+                if parent.email and 'parent@' in parent.email:
+                    mb_parents.append(parent.email)
+
+    print('# Existing parents in google: {}'.format(len(set(google_parents))))
+    print('# Existing parents in manage: {}'.format(len(set(mb_parents))))
+
+    print('google - mb:')
+    gmm = set(google_parents) - set(mb_parents)
+    mmg = set(mb_parents) - set(google_parents)
+    print('\n'.join(gmm))
+    print()
+    print('mb - google:')
+    print('\n'.join(mmg))
+    print()
+    from IPython import embed;embed()
+
+
+
