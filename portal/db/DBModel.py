@@ -223,6 +223,22 @@ class User(PortalORM):
     def __str__(self):
         return (self.first_name or "") + ' ' + (self.last_name or "")
 
+    @property
+    def is_male(self):
+        return self.gender == 'Male'
+
+    @property
+    def is_female(self):
+        return self.gender == 'Female'
+
+    @hybrid_property
+    def username(self):
+        return self.email.split("@")[0] if "@" in self.email else ""
+
+    @username.expression
+    def username_expression(cls):
+        return func.split_part(cls.email, "@", 1)
+
 class BusAdmin(Base, User):
     __tablename__ = BUSADMIN
     id = Column(BigInteger, primary_key=True)
@@ -311,7 +327,7 @@ class Student(Base, User):
 
 
     def __repr__(self):
-        return '<Student ' + self.first_nickname_last_studentid.encode('utf-8') + '>'
+        return '<Student {}>'.format(self.first_nickname_last_studentid)
 
     def __str__(self):
         return "<Student {}>".format(self.first_nickname_last_studentid)
@@ -421,12 +437,24 @@ class Student(Base, User):
         return ",".join(set(lst))
 
     @hybrid_property
+    def teacher_usernames(self):
+        lst = []
+        for course in self.classes:
+            for teacher in course.teachers:
+                lst.append(teacher.username_handle.lower())
+        return ",".join(set(lst))
+
+    @hybrid_property
     def teacher_names(self):
         lst = []
         for course in self.classes:
             for teacher in course.teachers:
                 lst.append(teacher.first_name + ' ' + teacher.last_name)
         return ", ".join(lst)
+
+    @hybrid_property
+    def nickname_last_studentid(self):
+        return (self.nickname + ' ' + self.last_name + ' (aka ' + self.first_name + ')' if self.nickname and self.nickname != self.first_name else self.first_name + ' ' + self.last_name) + ' [' + str(self.student_id) + ']'
 
     @hybrid_property
     def last_first_nickname_studentid(self):
@@ -438,7 +466,7 @@ class Student(Base, User):
 
     @hybrid_property
     def first_nickname_last_studentid(self):
-        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
+        return normalize(self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']')
 
     @first_nickname_last_studentid.expression
     def first_nickname_last_studentid(cls):
@@ -475,6 +503,19 @@ class Student(Base, User):
                 'Early Years 2':-1, 
                 'Kindergarten': 0
             }.get(self.class_grade, -10)
+
+    @hybrid_property
+    def grade_range(self):
+        if self.grade in range(-5, 0):
+            return 1
+        if self.grade in range(0, 3):
+            return 10
+        if self.grade in range(3, 6):
+            return 100
+        if self.grade in range(6, 9):
+            return 1000
+        if self.grade in range(9, 13):
+            return 10000
 
     @grade.expression
     def grade_expression(cls):
