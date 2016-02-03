@@ -8,7 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from chameleon import PageTemplate
 import gns
 from sqlalchemy.orm import joinedload, joinedload_all
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 db = Database()
 Students = db.table_string_to_class('student')
@@ -27,10 +27,6 @@ class dummy_row:
 
     def as_dict(self):
        return {c: getattr(self, c) for c in self._columns}
-       
-# @view_config(route_name='', renderer='json', http_cache=0)
-# def api_student_fields(request):
-#     pass
 
 @view_config(route_name='api-lastlogins', renderer='json', http_cache=0)
 def api_lastlogins(request):
@@ -107,10 +103,10 @@ def api_students(request):
             options(joinedload('ib_groups')).\
             options(joinedload_all('classes.teachers')).\
             filter(and_(
-                    not Students.is_archived==True,
+                    Students.is_archived==False,
                     Students.grade != -10,
                     Students.student_id != None,
-                    Students.classes != None
+                    not Students.classes is None
                 ))
 
         if filter == 'filterSecondary':
