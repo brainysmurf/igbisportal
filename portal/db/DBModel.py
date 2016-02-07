@@ -28,10 +28,11 @@ import unicodedata
 def normalize(this_string): 
     return unicodedata.normalize('NFKD', this_string).encode('ascii', 'ignore')
 
-from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date, case
+from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date, case, select
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import HYBRID_PROPERTY
 from sqlalchemy.orm import column_property
 from sqlalchemy.ext.declarative import declared_attr
@@ -45,6 +46,7 @@ from sqlalchemy.orm import relationship, backref
 
 from collections import defaultdict
 import re
+from portal.utils import get_year_of_graduation, get_this_academic_year
 
 class EmergInfo:
     def __init__(self, num):
@@ -232,12 +234,32 @@ class User(PortalORM):
         return self.gender == 'Female'
 
     @hybrid_property
+    def gender_abbrev(self):
+        return "M" if self.is_male else ("F" if self.is_female else "<unknown>")
+
+    @gender_abbrev.expression
+    def gender_abbrev_expression(cls):
+        return case([
+                (cls.gender == "Male", "M"),
+                (cls.gender == "Female", "F")
+            ],
+            else_ = "<uknown>")
+
+    @hybrid_property
     def username(self):
         return self.email.split("@")[0] if "@" in self.email else ""
 
     @username.expression
     def username_expression(cls):
         return func.split_part(cls.email, "@", 1)
+
+    @hybrid_property
+    def full_name(self):
+        return "{} {}".format(self.first_name, self.last_name)
+
+    @full_name.expression
+    def full_name_expression(cls):
+        return concat(cls.first_name, " ", cls.last_name)
 
 class BusAdmin(Base, User):
     __tablename__ = BUSADMIN
@@ -294,7 +316,6 @@ IBGroupMembership = Table(
     Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
     )
 
-
 class Student(Base, User):
     """
     I am a student in ManageBac
@@ -312,6 +333,7 @@ class Student(Base, User):
     nickname = Column(String(255))
 
     parents = relationship('Parent', secondary=ParentChildren, backref='children')
+
     classes = relationship('Course', secondary=Enrollment, backref='students')
     ib_groups = relationship('IBGroup', secondary=IBGroupMembership, backref='students')
 
@@ -324,7 +346,6 @@ class Student(Base, User):
     homeroom_advisor = Column(BigInteger, ForeignKey(ADVISORS+'.id'))
 
     profile_photo = Column(String(1000))
-
 
     def __repr__(self):
         return '<Student {}>'.format(self.first_nickname_last_studentid)
@@ -342,6 +363,10 @@ class Student(Base, User):
             return None
         return datetime.datetime.strptime(str_value, '%Y-%M-%d')
 
+    @start_date.expression
+    def start_date_expression(cls):
+        return func.to_timestamp(cls.attendance_start_date, "YYYY-MM-DD")
+
     @hybrid_property
     def is_archived(self):
         return bool(self.archived)
@@ -355,11 +380,26 @@ class Student(Base, User):
             else_ = False)
 
     @hybrid_property
+    def year_of_graduation(self):
+        grade = self.grade
+        if grade == -10:
+            return -10
+        # calculate the year of graduation
+        return get_year_of_graduation(grade)
+
+    @hybrid_property
     def parent_emails(self):
         ret = []
         for parent in self.parents:
             ret.append(parent.email)
         return ",".join(set(ret))
+
+    # TODO: I never figured this out, but probably not worh the effort
+    # @parent_emails.expression
+    # def parent_emails_expression(cls):
+    #     return select([Parent.email]).\
+    #         join(ParentChildren, ParentChildren.student_id == cls.id).\
+    #         join(Parent, Parent.id == ParentChildren.parent_id)
 
     @hybrid_property
     def parent_names(self):
@@ -611,18 +651,129 @@ class Student(Base, User):
 
     @hybrid_property
     def homeroom_teacher_email(self):
-        from portal.db import DBSession, Database
-        db = Database()
-        from sqlalchemy.orm.exc import NoResultFound
-        Teachers = db.table_string_to_class('advisor')
+        return self.homeroom_teacher.email if self.homeroom_teacher else "<uknown>"
 
-        with DBSession() as session:
-            try:
-                hr_teacher = session.query(Teachers).filter_by(id=self.homeroom_advisor).one()
-            except NoResultFound:
-                return "<>"
+    @homeroom_teacher_email.expression
+    def homeroom_teacher_email_expression(cls):
+        return Advisor.email
 
-            return hr_teacher.email
+    @hybrid_property
+    def homeroom_abbrev(self):
+        """
+        TODO: This is very make-shift
+        """
+        homeroom_mapping = {
+            'rachel.fleury':(6, '6'),
+            'tim.bartle': (7, '7'),
+            'sheena.kelly': (7, '7'), 
+            'benjamin.wylie': (8, '8'),
+            'emily.heys': (8, '8'),
+            'dean.watters':(9, '9'),
+            'glen.fleury': (9, '9'),
+            'marcus.wetherell': (10, '10'),
+            'diane.douglas': (10, '10'),
+            'paul.skadsen': (11, '11'),
+            'nathalie.chotard': (11, '11'),
+            'gabriel.evans': (11, '11'),
+            'michael.hawkes': (12, '12'),
+            'mary.richards': (-9, 'EY{}R'),
+            'deborah.king': (-9, 'EY{}K'),
+            'sally.watters': (-9, 'EY{}W'),
+            'leanne.harvey':(0, 'KH'),
+            'lisa.mcclurg': (0, 'KM'),
+            'shireen.blakeway': (1, '1B'),
+            'kath.kummerow': (2, '2K'),
+            'michelle.ostiguy': (3, '3O'),
+            'marshall.hudson': (3, '3H'),
+            'kari.twedt': (4, '4T'),
+            'steven.harvey': (4, '4H'),
+            'kathy.mckenzie': (5, '5M'),
+            'yolaine.johanson': (5, '5J'),
+            }
+        if not self.homeroom_teacher:
+            return "<HR>"
+        username = self.homeroom_teacher.username_handle
+        grade, homeroom = homeroom_mapping.get(username, (None, None))
+        if grade is None or homeroom is None:
+            return "<HR?>"
+        if grade >= 6:
+            return "{}{}".format(self.grade, (self.homeroom_teacher.username_handle.split('.')[1][0]).upper())
+        elif grade == 0:
+            return homeroom
+        elif grade >= -2:
+            return "{}{}".format(self.grade, homeroom)
+        elif grade == -9:
+            grad_year = self.year_of_graduation
+            this_year = 2000 + get_this_academic_year()
+            if grad_year - this_year == (12 + 2):
+                # early years 1
+                return homeroom.format(1)
+            elif grad_year - this_year == (12 + 1): 
+                # early years 2
+                return homeroom.format(2)
+
+    @hybrid_property
+    def homeroom_full(self):
+        """
+        TODO: This is very make-shift
+        """
+        if not self.homeroom_teacher:
+            return "<no hr>"
+        return {
+            'rachel.fleury': 'Grade 6F',
+            'tim.bartle': 'Grade 7B',
+            'sheena.kelly': 'Grade 7K', 
+            'benjamin.wylie': 'Grade 8W',
+            'emily.heys': 'Grade 8H',
+            'dean.watters': 'Grade 9W',
+            'glen.fleury': 'Grade 9F',
+            'marcus.wetherell': 'Grade 10W',
+            'diane.douglas': 'Grade 10D',
+            'paul.skadsen': 'Grade 11S',
+            'nathalie.chotard': 'Grade 11C',
+            'gabriel.evans': 'Grade 11E',
+            'michael.hawkes': 'Grade 12H',
+            'mary.richards': 'Early Years 1/2R',
+            'deborah.king': 'Early Years 1/2K',
+            'sally.watters': 'Ealy Years 1/2W',
+            'leanne.harvey': 'Kindergarden H',
+            'lisa.mcclurg':  'Kindergarden M',
+            'shireen.blakeway': 'Grade 1B',
+            'kath.kummerow': 'Grade 2K',
+            'michelle.ostiguy': 'Grade 3O',
+            'marshall.hudson': 'Grade 3H',
+            'kari.twedt': 'Grade 4T',
+            'steven.harvey': 'Grade 4H',
+            'kathy.mckenzie': 'Grade 5M',
+            'yolaine.johanson': 'Grade 5J',
+            }.get(self.homeroom_teacher.username_handle.lower(), '<unknown>')
+
+    @hybrid_property
+    def barcode(self):
+        return 'P {}'.format(self.student_id) 
+
+    @hybrid_property
+    def destiny_site_information(self):
+        return {
+            'PYP': "IGB International School Elementary",
+            'MYP': "IGB International School Secondary",
+            'DIPLOMA': "IGB International School Secondary"
+        }.get(self.program_of_study, "<uknown>")
+
+    @hybrid_property
+    def destiny_patron_type(self):
+        if self.grade in range(6,11):
+            return "Student G6-G10"
+        elif self.grade in range(11,13):
+            return "Student G11-G12"
+        elif self.grade in range(0, 3):
+            return "Student K-2"
+        elif self.grade in range(3, 6):
+            return "Student Grade 3-5"
+        elif self.grade in range(-2,0):
+            return "Early Years (EY1-EY2)"
+        else:
+            return "<uknown>"
 
 class Parent(Base, User):
     """
@@ -736,6 +887,7 @@ class Advisor(Base, User):
     last_name = Column(String(255))
     national_id = Column(String(255))
     classes = relationship('Course', secondary=Assignment, backref='teachers')
+    homeroom_students = relationship('Student', backref="homeroom_teacher")
 
     @hybrid_property
     def username_handle(self):

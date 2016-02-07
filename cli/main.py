@@ -258,6 +258,18 @@ def teacher_classes(ctx, id):
 def test():
     pass
 
+@test.command('test_db')
+@click.argument('_id', default=11204340) # Fern
+@click.pass_obj
+def test_db(obj, _id):  
+    from portal.db import Database, DBSession
+    db = Database()
+    Students = db.table_string_to_class('student')
+
+    with DBSession() as session:
+        student = session.query(Students).filter(Students.id==_id).one()
+        from IPython import embed;embed()
+
 @test.command('inspect_student')
 @click.pass_obj
 def inspect_student(obj):
@@ -289,7 +301,8 @@ def test_api_students(obj):
         'human_columns': True,
         'google_sheets_format': True,
         'column_map': {'health_information': 'Health Info!'}, 
-        'columns': ['nickname_last_studentid', 'grade', 'first_nickname_last', 'parent_names', 'teacher_usernames']   # 'health_information', 'parent_contact_info', 'emergency_info',
+        'columns': ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
+        #'columns': ['username', 'homeroom_teacher_email', 'homeroom_abbrev', 'nickname', 'nickname_last_studentid', 'grade', 'first_nickname_last', 'parent_emails', 'gender_abbrev', 'teacher_usernames', 'year_of_graduation']   # 'health_information', 'parent_contact_info', 'emergency_info',
     }
 
     #url = 'http://portal.igbis.edu.my/api/students'
@@ -394,7 +407,6 @@ def igbis_email_transition(obj, dry):
 @click.pass_context
 def test_api(ctx):
     pass
-
 
 @test_api.command('managebac')
 @click.argument('_id', default=10882228, )
