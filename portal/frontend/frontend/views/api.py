@@ -98,10 +98,12 @@ def api_students(request):
 
         # TODO: Make database function that allows for filtering out students who
         # are both enrolled and fall within the start date
+
         query = session.query(Students).\
             options(joinedload('parents')).\
             options(joinedload('ib_groups')).\
             options(joinedload_all('classes.teachers')).\
+            options(joinedload('homeroom_teacher')).\
             filter(and_(
                     Students.is_archived==False,
                     Students.grade != -10,
@@ -145,7 +147,9 @@ def api_students(request):
         data.insert(0, second_row)
 
     if google_sheets_format:
-        ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
+        # This ensures that hybrid properties values are fetched
+        ret = [[getattr(data[row], columns[col]) or "" for col in range(len(columns))] for row in range(len(data))]
+
         if not human_columns:
             columns = [[column_map.get(columns[column]) or columns[column] for column in range(len(columns))] for row in range(1)]
         else:
