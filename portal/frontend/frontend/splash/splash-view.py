@@ -334,9 +334,9 @@ def splash(request):
             'items': [
                 menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
                 menu_item(icon="user", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
-                menu_separator(),
-                menu_item(icon="venus-mars", display="Add New Daily Staff notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
-                menu_item(icon="venus-mars", display="Search Daily Staff notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),                
+                #menu_separator(),
+                #menu_item(icon="venus-mars", display="Add New Daily Staff notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
+                #menu_item(icon="venus-mars", display="Search Daily Staff notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),                
             ]}),
         button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", 
         context_menu={
@@ -361,10 +361,10 @@ def splash(request):
         'items': [
             menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
             menu_item(icon="venus-mars", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
-            menu_separator(),
-            menu_item(icon="venus-mars", display="Add New Daily Staff notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
-            menu_item(icon="venus-mars", display="Search Daily Staff notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),                
-            menu_separator(),
+            #menu_separator(),
+            #menu_item(icon="venus-mars", display="Add New Daily Staff notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
+            #menu_item(icon="venus-mars", display="Search Daily Staff notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),                
+            #menu_separator(),
             menu_placeholder('mb_grade_teachers')
         ]}),
 
