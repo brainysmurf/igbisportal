@@ -82,13 +82,14 @@ class DatabaseSetterUpper(object):
 		busadmins.append(BusAdmin(first_name="Kalai", last_name="Jagamarthan", type="BusAdmin", email="kalai@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Nor", last_name="Zainudin", type="BusAdmin", email="hamizar.zainudin@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Muhammad", last_name="Rusli", type="BusAdmin", email="shah.rusli@igbis.edu.my"))
+		busadmins.append(BusAdmin(first_name="Wayne", last_name="Demnar", type="BusAdmin", email="wayne.demnar@igbis.edu.my"))
 
 		admins = []   # get the ID of the admins from the URL when visiting managebac
 		admins.append(Teacher(
 			id = 10792616,
 			first_name= "Adam",
 			last_name = "Morris",
-			type= "Advisors",
+			type= "Advisor",
 			gender="Male",
 			email="adam.morris@igbis.edu.my"
 			))
@@ -97,7 +98,7 @@ class DatabaseSetterUpper(object):
 			id = 11602876,
 			first_name= "Uma",
 			last_name = "Devi",
-			type= "Advisors",
+			type= "Advisor",
 			gender="Female",
 			email="uma.devi@igbis.edu.my"
 			))
