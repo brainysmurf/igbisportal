@@ -202,7 +202,8 @@ def splash(request):
             }),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
-        counselor_button_students
+        counselor_button_students,
+        button(name="Student Q & A", externalid=-9, size="", color="orange", url="https://docs.google.com/a/igbis.edu.my/forms/d/1Gh8u4NdnPozpEU1ZuHRqDo7Mhgqh5gUueRDwLxscm_8/viewform", icon="question-circle", id="", context_menu=None)
     ])
 
     with DBSession() as session:
