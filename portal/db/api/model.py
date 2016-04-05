@@ -42,8 +42,8 @@ class Container(object):
         _type = dictionary.get('type', '')
         if _type:
             dictionary['kindof'] = _type
-        if dictionary['kindof'] == 'Account Admins':
-            dictionary['kindof'] = 'advisors'
+        if dictionary.get('type', '') == 'Account Admins':
+            dictionary['kindof'] = 'Advisors'
             dictionary['type'] = "Advisors"
         mapping = self.mapping.get(dictionary.get('kindof', '').lower(), None)            
         if mapping is None:

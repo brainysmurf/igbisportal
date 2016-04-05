@@ -74,7 +74,6 @@ class DatabaseSetterUpper(object):
 		busadmins.append(BusAdmin(first_name="Anbalagan", last_name="Subramaniam", type="BusAdmin", email="anbalagan.subramaniam@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Noor", last_name="Abdullah", type="BusAdmin", email="aida.a@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Firdaus", last_name="Sulaiman", type="BusAdmin", email="mohd.firdaus@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Jonathan", last_name="Chong", type="BusAdmin", email="jonathan.chong@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Chris", last_name="Neoh", type="BusAdmin", email="chris.neoh@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Janqi", last_name="Qi", type="BusAdmin", email="janqi.oo@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Nurlina", last_name="Hussin", type="BusAdmin", email="nurlina.hussin@igbis.edu.my"))
@@ -93,15 +92,6 @@ class DatabaseSetterUpper(object):
 			gender="Male",
 			email="adam.morris@igbis.edu.my"
 			))
-
-		admins.append(Teacher(
-			id = 11611376,
-			first_name= "Michael",
-			last_name = "Arcidiacono",
-			type= "Advisor",
-			gender="Male",
-			email="michael.arcidiacono@igbis.edu.my"
-			))		
 
 		admins.append(Teacher(
 			id = 11602876,
@@ -218,6 +208,7 @@ class DatabaseSetterUpper(object):
 					this_json = json.load(_f)
 
 				_map = dict(Classes="Course", Students="Student", Advisors="Advisor", Parents="Parent")
+				_map['Account Admins'] = "Advisor"   # count account admins as an advisor
 				if gns.section == "users":
 					# We need to process the advisors first, otherwise potentially we'll get foreign key constraint errors
 					# If we process student before advisor has been created
@@ -228,8 +219,6 @@ class DatabaseSetterUpper(object):
 				for item in items:
 					_type = item.get('type', None)
 					_type = _map.get(_type, _type)
-					if _type == 'AccountAdmins':
-						_type = "Advisors"
 					if not _type:
 						if gns.section == 'ib_groups':
 							_type = "IB_Group"
