@@ -228,6 +228,8 @@ class DatabaseSetterUpper(object):
 				for item in items:
 					_type = item.get('type', None)
 					_type = _map.get(_type, _type)
+					if _type == 'AccountAdmins':
+						_type = "Advisors"
 					if not _type:
 						if gns.section == 'ib_groups':
 							_type = "IB_Group"
