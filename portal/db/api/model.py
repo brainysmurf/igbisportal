@@ -46,9 +46,12 @@ class Container(object):
 		if mapping == 'Account Admins':
 			dictionary['kindof'] = 'Advisors'
 		if mapping is None:
-			self.default_logger('No type? {} not added'.format(dictionary))
-			return
-		new_one = Abstract.from_dictionary(dictionary)
+			if dictionary.get('kindof') == 'Account Admins':
+            	dictionary['kindof'] = 'Advisors'
+            	dictionary['type'] = "Advisors"
+                mapping = self.mapping.get('advisors')
+			else:
+            	self.default_logger('No type? {} not added'.format(dictionary))		new_one = Abstract.from_dictionary(dictionary)
 		if new_one is None:
 			self.default_logger("None returned from Abstract.from_dictionary")
 		mapping.append(new_one)	
