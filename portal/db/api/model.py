@@ -42,17 +42,12 @@ class Container(object):
         _type = dictionary.get('type', '')
         if _type:
             dictionary['kindof'] = _type
-        mapping = self.mapping.get(dictionary.get('kindof', '').lower(), None)
-        if mapping == 'Account Admins':
-            dictionary['kindof'] = 'Advisors'
+        if dictionary['kindof'] == 'Account Admins':
+            dictionary['kindof'] = 'advisors'
+            dictionary['type'] = "Advisors"
+        mapping = self.mapping.get(dictionary.get('kindof', '').lower(), None)            
         if mapping is None:
-            if dictionary.get('kindof') == 'Account Admins':
-                dictionary['kindof'] = 'Advisors'
-                dictionary['type'] = 'Advisors'
-                mapping = self.mapping.get('advisors')
-            else:
-                self.default_logger('No type? {} not added'.format(dictionary))     
-                return
+            self.default_logger('No type? {} not added'.format(dictionary))     
         new_one = Abstract.from_dictionary(dictionary)
         if new_one is None:
             self.default_logger("None returned from Abstract.from_dictionary")
