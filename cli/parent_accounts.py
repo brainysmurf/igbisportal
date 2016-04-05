@@ -11,6 +11,39 @@ from sqlalchemy import and_
 import gns
 import datetime
 
+"""
+ManageBac doesn't export the grade information, just the homeroom advisor,
+So this provides a workaround
+"""
+homeroom_mapping = {
+    'rachel.fleury':(6, '6'),
+    'tim.bartle': (7, '7'),
+    'sheena.kelly': (7, '7'), 
+    'benjamin.wylie': (8, '8'),
+    'emily.heys': (8, '8'),
+    'dean.watters':(9, '9'),
+    'glen.fleury': (9, '9'),
+    'marcus.wetherell': (10, '10'),
+    'diane.douglas': (10, '10'),
+    'paul.skadsen': (11, '11'),
+    'nathalie.chotard': (11, '11'),
+    'gabriel.evans': (11, '11'),
+    'michael.hawkes': (12, '12'),
+    'mary.richards': (-9, 'EY{}R'),
+    'deborah.king': (-9, 'EY{}K'),
+    'sally.watters': (-9, 'EY{}W'),
+    'leanne.harvey':(0, 'KH'),
+    'lisa.mcclurg': (0, 'KM'),
+    'shireen.blakeway': (1, '1B'),
+    'kath.kummerow': (2, '2K'),
+    'michelle.ostiguy': (3, '3O'),
+    'marshall.hudson': (3, '3H'),
+    'kari.twedt': (4, '4T'),
+    'steven.harvey': (4, '4H'),
+    'kathy.mckenzie': (5, '5M'),
+    'yolaine.johanson': (5, '5J'),
+    }
+
 class Error(Exception):
     def __str__(self):
         return self.msg
@@ -110,7 +143,7 @@ class ParentAccounts:
             # TODO: attendance_start_date REALLY needs to be a freaking date column
             return session.query(Students).options(joinedload('parents'),joinedload('parents')).\
                 filter(and_(
-                    not Students.is_archived==True, 
+                    Students.is_archived==False,
                     func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") >= self._since, 
                     func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") <= self._tomorrow
                     )
@@ -127,38 +160,11 @@ class ParentAccounts:
         verbose = False
         gns.suffix = '.parent'
         gns.domain = '@igbis.edu.my'
-        homeroom_mapping = {
-            'rachel.fleury':(6, '6'),
-            'tim.bartle': (7, '7'),
-            'sheena.kelly': (7, '7'), 
-            'benjamin.wylie': (8, '8'),
-            'emily.heys': (8, '8'),
-            'dean.watters':(9, '9'),
-            'glen.fleury': (9, '9'),
-            'marcus.wetherell': (10, '10'),
-            'diane.douglas': (10, '10'),
-            'paul.skadsen': (11, '11'),
-            'nathalie.chotard': (11, '11'),
-            'gabriel.evans': (11, '11'),
-            'michael.hawkes': (12, '12'),
-            'mary.richards': (-9, 'EY{}R'),
-            'deborah.king': (-9, 'EY{}K'),
-            'sally.watters': (-9, 'EY{}W'),
-            'leanne.harvey':(0, 'KH'),
-            'lisa.mcclurg': (0, 'KM'),
-            'shireen.blakeway': (1, '1B'),
-            'kath.kummerow': (2, '2K'),
-            'michelle.ostiguy': (3, '3O'),
-            'marshall.hudson': (3, '3H'),
-            'kari.twedt': (4, '4T'),
-            'steven.harvey': (4, '4H'),
-            'kathy.mckenzie': (5, '5M'),
-            'yolaine.johanson': (5, '5J'),
-            }
+
 
         # First do the groups
 
-        for group in ['Secondary', 'Elementary', 'Whole School', 'Grade 12', 'Grade 11', "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kindergarten", "Early Years 1", "Early Years 2"]:
+        for group in ['Secondary', 'Elementary', 'Whole School', 'Grade 12', 'Grade 11', "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kindergarten", "Fireflies", "Early Years 1", "Early Years 2"]:
             self.make_parent_group(group, group.lower().replace(' ', ''))
 
         for username, _ in homeroom_mapping.items():
