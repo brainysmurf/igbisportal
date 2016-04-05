@@ -48,6 +48,7 @@ class Container(object):
         if mapping is None:
             if dictionary.get('kindof') == 'Account Admins':
                 dictionary['kindof'] = 'Advisors'
+                dictionary['type'] = 'Advisors'
                 mapping = self.mapping.get('advisors')
             else:
                 self.default_logger('No type? {} not added'.format(dictionary))     
