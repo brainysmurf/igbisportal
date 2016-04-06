@@ -276,6 +276,8 @@ def mb_grade_teachers(request):
                     continue
                 if record.email.startswith('abena'):
                     continue
+                if record.email == 'supply@igbis.edu.my':
+                    continue
                 raw_data[grade].append(record.email)
 
     data = []
@@ -555,7 +557,7 @@ def footer_html(request):
     Just return the footer
     """
     student_id = request.GET.get('student_id')
-    term_id = 27808
+    term_id = 42555
     with DBSession() as session:
         student = session.query(Students).filter_by(id=student_id).one()
         report  = session.query(PrimaryReport).\
