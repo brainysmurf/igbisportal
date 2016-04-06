@@ -415,7 +415,7 @@ def splash(request):
 
     if logged_in_user:
         account_type = logged_in_user.type
-        if account_type == 'Advisors' or account_type == 'Advisor':
+        if account_type == 'Account Admins' or account_type == 'Advisors' or account_type == 'Advisor':
             buttons['Secondary_Teachers'] = sec_teacher_buttons
             buttons['Elementary_Teachers'] = elem_teacher_buttons
             buttons['Students'] = student_buttons
