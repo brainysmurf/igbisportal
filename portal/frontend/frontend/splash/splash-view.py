@@ -78,23 +78,25 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
     )
 
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu=None)
-counselor_button_students = button(name="Counselor", externalid=-9, size="", color="aqua", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
+counselor_button_students = button(name="Counselor", externalid=-9, size="", color="green", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form")         
     ]
     })
-counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="", color="aqua", url="https://sites.google.com/a/igbis.edu.my/sst", icon="heart", id="", context_menu={
+counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="large", color="green", url="https://sites.google.com/a/igbis.edu.my/sst", icon="heart", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Student Services Site", url="https://sites.google.com/a/igbis.edu.my/sst"),
         menu_item(icon="globe", display="Counselling Site", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/"),
         menu_separator(),
+        menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
+        menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI"),
         menu_item(icon="globe", display="Counselling Appointments Reference", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
         menu_separator(),
-        menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
-        menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
+        menu_item(icon="globe", display="Wednesday Homework Support Sign-up", url="https://docs.google.com/a/igbis.edu.my/forms/d/1l9vqLOyKLTNlTZBWwEKU9VJT1aAm3ff0iye1QwCcZY8/viewform"),
+        menu_item(icon="globe", display="Wednesday Homework Support Reference List", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
     ]
-    })  
-counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="aqua", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
+    })
+counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="green", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
         menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
@@ -315,13 +317,7 @@ def splash(request):
     elem_teacher_buttons.extend([
         ibo_button,
         button(name="Teacher Dashboard", externalid=-9, size="large", color="purple", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
-        button(name="InterSIS", externalid=-9, size="", color="blue", url="https://igbis.intersis.com", icon="info-circle", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
-            menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
-            menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
-        ]}),
+        counselor_button_not_students,
         button(name="Reports Hub", externalid=-9, size="", color="orange", url="reports_hub", icon="gavel", id="", context_menu=None),
         button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", id="", context_menu={
         'items': [
@@ -347,9 +343,7 @@ def splash(request):
             menu_item(icon="plus-circle", display="Sign-up", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up"),
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
-        ela_button,
         emergency_button,
-        counselor_button_not_students,
         cashless_button
         ])
 
@@ -379,14 +373,7 @@ def splash(request):
         ]}),
 
         button(name="Teacher Dashboard", externalid=-9, size="large", color="purple", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
-        button(name="InterSIS", externalid=-9, size="", color="blue", url="https://igbis.intersis.com", icon="info-circle", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="user", display="Students", url="https://igbis.intersis.com/students?statuses=enrolled"),
-            menu_item(icon="pencil", display='Messaging', url="https://igbis.intersis.com/messaging"),
-            menu_item(icon="check-square-o", display='Attendance', url="https://igbis.intersis.com/attendance/students"),
-        ]}),
-
+        counselor_button_not_students,
         button(name="Secondary Principal", externalid=-9, size="", color="peach", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
         context_menu={
         'items': [
@@ -405,9 +392,7 @@ def splash(request):
         ]}),
         button(name="IT and Facilities Help Desk", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         bookings_button,
-        ela_button,
         emergency_button,
-        counselor_button_not_students,
         cashless_button
     ])
 
