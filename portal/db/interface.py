@@ -84,120 +84,120 @@ class DatabaseSetterUpper(object):
 		busadmins.append(BusAdmin(first_name="Wayne", last_name="Demnar", type="BusAdmin", email="wayne.demnar@igbis.edu.my"))
 
 		admins = []   # get the ID of the admins from the URL when visiting managebac
-		admins.append(Teacher(
-			id = 10792616,
-			first_name= "Adam",
-			last_name = "Morris",
-			type= "Advisor",
-			gender="Male",
-			email="adam.morris@igbis.edu.my"
-			))
+		# admins.append(Teacher(
+		# 	id = 10792616,
+		# 	first_name= "Adam",
+		# 	last_name = "Morris",
+		# 	type= "Advisor",
+		# 	gender="Male",
+		# 	email="adam.morris@igbis.edu.my"
+		# 	))
 
-		admins.append(Teacher(
-			id = 11602876,
-			first_name= "Uma",
-			last_name = "Devi",
-			type= "Advisor",
-			gender="Female",
-			email="uma.devi@igbis.edu.my"
-			))
+		# admins.append(Teacher(
+		# 	id = 11602876,
+		# 	first_name= "Uma",
+		# 	last_name = "Devi",
+		# 	type= "Advisor",
+		# 	gender="Female",
+		# 	email="uma.devi@igbis.edu.my"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10792595,
-			first_name= "Amanda",
-			last_name = "Clarke",
-			type= "Advisors",
-			gender="Female",
-			email="amanda.clarke@igbis.edu.my"
-			))
+		# admins.append(Teacher(
+		# 	id = 10792595,
+		# 	first_name= "Amanda",
+		# 	last_name = "Clarke",
+		# 	type= "Advisors",
+		# 	gender="Female",
+		# 	email="amanda.clarke@igbis.edu.my"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10792598,
-			first_name="Geoffrey",
-			last_name ="Derry",
-			email="geoffrey.derry@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 10792598,
+		# 	first_name="Geoffrey",
+		# 	last_name ="Derry",
+		# 	email="geoffrey.derry@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id=10792614,
-			first_name="Matthew",
-			last_name="Marshall",
-			email="Matthew.Marshall@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id=10792614,
+		# 	first_name="Matthew",
+		# 	last_name="Marshall",
+		# 	email="Matthew.Marshall@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id=10792596,
-			first_name="Phil",
-			last_name="Clark",
-			email="Phil.Clark@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id=10792596,
+		# 	first_name="Phil",
+		# 	last_name="Clark",
+		# 	email="Phil.Clark@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10792615,
-			first_name="Simon",
-			last_name= "Millward",
-			email="Simon.Millward@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 10792615,
+		# 	first_name="Simon",
+		# 	last_name= "Millward",
+		# 	email="Simon.Millward@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10754286,
-			first_name="Claire",
-			last_name= "McCleod",
-			email="claire.mcleod@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 10754286,
+		# 	first_name="Claire",
+		# 	last_name= "McCleod",
+		# 	email="claire.mcleod@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10754285,
-			first_name="Lennox",
-			last_name="Meldrum",
-			email="lennox.meldrum@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 10754285,
+		# 	first_name="Lennox",
+		# 	last_name="Meldrum",
+		# 	email="lennox.meldrum@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10792603,
-			first_name="Peter",
-			last_name="Fowles",
-			email="peter.fowles@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 10792603,
+		# 	first_name="Peter",
+		# 	last_name="Fowles",
+		# 	email="peter.fowles@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10792604,
-			first_name="Gail",
-			last_name="Hall",
-			email="gail.hall@igbis.edu.my",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 10792604,
+		# 	first_name="Gail",
+		# 	last_name="Hall",
+		# 	email="gail.hall@igbis.edu.my",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id = 13546,
-			first_name="Super",
-			last_name="Admin",
-			email="superadmin@managebac.com",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 13546,
+		# 	first_name="Super",
+		# 	last_name="Admin",
+		# 	email="superadmin@managebac.com",
+		# 	type="Advisor"
+		# 	))
 
-		admins.append(Teacher(
-			id = 10958256,
-			first_name="Usha",
-			last_name ="Ranikrishnan",
-			email="usha.ranikrishnan",
-			type="Advisor"
-			))
+		# admins.append(Teacher(
+		# 	id = 10958256,
+		# 	first_name="Usha",
+		# 	last_name ="Ranikrishnan",
+		# 	email="usha.ranikrishnan",
+		# 	type="Advisor"
+		# 	))
 
 		with updater_helper() as u:
 
 			for busadmin in busadmins:
 				u.update_or_add(busadmin)
 
-			for admin in admins:
-				u.update_or_add(admin)
+			# for admin in admins:
+			# 	u.update_or_add(admin)
 
 			# Section refers to users, groups, etc
 

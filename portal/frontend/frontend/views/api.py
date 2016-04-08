@@ -148,7 +148,7 @@ def api_students(request):
 
     if google_sheets_format:
         # This ensures that hybrid properties values are fetched
-        ret = [[getattr(data[row], columns[col]) or "" for col in range(len(columns))] for row in range(len(data))]
+        ret = [[getattr(data[row], columns[col], "") for col in range(len(columns))] for row in range(len(data))]
 
         if not human_columns:
             columns = [[column_map.get(columns[column]) or columns[column] for column in range(len(columns))] for row in range(1)]

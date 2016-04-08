@@ -293,16 +293,28 @@ def inspect_student(obj):
         from IPython import embed;embed()
 
 @test.command('api_students')
+@click.option('--columns', default=None, help="Any of the hybrid properties")
+@click.option('--destiny', is_flag=True, default=False, help="Use destiny columns (overrides columns)")
+@click.option('--every_column', is_flag=True, default=False, help="Test everything!")
+@click.option('--output', default=False, help="Which one?, must be int")
+@click.option('--inspect', is_flag=True, default=False, help="runs IPyton at end")
 @click.pass_obj
-def test_api_students(obj):
+def test_api_students(obj, columns, destiny, every_column, output, inspect):
+    if destiny:
+        columns = ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
+    if every_column:
+        columns = ['username', 'homeroom_teacher_email', 'homeroom_abbrev', 'nickname', 'nickname_last_studentid', 'grade', 'class_grade', 'first_nickname_last', 'parent_emails', 'gender_abbrev', 'teacher_usernames', 'year_of_graduation']
+    if columns is None:
+        print("No columns..")
+        return
+
     options = {
         'secret': 'phillies',
         'awesome_table_filters': {'student': 'StringFilter', 'grade': 'CategoryFilter'},
         'human_columns': True,
         'google_sheets_format': True,
         'column_map': {'health_information': 'Health Info!'}, 
-        'columns': ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
-        #'columns': ['username', 'homeroom_teacher_email', 'homeroom_abbrev', 'nickname', 'nickname_last_studentid', 'grade', 'first_nickname_last', 'parent_emails', 'gender_abbrev', 'teacher_usernames', 'year_of_graduation']   # 'health_information', 'parent_contact_info', 'emergency_info',
+        'columns': columns
     }
 
     #url = 'http://portal.igbis.edu.my/api/students'
@@ -310,7 +322,13 @@ def test_api_students(obj):
     result = requests.post(url, json=options)
     json = result.json()
     print(len(json['data']))
-    from IPython import embed;embed()
+    if output:
+        print(json['data'][int(output)])
+    else:
+        for data in json['data']:
+            print(data)
+    if inspect:
+        from IPython import embed;embed()
 
 @test.command('api_lastlogins')
 @click.pass_obj
@@ -319,13 +337,14 @@ def test_api_lastlogins(obj):
         'secret': 'phillies',
     }
 
-    #url = 'http://portal.igbis.edu.my/api/students'
-    url = 'http://localhost:6543/api/lastlogins'
+    url = 'http://portal.igbis.edu.my/api/students'
+    #url = 'http://localhost:6543/api/lastlogins'
     result = requests.post(url, json=options)
     print(result.json())
     from IPython import embed;embed()
 
 @test.command('api_teachers')
+@click.option('--columns')
 @click.pass_obj
 def test_api_teachers(obj):
     options = {

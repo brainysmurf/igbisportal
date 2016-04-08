@@ -164,7 +164,7 @@ class ParentAccounts:
 
         # First do the groups
 
-        for group in ['Secondary', 'Elementary', 'Whole School', 'Grade 12', 'Grade 11', "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kindergarten", "Fireflies", "Early Years 1", "Early Years 2"]:
+        for group in ['Secondary', 'Elementary', 'Whole School', 'Grade 12', 'Grade 11', "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kindergarten", "Early Years 1", "Early Years 2", "Fireflies"]:
             self.make_parent_group(group, group.lower().replace(' ', ''))
 
         for username, _ in homeroom_mapping.items():
