@@ -147,8 +147,18 @@ def api_students(request):
         data.insert(0, second_row)
 
     if google_sheets_format:
-        # This ensures that hybrid properties values are fetched
-        ret = [[getattr(data[row], columns[col], "") for col in range(len(columns))] for row in range(len(data))]
+
+        # FIXME: This takes up to 9 seconds...
+        ret = []
+        for row in range(len(data)):
+            r = []
+            for col in columns:
+                v = getattr(data[row], col, "")
+                if v is None:
+                    v = ""
+                r.append(v)
+            ret.append(r)
+        #ret = [[getattr(data[row], columns[col], "") for col in range(len(columns))] for row in range(len(data))]
 
         if not human_columns:
             columns = [[column_map.get(columns[column]) or columns[column] for column in range(len(columns))] for row in range(1)]
@@ -216,7 +226,19 @@ def api_teachers(request):
         data.insert(0, second_row)
 
     if google_sheets_format:
-        ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
+
+        # FIXME: Turn the 
+        ret = []
+        for row in range(len(data)):
+            r = []
+            for col in columns:
+                v = getattr(data[row], columns[col], "")
+                if v is None:
+                    v = ""
+                r.append(v)
+            ret.append(r)
+        #ret = [[getattr(data[row], columns[col]) for col in range(len(columns))] for row in range(len(data))]
+
         if not human_columns:
             columns = [[column_map.get(columns[column]) or columns[column] for column in range(len(columns))] for row in range(1)]
         else:

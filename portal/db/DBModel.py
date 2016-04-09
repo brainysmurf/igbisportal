@@ -539,27 +539,16 @@ class Student(Base, User):
                 'Grade 3': 3, 
                 'Grade 2': 2, 
                 'Grade 1': 1, 
+                'Fireflies': -3,
                 'Early Years 1':-2, 
                 'Early Years 2':-1, 
-                'Kindergarten': 0
+                'Kindergarten': 0,
             }.get(self.class_grade, -10)
-
-    @hybrid_property
-    def grade_range(self):
-        if self.grade in range(-5, 0):
-            return 1
-        if self.grade in range(0, 3):
-            return 10
-        if self.grade in range(3, 6):
-            return 100
-        if self.grade in range(6, 9):
-            return 1000
-        if self.grade in range(9, 13):
-            return 10000
 
     @grade.expression
     def grade_expression(cls):
         return case([
+                (cls.class_grade == 'Fireflies', -3), 
                 (cls.class_grade == 'Early Years 1', -2), 
                 (cls.class_grade == 'Early Years 2', -1), 
                 (cls.class_grade == 'Kindergarten', 0), 
@@ -579,6 +568,19 @@ class Student(Base, User):
             else_ = -10)
 
     @hybrid_property
+    def grade_range(self):
+        if self.grade in range(-5, 0):
+            return 1
+        if self.grade in range(0, 3):
+            return 10
+        if self.grade in range(3, 6):
+            return 100
+        if self.grade in range(6, 9):
+            return 1000
+        if self.grade in range(9, 13):
+            return 10000
+
+    @hybrid_property
     def abbrev_grade(self):
         return {
                 'Grade 12':'12', 
@@ -594,13 +596,15 @@ class Student(Base, User):
                 'Grade 2': '2', 
                 'Grade 1': '1', 
                 'Early Years 1':'EY1', 
-                'Early Years 2':'EY2', 
-                'Kindergarten': 'KG'
+                'Early Years 2':'EY2',
+                'Kindergarten': 'KG',
+                'Fireflies': 'FF',
             }.get(self.class_grade, '<ng>')
 
     @abbrev_grade.expression
     def abbrev_grade_expression(cls):
         return case([
+                (cls.class_grade == 'Fireflies', 'FF'), 
                 (cls.class_grade == 'Early Years 1', 'EY1'), 
                 (cls.class_grade == 'Early Years 2', 'EY2'), 
                 (cls.class_grade == 'Kindergarten', 'KG'), 

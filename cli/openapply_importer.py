@@ -80,7 +80,8 @@ class OA_Medical_Importer:
 
         url = gns('{config.openapply.url}/api/v1/students/')
         result = requests.get(url, params=initial_params)
-
+        if not result.ok:
+            from IPython import embed;embed();exit()
         result_json = result.json()['students']
 
         for student in result_json:
@@ -93,6 +94,10 @@ class OA_Medical_Importer:
             }
 
             student_info = requests.get(url, params=this_params)
+            if not student_info.ok:
+                # Probably not a student on MB yet
+                # TODO: Notify someone?
+                continue
             student = student_info.json().get('student')
 
             health_info = student['custom_fields'].get('health_information')

@@ -296,14 +296,15 @@ def inspect_student(obj):
 @click.option('--columns', default=None, help="Any of the hybrid properties")
 @click.option('--destiny', is_flag=True, default=False, help="Use destiny columns (overrides columns)")
 @click.option('--every_column', is_flag=True, default=False, help="Test everything!")
-@click.option('--output', default=False, help="Which one?, must be int")
 @click.option('--inspect', is_flag=True, default=False, help="runs IPyton at end")
+@click.option('--output_sids', default=None, help="string of student ids with spaces")
 @click.pass_obj
-def test_api_students(obj, columns, destiny, every_column, output, inspect):
+def test_api_students(obj, columns, destiny, every_column, inspect, output_sids):
     if destiny:
         columns = ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
     if every_column:
-        columns = ['username', 'homeroom_teacher_email', 'homeroom_abbrev', 'nickname', 'nickname_last_studentid', 'grade', 'class_grade', 'first_nickname_last', 'parent_emails', 'gender_abbrev', 'teacher_usernames', 'year_of_graduation']
+        columns = ['student_id', 'first_name', 'last_name', 'gender', 'nationality1', 'nationality2', 'nationality3', 'nationality4', 'phone_number', 'mobile_phone_number', 'national_id', 'email', 'language', 'lanuage1', 'language2', 'language3', 'program', 'program_of_study', 'class_year', 'grade', 'class_grade', 'grade_range', 'archived', 'nickname', 'attendance_start_date', 'birthday', 'open_apply_student_id', 'homeroom_advisor', 'profile_photo', 'year_of_graduation', 'parent_emails', 'parent_names', 'parent_name_1', 'parent_name_2', 'parent_email_1', 'parent_email_2', 'parent_work_email_1', 'parent_work_email_2', 'parent_contact_info', 'teacher_emails', 'teacher_usernames', 'nickname_last_studentid', 'last_first_nickname_studentid', 'grade_last_first_nickname_studentid', 'first_nickname_last_studentid', 'first_nickname_last', 'first_nickname', 'grade_first_nickname_last_studentid', 'abbrev_grade', 'health_information', 'emergency_info', 'homeroom_teacher_email', 'homeroom_abbrev', 'homeroom_full', 'barcode', 'destiny_site_information', 'destiny_patron_type']
+        #TODO: open_apply_student_id
     if columns is None:
         print("No columns..")
         return
@@ -321,14 +322,18 @@ def test_api_students(obj, columns, destiny, every_column, output, inspect):
     url = 'http://localhost:6543/api/students'
     result = requests.post(url, json=options)
     json = result.json()
-    print(len(json['data']))
-    if output:
-        print(json['data'][int(output)])
-    else:
-        for data in json['data']:
+    for data in json['data']:
+        if not output_sids is None:
+            i = int(output_sids.split(' ')[0])
+            if data[i] in output_sids.split(' ')[1:]:
+                print(data)
+        else:
             print(data)
     if inspect:
         from IPython import embed;embed()
+
+    for data in json['data']:
+        pass
 
 @test.command('api_lastlogins')
 @click.pass_obj
