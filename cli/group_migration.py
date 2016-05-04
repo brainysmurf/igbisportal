@@ -1,5 +1,5 @@
 domain = 'igbis.edu.my'
-target_groups = ["all.team", "ss.team", "es.team", 'wholeschool.parents']
+target_groups = ["all.team", "ss.team", "es.team", 'wholeschool.parents', 'ta.team']
 close_groups_str = "gam update group '{group}' who_can_post_message all_managers_can_post"
 make_manager_str = "gam update group '{group}' update manager user '{user}'"
 add_manager_str = "gam update group '{group}'' add manager user '{user}'"
@@ -13,7 +13,7 @@ managers = [
 	'claire.mccleod',
 	'ben.hor',
 	'wayne.demnar',
-	'munchiew.looi'
+	'munchiew.looi',
 ]
 additions = {
 	'all.team': [
