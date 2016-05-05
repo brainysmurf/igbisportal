@@ -14,11 +14,13 @@ managers = [
 	'ben.hor',
 	'wayne.demnar',
 	'munchiew.looi',
+	'usha.ranikrishnan',
+	'rubavathy.bojan'
 ]
 additions = {
 	'all.team': [
 		'kathy.mckenzie'
-		]
+		],
 }
 
 for group in target_groups:
