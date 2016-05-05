@@ -8,14 +8,7 @@ set_text_str = "gam update group '{group}' message_deny_notification_text '{text
 denied = "To whom it may concern: Your message has been denied as you do not have permissions. You may either use the Daily Notices to share the information it contains, or else seek a member of staff who has access to use group email. These people/positions are identified in the Communications Policy of the School. https://docs.google.com/document/d/1cFXpxc-2LJ2UEYbmMZNEUkyx1rJHUE18ZSWWrYNOY8c/edit. Thank you"
 
 managers = [
-	'anne.fowles',
-	'lennox.meldrum',
-	'claire.mccleod',
-	'ben.hor',
-	'wayne.demnar',
-	'munchiew.looi',
-	'usha.ranikrishnan',
-	'rubavathy.bojan'
+	'bulk.email.group.permissions',
 ]
 additions = {
 	'all.team': [
