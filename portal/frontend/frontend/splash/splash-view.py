@@ -407,7 +407,6 @@ def splash(request):
             buttons['Elementary_Teachers'] = elem_teacher_buttons
             buttons['Students'] = student_buttons
             buttons['Parents'] = parent_buttons
-            buttons['Admin'] = administration_buttons
         elif account_type == 'Students':
             buttons['Students'] = student_buttons
             buttons['Parents'] = parent_buttons
