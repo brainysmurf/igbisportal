@@ -52,18 +52,16 @@ stndrdbttns = [
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
+daily_notices_button = button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
+    'items': [
+        menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
+        menu_separator(),
+        menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
+        menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
+    ]}),
+
 emergency_button = button(name="Emergency Contact", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", id="", context_menu=None)
-# intl_day_button = button(name="International Day", color=None, icon="smile-o", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k", id="", 
-#         context_menu={
-#         'items': [
-#             menu_item(icon="folder", display="Google Drive folder", url="https://drive.google.com/drive/folders/0By29gsjYgr0EdS1WWFVRS1pTY1k"),
-#             menu_separator(),
-#             menu_item(icon="file-text", display="Cultural Activities and Sports", url="https://docs.google.com/document/d/1UjvgvSdel_gonrq6ONngcZquIh-upTVU64Tw6_FWVKQ/edit"),
-#             menu_item(icon="file-text", display="Nationality Lists", url="https://docs.google.com/spreadsheets/d/1qcKr_IFlDaL-4LiF5BswU5xG4aFKkTx096PQbUiVXtg/edit#gid=196206741"),
-#             menu_separator(),
-#             menu_item(icon="file-movie-o", display="Download Students Dancing", url="https://doc-00-5c-docs.googleusercontent.com/docs/securesc/884cabjr1sdneekvn44p41a882r4naec/3n5qsegs0a0651mtt09hhcijticoe6av/1431424800000/02981500850996571698/02981500850996571698/0B2Jx5iFaTuHJM0tfV0JYV2Q4Qjg?h=08807967339938854529&e=download"),
-#         ],
-#     })
+
 ela_button = button(name="ELA Department", externalid=-9, size="", color="orange", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", id="", context_menu=None)
 bookings_button = button(name="Bookings", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", id="", context_menu=None)
 ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="http://www.ibo.org/", icon="globe", id="", 
@@ -150,13 +148,13 @@ administration_buttons = [
             menu_item(icon="folder", display="SS Camps", url="https://docs.google.com/spreadsheets/d/1l4rF_xnyy3hjKOGftBaOfnACq-PIz2hgT2uIR_Jyd2g/edit#gid=798482198"),
         ]
         }),
-    button(name="Communications", externalid=-9, size="large", color="cyan", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
-        'items': [
-            menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
-            menu_separator(),
-            menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
-            menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
-        ]}),
+    button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
+    'items': [
+        menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
+        menu_separator(),
+        menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
+        menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
+    ]}),
 ]
 
 @view_config(route_name='updateButtons', renderer='json')
@@ -285,6 +283,16 @@ def splash(request):
             }),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
 
+        button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", 
+        context_menu={
+        'items': [
+            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
+            menu_separator(),
+            menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
+            menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
+            menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),
+            menu_placeholder('mb_grade_teachers')
+        ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
     ]
 
@@ -320,12 +328,20 @@ def splash(request):
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu=None),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
 
+        button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
+            'items': [
+                menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
+                menu_separator(),
+                menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
+                menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
+                menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
+            ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
     ]
 
     elem_teacher_buttons.extend([
-        ibo_button,
         button(name="Teacher Dashboard", externalid=-9, size="large", color="purple", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
+        ibo_button,
         counselor_button_not_students,
         button(name="Reports Hub", externalid=-9, size="", color="orange", url="reports_hub", icon="gavel", id="", context_menu=None),
         button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", id="", context_menu={
@@ -336,14 +352,6 @@ def splash(request):
         button(name="IT and Facilities Help Desk", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         bookings_button,
-        button(name="Communications", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
-            'items': [
-                menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
-                menu_item(icon="user", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
-                #menu_separator(),
-                #menu_item(icon="venus-mars", display="Add New Daily Staff notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
-                #menu_item(icon="venus-mars", display="Search Daily Staff notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),                
-            ]}),
         button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", 
         context_menu={
         'items': [
@@ -358,20 +366,10 @@ def splash(request):
 
 
     sec_teacher_buttons.extend([
+        button(name="Teacher Dashboard", externalid=-9, size="large", color="purple", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
         ibo_button,
 
-        button(name="Communications", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
-            menu_item(icon="venus-mars", display="Add/Edit Daily Staff Notices", url="https://docs.google.com/document/d/139SYcCgRlErsiwaUPzuooZx_fx21AkhvU93L4X0cgq4/edit"),
-            #menu_separator(),
-            #menu_item(icon="venus-mars", display="Add New Daily Staff notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
-            #menu_item(icon="venus-mars", display="Search Daily Staff notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),                
-            #menu_separator(),
-            menu_placeholder('mb_grade_teachers')
-        ]}),
-
+        counselor_button_not_students,
         button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", 
         context_menu={
         'items': [
@@ -381,8 +379,6 @@ def splash(request):
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
 
-        button(name="Teacher Dashboard", externalid=-9, size="large", color="purple", url="https://teacherdashboard.appspot.com/igbis.edu.my", icon="dashboard", id="", context_menu=None),
-        counselor_button_not_students,
         button(name="Secondary Principal", externalid=-9, size="", color="peach", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
         context_menu={
         'items': [
@@ -414,6 +410,7 @@ def splash(request):
             buttons['Elementary_Teachers'] = elem_teacher_buttons
             buttons['Students'] = student_buttons
             buttons['Parents'] = parent_buttons
+            buttons['Admin'] = administration_buttons
         elif account_type == 'Students':
             buttons['Students'] = student_buttons
             buttons['Parents'] = parent_buttons
