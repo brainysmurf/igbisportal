@@ -88,7 +88,7 @@ counselor_button_not_students = button(name="Student Services & Counseling", ext
         menu_separator(),
         menu_item(icon="globe", display="Behaviour Report Form", url="https://docs.google.com/a/igbis.edu.my/forms/d/1aTxoKnpGjuY9DcNJ7UlTJ6egsjG8-FMYTLpjvM1jdbY/viewform?c=0&w=1"),
         menu_separator(),
-        menu_item(icon="globe", display="Make Appointment with Ms Natalie (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
+        menu_item(icon="globe", display="Make Appointment with Ms Chris (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
         menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI"),
         menu_item(icon="globe", display="Counselling Appointments Reference", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
         menu_separator(),
@@ -125,7 +125,7 @@ parent_buttons = [
                 menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
             ]
         }),
-    button(name="Activities & Sports", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu={
+    button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu={
             'items': [
                 menu_item(icon="rocket", display="IGBIS Swimming", url="https://sites.google.com/a/igbis.edu.my/igbis-swimming/"),
             ]
@@ -143,6 +143,7 @@ administration_buttons = [
             menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
             menu_separator(),
             menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
+            menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
             menu_separator(),
             menu_item(icon="folder", display="Instrumental Music Academy", url="https://docs.google.com/spreadsheets/d/1pqdrV3uaHChzrcUEC-6UMwZOrrdyQH_PaVyr4OuXu90/edit#gid=0"),
             menu_item(icon="folder", display="SS Camps", url="https://docs.google.com/spreadsheets/d/1l4rF_xnyy3hjKOGftBaOfnACq-PIz2hgT2uIR_Jyd2g/edit#gid=798482198"),
@@ -228,7 +229,10 @@ def splash(request):
                 if not item.email in homeroom_teachers[grade]:
                     homeroom_teachers[grade].append(item.email)
 
-    homeroom_items = []
+    homeroom_items = [
+        menu_item(icon="", display="Welfare Program", url="https://docs.google.com/document/d/1qc2CxmBiC3CNOtJguD4trMRmfJ4O2I_H0ryAFRmfFrM/edit"),
+        menu_separator(),
+    ]
     for grade in sorted(homeroom_teachers):
         these_teachers = homeroom_teachers[grade]
         hroom_emails = ",".join(these_teachers)
@@ -262,11 +266,15 @@ def splash(request):
                 menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
                 menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
-                menu_item(icon="folder", display="Semester One Timetables", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERbm0zWXV1bWxsb0k"),
+                menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
                 menu_separator(),
-                menu_item(icon="folder", display="MYP IB Recources", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERclEzb3Zpa3dMcjg"),
+                menu_item(icon="folder", display="MYP Resources", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERclEzb3Zpa3dMcjg"),
                 menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc"),
-                menu_item(icon="folder", display="MYP Subject Overviews 2015-16", url="https://docs.google.com/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit#gid=0")             
+                menu_item(icon="folder", display="MYP Subject Overviews 2015-16", url="https://docs.google.com/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit#gid=0"),
+                menu_separator(),
+                menu_item(icon="folder", display="Timetables Semester One 2016/17", url="https://drive.google.com/drive/folders/0By9YOJwliLtBSnFXUnhWcUdPdms"),
+                menu_item(icon="folder", display="Duties (not available yet)", url="#"),
+                menu_item(icon="folder", display="Cover Rota (not available yet)", url="#")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
@@ -276,9 +284,9 @@ def splash(request):
             context_menu=None),
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu={
             'items': [
-                menu_item(icon="search", display="Official Website Calendars", url="http://www.igbis.edu.my/index.php/admissions/academic-calendar/"),
-                menu_item(icon="search", display="ManageBac Calendar", url="https://igbis.managebac.com/home"),
+                menu_item(icon="search", display="Official Website Calendars", url="http://igbis.edu.my/admissions/calendar-timetable/"),
                 menu_item(icon="search", display="Google Calendar", url="https://www.google.com/calendar"),
+                menu_item(icon="search", display="Internal School Calendar", url="https://drive.google.com/a/igbis.edu.my/file/d/0By9YOJwliLtBdGxOZlhfOTA1MjdmdDk4NXlkRkE5RjVMQ0dJ/view?usp=sharing"),
             ],
             }),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
@@ -286,11 +294,12 @@ def splash(request):
         button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", 
         context_menu={
         'items': [
-            menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
+            menu_item(icon="", display="Communication Main Site", url="https://sites.google.com/a/igbis.edu.my/communications/"),
+            menu_item(icon="", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
             menu_separator(),
-            menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
-            menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
-            menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),
+            menu_item(icon="", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
+            menu_item(icon="", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
+            menu_item(icon="", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),
             menu_placeholder('mb_grade_teachers')
         ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
@@ -320,6 +329,7 @@ def splash(request):
                 menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
                 menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
+                menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
             ]
             }),
         button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
@@ -379,11 +389,13 @@ def splash(request):
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
 
-        button(name="Secondary Principal", externalid=-9, size="", color="peach", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
+        button(name="Secondary Procedures", externalid=-9, size="", color="peach", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
         context_menu={
         'items': [
-            menu_item(icon="warning", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
-            menu_item(icon="pencil", display='Sending Messages', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/using-intersis-bulk-messaging")
+            menu_item(icon="pencil", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
+            menu_item(icon="pencil", display='Professional Development Requests', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/professional-development"),
+            menu_item(icon="pencil", display='Events at IGBIS', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/events"),
+            menu_item(icon="pencil", display='Students - Late arrival & Leaving early', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/late-students"),
         ]}),
 
         button(name="OCC", externalid=-9, size="", color="beige", url="http://occ.ibo.org/ibis/occ/guest/home.cfm", icon="gear", id="", context_menu={
