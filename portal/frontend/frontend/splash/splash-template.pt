@@ -211,7 +211,7 @@
         <div class="grid systemTab">
           <tal:block tal:define="items buttons[key]" tal:repeat="button items">
 
-            <div class="buttonContainer ${button.size}" data-id="${button.id}" data-kind="systemButton" data-color="${button.color if button.color else 'default'}" data-url="${button.url}" data-icon="${button.icon}" data-name="${button.name}" data-size="${button.size}" data-externalid="${button.externalid}">
+            <div class="buttonContainer ${button.size}" data-id="${button.id}" data-kind="systemButton" data-color="${button.color if button.color else 'default'}" data-url="${button.url}" data-icon="${button.icon}" data-name="${structure: button.name}" data-size="${button.size}" data-externalid="${button.externalid}">
 
                 <ul style="display:none" tal:condition="button.context_menu" >
                   <tal:block tal:repeat="menuItem button.context_menu.get('items')">
