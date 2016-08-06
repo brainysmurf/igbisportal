@@ -347,6 +347,8 @@ class Student(Base, User):
 
     profile_photo = Column(String(1000))
 
+    status = Column(String(255))
+
     def __repr__(self):
         return '<Student {}>'.format(self.first_nickname_last_studentid)
 

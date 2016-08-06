@@ -121,15 +121,18 @@ class updater_helper:
 		TODO: Self is not used, should probably be a class method?
 		TODO: Make a logger so I can track changes
 		"""
+		verbose = False
+
 		with DBSession() as session:
 			try:
 				row = session.query(obj.__class__).filter_by(id=obj.id).one()
 			except NoResultFound:
 				# workaround a thing with managebac where the the uniq_id has not changed, but the course ID has..
+				if verbose:
+					print("added")
 				session.add(obj)
 				row = None
 
-			verbose = False
 
 			if row:
 				# Get list of columns that the object possesses and are available in the database

@@ -22,12 +22,41 @@ class DatabaseSetterUpper(object):
 		if not lazy:
 			self.setup_database()
 
+	def update_status(self):
+		with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
+			this_json = json.load(_f)
+
+			for student in this_json.get('students'):
+
+				student_mb_id = student.get('managebac_student_id')
+				student_email = student.get('email')
+				name = student.get('first_name') + ' ' + student.get('last_name')
+
+				with DBSession() as session:
+
+					try:
+						if student_mb_id is None:
+							# short-circuit to checking by email addy
+							raise NoResultFound
+						db_student = session.query(Student).filter(Student.id==student_mb_id).one()
+					except NoResultFound:
+						try:
+							db_student = session.query(Student).filter(Student.email==student_email).one()
+						except NoResultFound:
+							db_student = None
+
+					if db_student:
+						print('\t Changed status of {} from {} to {}'.format(db_student, db_student.status, student.get('status')))
+						db_student.status = student.get('status')
+
+					else:
+						print("\t ----")
+
 	def setup_database(self):
 		"""
 		Reads in file information (made from Go.download) and sets up the database structures
 		"""
 
-		#self.default_logger("Setting up additional accounts manually, those who are admins & teachers")
 
 		busadmins = []
 		busadmins.append(BusAdmin(first_name="Anne", last_name="Fowles", type="BusAdmin", email="anne.fowles@igbis.edu.my"))
@@ -84,113 +113,7 @@ class DatabaseSetterUpper(object):
 		busadmins.append(BusAdmin(first_name="Muhammad", last_name="Rusli", type="BusAdmin", email="shah.rusli@igbis.edu.my"))
 		busadmins.append(BusAdmin(first_name="Wayne", last_name="Demnar", type="BusAdmin", email="wayne.demnar@igbis.edu.my"))
 
-		admins = []   # get the ID of the admins from the URL when visiting managebac
-		# admins.append(Teacher(
-		# 	id = 10792616,
-		# 	first_name= "Adam",
-		# 	last_name = "Morris",
-		# 	type= "Advisor",
-		# 	gender="Male",
-		# 	email="adam.morris@igbis.edu.my"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 11602876,
-		# 	first_name= "Uma",
-		# 	last_name = "Devi",
-		# 	type= "Advisor",
-		# 	gender="Female",
-		# 	email="uma.devi@igbis.edu.my"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10792595,
-		# 	first_name= "Amanda",
-		# 	last_name = "Clarke",
-		# 	type= "Advisors",
-		# 	gender="Female",
-		# 	email="amanda.clarke@igbis.edu.my"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10792598,
-		# 	first_name="Geoffrey",
-		# 	last_name ="Derry",
-		# 	email="geoffrey.derry@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id=10792614,
-		# 	first_name="Matthew",
-		# 	last_name="Marshall",
-		# 	email="Matthew.Marshall@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id=10792596,
-		# 	first_name="Phil",
-		# 	last_name="Clark",
-		# 	email="Phil.Clark@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10792615,
-		# 	first_name="Simon",
-		# 	last_name= "Millward",
-		# 	email="Simon.Millward@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10754286,
-		# 	first_name="Claire",
-		# 	last_name= "McCleod",
-		# 	email="claire.mcleod@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10754285,
-		# 	first_name="Lennox",
-		# 	last_name="Meldrum",
-		# 	email="lennox.meldrum@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10792603,
-		# 	first_name="Peter",
-		# 	last_name="Fowles",
-		# 	email="peter.fowles@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10792604,
-		# 	first_name="Gail",
-		# 	last_name="Hall",
-		# 	email="gail.hall@igbis.edu.my",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 13546,
-		# 	first_name="Super",
-		# 	last_name="Admin",
-		# 	email="superadmin@managebac.com",
-		# 	type="Advisor"
-		# 	))
-
-		# admins.append(Teacher(
-		# 	id = 10958256,
-		# 	first_name="Usha",
-		# 	last_name ="Ranikrishnan",
-		# 	email="usha.ranikrishnan",
-		# 	type="Advisor"
-		# 	))
+		admins = []
 
 		with updater_helper() as u:
 
@@ -328,8 +251,14 @@ class DatabaseSetterUpper(object):
 								pass
 								#print('course_id {} or student_id {} not found'.format(course_id, student_id))
 
-			#self.default_logger("Done!")
+		# Now let's look at open_apply and update status, but only if the student is already in there.
+		# We won't use the manager because this is more of a piece-meal thing
+
+		self.update_status()
+
+
 
 if __name__ == "__main__":
 
-	go  = DatabaseSetterUpper(lazy=False)
+	go  = DatabaseSetterUpper(lazy=True)
+	go.update_status()

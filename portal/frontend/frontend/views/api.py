@@ -108,7 +108,7 @@ def api_students(request):
                     Students.is_archived==False,
                     Students.grade != -10,
                     Students.student_id != None,
-                    not Students.classes is None
+                    Students.status == 'enrolled'
                 ))
 
         if filter == 'filterSecondary':

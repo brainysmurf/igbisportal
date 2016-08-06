@@ -47,6 +47,7 @@ class APIDownloader(object):
 		if not lazy:
 			# Immediately do our thang.
 			self.download(overwrite=True)
+			self.open_apply_download(overwrite=True)
 
 	def default_logger(self, *args, **kwargs):
 		#print(args)   # uncomment this line
@@ -66,25 +67,41 @@ class APIDownloader(object):
 
 	def open_apply_download(self, overwrite=False):
 		"""
-		Just testing things out
+		TODO: Make overwrite meaningful
 		"""
-		#path_to_jsons = gns.settings.path_to_jsons.replace('jsons', 'oa_jsons')
-		api_token = settings.get("OPENAPPLY", 'oa_api_key')
-		settings.get("OPENAPPLY", 'oa_url')
-		url = gns('{settings.oa_url}/{{uri}}')
-
+		api_token = gns.config.openapply.api_token
+		url = "{}/{{uri}}".format(gns.config.openapply.api_url)
 		url = url.format(uri='students')
 
-		r = requests.get(url, params=dict(
-			auth_token=api_token
-			))
-		try:
-			if not r.ok:
-				self.debug and self.default_logger('Download request did not return "OK"')
-			json_info = r.json()
+		since_id = 0
+		compiled_json_obj = {'students':[]}
 
-		except ValueError:
-			self.debug and self.default_logger('Invalid json after download. Oops?')
+		while since_id >= 0:
+
+			r = requests.get(url, params=dict(
+				auth_token=api_token,
+				count=1000,
+				since_id=since_id
+				))
+			try:
+				if not r.ok:
+					self.debug and self.default_logger('Download request did not return "OK"')
+					since_id = -1
+				else:
+					json_info = r.json()
+					# make since_id the id for the last id passed
+					these_students = json_info.get('students')
+					if not these_students:
+						since_id = -1
+					else:
+						since_id = these_students[-1].get('id')
+						compiled_json_obj['students'].extend(these_students)
+
+			except ValueError:
+				self.debug and self.default_logger('Invalid json after download. Oops?')
+
+		path = self.build_json_path('open_apply_users', '.json')
+		self.write_to_disk(compiled_json_obj, path)
 
 	def download(self, overwrite=False):
 		"""
