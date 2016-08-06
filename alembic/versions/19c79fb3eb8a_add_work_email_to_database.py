@@ -21,11 +21,14 @@ if prefix is None or prefix.upper() is "NONE":
     prefix = ""
 
 def upgrade():
-    op.add_column('{}parents'.format(prefix), 
-        sa.Column('work_email', 
-            sa.String(255)
-            )
-        )
+	try:
+	    op.add_column('{}parents'.format(prefix), 
+	        sa.Column('work_email', 
+	            sa.String(255)
+	            )
+	        )
+	except:
+		pass
 
 def downgrade():
     pass
