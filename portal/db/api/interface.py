@@ -53,6 +53,10 @@ class APIDownloader(object):
 		#print(args)   # uncomment this line
 		pass
 
+	def download_get(self, *args, **kwargs):
+		print("Downloading via api: {}".format(args[0]))
+		return requests.get(*args, **kwargs)
+
 	def build_json_path(self, *args):
 		"""
 		Pass it a variable number of parameters to build the path to json
@@ -78,7 +82,7 @@ class APIDownloader(object):
 
 		while since_id >= 0:
 
-			r = requests.get(url, params=dict(
+			r = self.download_get(url, params=dict(
 				auth_token=api_token,
 				count=1000,
 				since_id=since_id
@@ -129,7 +133,7 @@ class APIDownloader(object):
 				url = self.url.format(uri=gns.section)
 				self.debug and self.default_logger('Downloading {}'.format(url))
 
-				r = requests.get(url, params=dict(
+				r = self.download_get(url, params=dict(
 					auth_token=self.api_token
 					))
 				try:
@@ -171,7 +175,7 @@ class APIDownloader(object):
 				if not fileexists:
 					self.debug and self.default_logger('Downloading {}'.format(this_filename))
 					try:
-						r = requests.get(self.url.format(uri=this_url), params=dict(
+						r = self.download_get(self.url.format(uri=this_url), params=dict(
 						auth_token=self.api_token
 						))
 					except requests.exceptions.SSLError:

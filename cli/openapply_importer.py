@@ -79,6 +79,7 @@ class OA_Medical_Importer:
             }
 
         url = gns('{config.openapply.url}/api/v1/students/')
+        print("Downloading via api: {}".format(url))
         result = requests.get(url, params=initial_params)
         if not result.ok:
             from IPython import embed;embed();exit()

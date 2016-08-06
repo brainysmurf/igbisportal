@@ -30,7 +30,6 @@ class DatabaseSetterUpper(object):
 
 				student_mb_id = student.get('managebac_student_id')
 				student_email = student.get('email')
-				name = student.get('first_name') + ' ' + student.get('last_name')
 
 				with DBSession() as session:
 
@@ -45,18 +44,19 @@ class DatabaseSetterUpper(object):
 						except NoResultFound:
 							db_student = None
 
-					if db_student:
+					# FIXME: Why is db_student.status always None here?
+					if db_student and db_student.status != student.get('status'):
 						print('\t Changed status of {} from {} to {}'.format(db_student, db_student.status, student.get('status')))
 						db_student.status = student.get('status')
 
 					else:
-						print("\t ----")
+						pass
+						#print("\t ----")
 
 	def setup_database(self):
 		"""
 		Reads in file information (made from Go.download) and sets up the database structures
 		"""
-
 
 		busadmins = []
 		busadmins.append(BusAdmin(first_name="Anne", last_name="Fowles", type="BusAdmin", email="anne.fowles@igbis.edu.my"))
