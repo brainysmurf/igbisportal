@@ -271,7 +271,7 @@ def splash(request):
                 menu_item(icon="folder", display="MYP Subject Overviews 2015-16", url="https://docs.google.com/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit#gid=0"),
                 menu_separator(),
                 menu_item(icon="folder", display="Timetables Semester One 2016/17", url="https://drive.google.com/drive/folders/0By9YOJwliLtBSnFXUnhWcUdPdms"),
-                menu_item(icon="folder", display="Duties (not available yet)", url="#"),
+                menu_item(icon="folder", display="Duties", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1lhsGHubespv-sVI1RPcTYJDf_NKNGft983PJ5R_BrVs/edit?usp=sharing"),
                 menu_item(icon="folder", display="Cover Rota (not available yet)", url="#")
             ]
             }),
