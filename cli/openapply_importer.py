@@ -4,7 +4,7 @@ Read in info from CSV file and update the database appropriately
 import csv
 from portal.db import Database, DBSession
 db = Database()
-import click
+import click, json
 import gns
 import requests
 
@@ -69,23 +69,30 @@ class OA_Medical_Importer:
 
                 updater(obj)
 
+    def download_get(self, *args, **kwargs):
+        print("Downloading via api: {}".format(args[0]))
+        return requests.get(*args, **kwargs)
+
     def read_in_from_api(self):
 
         # First call the API to get students who are currently enrolled
-        initial_params = {
-            'auth_token': gns.config.openapply.api_token, 
-            'count': 1000,    # we have less than 1000 enrolled, so this should be okay for now
-            'status': 'enrolled'
-            }
+        # initial_params = {
+        #     'auth_token': gns.config.openapply.api_token, 
+        #     'count': 1000,    # we have less than 1000 enrolled, so this should be okay for now
+        #     'status': 'enrolled'
+        #     }
 
-        url = gns('{config.openapply.url}/api/v1/students/')
-        print("Downloading via api: {}".format(url))
-        result = requests.get(url, params=initial_params)
-        if not result.ok:
-            from IPython import embed;embed();exit()
-        result_json = result.json()['students']
+        # url = gns('{config.openapply.url}/api/v1/students/')
+        # print("Downloading via api: {}".format(url))
+        # result = requests.get(url, params=initial_params)
+        # if not result.ok:
+        #     from IPython import embed;embed();exit()
+        # result_json = result.json()['students']
 
-        for student in result_json:
+        with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
+            result_json = json.load(_f)
+
+        for student in result_json['students']:
 
             # Get the full information
             gns.user_id = student['id']
@@ -94,7 +101,7 @@ class OA_Medical_Importer:
                 'auth_token': gns.config.openapply.api_token, 
             }
 
-            student_info = requests.get(url, params=this_params)
+            student_info = self.download_get(url, params=this_params)
             if not student_info.ok:
                 # Probably not a student on MB yet
                 # TODO: Notify someone?
@@ -102,6 +109,7 @@ class OA_Medical_Importer:
             student = student_info.json().get('student')
 
             health_info = student['custom_fields'].get('health_information')
+            vaccination_info = student['custom_fields'].get('immunization_record')
             emerg_contact_info = student['custom_fields'].get('emergency_contact')
 
             obj = MedInfo()
@@ -134,6 +142,7 @@ class OA_Medical_Importer:
 
                             setattr(obj, this_field, value)
 
+                    print("Updating record for {}".format(student))
                     updater(obj)
             else:
                 print("A student with no managebac student id?")
