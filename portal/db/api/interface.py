@@ -30,9 +30,6 @@ class APIDownloader(object):
 		self.url = 'https://{prefix}.managebac.com/api/{{uri}}'.format(prefix=self.prefix)
 		self.api_token = api_token or gns.config.managebac.api_token
 
-		# settings.get('MANAGEBAC', 'sections', required=True)
-		# settings.get('MANAGEBAC', 'sections_with_members', required=True)
-
 		self.section_urls = {}
 		for section in gns.config.managebac.sections.split(','):
 			try:
@@ -69,6 +66,19 @@ class APIDownloader(object):
 		with open(path, 'w') as _f:
 			json.dump(obj, _f, indent=4)
 
+	def managebac_users_download(self):
+		api_token = gns.config.managebac.api_token
+		url = gns.config.managebac.api_url + '/users'
+		r = self.download_get(url, params=dict(
+				auth_token=api_token,
+			))
+		if not r.ok:
+			print("Failed")
+		else:
+			json_obj = r.json()
+			path = self.build_json_path('users', '.json')
+			self.write_to_disk(json_obj, path)
+
 	def open_apply_download(self, overwrite=False):
 		"""
 		TODO: Make overwrite meaningful
@@ -78,31 +88,32 @@ class APIDownloader(object):
 		url = url.format(uri='students')
 
 		since_id = 0
-		compiled_json_obj = {'students':[]}
+		compiled_json_obj = {'students':[], 'parents':[]}
 
 		while since_id >= 0:
 
 			r = self.download_get(url, params=dict(
 				auth_token=api_token,
-				count=1000,
+				count=10,
 				since_id=since_id
 				))
-			try:
-				if not r.ok:
-					self.debug and self.default_logger('Download request did not return "OK"')
+
+			if not r.ok:
+				self.debug and self.default_logger('Download request did not return "OK"')
+				since_id = -1
+			else:
+				json_info = r.json()
+				# make since_id the id for the last id passed
+				these_students = json_info.get('students')
+				these_links = json_info.get('linked')
+				if not these_students:
 					since_id = -1
 				else:
-					json_info = r.json()
-					# make since_id the id for the last id passed
-					these_students = json_info.get('students')
-					if not these_students:
-						since_id = -1
-					else:
-						since_id = these_students[-1].get('id')
+					since_id = these_students[-1].get('id')
+					if these_students:
 						compiled_json_obj['students'].extend(these_students)
-
-			except ValueError:
-				self.debug and self.default_logger('Invalid json after download. Oops?')
+					if these_links:
+						compiled_json_obj['parents'].extend(these_links.get('parents'))
 
 		path = self.build_json_path('open_apply_users', '.json')
 		self.write_to_disk(compiled_json_obj, path)

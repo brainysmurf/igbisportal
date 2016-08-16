@@ -45,6 +45,176 @@ def managebac(obj, download, setupdb):
     dl(lazy=not download, verbose=obj.verbose)
     db_setup(lazy=not setupdb, verbose=obj.verbose)
 
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
+import ssl
+
+@sync.command()
+@click.pass_obj
+def new_students(obj):
+    import gns
+    mb_file = gns.config.paths.jsons + '/users.json'
+    mb_data = None
+    oa_file = gns.config.paths.jsons + '/open_apply_users.json'
+    oa_data = None
+    import requests, json
+
+    with open(mb_file, 'r') as _f:
+        mb_data = json.load(_f)
+
+    with open(oa_file, 'r') as _f:
+        oa_data = json.load(_f)
+
+    oa_enrolled_students = {}
+    oa_unenrolled_students = {}
+    for student in oa_data['students']:
+        if 'custom_id' in student:
+            if student['status'] == 'enrolled':
+                oa_enrolled_students[student['custom_id']] = student
+            else:
+                oa_unenrolled_students[student['custom_id']] = student
+
+    mb_students = {}
+    for student in mb_data['users']:
+        if student['type'] == 'Students':
+            mb_students[student['student_id']] = student
+
+    to_enroll = []
+    for id_, student in oa_enrolled_students.items():
+        to_enroll.append(student)
+
+        # if not id_ in mb_students:
+        #     name = student['first_name'] + ' ' + student['last_name'] + ' ' + student['grade']
+        #     print(u"Found one to enrolled: {}".format(name))
+        #     if student['first_name'] not in ['Riko']:
+        #         to_enroll.append(student)
+
+    new_user_url = gns.config.managebac.api_url + '/users'
+    auth_token = gns.config.managebac.api_token
+    for student in to_enroll:
+        if student['last_name'] == 'Arcidiacono':
+            student['student_id'] = student["custom_id"]
+            student['type'] = "student"
+            student['year_class'] = student['grade']
+            del student['tags']
+            del student['status']
+            student['welcome_email'] = "Yes"
+            data = {'user':student}
+            print("POST: {}\npayload:\n{}".format(new_user_url, json.dumps(data, indent=2)))
+            #result = requests.post(new_user_url, params={'auth_token':auth_token}, json=data)
+            #print(result.status_code)
+            #from IPython import embed;embed()
+            #assert result.status_code == 201
+
+
+    #from IPython import embed;embed()
+
+@sync.command()
+@click.option('--download/--dontdownload', default=True, help='default is --download')
+@click.option('--update/--dontupdate', default=True, help='default is --update')
+@click.pass_obj
+def update_users(obj, download, update):
+    from portal.db.api.interface import APIDownloader
+    dload = APIDownloader(lazy=True) 
+
+    if download:
+        dload.managebac_users_download()
+        dload.open_apply_download()
+
+    path = dload.build_json_path('users', '.json')
+    with open(path, 'r') as _f:
+        mb_data = json.load(_f)
+    path = dload.build_json_path('open_apply_users', '.json')
+    with open(path, 'r') as _f:
+        oa_data = json.load(_f)
+
+    # Go through Managebac data
+    students = [s for s in oa_data['students'] if s['last_name'].startswith('Arc')]
+    api_token = gns.config.managebac.api_token
+
+    for student in students:
+
+        print(student)
+        mb_student = [s for s in mb_data['users'] if s.get('student_id') == student['custom_id']][0]
+        print(mb_student)
+        put_url = gns.config.managebac.api_url + '/users/{}'.format(mb_student['id'])
+        if update:
+            r = requests.put(put_url, params=dict(
+                    auth_token = api_token
+                ), json={
+                    'user': 
+                        { 
+                            'parents_ids': student['parent_ids']
+                        }
+                    }
+                )
+        from IPython import embed;embed()
+
+
+@sync.command()
+@click.pass_obj
+def photos(obj):
+    """
+    Get all the student photos you can and download them
+    """
+    from portal.db import Database, DBSession
+    db = Database()
+
+    if os.path.isfile('/tmp/idlink.txt'):
+        os.remove('/tmp/idlink.txt')
+
+    Students = db.table_string_to_class('student')
+
+    # We have to do a get here due to expiries
+    # TODO: Make the downloader more robust to allow us to piggyback
+    prefix = gns.config.managebac.prefix
+    api_url = 'https://{prefix}.managebac.com/api/{uri}'.format(prefix=prefix, uri="users")
+    api_token = gns.config.managebac.api_token
+
+    import requests
+    print("Downloading via api: {}".format(api_url))
+    result = requests.get(api_url, params=dict(
+        auth_token=api_token
+    ))
+    photo_links = dict()
+    if not result.ok:
+        print("Could not get updated links, attempting to proceed")
+    else:
+        print('Parsing the data...')
+        for user in result.json()['users']:
+            if 'student_id' in user and 'profile_photo' in user:
+                print("Photo url for student id {} found".format(user['student_id']))
+                photo_links[user['student_id']] = user['profile_photo']
+
+    with DBSession() as session:
+
+        students = session.query(Students).filter(Students.status=='enrolled').all()
+
+        for student in students:
+
+            url = student.profile_photo
+            if not url:
+                continue
+            expires = float(re.findall('&Expires=([0-9]+)', url)[0])
+            expiry_date = datetime.datetime.fromtimestamp(expires)
+            now = datetime.datetime.now()
+            if now > expiry_date:   # expired, use downloaded one
+                url = photo_links[student.student_id]
+
+            if url is None:
+                print("No photo available for {} ... must not be on ManageBac yet".format(student.grade_last_first_nickname_studentid))
+                continue
+
+            print(u"Downloading photo for {}".format(student.grade_last_first_nickname_studentid))
+            r = requests.get(url)
+            if r.ok:
+                file_name = '{}.jpeg'.format(student.id)
+                with open('/tmp/{}'.format(file_name), 'wb') as _f:
+                    _f.write(r.content)
+
+                with open('/tmp/idlink.txt', 'a') as _f:
+                    _f.write("{},{}\n".format(student.barcode, file_name))
+
 @main.group()
 def output():
     """

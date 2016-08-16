@@ -44,7 +44,7 @@ homeroom_mapping = {
     'stephanie.wafzig': (2, '2w'),
     'clare.demnar': (2, '2d'),
 
-    'lisa.mcclurg': (0, '3m'),
+    'lisa.mcclurg': (3, '3m'),
     'marshall.hudson': (3, '3h'),
 
     'kari.twedt': (4, '4t'),
