@@ -243,7 +243,7 @@ class User(PortalORM):
                 (cls.gender == "Male", "M"),
                 (cls.gender == "Female", "F")
             ],
-            else_ = "<uknown>")
+            else_ = "<unknown gender>")
 
     @hybrid_property
     def username(self):
@@ -657,7 +657,7 @@ class Student(Base, User):
 
     @hybrid_property
     def homeroom_teacher_email(self):
-        return self.homeroom_teacher.email if self.homeroom_teacher else "<uknown>"
+        return self.homeroom_teacher.email if self.homeroom_teacher else "<unknown hr teacher>"
 
     @homeroom_teacher_email.expression
     def homeroom_teacher_email_expression(cls):
@@ -770,7 +770,7 @@ class Student(Base, User):
             'PYP': "IGB International School Elementary",
             'MYP': "IGB International School Secondary",
             'DIPLOMA': "IGB International School Secondary"
-        }.get(self.program_of_study, "<uknown>")
+        }.get(self.program_of_study, "<unknown site>")
 
     @hybrid_property
     def destiny_patron_type(self):
@@ -784,8 +784,10 @@ class Student(Base, User):
             return "Student Grade 3-5"
         elif self.grade in range(-2,0):
             return "Early Years (EY1-EY2)"
+        elif self.grade == -3:
+            return "Fireflies"
         else:
-            return "<uknown>"
+            return "<unknown program>"
 
 class Parent(Base, User):
     """
