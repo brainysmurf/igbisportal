@@ -16,32 +16,43 @@ ManageBac doesn't export the grade information, just the homeroom advisor,
 So this provides a workaround
 """
 homeroom_mapping = {
-    'rachel.fleury':(6, '6'),
-    'tim.bartle': (7, '7'),
-    'sheena.kelly': (7, '7'), 
-    'benjamin.wylie': (8, '8'),
-    'emily.heys': (8, '8'),
+    'jade.saba':(6, '6'),
+    'sheena.kelly':(6, '6'),
+    'glen.fleury': (7, '7'),
+    'jo.spivey-jones': (7, '7'),
+    'adam.morris': (8, '8'),
+    'silvana.evans': (8, '8'),
+    'beth.mullin': (9, '9'),
     'dean.watters':(9, '9'),
-    'glen.fleury': (9, '9'),
     'marcus.wetherell': (10, '10'),
-    'diane.douglas': (10, '10'),
-    'paul.skadsen': (11, '11'),
-    'nathalie.chotard': (11, '11'),
-    'gabriel.evans': (11, '11'),
-    'michael.hawkes': (12, '12'),
-    'mary.richards': (-9, 'EY{}R'),
-    'deborah.king': (-9, 'EY{}K'),
-    'sally.watters': (-9, 'EY{}W'),
-    'leanne.harvey':(0, 'KH'),
-    'lisa.mcclurg': (0, 'KM'),
-    'shireen.blakeway': (1, '1B'),
-    'kath.kummerow': (2, '2K'),
-    'michelle.ostiguy': (3, '3O'),
-    'marshall.hudson': (3, '3H'),
-    'kari.twedt': (4, '4T'),
-    'steven.harvey': (4, '4H'),
-    'kathy.mckenzie': (5, '5M'),
-    'yolaine.johanson': (5, '5J'),
+    'scott.cameron': (10, '10'),
+    'diane.douglas': (11, '11'),
+    'matthew.marshall': (11, '11'),
+    'christopher.thompson': (12, '12'),
+    'natalie.chotard': (12, '12'),
+
+    'mary.richards': (-9, 'eyr'),
+    'deborah.king': (-9, 'eyk'),
+    'tamara.snooks': (-9, 'eys'),
+
+    'leanne.harvey':(0, 'kh'),
+    'megan.ngatai': (0, 'kn'),
+
+    'sally.watters': (1, '1w'),
+    'shireen.blakeway': (1, '1b'),
+
+    'stephanie.wafzig': (2, '2w'),
+    'clare.demnar': (2, '2d'),
+
+    'lisa.mcclurg': (0, '3m'),
+    'marshall.hudson': (3, '3h'),
+
+    'kari.twedt': (4, '4t'),
+    'steven.harvey': (4, '4h'),
+
+    'yolaine.johanson': (5, '5j'),
+    'kathy.mckenzie': (5, '5m')
+
     }
 
 class Error(Exception):
@@ -108,6 +119,7 @@ class ParentAccounts:
         self._since = since
         self._tomorrow = datetime.datetime.now().date() + datetime.timedelta(days=1)
         self.build()
+        self._echo_count = 0
 
     @classmethod
     def make_family_id(cls):
@@ -119,6 +131,16 @@ class ParentAccounts:
     def make_parent_link(cls, parent, student):
         ParentAccounts.parent_links[parent.id].append(student)
 
+    def echo(self, *args, **kwargs):
+        """
+        Ensure that commit-batch is written for (at least) every ten times
+        """
+        self._echo_count += 1
+        if self._echo_count >= 10:
+            click.echo('commit-batch')
+            self._echo_count = 0
+        click.echo(*args, **kwargs)
+
     def make_parent_group(self, group, email=None):
         ParentAccounts.groups[group] = type('Parents Group', (), {})
         ParentAccounts.groups[group].name = "Parents of " + group
@@ -129,7 +151,7 @@ class ParentAccounts:
     def make_class_group(self, group, email=None):
         if not group in ParentAccounts.classes:
             ParentAccounts.classes[group] = type("Parents Classes Group", (), {})
-            ParentAccounts.classes[group].name = "Parents of children enrolled in classs " + group
+            ParentAccounts.classes[group].name = "Parents of children enrolled in class " + group
             ParentAccounts.classes[group].email = group if email is None else email
             ParentAccounts.classes[group].list = []
 
@@ -137,13 +159,15 @@ class ParentAccounts:
         if not self._since:
             return session.query(Students).options(joinedload('parents'),joinedload('classes')).\
                 filter(
-                        Students.is_archived==False
+                        Students.is_archived==False,
+                        Students.status == 'enrolled'
                     ).order_by(Students.student_id)
         else:
             # TODO: attendance_start_date REALLY needs to be a freaking date column
             return session.query(Students).options(joinedload('parents'),joinedload('parents')).\
                 filter(and_(
                     Students.is_archived==False,
+                    Students.status == 'enrolled',
                     func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") >= self._since, 
                     func.to_timestamp(func.coalesce(Students.attendance_start_date, '3000-01-01'), "YYYY-MM-DD") <= self._tomorrow
                     )
@@ -280,7 +304,7 @@ class ParentAccounts:
                 # derive family_id, and save it in the object
                 fam.family_id = family_id
 
-                verbose and click.echo(family_id + '_')
+                verbose and self.echo(family_id + '_')
 
                 stu_index = 0  # first child is 0, counting up
 
@@ -292,7 +316,7 @@ class ParentAccounts:
 
                     fam.students.append(student)                    # append student info to the family object
 
-                    verbose and click.echo("\t{} ({})".format(student, _sid))
+                    verbose and self.echo("\t{} ({})".format(student, _sid))
                     stu_index += 1
 
                     parent_index = 9   # first parent is 9, counting down
@@ -308,7 +332,7 @@ class ParentAccounts:
                         if parent not in fam.parents:
                             fam.parents.append( parent )
 
-                        verbose and click.echo("\t\t {} ({})".format(parent.igbis_email_address, _pid))
+                        verbose and self.echo("\t\t {} ({})".format(parent.igbis_email_address, _pid))
                         parent_index -= 1
 
                 self.family_accounts.append(fam)
@@ -379,7 +403,7 @@ class ParentAccounts:
         for gns.family in self.family_accounts:
 
             for gns.parent in gns.family.parents:
-                click.echo( gns(
+                self.echo( gns(
                     'gam create user \'{parent.igbis_email_address}\' '\
                     'firstname "{parent.first_name}" '\
                     'lastname "{parent.last_name}" '\
@@ -410,27 +434,26 @@ class ParentAccounts:
             #         'add member user \'{parent.igbis_email_address}\''
             #     ))
 
-
         click.echo('commit-batch')
 
         for group in ParentAccounts.groups:
             gns.group = ParentAccounts.groups[group]            
             for gns.parent_email in gns.group.list:
-                click.echo( gns(
+                self.echo( gns(
                     'gam update group '\
                     '\'{group.email}\' '\
                     'add member user \'{parent_email}\''
                     )
                 )
 
-        for class_ in ParentAccounts.classes:
-            gns.group = ParentAccounts.classes[class_]
-            for gns.parent_email in gns.group.list:
-                click.echo( gns(
-                    'gam update group '
-                    '\'{group.email}\' '
-                    'add member user \'{parent_email}\''
-                    )
-                )
+        # for class_ in ParentAccounts.classes:
+        #     gns.group = ParentAccounts.classes[class_]
+        #     for gns.parent_email in gns.group.list:
+        #         click.echo( gns(
+        #             'gam update group '
+        #             '\'{group.email}\' '
+        #             'add member user \'{parent_email}\''
+        #             )
+        #         )
 
 
