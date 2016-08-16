@@ -1,6 +1,7 @@
 from portal.db import Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from collections import defaultdict
+import sys
 
 # Makes an object so we can use dot notation
 DO = lambda name, **kwargs: type(name, (), kwargs)
@@ -121,7 +122,7 @@ class updater_helper:
 		TODO: Self is not used, should probably be a class method?
 		TODO: Make a logger so I can track changes
 		"""
-		verbose = False
+		verbose = True
 
 		with DBSession() as session:
 			try:
@@ -133,42 +134,43 @@ class updater_helper:
 				session.add(obj)
 				row = None
 
+		if row:
+			# Get list of columns that the object possesses and are available in the database
+			column_names = [c.name for c in row.__table__.columns if c.name != 'id']
+			column_names = [c for c in column_names if hasattr(obj, c)]
 
-			if row:
-				# Get list of columns that the object possesses and are available in the database
-				column_names = [c.name for c in row.__table__.columns if c.name != 'id']
-				column_names = [c for c in column_names if hasattr(obj, c)]
+			# if hasattr(row, 'student_id') and row.student_id == '20300008':
+			# 	from IPython import embed;embed();exit()
 
-				# if hasattr(row, 'student_id') and row.student_id == '20300008':
-				# 	from IPython import embed;embed();exit()
+			for column in column_names:
+				if verbose:
+					pass #sys.stdout.write('Column {}'.format(column))
+				left = getattr(row, column)  # has
+				right = getattr(obj, column) # needs
+				if verbose:
+					if left is not None or right is not None:
+						pass #sys.stdout.write(u' has: {}; needs : {} '.format(left, right))
 
-				for column in column_names:
-					if verbose:
-						print('Column {}'.format(column))
-					left = getattr(row, column)  # has
-					right = getattr(obj, column) # needs
-					if verbose:
-						print(u'has (left): {}; needs (right): {}'.format(left, right))
-
-					# If there are some values that are different, construct an update object
-					# and execute with the session obj
-					# Second boolean discovers cases where field was cleared
-					if ((right==False or right) and left != right) or (right is None and (left or None) != (right or None)):
-						values_statement = {column: right}
+				# If there are some values that are different, construct an update object
+				# and execute with the session obj
+				# Second boolean discovers cases where field was cleared
+				if ((right==False or right) and left != right) or (right is None and (left or None) != (right or None)):
+					values_statement = {column: right}
+					with DBSession() as session:
 						update_obj = obj.__table__.update().\
 							where(obj.__table__.c.id == obj.id).\
 							values(**values_statement)
 						session.execute(update_obj)
-						if verbose: 
-							print(u'changed column {} from {} to {}'.format(column, left, right))
+					if verbose: 
+						sys.stdout.write(u'CHANGED id: {} column {} from {} to {}\n'.format(obj.id, column, left, right))
 
-						# TODO: Log this
-					else:
-						if verbose:
-							print(u'did not change, {} is right'.format(left or "<None>"))
-			else:
-				if verbose:
-					print('no row?')
+					# TODO: Log this
+				else:
+					if verbose:
+						pass #sys.stdout.write(u'... no change needed\n'.format(left or "<None>"))
+		else:
+			if verbose:
+				print('no row?')
 
 	def collection(self, left, right, attr, left_column='id', right_column='id'):
 		"""

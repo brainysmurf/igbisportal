@@ -92,6 +92,8 @@ class OA_Medical_Importer:
         with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
             result_json = json.load(_f)
 
+        # all_columns = set()
+
         for student in result_json['students']:
 
             # Get the full information
@@ -112,6 +114,7 @@ class OA_Medical_Importer:
             vaccination_info = student['custom_fields'].get('immunization_record')
             emerg_contact_info = student['custom_fields'].get('emergency_contact')
 
+            # Construct an instance of MedInfo, building it up
             obj = MedInfo()
             obj.id = student['managebac_student_id']  # This is the managebac primary id, not the student_id (which is a custom field)
 
@@ -119,9 +122,11 @@ class OA_Medical_Importer:
                 # illegal number
                 continue
 
-            if obj.id:   # might need to investigate how a student ends up with
-                for gns.prefix, info_kind in [('health_information', health_info), ('emergency_contact', emerg_contact_info)]:
+            import sys
 
+            if obj.id:   # might need to investigate how a student ends up with
+                sys.stdout.write("record ID: {}\n".format(obj.id))
+                for gns.prefix, info_kind in [('health_information', health_info), ('emergency_contact', emerg_contact_info), ('immunization_record', vaccination_info)]:
                     for index in range(len(info_kind)):
                         gns.index = index + 1
 
@@ -129,8 +134,11 @@ class OA_Medical_Importer:
                         for field in [f for f in info_kind[index].keys() if f != 'id']:
                             gns.field = field
                             this_field = gns('{prefix}_{index}_{field}')
+                            # all_columns.add(this_field)
+                            # sys.stdout.write(this_field + ': ')
 
                             value = info_kind[index].get(field)
+                            # sys.stdout.write(str(value) + '\n')
 
                             # Do some value mangling....
                             if isinstance(value, dict):
@@ -139,14 +147,15 @@ class OA_Medical_Importer:
 
                             if isinstance(value, list):
                                 value = ", ".join(value)
-
                             setattr(obj, this_field, value)
 
-                    print("Updating record for {}".format(student))
-                    updater(obj)
+                print("Updating record for {}".format(student.get('custom_id', '<no student ID?>')))
+                updater(obj)
             else:
                 print("A student with no managebac student id?")
                 print(student)
+
+            # print("{}: {}".format(len(list(all_columns)), all_columns))
 
     def read_in(self):
         if self.path:

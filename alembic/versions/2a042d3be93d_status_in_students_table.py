@@ -5,7 +5,6 @@ Revises: 19c79fb3eb8a
 Create Date: 2016-08-06 03:35:56.409182
 
 """
-
 # revision identifiers, used by Alembic.
 revision = '2a042d3be93d'
 down_revision = '19c79fb3eb8a'
@@ -21,11 +20,7 @@ if prefix is None or prefix.upper() is "NONE":
     prefix = ""
 
 def upgrade():
-    op.add_column('{}students'.format(prefix), 
-        sa.Column('status', 
-            sa.String(255)
-            )
-        )
-    
+    pass
+            
 def downgrade():
     pass

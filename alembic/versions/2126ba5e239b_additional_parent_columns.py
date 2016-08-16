@@ -20,21 +20,13 @@ if prefix is None or prefix.upper() is "NONE":
     prefix = ""
 
 def upgrade():
-    op.add_column('{}parents'.format(prefix), 
-        sa.Column('home_phone', 
-            sa.String(255)
+    for column in ['health_information_1_bcg_date', 'health_information_1_dtp_dp_date', 'health_information_1_hepatitis_a_date', 'health_information_1_hepatitis_b_date', 'health_information_1_hib_date', 'health_information_1_immunization_file', 'health_information_1_japanese_b_encephalitis_date', 'health_information_1_mmr_date', 'health_information_1_opv_ipv_date', 'health_information_1_varicella_chicken_pox_date']:
+
+        op.add_column('{}medinfo'.format(prefix), 
+            sa.Column(column, 
+                sa.String(255)
+                )
             )
-        )
-    op.add_column('{}parents'.format(prefix), 
-        sa.Column('mobile_phone', 
-            sa.String(255)
-            )
-        )
-    op.add_column('{}parents'.format(prefix), 
-        sa.Column('work_phone', 
-            sa.String(255)
-            )
-        )
 
 def downgrade():
     pass
