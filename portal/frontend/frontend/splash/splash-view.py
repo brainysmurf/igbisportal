@@ -273,7 +273,7 @@ def splash(request):
                 menu_item(icon="folder", display="Timetables Semester One 2016/17", url="https://drive.google.com/drive/folders/0By9YOJwliLtBSnFXUnhWcUdPdms"),
                 menu_item(icon="folder", display="Duties", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1lhsGHubespv-sVI1RPcTYJDf_NKNGft983PJ5R_BrVs/edit?usp=sharing"),
                 menu_item(icon="folder", display="Cover Rota (not available yet)", url="#"),
-                menu_item(icon="folder", display="SS Meeting Minutes 2016-2017", url="https://docs.google.com/document/d/12m_9oOrDWb_vhmOurmK4cJpweqpPxUKiJkmXV8HEQEs")
+                menu_item(icon="folder", display="Meeting Minutes 2016-2017", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERfkxJcEhDaURrcXRQRXU0bkwwUWUybG9fc3E4cG5vUkE3c3FZdTZhT3hldEE")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
