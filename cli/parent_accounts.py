@@ -31,9 +31,9 @@ homeroom_mapping = {
     'christopher.thompson': (12, '12'),
     'natalie.chotard': (12, '12'),
 
-    'mary.richards': (-9, 'eyr'),
-    'deborah.king': (-9, 'eyk'),
-    'tamara.snooks': (-9, 'eys'),
+    'mary.richards': (-1, 'eyr'),
+    'deborah.king': (-1, 'eyk'),
+    'tamara.snooks': (-1, 'eys'),
 
     'leanne.harvey':(0, 'kh'),
     'megan.ngatai': (0, 'kn'),
@@ -192,17 +192,15 @@ class ParentAccounts:
             self.make_parent_group(group, group.lower().replace(' ', ''))
 
         for username, _ in homeroom_mapping.items():
+            # grade/homeroom/etc is here in case we need it for mapping purposes
+            # no longer used
             grade, homeroom = _
             if grade >= 6:
                 group = 'homeroom.' + homeroom + (username.split('.')[1][0]).lower()
-            elif grade >= -2:
+            else:
                 group = 'homeroom.' + homeroom
-            elif grade == -9:
-                for i in [1, 2]:
-                    self.make_parent_group('homeroom.'+ homeroom.format(i))
 
-            if grade >= -2:
-                self.make_parent_group(group)
+            self.make_parent_group(group)
 
         with DBSession() as session: # this opens a connection to the database
 
@@ -234,21 +232,15 @@ class ParentAccounts:
 
                         if grade >= 6:
                             homeroom_level_group = 'homeroom.' + homeroom + (teacher.username_handle.split('.')[1][0]).lower()
-                        elif grade >= -2:
+                        else:
                             homeroom_level_group = 'homeroom.' + homeroom
-                        elif grade == -9:
-                            for i in [1, 2]:
-                                homeroom_level_group = 'homeroom.' + homeroom.format(i)
-                                for parent in student.parents:
-                                    ParentAccounts.groups[homeroom_level_group].list.append(parent.igbis_email_address)
 
-                        if grade >= -2:
-                            try:
-                                for parent in student.parents:
-                                    ParentAccounts.groups[homeroom_level_group].list.append(parent.igbis_email_address)
-                            except KeyError:
-                                print("Key Error: {}".format(homeroom_level_group))
-                                #from IPython import embed;embed()
+                        try:
+                            for parent in student.parents:
+                                ParentAccounts.groups[homeroom_level_group].list.append(parent.igbis_email_address)
+                        except KeyError:
+                            print("Key Error: {}".format(homeroom_level_group))
+                            #from IPython import embed;embed()
 
                 for class_ in student.classes:
                     if class_.uniq_id:
