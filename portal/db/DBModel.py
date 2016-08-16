@@ -724,7 +724,7 @@ class Student(Base, User):
         TODO: This is very make-shift
         """
         if not self.homeroom_teacher:
-            return "<no hr>"
+            return "<no hr teacher>"
         return {
             'jade.saba': 'Grade 6S',
             'sheena.kelly': 'Grade 6K', 
@@ -767,9 +767,9 @@ class Student(Base, User):
     @hybrid_property
     def destiny_site_information(self):
         return {
-            'PYP': "IGB International School Elementary",
-            'MYP': "IGB International School Secondary",
-            'DIPLOMA': "IGB International School Secondary"
+            'PYP': "IGBISE",
+            'MYP': "IGBISS",
+            'DIPLOMA': "IGBISS"
         }.get(self.program_of_study, "<unknown site>")
 
     @hybrid_property
