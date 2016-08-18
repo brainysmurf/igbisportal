@@ -546,7 +546,7 @@ class Student(Base, User):
                 'Fireflies': -3,
                 'Early Years 1':-2, 
                 'Early Years 2':-1, 
-                'Kindergarden': 0,
+                'Kindergarten': 0,
             }.get(self.class_grade, -10)
 
     @grade.expression
@@ -555,7 +555,7 @@ class Student(Base, User):
                 (cls.class_grade == 'Fireflies', -3), 
                 (cls.class_grade == 'Early Years 1', -2), 
                 (cls.class_grade == 'Early Years 2', -1), 
-                (cls.class_grade == 'Kindergaren', 0), 
+                (cls.class_grade == 'Kindergarten', 0), 
                 (cls.class_grade == 'Grade 1', 1), 
                 (cls.class_grade == 'Grade 2', 2), 
                 (cls.class_grade == 'Grade 3', 3), 
@@ -601,7 +601,7 @@ class Student(Base, User):
                 'Grade 1': '1', 
                 'Early Years 1':'EY1', 
                 'Early Years 2':'EY2',
-                'Kindergarden': 'KG',
+                'Kindergarten': 'KG',
                 'Fireflies': 'FF',
             }.get(self.class_grade, '<ng>')
 
@@ -611,7 +611,7 @@ class Student(Base, User):
                 (cls.class_grade == 'Fireflies', 'FF'), 
                 (cls.class_grade == 'Early Years 1', 'EY1'), 
                 (cls.class_grade == 'Early Years 2', 'EY2'), 
-                (cls.class_grade == 'Kindergarden', 'KG'), 
+                (cls.class_grade == 'Kindergarten', 'KG'), 
                 (cls.class_grade == 'Grade 1', '1'), 
                 (cls.class_grade == 'Grade 2', '2'), 
                 (cls.class_grade == 'Grade 3', '3'), 
@@ -745,8 +745,8 @@ class Student(Base, User):
             'mary.richards': 'Early Years 1/2R',
             'tamara.snooks': 'Early Years 1/2S',
             'deborah.king': 'Early Years 1/2K',
-            'leanne.harvey': 'Kindergarden H',
-            'megan.ngatai':  'Kindergarden N',
+            'leanne.harvey': 'Kindergarten H',
+            'megan.ngatai':  'Kindergarten N',
             'shireen.blakeway': 'Grade 1B',
             'sally.watters': 'Grade 1W',
             'stephanie.wafzig': 'Grade 2W',
