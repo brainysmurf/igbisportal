@@ -113,11 +113,13 @@ parent_buttons = [
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
     button(name="Classes", externalid=-9, size="", color="orange", url="", icon="star", id="", context_menu={
             'items': [
-                menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
-                menu_item(icon="globe", display="Early Years R", url="https://sites.google.com/a/igbis.edu.my/eyri/"),
-                menu_item(icon="globe", display="Kindergarten - Coming soon", url=""),
-                menu_item(icon="globe", display="Grade 1 - Coming soon", url=""),
-                menu_item(icon="globe", display="Grade 2 - Comming soon", url=""),
+                #menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
+                #menu_item(icon="globe", display="Early Years R", url="https://sites.google.com/a/igbis.edu.my/eyri/"),
+                menu_item(icon="globe", display="Early Years", url="https://sites.google.com/a/igbis.edu.my/early-years-16-17/"),
+                menu_item(icon="globe", display="Kindergarten H", url="https://sites.google.com/a/igbis.edu.my/kgh/?pli=1"),
+                menu_item(icon="globe", display="Kindergarten H", url="https://sites.google.com/a/igbis.edu.my/igbis-kindergarten-n-1617/"),
+                menu_item(icon="globe", display="Grade 1", url="https://sites.google.com/a/igbis.edu.my/grade-1-1617/"),
+                menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-2-2016-2017/"),
                 menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-3-2016-17/"),
                 menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/a/igbis.edu.my/g4-igbis1617/"),
                 menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
