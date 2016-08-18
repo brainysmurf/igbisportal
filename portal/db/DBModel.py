@@ -38,6 +38,8 @@ from sqlalchemy.orm import column_property
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql.functions import concat
 from sqlalchemy.sql.expression import case
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+
 from sqlalchemy import inspect, func
 Base = declarative_base()
 metadata = Base.metadata
@@ -544,7 +546,7 @@ class Student(Base, User):
                 'Fireflies': -3,
                 'Early Years 1':-2, 
                 'Early Years 2':-1, 
-                'Kindergarten': 0,
+                'Kindergarden': 0,
             }.get(self.class_grade, -10)
 
     @grade.expression
@@ -553,7 +555,7 @@ class Student(Base, User):
                 (cls.class_grade == 'Fireflies', -3), 
                 (cls.class_grade == 'Early Years 1', -2), 
                 (cls.class_grade == 'Early Years 2', -1), 
-                (cls.class_grade == 'Kindergarten', 0), 
+                (cls.class_grade == 'Kindergaren', 0), 
                 (cls.class_grade == 'Grade 1', 1), 
                 (cls.class_grade == 'Grade 2', 2), 
                 (cls.class_grade == 'Grade 3', 3), 
@@ -599,7 +601,7 @@ class Student(Base, User):
                 'Grade 1': '1', 
                 'Early Years 1':'EY1', 
                 'Early Years 2':'EY2',
-                'Kindergarten': 'KG',
+                'Kindergarden': 'KG',
                 'Fireflies': 'FF',
             }.get(self.class_grade, '<ng>')
 
@@ -609,7 +611,7 @@ class Student(Base, User):
                 (cls.class_grade == 'Fireflies', 'FF'), 
                 (cls.class_grade == 'Early Years 1', 'EY1'), 
                 (cls.class_grade == 'Early Years 2', 'EY2'), 
-                (cls.class_grade == 'Kindergarten', 'KG'), 
+                (cls.class_grade == 'Kindergarden', 'KG'), 
                 (cls.class_grade == 'Grade 1', '1'), 
                 (cls.class_grade == 'Grade 2', '2'), 
                 (cls.class_grade == 'Grade 3', '3'), 
@@ -629,7 +631,6 @@ class Student(Base, User):
     def health_information(self):
         from portal.db import DBSession, Database
         db = Database()
-        from sqlalchemy.orm.exc import NoResultFound
         MedInfo = db.table_string_to_class('med_info')
 
         with DBSession() as session:
@@ -637,21 +638,22 @@ class Student(Base, User):
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
                 return "<>"
-
             return med_info.health_information
 
     @hybrid_property
     def emergency_info(self):
         from portal.db import DBSession, Database
         db = Database()
-        from sqlalchemy.orm.exc import NoResultFound
         MedInfo = db.table_string_to_class('med_info')
 
         with DBSession() as session:
             try:
+                print("ID: {}".format(self.id))
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
                 return "<>"
+            except MultipleResultsFound:
+                pass  # uh oh
 
             return med_info.emergency_info
 
@@ -1311,7 +1313,6 @@ class MedInfo(Base):
     immunization_record_1_opv_ipv_question = Column(String(255))
     immunization_record_1_varicella_chicken_pox_date = Column(String(255))
     immunization_record_1_varicella_chicken_pox_question = Column(String(255))
-
 
     @hybrid_property
     def emergency_info(self):
