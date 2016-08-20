@@ -122,7 +122,7 @@ class updater_helper:
 		TODO: Self is not used, should probably be a class method?
 		TODO: Make a logger so I can track changes
 		"""
-		verbose = True
+		verbose = False
 
 		with DBSession() as session:
 			try:

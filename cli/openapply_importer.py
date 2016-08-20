@@ -81,21 +81,41 @@ class OA_Medical_Importer:
         Students = db.table_string_to_class('student')
 
         for student in result_json['students']:
+
             if not student['managebac_student_id']:
                 if not student['custom_id']:
-                    sys.stdout.write("Cannot update this student, no custom_id, no managebac_student_id {}\n".format(student['name']))
+                    if student['status'] == 'enrolled':
+                        sys.stdout.write(u"Cannot update this student, no custom_id, no managebac_student_id: {}\n".format(student['name']))
                     continue
                 with DBSession() as session:
                     try:
                         db_student = session.query(Students).filter(Students.student_id == student['custom_id']).one()
                     except NoResultFound:
-                        sys.stdout.write("{} not found in database, no student_id: {}\n".format(student['name'], student['custom_id']))
+                        sys.stdout.write(u"{} not found in database, no student_id: {}\n".format(student['name'], student['custom_id']))
                         continue
                     except MultipleResultsFound:
-                        sys.stdout.write("Found multiple results when querying {}: {}".format(student['custom_id]'], student['name']))
+                        sys.stdout.write(u"Found multiple results when querying {}: {}".format(student['custom_id]'], student['name']))
                         continue
             
                 student['managebac_student_id'] = db_student.id
+            else:
+                #
+                # Ensure we actually have a student with this primary Id
+                # And that it is right
+                # Otherwise we'll end up with an integrity error
+                # I am thinking that openapply does NOT play nicely with MB
+                #
+                if not student['custom_id']:
+                    sys.stdout.write(u"Cannot double-check student exists in table! {} no custom_id present!\n".format(student['name']))
+                    continue
+                with DBSession() as session:
+                    try:
+                        db_student = session.query(Students).filter(Students.student_id == student['custom_id']).one()
+                    except NoResultFound:
+                        continue
+                    if student['managebac_student_id'] != db_student.id:
+                        sys.stdout.write("WORKAROUND for {}".format(student['name']))
+                        student['managebac_student_id'] = db_student.id
 
             # Get the full information
             gns.user_id = student['id']
@@ -110,8 +130,7 @@ class OA_Medical_Importer:
                 continue
 
             oa_student = student_info.json().get('student')
-            if not oa_student.get('managebac_student_id'):
-                oa_student['managebac_student_id'] = student['managebac_student_id']
+            oa_student['managebac_student_id'] = student['managebac_student_id']
 
             health_info = oa_student['custom_fields'].get('health_information')
             vaccination_info = oa_student['custom_fields'].get('immunization_record')
@@ -122,7 +141,7 @@ class OA_Medical_Importer:
             obj.id = oa_student['managebac_student_id']  # This is the managebac primary id, not the student_id (which is a custom field)
 
             if obj.id:   # might need to investigate how a student ends up with
-                sys.stdout.write("record ID: {}\n".format(obj.id))
+                #sys.stdout.write("record ID: {}\n".format(obj.id))
                 for gns.prefix, info_kind in [('health_information', health_info), ('emergency_contact', emerg_contact_info), ('immunization_record', vaccination_info)]:
                     for index in range(len(info_kind)):
                         gns.index = index + 1
@@ -132,10 +151,10 @@ class OA_Medical_Importer:
                             gns.field = field
                             this_field = gns('{prefix}_{index}_{field}')
                             # all_columns.add(this_field)
-                            sys.stdout.write(this_field + ': ')
+                            #sys.stdout.write(this_field + ': ')
 
                             value = info_kind[index].get(field)
-                            sys.stdout.write(str(value) + '\n')
+                            #sys.stdout.write(str(value) + '\n')
 
                             # Do some value mangling....
                             if isinstance(value, dict):
@@ -146,10 +165,10 @@ class OA_Medical_Importer:
                                 value = ", ".join(value)
                             setattr(obj, this_field, value)
 
-                print("Updating record for {}".format(student.get('custom_id', '<no student ID?>')))
+                print(u"Updating record for {}".format(student['name']))
                 updater(obj)
             else:
-                sys.stdout.write("No managebac_student_id for {}?\n".format(student['name']))
+                sys.stdout.write(u"No managebac_student_id for {}?\n".format(student['name']))
 
             # print("{}: {}".format(len(list(all_columns)), all_columns))
 
