@@ -14,6 +14,8 @@ Parent = db.table_string_to_class('Parent')
 Course = db.table_string_to_class('Course')
 IBGroup = db.table_string_to_class('IBGroup')
 
+import hashlib # so we can store unique IDs for busadmins
+
 class DatabaseSetterUpper(object):
 
 	def __init__(self, lazy=True, verbose=False):
@@ -59,69 +61,35 @@ class DatabaseSetterUpper(object):
 		"""
 
 		busadmins = []
-		busadmins.append(BusAdmin(first_name="Anne", last_name="Fowles", type="BusAdmin", email="anne.fowles@igbis.edu.my"))
-		#busadmins.append(BusAdmin(first_name="Amanda", last_name="Clarke", type="BusAdmin", email="amanda.clarke@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Ashwinaa", last_name="Valaidam", type="BusAdmin", email="ashwinaa.valaidam@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="ShuhailaBinti", last_name="MadNasir", type="BusAdmin", email="shuhaila.nasir@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="MDZain", last_name="Mohd", type="BusAdmin", email="md.zain@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Danny", last_name="Yin", type="BusAdmin", email="danny.chan@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Mohd", last_name="AbdHalim", type="BusAdmin", email="halim.abdhalim@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Sarah", last_name="Amin", type="BusAdmin", email="sarahain.mohdamin@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Azilahbinti", last_name="RazaliChan", type="BusAdmin", email="azilah.razali@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Mohammad", last_name="Rizal", type="BusAdmin", email="mohdrizal.jali@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Tania", last_name="Nathan", type="BusAdmin", email="tania.nathan@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Anderina", last_name="Alexander", type="BusAdmin", email="anderina.alexander@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Stephanie", last_name="LimSuLin", type="BusAdmin", email="stephanie.lim@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Tan", last_name="HueiYin", type="BusAdmin", email="hueiyin.tan@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Meena", last_name="Chi", type="BusAdmin", email="meenachi.palanisamy@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Fadlini", last_name="James", type="BusAdmin", email="fadlini.james@igbis.edu.my      "))
-		busadmins.append(BusAdmin(first_name="Nazirah", last_name="Saleh", type="BusAdmin", email="nazirah.mohdsaleh@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Noor", last_name="Ismail", type="BusAdmin", email="carolnisak.ismail@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Sarah", last_name="Suhaimin", type="BusAdmin", email="sarah.suhaimin@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Vanessa", last_name="John", type="BusAdmin", email="vanessa.john@igbis.edu.my          "))
-		busadmins.append(BusAdmin(first_name="Yvonne", last_name="Peter", type="BusAdmin", email="yvonne.peter@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Lim", last_name="Gigi", type="BusAdmin", email="gigi.lim@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Lim", last_name="Natalie", type="BusAdmin", email="natalie.lim@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Shree", last_name="Narayanasamy", type="BusAdmin", email="devishree.narayanasamy@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Catherine", last_name="DeJonge", type="BusAdmin", email="catherine.dejonge@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Siti", last_name="Khalid", type="BusAdmin", email="siti.khalid@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Rubavathy", last_name="Bojan", type="BusAdmin", email="rubavathy.bojan@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Usha", last_name="Krishnan", type="BusAdmin", email="usha.ranikrishnan@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Yuly", last_name="Ahmad", type="BusAdmin", email="yuly.ahmad@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Indros", last_name="Roslam", type="BusAdmin", email="indros.roslan@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Ahmad", last_name="Aslan", type="BusAdmin", email="shazwan.aslan@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Zulkifli", last_name="Zakaria", type="BusAdmin", email="zulkifli.zakaria@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Choong", last_name="Teresa", type="BusAdmin", email="teresa.choong@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Lee", last_name="ShwuYee", type="BusAdmin", email="shwuyee.lee@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Magenjit", last_name="Singh", type="BusAdmin", email="magenjit.kaur@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Jayaletchumy", last_name="Solan", type="BusAdmin", email="clarissa.jaya@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Thila", last_name="Garani", type="BusAdmin", email="thilagarani.kalimuthu@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Rachel", last_name="Ernhui", type="BusAdmin", email="rachel.kong@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Susie", last_name="Tee", type="BusAdmin", email="susie.tee@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Jegathaswary", last_name="Selveraju", type="BusAdmin", email="jegathaswary.selveraju@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Violet", last_name="Phillip", type="BusAdmin", email="violet.phillip@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Ben", last_name="Voey", type="BusAdmin", email="ben.hor@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Anbalagan", last_name="Subramaniam", type="BusAdmin", email="anbalagan.subramaniam@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Noor", last_name="Abdullah", type="BusAdmin", email="aida.a@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Firdaus", last_name="Sulaiman", type="BusAdmin", email="mohd.firdaus@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Chris", last_name="Neoh", type="BusAdmin", email="chris.neoh@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Janqi", last_name="Qi", type="BusAdmin", email="janqi.oo@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Nurlina", last_name="Hussin", type="BusAdmin", email="nurlina.hussin@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Harman", last_name="Mazlan", type="BusAdmin", email="harman.harison@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Kalai", last_name="Jagamarthan", type="BusAdmin", email="kalai@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Nor", last_name="Zainudin", type="BusAdmin", email="hamizar.zainudin@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Muhammad", last_name="Rusli", type="BusAdmin", email="shah.rusli@igbis.edu.my"))
-		busadmins.append(BusAdmin(first_name="Wayne", last_name="Demnar", type="BusAdmin", email="wayne.demnar@igbis.edu.my"))
 
-		admins = []
+		# horrible hack-ish
+		# open up the file that isn't in the rep, that outputs the group info 
+		# for all.team, and then add those that aren't 
+		with open(gns.config.paths.allteam_file) as _f:
+			for line in _f.readlines():
+				if line.startswith(' member:'):
+					_, pre, user_email, post = line.strip("\n").split(" ")
+					handle, _ = user_email.split("@")
+					if "." in handle:
+						try:
+							# most have a dot to seperate first and last names
+							first, last = handle.split(".")
+						except ValueError:
+							# have to do something, so just assume first is before the first dot
+							# and last is everything after that
+							first = handle.split(".")[0].title()
+							last = "".join(handle.split(".")[1:]).title()
+
+						# This gets a usable unique ID integer to use for IDs
+						# very unlikely to produce collisions
+						id_ = int(hashlib.md5(handle).hexdigest()[:12], 16)
+						busadmins.append(BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
 
 		with updater_helper() as u:
 
 			for busadmin in busadmins:
 				u.update_or_add(busadmin)
 
-			# for admin in admins:
-			# 	u.update_or_add(admin)
 
 			# Section refers to users, groups, etc
 
