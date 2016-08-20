@@ -4,14 +4,14 @@ Read in info from CSV file and update the database appropriately
 import csv
 from portal.db import Database, DBSession
 db = Database()
-import click, json
+import click, json, sys
 import gns
 import requests
 
 Students = db.table_string_to_class('student')
 MedInfo = db.table_string_to_class('med_info')
 
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from portal.db.UpdaterHelper import updater_helper
 
@@ -75,26 +75,27 @@ class OA_Medical_Importer:
 
     def read_in_from_api(self):
 
-        # First call the API to get students who are currently enrolled
-        # initial_params = {
-        #     'auth_token': gns.config.openapply.api_token, 
-        #     'count': 1000,    # we have less than 1000 enrolled, so this should be okay for now
-        #     'status': 'enrolled'
-        #     }
-
-        # url = gns('{config.openapply.url}/api/v1/students/')
-        # print("Downloading via api: {}".format(url))
-        # result = requests.get(url, params=initial_params)
-        # if not result.ok:
-        #     from IPython import embed;embed();exit()
-        # result_json = result.json()['students']
-
         with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
             result_json = json.load(_f)
 
-        # all_columns = set()
+        Students = db.table_string_to_class('student')
 
         for student in result_json['students']:
+            if not student['managebac_student_id']:
+                if not student['custom_id']:
+                    sys.stdout.write("Cannot update this student, no custom_id, no managebac_student_id {}\n".format(student['name']))
+                    continue
+                with DBSession() as session:
+                    try:
+                        db_student = session.query(Students).filter(Students.student_id == student['custom_id']).one()
+                    except NoResultFound:
+                        sys.stdout.write("{} not found in database, no student_id: {}\n".format(student['name'], student['custom_id']))
+                        continue
+                    except MultipleResultsFound:
+                        sys.stdout.write("Found multiple results when querying {}: {}".format(student['custom_id]'], student['name']))
+                        continue
+            
+                student['managebac_student_id'] = db_student.id
 
             # Get the full information
             gns.user_id = student['id']
@@ -105,24 +106,20 @@ class OA_Medical_Importer:
 
             student_info = self.download_get(url, params=this_params)
             if not student_info.ok:
-                # Probably not a student on MB yet
-                # TODO: Notify someone?
+                print("Download failed")
                 continue
-            student = student_info.json().get('student')
 
-            health_info = student['custom_fields'].get('health_information')
-            vaccination_info = student['custom_fields'].get('immunization_record')
-            emerg_contact_info = student['custom_fields'].get('emergency_contact')
+            oa_student = student_info.json().get('student')
+            if not oa_student.get('managebac_student_id'):
+                oa_student['managebac_student_id'] = student['managebac_student_id']
+
+            health_info = oa_student['custom_fields'].get('health_information')
+            vaccination_info = oa_student['custom_fields'].get('immunization_record')
+            emerg_contact_info = oa_student['custom_fields'].get('emergency_contact')
 
             # Construct an instance of MedInfo, building it up
             obj = MedInfo()
-            obj.id = student['managebac_student_id']  # This is the managebac primary id, not the student_id (which is a custom field)
-
-            if len(str(obj.id)) != 8:
-                # illegal number
-                continue
-
-            import sys
+            obj.id = oa_student['managebac_student_id']  # This is the managebac primary id, not the student_id (which is a custom field)
 
             if obj.id:   # might need to investigate how a student ends up with
                 sys.stdout.write("record ID: {}\n".format(obj.id))
@@ -135,10 +132,10 @@ class OA_Medical_Importer:
                             gns.field = field
                             this_field = gns('{prefix}_{index}_{field}')
                             # all_columns.add(this_field)
-                            # sys.stdout.write(this_field + ': ')
+                            sys.stdout.write(this_field + ': ')
 
                             value = info_kind[index].get(field)
-                            # sys.stdout.write(str(value) + '\n')
+                            sys.stdout.write(str(value) + '\n')
 
                             # Do some value mangling....
                             if isinstance(value, dict):
@@ -152,8 +149,7 @@ class OA_Medical_Importer:
                 print("Updating record for {}".format(student.get('custom_id', '<no student ID?>')))
                 updater(obj)
             else:
-                print("A student with no managebac student id?")
-                print(student)
+                sys.stdout.write("No managebac_student_id for {}?\n".format(student['name']))
 
             # print("{}: {}".format(len(list(all_columns)), all_columns))
 
@@ -164,4 +160,4 @@ class OA_Medical_Importer:
             self.read_in_from_api()
 
 if __name__ == "__main__":
-    read_in()
+    OA_Importer()
