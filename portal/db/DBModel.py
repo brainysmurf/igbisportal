@@ -641,6 +641,19 @@ class Student(Base, User):
             return med_info.health_information
 
     @hybrid_property
+    def immunization_record(self):
+        from portal.db import DBSession, Database
+        db = Database()
+        MedInfo = db.table_string_to_class('med_info')
+
+        with DBSession() as session:
+            try:
+                med_info = session.query(MedInfo).filter_by(id=self.id).one()
+            except NoResultFound:
+                return "<>"
+            return med_info.immunization_record
+
+    @hybrid_property
     def emergency_info(self):
         from portal.db import DBSession, Database
         db = Database()
@@ -1248,7 +1261,7 @@ class MedInfo(Base):
     health_information_1_heart_problems_history = Column(String(255))
     health_information_1_other_health_problems = Column(String(255))
     health_information_1_other_health_problems_history = Column(String(255))
-    health_information_1_other_information = Column(String(255))
+    health_information_1_other_information = Column(String(500))
     health_information_1_psychological_conditions = Column(String(255))
     health_information_1_psychological_conditions_history = Column(String(255))
     health_information_1_seizure_disorder_epilepsy = Column(String(255))
@@ -1283,7 +1296,7 @@ class MedInfo(Base):
     health_information_2_heart_problems_history = Column(String(255))
     health_information_2_other_health_problems = Column(String(255))
     health_information_2_other_health_problems_history = Column(String(255))
-    health_information_2_other_information = Column(String(255))
+    health_information_2_other_information = Column(String(500))
     health_information_2_psychological_conditions = Column(String(255))
     health_information_2_psychological_conditions_history = Column(String(255))
     health_information_2_seizure_disorder_epilepsy = Column(String(255))
