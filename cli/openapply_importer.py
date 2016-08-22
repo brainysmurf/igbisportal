@@ -165,7 +165,11 @@ class OA_Medical_Importer:
                                 value = ", ".join(value)
                             setattr(obj, this_field, value)
 
-                print(u"Updating record for {}".format(student['name']))
+                # Is there something about a cron context where unicode is different?
+                try:
+                    print(u"Updating record for {}".format(student['name']))
+                except:
+                    print("Updating record for {}".format(student['id']))
                 updater(obj)
             else:
                 sys.stdout.write(u"No managebac_student_id for {}?\n".format(student['name']))
