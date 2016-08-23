@@ -222,7 +222,7 @@ class DatabaseSetterUpper(object):
 		# Now let's look at open_apply and update status, but only if the student is already in there.
 		# We won't use the manager because this is more of a piece-meal thing
 
-		self.update_status()
+		#self.update_status()
 
 
 

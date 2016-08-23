@@ -24,6 +24,7 @@ class APIDownloader(object):
 		Sent in optional params can override settings.ini, useful for debugging
 		"""
 		self.debug = True
+		self.verbose = verbose
 
 		self.prefix = prefix or gns.config.managebac.prefix
 
@@ -44,7 +45,7 @@ class APIDownloader(object):
 		if not lazy:
 			# Immediately do our thang.
 			self.download(overwrite=True)
-			self.open_apply_download(overwrite=True)
+			#self.open_apply_download(overwrite=True)
 
 	def default_logger(self, *args, **kwargs):
 		#print(args)   # uncomment this line
