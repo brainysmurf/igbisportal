@@ -149,8 +149,6 @@ administration_buttons = [
             menu_item(icon="folder", display="SS Camps", url="https://docs.google.com/spreadsheets/d/1l4rF_xnyy3hjKOGftBaOfnACq-PIz2hgT2uIR_Jyd2g/edit#gid=798482198"),
         ]
         }),
-    button(name="Gmail", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
-        context_menu=None),
     button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
     'items': [
         menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
@@ -158,6 +156,8 @@ administration_buttons = [
         menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
         menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
     ]}),
+    button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+        context_menu=None),
     bookings_button,
     button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
 ]
