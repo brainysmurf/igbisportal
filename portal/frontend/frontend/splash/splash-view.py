@@ -217,7 +217,6 @@ def splash(request):
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
         counselor_button_students,
-        button(name="Student Q & A", externalid=-9, size="", color="orange", url="https://docs.google.com/a/igbis.edu.my/forms/d/1Gh8u4NdnPozpEU1ZuHRqDo7Mhgqh5gUueRDwLxscm_8/viewform", icon="question-circle", id="", context_menu=None)
     ])
 
     with DBSession() as session:
@@ -334,13 +333,7 @@ def splash(request):
         button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
         button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
             context_menu=None),
-        button(name="Calendar", externalid=-9, size="", color="peach", url="https://www.google.com/calendar/", icon="calendar", id="", context_menu={
-            'items': [
-                menu_item(icon="search", display="Official Website Calendars", url="http://igbis.edu.my/admissions/calendar-timetable/"),
-                menu_item(icon="search", display="Google Calendar", url="https://www.google.com/calendar"),
-                menu_item(icon="search", display="Internal School Calendar", url="https://drive.google.com/a/igbis.edu.my/file/d/0By9YOJwliLtBdGxOZlhfOTA1MjdmdDk4NXlkRkE5RjVMQ0dJ/view?usp=sharing"),
-            ],
-            }),
+        button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
 
         button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
