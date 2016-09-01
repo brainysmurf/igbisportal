@@ -123,6 +123,8 @@ parent_buttons = [
                 menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-3-2016-17/"),
                 menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/a/igbis.edu.my/g4-igbis1617/"),
                 menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
+                menu_separator(),
+                menu_item(icon="globe", display="Single Subject Classes", url="https://sites.google.com/a/igbis.edu.my/single-subject-class-16-17/welcome"),
             ]
         }),
     button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu={
