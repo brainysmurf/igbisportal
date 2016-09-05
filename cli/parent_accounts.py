@@ -22,7 +22,7 @@ homeroom_mapping = {
     'jo.spivey-jones': (7, '7'),
     'adam.morris': (8, '8'),
     'silvana.evans': (8, '8'),
-    'beth.mullin': (9, '9'),
+    'mick.smith: (9, '9'),
     'dean.watters':(9, '9'),
     'marcus.wetherell': (10, '10'),
     'scott.cameron': (10, '10'),
