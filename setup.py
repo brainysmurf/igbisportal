@@ -1,7 +1,6 @@
 from distutils.core import setup
 setup(
     name = "IGBIS Portal",
-    #packages = ['db'],
     version = "1.5",
     description = "A front end to all the front ends",
     author = "Adam Morris",
@@ -24,7 +23,8 @@ setup(
     'waitress',
     'requests',
     'psycopg2',
-    'python-dateutil'
+    'python-dateutil',
+    'pysftp',
 ],
     # also requires?
     #'scrapyd', 'lxml', 'w3lib', 'cssselect', 'pysqlite'

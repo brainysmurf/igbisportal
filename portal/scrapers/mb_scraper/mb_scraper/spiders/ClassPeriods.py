@@ -131,7 +131,7 @@ class SecondaryHomeroomAdvisors(ClassLevelManageBac):
 class ClassReports(ClassLevelManageBac):
     #name = 'no name because I don't want this to run separetly'
     program = '#'  # myp, dp, or pyp
-    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=27809'
+    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=42556'
 
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
@@ -212,7 +212,7 @@ class PYPClassReportTemplate(ClassReports):
 
 class PYPStudentAttendance(ManageBacLogin):
     name = "PYPStudentAttendance"
-    path = '/admin/reports/attendance/cumulative?program=pyp&term=27809&grade={}&cumulative_view=homeroom'
+    path = '/admin/reports/attendance/cumulative?program=pyp&term=42556&grade={}&cumulative_view=homeroom'
 
     def __init__(self, *args, **kwargs):
         self.grades = [-2, -1, 0, 1, 2, 3, 4, 5]
@@ -243,7 +243,8 @@ class PYPStudentAttendance(ManageBacLogin):
         for row in response.xpath('//tbody/tr'):
 
             user_id = row.xpath('./td[@class="student"]/@user_id').extract()[0]
-
+            # if user_id == '11392152':
+            #     from IPython import embed;embed()
             # Takes a lot of shortcuts here...
             try:
                 absent = row.xpath('./td/span/span[@class="absent"]')
@@ -251,15 +252,33 @@ class PYPStudentAttendance(ManageBacLogin):
                     absences = 0
                 else:
                     absences = int(absent.xpath('./text()').extract()[0].strip('\n'))
+                mini_row = row.xpath('./td[@class="tac vac"]')
+
+                late = mini_row[2].extract()
+                findall = re.findall('[0-9]+', late)
+                if not findall:
+                    late = 0
+                else:
+                    late = int(re.findall('[0-9]+', late)[0])
+                present = mini_row[1].extract()
+                present = int(re.findall('[0-9]+', present)[0])
+                other = mini_row[3].extract()
+                other = int(re.findall('[0-9]+', other)[0])
+
+                present = present + other
+
+                total_present = present + absences + late
+
             except IndexError:
-                absences = None 
+                absences = None
+
 
             if not absences is None:
                 item = PrimaryStudentAbsences()
                 item['student_id'] = user_id
                 item['absences'] = absences
-                item['total_days'] = 85  # HARD-CODED!
-                item['term_id'] = 27809
+                item['total_days'] = total_present
+                item['term_id'] = 42556
 
                 yield item
 
@@ -307,6 +326,7 @@ class PYPTeacherAssignments(PYPClassReportTemplate):
 
             if teacher and subjects and checked and checked.xpath('@value').extract()[0] == '1':
                 teacher_id = teacher.xpath('@value').extract()[0]
+
                 for subject in subjects:
                     subject_id = subject.xpath('@value').extract()[0]
                     item = TeacherAssignmentItem()
@@ -330,7 +350,7 @@ class PYPTeacherAssignments(PYPClassReportTemplate):
 class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inheritence?
     name = "PYPClassReports"
     program = 'pyp'
-    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=27809'
+    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=42556'
 
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
@@ -364,7 +384,7 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
         # Code this first because this will actually be deferred until last
         for subject_url in response.xpath("//ul[@class='small_right_tabs']/li/a/@href").extract():
             request = scrapy.Request(
-                url=gns.settings.mb_url + subject_url,
+                url=gns.config.managebac.url + subject_url,
                 callback=self.parse_subject,
                 errback=self.error_parsing,
                 dont_filter=True,
@@ -375,7 +395,7 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
         # Dispatch to parse_student per each student on left side
         for student_url in response.xpath("//li[@class='selected own-pyp-class']/ul/li/a/@href").extract():
             request = scrapy.Request(
-                url=gns.settings.mb_url + student_url,
+                url=gns.config.managebac.url + student_url,
                 callback=self.parse_student,
                 errback=self.error_parsing,
                 dont_filter=True,
@@ -509,6 +529,8 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
                                     yield item
                                 which += 1
 
+    # def path_to_url(self):
+    #     return super(PYPClassReportTemplate, self).path_to_url(self.path.format(self.class_id, self.student_id))
 
 class ClassReportsMYP(ClassReports):
     name = "ClassReportsMYP"

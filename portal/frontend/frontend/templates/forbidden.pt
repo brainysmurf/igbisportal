@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html tal:define="static_url request.static_url('frontend:static/')">
+<head>
+  <title>No such user</title>
+  <link rel="icon" href="${static_url}favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="${static_url}bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="${static_url}css/splash.css" />
+
+</head>
+<body>
+
+  <center>
+    <div id="button_list" style="display:none;">
+      <div metal:define-slot="additional-buttons"></div>
+      <button id="userButton" class="nav_button" ><i class="fa fa-user"></i>&nbsp;&nbsp;${name or "Logged in!"}</button>
+    </div>
+    <div class="clearfix"></div>
+  </center>
+
+  <div id="contentwrap">
+    Hello.
+  </div>
+</body>
+</html>

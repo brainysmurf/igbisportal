@@ -3,6 +3,7 @@ import gns
 import os, datetime
 import requests, json
 import re, csv
+from PIL import Image
 
 class Object(object):
     def __init__(self):
@@ -33,6 +34,64 @@ def sync():
     Commands that launches syncing with MB and OA
     """
     pass
+
+@sync.command("destiny")
+@click.pass_obj
+def destiny(obj):
+    """
+    Writes to a location on the server
+    Internal use only
+    """
+    import requests, gns
+    secret = gns.config.api.secret
+    payload = {
+        'secret': secret,
+        'columns': [
+                    'first_nickname_last_studentid', 
+                    'student_id',
+                    'destiny_site_information',
+                    'barcode',
+                    'last_name',
+                    'first_name',
+                    'nickname',
+                    'destiny_patron_type',
+                    'homeroom_abbrev',
+                    'grade',
+                    'year_of_graduation',
+                    'username',
+                    'email',
+                ],
+    }
+    result = requests.get('http://0.0.0.0:6543/api/students', json=payload)
+    if result.ok:
+        json = result.json()
+        data = json.get('data')
+        if not data:
+            print("BAD")
+            return
+        with open('/tmp/destinysync.txt', 'w') as _f:
+            for line in data:
+                for i in range(len(line)):
+                    l = line[i]
+                    if i == 0 or i == len(line):
+                        pass # don't write a comma
+                    else:
+                        _f.write(',')
+                    _f.write( unicode(l).encode('utf-8') )
+                _f.write(u'\n')
+        import pysftp
+
+        path = gns.config.destiny.path
+        host = gns.config.destiny.host
+        username = gns.config.destiny.username
+        password = gns.config.destiny.password
+        with pysftp.Connection(host, username=username, password=password) as conn:
+            with conn.cd(path):
+                conn.put('/tmp/destinysync.txt')
+
+
+    else:
+        print(result.status_code)
 
 @sync.command()
 @click.option('--download/--dontdownload', default=True, help='default is --download')
@@ -157,11 +216,27 @@ def photos(obj):
     """
     Get all the student photos you can and download them
     """
+    import shutil
     from portal.db import Database, DBSession
     db = Database()
 
-    if os.path.isfile('/tmp/idlink.txt'):
-        os.remove('/tmp/idlink.txt')
+    rootpath = '/home/vagrant/igbisportal/'
+    try:
+        os.mkdir(rootpath + 'student_photos/')
+    except OSError:
+        pass
+    rootpath = rootpath + 'student_photos/'
+    paths = {'sec':rootpath+'sec/', 'elem':rootpath+'elem/'}
+
+    for pth in ['sec', 'elem']:
+        p = paths.get(pth)
+        try:
+            os.mkdir(p)
+        except OSError:
+            shutil.rmtree(p)
+            os.mkdir(p)
+        if os.path.isfile(p +'idlink.txt'):
+            os.remove(p + 'idlink.txt')
 
     Students = db.table_string_to_class('student')
 
@@ -192,6 +267,9 @@ def photos(obj):
 
         for student in students:
 
+            school = 'elem' if student.grade <= 5 else 'sec'
+            path = paths.get(school)
+
             url = student.profile_photo
             if not url:
                 continue
@@ -205,15 +283,25 @@ def photos(obj):
                 print("No photo available for {} ... must not be on ManageBac yet".format(student.grade_last_first_nickname_studentid))
                 continue
 
-            print(u"Downloading photo for {}".format(student.grade_last_first_nickname_studentid))
+            print(u"Downloading photo for {} to {}".format(student.grade_last_first_nickname_studentid, path))
             r = requests.get(url)
             if r.ok:
-                file_name = '{}.jpeg'.format(student.id)
-                with open('/tmp/{}'.format(file_name), 'wb') as _f:
+                file_name = str(student.student_id)
+
+                with open(path + file_name, 'wb') as _f:
                     _f.write(r.content)
 
-                with open('/tmp/idlink.txt', 'a') as _f:
-                    _f.write("{},{}\n".format(student.barcode, file_name))
+                i = Image.open(path + file_name)
+                ext = i.format.lower()
+
+                os.rename(path + file_name, path + file_name + '.' + ext)
+
+                with open(path + 'idlink.txt', 'a') as _f:
+                    _f.write("{},{}\n".format(student.barcode, file_name + '.' + ext))
+
+    for pth in ['sec', 'elem']:
+        p = paths.get(pth)
+        shutil.make_archive(p, 'zip', p)
 
 @main.group()
 def output():
@@ -435,10 +523,13 @@ def test_db(obj, _id):
     from portal.db import Database, DBSession
     db = Database()
     Students = db.table_string_to_class('student')
+    Teachers = db.table_string_to_class('advisor')
+    from sqlalchemy.orm import joinedload
 
     with DBSession() as session:
-        student = session.query(Students).filter(Students.id==_id).one()
-        from IPython import embed;embed()
+        teachers = session.query(Teachers).options(joinedload('classes')).all()
+
+    from IPython import embed;embed()
 
 @test.command('inspect_student')
 @click.pass_obj
@@ -463,7 +554,7 @@ def inspect_student(obj):
         from IPython import embed;embed()
 
 @test.command('api_students')
-@click.option('--columns', default=None, help="Any of the hybrid properties")
+@click.option('--columns', default=None, multiple=True, help="Any of the hybrid properties")
 @click.option('--destiny', is_flag=True, default=False, help="Use destiny columns (overrides columns)")
 @click.option('--every_column', is_flag=True, default=False, help="Test everything!")
 @click.option('--inspect', is_flag=True, default=False, help="runs IPyton at end")
@@ -479,18 +570,24 @@ def test_api_students(obj, columns, destiny, every_column, inspect, output_sids)
         print("No columns..")
         return
 
+    raw_input(columns)
+
     options = {
         'secret': 'phillies',
         'awesome_table_filters': {'student': 'StringFilter', 'grade': 'CategoryFilter'},
         'human_columns': True,
         'google_sheets_format': True,
-        'column_map': {'health_information': 'Health Info!'}, 
+        'column_map': {'immunization_record': 'Immunization!'}, 
         'columns': columns
     }
 
     #url = 'http://portal.igbis.edu.my/api/students'
     url = 'http://localhost:6543/api/students'
+    print(options)
     result = requests.post(url, json=options)
+    if not result.ok:
+        print("Bad result: {}".format(result.status_code))
+        from IPython import embed;embed()
     json = result.json()
     for data in json['data']:
         if not output_sids is None:
@@ -749,6 +846,5 @@ def compare(obj):
     print('\n'.join(mmg))
     print()
     from IPython import embed;embed()
-
 
 

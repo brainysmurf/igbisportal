@@ -5,10 +5,10 @@ Defines the frontend behaviour
 """
 
 from pyramid.response import Response, FileResponse
-from pyramid.view import view_config
+from pyramid.view import view_config, forbidden_view_config
 from pyramid.renderers import render
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import joinedload, joinedload_all
@@ -99,9 +99,13 @@ def session_user(request):
 
         if not user: # authenticated, but not in MB, so just put in users table
 
+            raise HTTPForbidden()
+
             gl_user = session.query(Users).filter(func.lower(Users.email) == user_email.lower()).first()
 
             if not gl_user:
+
+                raise exc.HTTPFound(request.route_url("user_not_found"))
 
                 new_user = Users(email=user_email, igbid=0)
                 # TODO: This isn't the best way to get the name info...
@@ -213,6 +217,10 @@ def credentials_flow(request, code):
     else:
        return dict(message="Error: {}".format(result.status_code))    
 
+@forbidden_view_config(renderer="frontend:templates/forbidden.pt")
+def forbidden_view(exc, request):
+    return dict(message="", title="No such user", name="Forbidden!")
+
 @view_config(route_name="signinCallback", renderer="json")
 def signinCallback(request):
     """
@@ -258,7 +266,7 @@ def mb_grade_teachers(request):
     user = request.session.get('mb_user')
     if not user:
         return dict(message="No user in session?", data=[])
-    if user.type != 'Advisors':
+    if user.type != 'Advisors' and user.type != 'Account Admins':
         return dict(message="Not a teacher", data=[])
 
     raw_data = defaultdict(list)
@@ -351,7 +359,7 @@ def auditlog_data(request):
         data['data'].append(python_list)
     return data
 
-@view_config(route_name='grade_course', renderer='templates/grade_course.pt')
+@view_config(route_name='grade_course', renderer='frontend:templates/grade_course.pt')
 def grade_course(request):
     grade = request.params.get('grade')
     if not grade:
@@ -385,7 +393,7 @@ def grade_course_info(request):
 
     return data
 
-@view_config(route_name='schedule', renderer='templates/schedule.pt')
+@view_config(route_name='schedule', renderer='frontend:templates/schedule.pt')
 def schedule(request):
     return dict(api_key='a473e92458548d66c06fe83f69831fd5')
 
@@ -399,7 +407,7 @@ def schedule_data(request):
 
     return data
 
-@view_config(route_name='students', renderer='templates/students.pt')
+@view_config(route_name='students', renderer='frontend:templates/students.pt')
 def students(request):
 
     params = request.params
@@ -557,7 +565,7 @@ def footer_html(request):
     Just return the footer
     """
     student_id = request.GET.get('student_id')
-    term_id = 42555
+    term_id = 42556
     with DBSession() as session:
         student = session.query(Students).filter_by(id=student_id).one()
         report  = session.query(PrimaryReport).\

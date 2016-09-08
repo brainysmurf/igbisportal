@@ -25,7 +25,7 @@ ITEM_PIPELINES = {
 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.PYPStudentAttendance': 5,
  		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.SecHRPipeline': 6,
 		'scrapy.pipelines.files.FilesPipeline': 7,
- 		'portal.scrapers.mb_scraper.mb_scraper.pipelines.classreports.GradeBookDump': 8,
+ 		#'portal.scrapers.mb_scraper.mb_scraper.pipelines.classperiods.GradeBookDump': 8,
 	}
 
 FILES_STORE = "/home/vagrant/data_dump/grade_reports"

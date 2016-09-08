@@ -1,0 +1,13 @@
+<metal:main use-macro="load: main2.pt">
+
+<!--   <div metal:fill-slot="tabs_bar">
+    <ul><li><a href="/">Home</a></li><li><a href="/students">Students</a></li></ul>
+  </div>
+ -->
+
+  <div metal:fill-slot="content">
+    <p tal:repeat="item items">
+       <h4><a href="/students/${item.id}">${str(item)}</a></h4>
+    </p>
+  </div>
+</metal:main>

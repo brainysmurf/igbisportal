@@ -11,3 +11,13 @@ downloads/emergency.csv
 *.ini
 *.log
 *.pid
+*.txt
+*.sql
+*.zip
+student_photos/
+*.deb
+*.pdf
+*.csv
+*.sublime-project
+*.sublime-workspace
+build/

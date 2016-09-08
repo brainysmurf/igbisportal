@@ -1,0 +1,13 @@
+# Autosave stuff
+
+import pickle
+
+class Saved:
+    def __init__(self, path):
+        self.path = path
+
+
+if __name__ == "__main__":
+
+    Saved('/tmp/test')
+

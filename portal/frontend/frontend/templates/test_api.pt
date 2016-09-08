@@ -1,0 +1,29 @@
+<html metal:use-macro="load: frontend:templates/portal_main.pt">
+
+<div metal:fill-slot="content">
+	<script>
+console.log('hello');
+$.ajax({
+	type:'POST',
+	url: 'api/students',
+	contentType: 'application/json; charset=utf-8',
+	data: JSON.stringify({
+	  secret: 'phillies',
+	  as_multidimentional_arrays: true,
+	  derived_attr: {
+	    field: 'display_name',
+	    string: "${first_nickname_last_studentid}"
+	  },
+	  emergency_information: true,
+	  human_columns: true,
+	  columns: ['health_information', 'parent_contact_info', 'emergency_info']
+	}),
+	success: function(result) {
+	  console.log(result);
+	}
+});
+	</script>
+</div>
+
+
+</html>

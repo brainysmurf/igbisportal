@@ -21,13 +21,11 @@
           <h1>Elementary School Programme</h1>
           <h2>Early Years 1 &amp; 2</h2>
           <h2>Semester Two</h2>
-          <h2>June 2015</h2>
+          <h2>June 2016</h2>
         </div>
     </div>
 
-    
-
-          <h3 style="margin-top:150px;">Student Information:</h3>
+      <h3 style="margin-top:150px;">Student Information:</h3>
 
       <table class="table table-student-info">
         <tr>
@@ -53,9 +51,14 @@
         <li><strong>Igniting Minds</strong><br />Engaging, enabling, empowering the inquiring minds of IGBIS students. In this way they learn to become confident, knowledgeable, lifelong learners.</li>
         <li><strong>Impacting Lives</strong><br />Students of IGBIS will impact lives as they learn to understand themselves better, and discover how they can influence and contribute to the wider community. In doing so, they will learn to make a positive difference to their own lives and the lives of others.</li>
       </ul>
-      <br /><br /><br /><br />
-      <center><img style="width:120px;" src="${static_url}images/logo_no_flame_no_tagline.png" />
-      <p style="margin-top:0px;font-face:Helvetica;font-size:12pt;font-size:9pt;"><span style="color:#EA302B;font-weight:900;">T</span>: +60 3 6145 4688 <span style="color:#EA302B;font-weight:900;">F</span>: +60 3 6145 4600  <span style="color:#EA302B;font-weight:900;">W</span>: <a style="color:#000;text-decoration:none" href="http://www.igbis.edu.my">www.igbis.edu.my</a></p>
+
+      <br /><br />
+
+      <center>
+        <div><em>Please consult your child’s portfolio for further developmental information.</em></div>
+        <br /><br />
+        <img style="width:120px;" src="${static_url}images/logo_no_flame_no_tagline.png" />
+        <p style="margin-top:0px;font-face:Helvetica;font-size:12pt;font-size:9pt;"><span style="color:#EA302B;font-weight:900;">T</span>: +60 3 6145 4688 <span style="color:#EA302B;font-weight:900;">F</span>: +60 3 6145 4600  <span style="color:#EA302B;font-weight:900;">W</span>: <a style="color:#000;text-decoration:none" href="http://www.igbis.edu.my">www.igbis.edu.my</a></p>
       </center>
 
 
@@ -73,48 +76,58 @@
           <h4>${section.name}: <span style="font-weight:normal;">${section.name_after}</span></h4>
         </div>
 
-        <th tal:condition="not section.organization_header">
+        <th tal:condition="not section.organization_header and section.rank in [-1,0,1]">
           <h3>${section.name}${section.name_after}:</h3>
+
+          <div style="margin-left:10px;margin-right:10px;" tal:condition="section.blurb">
+            ${structure: section.blurb}
+          </div>
         </th>
 
-        <table tal:condition="len(section.learning_outcomes) > 2" class="table table-header-rotated">
+        <th tal:condition="not section.organization_header and section.rank in [2,3]">
+          <h3>${section.name}: <span style="font-weight:normal;font-size:10pt;">${section.name_after}</span></h3>
+        </th>
 
-          <tbody>
-            <tal:block tal:repeat="outcome section.learning_outcomes">
-              <tr class="effort" tal:condition="hasattr(outcome, 'effort')">
-                <td><strong>${outcome.heading}</strong>
-                  <nobr><span style="float:right;white-space: nowrap;"><em>Effort:&nbsp;${outcome.effort}</em></span>
-                </nobr>
-                </td><td colspan="4">
-                </td>
-              </tr>
-              <tr tal:condition="outcome.label">
-                <td>${structure: outcome.label}</td>
-              </tr>
-            </tal:block>
-          </tbody>
+
+        <table tal:condition="section.report_indicators" class="table table-student-info">
+          <tr tal:repeat="indicator section.report_indicators">
+            <td><strong>${indicator['name']}</strong></td>
+            <td>${structure: indicator['content']}</td>
+          </tr>
+        </table>
+
+        <table tal:condition="not section.report_indicators and len(section.learning_outcomes) > 2" class="table table-student-info">
+          <tr>
+            <td><strong>${section.name}<br/>${section.name_after}</strong></td>
+            <td>
+              <ul>
+                <li tal:repeat="outcome section.learning_outcomes">${structure: outcome.label}</li>
+              </ul>
+            </td>
+          </tr>
+
         </table>
 
         <table class="table table-student-info" tal:condition="'Who We Are' in section.name">
           <tr>
-            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Likes and dislikes</li><li>How we are different to others</li><li>How we learn to play together</li></td>
+            <td><strong>Lines of Inquiry:<br /></strong></td><td><ul><li>Knowing about our body and how it functions</li><li>How our body is growing and changing</li><li>How to stay healthy</li></td>
           </tr>
         </table>
 
         <table class="table table-student-info" tal:condition="'Sharing The Planet' in section.name">
           <tr>
-            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Where creatures live</li><li>What creatures need to survive</li><li>Our repsonsibility to the creatures in our environment</li></td>
+            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Our learning environment</li><li>Sharing and learning together</li><li>Choices having consequences and how problems can be solved in many ways.</li></td>
           </tr>
         </table>
         <table class="table table-student-info" tal:condition="'How The World Works' in section.name">
           <tr>
-            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Different kinds of light</li><li>Things that light can do</li><li>The ways we use light in our world</li></td>
+            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Water in our environment</li><li>Water and its properties</li><li>Ways people use water</li></td>
           </tr>
         </table>
 
         <table class="table table-student-info" tal:condition="'How We Express Ourselves' in section.name">
           <tr>
-            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>Ways we can identify our ideas and feelings</li><li>Ways we can connect with the ideas and feelings of others</li><li>Ways we can express our ideas and feelings</li></td>
+            <td><strong>Lines of Inquiry: </strong></td><td><ul><li>The purpose of stories</li><li>The messages of stories</li><li>How stories are created and shared</li></td>
           </tr>
         </table>
 
@@ -167,10 +180,10 @@
       <h3>Message from the Principal:</h3>
       <ul>
         <li style="list-style-type:none;">
-      Please discuss the report with your child and encourage their development and effort. The report should not be compared to reports of siblings and peers. If you have any questions regarding your child&rsquo;s report please contact their class teacher.
+      Please discuss the report with your child and encourage their development and effort. The report should not be compared to reports of siblings and peers. If you have any questions regarding your child’s report please contact their class teacher. 
         </li>
       </ul>
-      <p style="margin-top: 50px;margin-left:5px;margin-right:5px;">
+      <p style="margin-top: 25px;margin-left:5px;margin-right:5px;">
       <strong>Teacher:</strong> ${report.teacher.first_name} ${report.teacher.last_name} <span style="float:right;text-align:right"><strong>Elementary School Principal:</strong> Claire McLeod</span>
     </p><br />
       <center><img style="width:120px;" src="${static_url}images/logo_no_flame_no_tagline.png" />

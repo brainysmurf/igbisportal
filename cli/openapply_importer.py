@@ -20,8 +20,9 @@ updater = updater_helper.update_or_add
 
 class OA_Medical_Importer:
 
-    def __init__(self, path):
+    def __init__(self, path, verbose=False):
         self.path = path
+        self.verbose = verbose
 
     @staticmethod
     def translate_headers(x):
@@ -70,7 +71,7 @@ class OA_Medical_Importer:
                 updater(obj)
 
     def download_get(self, *args, **kwargs):
-        print("Downloading via api: {}".format(args[0]))
+        self.verbose and sys.stdout.write("Downloading via api: {}\n".format(args[0]))
         return requests.get(*args, **kwargs)
 
     def read_in_from_api(self):
@@ -114,7 +115,7 @@ class OA_Medical_Importer:
                     except NoResultFound:
                         continue
                     if student['managebac_student_id'] != db_student.id:
-                        sys.stdout.write("WORKAROUND for {}".format(student['name']))
+                        sys.stdout.write("WORKAROUND for {}\n".format(student['name']))
                         student['managebac_student_id'] = db_student.id
 
             # Get the full information
@@ -166,10 +167,11 @@ class OA_Medical_Importer:
                             setattr(obj, this_field, value)
 
                 # Is there something about a cron context where unicode is different?
-                try:
-                    print(u"Updating record for {}".format(student['name']))
-                except:
-                    print("Updating record for {}".format(student['id']))
+                if self.verbose:
+                    try:
+                        sys.stdout.write(u"Updating record for {}\n".format(student['name']))
+                    except:
+                        sys.stdout.write("Updating record for {}\n".format(student['id']))
                 updater(obj)
             else:
                 sys.stdout.write(u"No managebac_student_id for {}?\n".format(student['name']))

@@ -53,7 +53,10 @@ def api_lastlogins(request):
 
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
-    json_body = request.json_body
+    try:
+        json_body = request.json_body
+    except ValueError:
+        return dict(message="Expecting json body")
     secret = json_body.get('secret')
     if secret != gns.config.api.secret:
         return dict(message="IGBIS api is not for public consumption.", data=[])

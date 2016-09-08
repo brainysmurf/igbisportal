@@ -178,7 +178,6 @@ class PYPClassReportsPipline(PostgresPipeline):
 
                 return primary_report_section
 
-
     def database_add(self, key, item):
         Teacher = self.database.table_string_to_class('Advisor')
         TeacherAssignments = self.database.table_string_to_class('Primary_Teacher_Assignments')
@@ -204,7 +203,7 @@ class PYPClassReportsPipline(PostgresPipeline):
 
             self.make_primary_report_section(term_id, subject_id, course_id, student_id,
                 comment=item.get('comment'), name=item.get('subject_name')
-                )                    
+                )
 
         elif issubclass(item.__class__, PrimaryReportSupplementItem):
             # First get the id of the primary report, for convenience
