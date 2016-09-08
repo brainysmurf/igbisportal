@@ -257,7 +257,7 @@ class User(PortalORM):
 
     @hybrid_property
     def full_name(self):
-        return "{} {}".format(self.first_name, self.last_name)
+        return u"{} {}".format(self.first_name, self.last_name)
 
     @full_name.expression
     def full_name_expression(cls):
@@ -496,6 +496,8 @@ class Student(Base, User):
                 lst.append(teacher.first_name + ' ' + teacher.last_name)
         return ", ".join(lst)
 
+    # FIXME: Cannot ascertain why order_by for the following produces results with ones out-of-order at the end...
+
     @hybrid_property
     def nickname_last_studentid(self):
         return (self.nickname + ' ' + self.last_name + ' (aka ' + self.first_name + ')' if self.nickname and self.nickname != self.first_name else self.first_name + ' ' + self.last_name) + ' [' + str(self.student_id) + ']'
@@ -510,19 +512,30 @@ class Student(Base, User):
 
     @hybrid_property
     def first_nickname_last_studentid(self):
-        return normalize(self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']')
+        return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' ' + self.last_name + ' [' + str(self.student_id) + ']'
 
     @first_nickname_last_studentid.expression
-    def first_nickname_last_studentid(cls):
+    def first_nickname_last_studentid_expression(cls):
         return cls.first_name + (' (' + cls.nickname + ')' if cls.nickname and cls.nickname != cls.first_name else '') + ' ' + cls.last_name + ' [' + str(cls.student_id) + ']'
 
     @hybrid_property
     def first_nickname_last(self):
         return self.first_nickname + u' ' + self.last_name
 
+    @first_nickname_last.expression
+    def first_nickname_last_expression(cls):
+        return cls.first_nickname + ' ' + cls.last_name
+
     @hybrid_property
     def first_nickname(self):
         return self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else u'')
+
+    @first_nickname.expression
+    def first_nickname_expression(cls):
+        """
+        TODO: Use case statement to make the nickname optional
+        """
+        return cls.first_name + ' (' + cls.nickname + ') '
 
     @hybrid_property
     def grade_first_nickname_last_studentid(self):
@@ -625,7 +638,7 @@ class Student(Base, User):
                 (cls.class_grade == 'Grade 11', '11'), 
                 (cls.class_grade == 'Grade 12', '12'),
             ],
-            else_ = -10)
+            else_ = '-10')
 
     @hybrid_property
     def health_information(self):
@@ -868,33 +881,6 @@ class Parent(Base, User):
             if earliest is None or this_date < earliest:
                 earliest = this_date
         return earliest
-
-    def google_account_sunset(self, duration):
-        """
-        Return true if this account has been around long enough for them to convert using this domain
-        TODO: Consider putting this in another layer
-        TODO: string interface used for duration could be in a utils function
-
-        @duration string representing how long '1 week, 3 weeks, 3 months'
-        """
-        earliest = self.first_child_date_started
-        if earliest is None:
-            # what do I do?
-            print(self)
-            return
-
-        dur = {
-                '3 weeks': datetime.timedelta(weeks=3),
-                '2 weeks': datetime.timedelta(weeks=2),
-                '1 week': datetime.timedelta(weeks=1),
-                '3 months': datetime.timedelta(weeks=4*3),
-                '2 months': datetime.timedelta(weeks=4*2),
-                '1 month': datetime.timedelta(weeks=4)
-            }\
-            .get(duration.strip().lower(), None)
-
-        ret = datetime.datetime.now() > earliest
-        return ret
 
     def __repr__(self):
         return '<Parent ({}) '.format(self.id) + self.name + '>'

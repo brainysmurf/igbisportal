@@ -1,0 +1,210 @@
+
+Group Settings:
+ nonEditableAliases:
+  all.team@igbis.edu.my.test-google-a.com
+ name: Whole School Staff
+ adminCreated: False
+ directMembersCount: 169
+ email: all.team@igbis.edu.my
+ id: 02p2csry34sxjq5
+ description: ES+SS+TA+ADMIN
+
+Created by JC 6Aug14
+ allowExternalMembers: false
+ whoCanJoin: ALL_IN_DOMAIN_CAN_JOIN
+ primaryLanguage: en
+ whoCanViewMembership: ALL_MEMBERS_CAN_VIEW
+ includeCustomFooter: false
+ defaultMessageDenyNotificationText: 
+ includeInGlobalAddressList: true
+ archiveOnly: false
+ isArchived: true
+ membersCanPostAsTheGroup: true
+ allowWebPosting: true
+ sendMessageDenyNotification: false
+ replyTo: REPLY_TO_SENDER
+ customReplyTo: 
+ messageModerationLevel: MODERATE_NONE
+ whoCanContactOwner: ALL_IN_DOMAIN_CAN_CONTACT
+ messageDisplayFont: DEFAULT_FONT
+ whoCanLeaveGroup: ALL_MEMBERS_CAN_LEAVE
+ whoCanAdd: ALL_MANAGERS_CAN_ADD
+ whoCanPostMessage: ALL_MEMBERS_CAN_POST
+ whoCanInvite: ALL_MANAGERS_CAN_INVITE
+ spamModerationLevel: ALLOW
+ whoCanViewGroup: ALL_IN_DOMAIN_CAN_VIEW
+ showInGroupDirectory: true
+ maxMessageBytes: 25M
+ customFooterText: 
+ allowGoogleCommunication: true
+Members:
+ member: adam.morris@igbis.edu.my (user)
+ member: adiyati.ibrahim@igbis.edu.my (user)
+ member: admin.team@igbis.edu.my (group)
+ member: aida.a@igbis.edu.my (user)
+ member: aliff.nordin@igbis.edu.my (user)
+ member: amanda.clark@igbis.edu.my (user)
+ member: amirrul.zaidon@igbis.edu.my (user)
+ member: anbalagan.subramaniam@igbis.edu.my (user)
+ member: anderina.alexander@igbis.edu.my (user)
+ member: andy.mullin@igbis.edu.my (user)
+ member: angeline.liew@igbis.edu.my (user)
+ owner: anne.fowles@igbis.edu.my (user)
+ member: anthony.spivey-jones@igbis.edu.my (user)
+ member: arvin.kaur@igbis.edu.my (user)
+ member: ashwinaa.valaidam@igbis.edu.my (user)
+ member: ashwinder.kaur@igbis.edu.my (user)
+ member: azilah.razali@igbis.edu.my (user)
+ manager: ben.hor@igbis.edu.my (user)
+ member: benjamin.wylie@igbis.edu.my (user)
+ member: beth.mullin@igbis.edu.my (user)
+ member: bronwyn.thorburn@igbis.edu.my (user)
+ owner: bulk.email.group.permissions@igbis.edu.my (group)
+ member: carolnisak.ismail@igbis.edu.my (user)
+ member: catherine.dejonge@igbis.edu.my (user)
+ member: christopher.klesch@igbis.edu.my (user)
+ member: christopher.thompson@igbis.edu.my (user)
+ manager: claire.mccleod@igbis.edu.my (user)
+ member: claire.mcleod@igbis.edu.my (user)
+ member: clare.demnar@igbis.edu.my (user)
+ member: clarissa.jaya@igbis.edu.my (user)
+ member: danny.chan@igbis.edu.my (user)
+ member: darren.aherne@igbis.edu.my (user)
+ member: dashani.muniandy@igbis.edu.my (user)
+ member: dean.watters@igbis.edu.my (user)
+ member: deborah.king@igbis.edu.my (user)
+ member: deborah.tobin@igbis.edu.my (user)
+ member: devishree.narayanasamy@igbis.edu.my (user)
+ member: diane.douglas@igbis.edu.my (user)
+ member: dianti.ranofla@igbis.edu.my (user)
+ member: elizabeth.hudson@igbis.edu.my (user)
+ member: elke.paul@igbis.edu.my (user)
+ member: elli.lawson@igbis.edu.my (user)
+ member: emily.heys@igbis.edu.my (user)
+ member: es.team@igbis.edu.my (group)
+ member: example.teacher@igbis.edu.my (user)
+ member: fadlini.james@igbis.edu.my (user)
+ member: farahzara.karim@igbis.edu.my (user)
+ member: gabriel.evans@igbis.edu.my (user)
+ member: gail.hall@igbis.edu.my (user)
+ member: geoffrey.derry@igbis.edu.my (user)
+ member: gigi.lim@igbis.edu.my (user)
+ member: glen.fleury@igbis.edu.my (user)
+ member: gustav.helman@igbis.edu.my (user)
+ member: hadewych.dujardin@igbis.edu.my (user)
+ member: halim.abdhalim@igbis.edu.my (user)
+ member: hamizar.zainudin@igbis.edu.my (user)
+ member: harman.harison@igbis.edu.my (user)
+ member: hueiyin.tan@igbis.edu.my (user)
+ member: igbisnotices@igbis.edu.my (user)
+ member: indra.lina@igbis.edu.my (user)
+ member: indros.roslan@igbis.edu.my (user)
+ member: jackson.ho@igbis.edu.my (user)
+ member: jade.saba@igbis.edu.my (user)
+ member: jane.cheu@igbis.edu.my (user)
+ member: janqi.oo@igbis.edu.my (user)
+ member: jasmine.brawn@igbis.edu.my (user)
+ member: jaswindar.kaur@igbis.edu.my (user)
+ member: jegathaswary.selveraju@igbis.edu.my (user)
+ member: jo.spivey-jones@igbis.edu.my (user)
+ member: jon.suffolk@igbis.edu.my (user)
+ member: julie.arcidiacono@igbis.edu.my (user)
+ member: kalai@igbis.edu.my (user)
+ member: kari.twedt@igbis.edu.my (user)
+ member: kath.kummerow@igbis.edu.my (user)
+ manager: kathy.mckenzie@igbis.edu.my (user)
+ member: laiping.yap@igbis.edu.my (user)
+ member: lara.skadsen@igbis.edu.my (user)
+ member: layfong.chan@igbis.edu.my (user)
+ member: leanne.harvey@igbis.edu.my (user)
+ manager: lennox.meldrum@igbis.edu.my (user)
+ member: licheen.koid@igbis.edu.my (user)
+ member: lisa.mcclurg@igbis.edu.my (user)
+ member: lucy.ashdown@igbis.edu.my (user)
+ member: maevy.lee@igbis.edu.my (user)
+ member: magenjit.kaur@igbis.edu.my (user)
+ member: marcus.wetherell@igbis.edu.my (user)
+ member: marshall.hudson@igbis.edu.my (user)
+ member: mary.boyd@igbis.edu.my (user)
+ member: mary.richards@igbis.edu.my (user)
+ member: matthew.marshall@igbis.edu.my (user)
+ member: md.zain@igbis.edu.my (user)
+ member: meenachi.palanisamy@igbis.edu.my (user)
+ member: megan.ngatai@igbis.edu.my (user)
+ member: megan.settle@igbis.edu.my (user)
+ member: michael.arcidiacono@igbis.edu.my (user)
+ member: michael.hawkes@igbis.edu.my (user)
+ member: michelle.ostiguy@igbis.edu.my (user)
+ member: mick.smith@igbis.edu.my (user)
+ member: mohd.firdaus@igbis.edu.my (user)
+ member: mohdrizal.jali@igbis.edu.my (user)
+ manager: munchiew.looi@igbis.edu.my (user)
+ member: naha.sumairi@igbis.edu.my (user)
+ member: nan.parker@igbis.edu.my (user)
+ member: nancy.fu@igbis.edu.my (user)
+ member: natalie.fabian@igbis.edu.my (user)
+ member: natalie.lim@igbis.edu.my (user)
+ member: nathalie.chotard@igbis.edu.my (user)
+ member: nazirah.mohdsaleh@igbis.edu.my (user)
+ member: nera.janarthanan@igbis.edu.my (user)
+ member: paul.skadsen@igbis.edu.my (user)
+ member: pauline.davidson@igbis.edu.my (user)
+ member: peter.fowles@igbis.edu.my (user)
+ member: petersyme@igbis.edu.my (user)
+ member: phil.clark@igbis.edu.my (user)
+ member: rachel.fleury@igbis.edu.my (user)
+ member: rani.punnusamy@igbis.edu.my (user)
+ member: rong.mu@igbis.edu.my (user)
+ manager: rubavathy.bojan@igbis.edu.my (user)
+ member: sally.watters@igbis.edu.my (user)
+ member: sarahain.mohdamin@igbis.edu.my (user)
+ member: scott.cameron@igbis.edu.my (user)
+ member: scott.ngatai@igbis.edu.my (user)
+ member: security@igbis.edu.my (user)
+ member: seoyoung.park@igbis.edu.my (user)
+ member: shah.rusli@igbis.edu.my (user)
+ member: shazwan.aslan@igbis.edu.my (user)
+ member: sheena.kelly@igbis.edu.my (user)
+ member: shireen.blakeway@igbis.edu.my (user)
+ member: shuhaila.nasir@igbis.edu.my (user)
+ member: shwuyee.lee@igbis.edu.my (user)
+ member: silvana.evans@igbis.edu.my (user)
+ member: simon.millward@igbis.edu.my (user)
+ member: siokbee.ong@igbis.edu.my (user)
+ member: siti.arashid@igbis.edu.my (user)
+ member: siti.khalid@igbis.edu.my (user)
+ member: sony.nawi@igbis.edu.my (user)
+ member: ss.team@igbis.edu.my (group)
+ member: stephanie.lim@igbis.edu.my (user)
+ member: stephanie.seehaus@igbis.edu.my (user)
+ member: stephanie.wafzig@igbis.edu.my (user)
+ member: steven.harvey@igbis.edu.my (user)
+ member: susan.balshort@igbis.edu.my (user)
+ member: susie.tee@igbis.edu.my (user)
+ member: ta.team@igbis.edu.my (group)
+ member: tamara.snooks@igbis.edu.my (user)
+ member: tania.nathan@igbis.edu.my (user)
+ member: tanya.cornish@igbis.edu.my (user)
+ member: teresa.choong@igbis.edu.my (user)
+ member: thiamsoon.sheah@igbis.edu.my (user)
+ member: thilagarani.kalimuthu@igbis.edu.my (user)
+ member: tim.bartle@igbis.edu.my (user)
+ member: uma.devi@igbis.edu.my (user)
+ member: usa.chankasem@igbis.edu.my (user)
+ manager: usha.ranikrishnan@igbis.edu.my (user)
+ member: vadiveloo.p@igbis.edu.my (user)
+ member: vanessa.john@igbis.edu.my (user)
+ member: violet.phillip@igbis.edu.my (user)
+ member: waicheng.lai@igbis.edu.my (user)
+ manager: wayne.demnar@igbis.edu.my (user)
+ member: ws.team@igbis.edu.my (group)
+ member: xiaoping.li@igbis.edu.my (user)
+ member: xuxuan.ng@igbis.edu.my (user)
+ member: yaosheng@igbis.edu.my (user)
+ member: yoges.muniandi@igbis.edu.my (user)
+ member: yolaine.johanson@igbis.edu.my (user)
+ member: yuly.ahmad@igbis.edu.my (user)
+ member: yuri.kim@igbis.edu.my (user)
+ member: yvonne.peter@igbis.edu.my (user)
+ member: zulkifli.zakaria@igbis.edu.my (user)
+Total 169 users in group

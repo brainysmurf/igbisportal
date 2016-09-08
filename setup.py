@@ -25,6 +25,7 @@ setup(
     'psycopg2',
     'python-dateutil',
     'pysftp',
+    'oauth2client'
 ],
     # also requires?
     #'scrapyd', 'lxml', 'w3lib', 'cssselect', 'pysqlite'

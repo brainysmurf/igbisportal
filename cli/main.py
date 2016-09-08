@@ -554,32 +554,33 @@ def inspect_student(obj):
         from IPython import embed;embed()
 
 @test.command('api_students')
-@click.option('--columns', default=None, multiple=True, help="Any of the hybrid properties")
+@click.option('--column', multiple=True, default=None, help="Any of the hybrid properties")
 @click.option('--destiny', is_flag=True, default=False, help="Use destiny columns (overrides columns)")
 @click.option('--every_column', is_flag=True, default=False, help="Test everything!")
+@click.option('--order_by', default=False, help="Order by column")
 @click.option('--inspect', is_flag=True, default=False, help="runs IPyton at end")
 @click.option('--output_sids', default=None, help="string of student ids with spaces")
 @click.pass_obj
-def test_api_students(obj, columns, destiny, every_column, inspect, output_sids):
+def test_api_students(obj, column, destiny, every_column, order_by, inspect, output_sids):
     if destiny:
-        columns = ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
-    if every_column:
-        columns = ['student_id', 'first_name', 'last_name', 'gender', 'nationality1', 'nationality2', 'nationality3', 'nationality4', 'phone_number', 'mobile_phone_number', 'national_id', 'email', 'language', 'lanuage1', 'language2', 'language3', 'program', 'program_of_study', 'class_year', 'grade', 'class_grade', 'grade_range', 'archived', 'nickname', 'attendance_start_date', 'birthday', 'open_apply_student_id', 'homeroom_advisor', 'profile_photo', 'year_of_graduation', 'parent_emails', 'parent_names', 'parent_name_1', 'parent_name_2', 'parent_email_1', 'parent_email_2', 'parent_work_email_1', 'parent_work_email_2', 'parent_contact_info', 'teacher_emails', 'teacher_usernames', 'nickname_last_studentid', 'last_first_nickname_studentid', 'grade_last_first_nickname_studentid', 'first_nickname_last_studentid', 'first_nickname_last', 'first_nickname', 'grade_first_nickname_last_studentid', 'abbrev_grade', 'health_information', 'emergency_info', 'homeroom_teacher_email', 'homeroom_abbrev', 'homeroom_full', 'barcode', 'destiny_site_information', 'destiny_patron_type']
-        #TODO: open_apply_student_id
-    if columns is None:
+        column = ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
+    if column is None:
         print("No columns..")
         return
-
-    raw_input(columns)
 
     options = {
         'secret': 'phillies',
         'awesome_table_filters': {'student': 'StringFilter', 'grade': 'CategoryFilter'},
         'human_columns': True,
         'google_sheets_format': True,
-        'column_map': {'immunization_record': 'Immunization!'}, 
-        'columns': columns
+        'column_map': {'health_information': 'Health Info!'}, 
+        'columns': column,
     }
+
+    if every_column:
+        options['every_column'] = True
+    if order_by:
+        options['order_by'] = order_by
 
     #url = 'http://portal.igbis.edu.my/api/students'
     url = 'http://localhost:6543/api/students'
@@ -587,7 +588,6 @@ def test_api_students(obj, columns, destiny, every_column, inspect, output_sids)
     result = requests.post(url, json=options)
     if not result.ok:
         print("Bad result: {}".format(result.status_code))
-        from IPython import embed;embed()
     json = result.json()
     for data in json['data']:
         if not output_sids is None:
