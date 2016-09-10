@@ -27,6 +27,7 @@ def dl(lazy=False, verbose=False):
 def db_setup(lazy, verbose):
     from portal.db.interface import DatabaseSetterUpper
     go = DatabaseSetterUpper(lazy=lazy, verbose=verbose)
+    go.setup_database()
 
 @main.group()
 def sync():
@@ -69,7 +70,10 @@ def destiny(obj):
         if not data:
             print("BAD")
             return
-        with open('/tmp/destinysync.txt', 'w') as _f:
+
+        path_to_output = '/home/vagrant/igbisportal/portal/output/destinysync.csv'  
+        encoding = 'cp1252'    # 'utf-8' or 'cp-1252'
+        with open(path_to_output, 'w') as _f:
             for line in data:
                 for i in range(len(line)):
                     l = line[i]
@@ -77,8 +81,8 @@ def destiny(obj):
                         pass # don't write a comma
                     else:
                         _f.write(',')
-                    _f.write( unicode(l).encode('utf-8') )
-                _f.write(u'\n')
+                    _f.write( unicode(l).encode(encoding) )
+                _f.write(u'\n'.encode(encoding))
         import pysftp
 
         path = gns.config.destiny.path
@@ -87,7 +91,7 @@ def destiny(obj):
         password = gns.config.destiny.password
         with pysftp.Connection(host, username=username, password=password) as conn:
             with conn.cd(path):
-                conn.put('/tmp/destinysync.txt')
+                conn.put(path_to_output)
 
 
     else:
@@ -515,6 +519,16 @@ def teacher_classes(ctx, id):
 @main.group()
 def test():
     pass
+
+@test.command('test_api_downloader')
+@click.pass_obj
+def test_api_downloader(obj):
+    from portal.db.api.interface import APIDownloader
+    dl = APIDownloader(lazy=True, mock=True, verbose=True)
+    dl.download()
+    from portal.db.interface import DatabaseSetterUpper
+    go = DatabaseSetterUpper(lazy=True, verbose=True)
+    go.setup_database()
 
 @test.command('test_db')
 @click.argument('_id', default=11204340) # Fern
