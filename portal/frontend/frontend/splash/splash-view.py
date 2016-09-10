@@ -237,7 +237,6 @@ def splash(request):
 
     homeroom_items = [
         menu_item(icon="", display="Welfare Program", url="https://docs.google.com/document/d/1qc2CxmBiC3CNOtJguD4trMRmfJ4O2I_H0ryAFRmfFrM/edit"),
-        menu_separator(),
     ]
     for grade in sorted(homeroom_teachers):
         these_teachers = homeroom_teachers[grade]

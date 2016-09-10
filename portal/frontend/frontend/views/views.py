@@ -306,7 +306,7 @@ def mb_homeroom(request):
     user = request.session.get('mb_user')
     if not user:
         return dict(message="No user in session?", data=[])
-    if user.type != 'Advisors':
+    if not user.type in ['Advisor', 'Advisors', 'Account Admins']:
         return dict(message="Not a teacher", data=[])
     data = []
     with DBSession() as session:
@@ -315,7 +315,7 @@ def mb_homeroom(request):
             try:
                 teachers = session.query(Teachers.email).\
                     select_from(Students).\
-                        join(Enrollments, Enrollments.c.student_id == student.student_id).\
+                        join(Enrollments, Enrollments.c.student_id == student.id).\
                         join(Courses, Courses.id == Enrollments.c.course_id).\
                         join(Assignments, Assignments.c.course_id == Courses.id).\
                         join(Teachers, Teachers.id == Assignments.c.teacher_id).\
