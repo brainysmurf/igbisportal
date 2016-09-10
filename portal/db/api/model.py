@@ -13,13 +13,12 @@ class Container(object):
         Setup our mapping object which translates their API terminolgoy to more familiar terms :)
         """
         self.mapping = {
-        'students': self.students, 
-        'parents': self.parents,
-        'advisors': self.teachers,
-        'classes': self.classes,
-        'ib_groups': self.ib_groups
+            'students': self.students, 
+            'parents': self.parents,
+            'advisors': self.teachers,
+            'classes': self.classes,
+            'ib_groups': self.ib_groups
         }
-        #settings.setup_verbosity(self)
 
     @property
     def users(self):

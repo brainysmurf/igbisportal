@@ -61,10 +61,10 @@ class collection_obj:
 				left_row = session.query(ti.left.table).filter_by(**ti.left.by).one()
 			except MultipleResultsFound:
 				# FIXME: Check for constraint on database...
-				print('Multiple Results Found: You passed {} as the primary ID to use in the table {}, is it unique?'.format(self.left_column, self.left_table))
+				# print('Multiple Results Found: You passed {} as the primary ID to use in the table {}, is it unique?'.format(self.left_column, self.left_table))
 				return
 			except NoResultFound:
-				print('Lookup {} does not exist'.format(ti.left.by))
+				#print('Lookup {} does not exist'.format(ti.left.by))
 				return
 
 			right_row = session.query(ti.right.table).filter_by(**ti.right.by).one()
@@ -80,7 +80,7 @@ class collection_obj:
 			else:
 				# This actually emits the sql:
 				getattr(left_row, self.collection).append(right_row)
-				print("+ Added {} to {} into {} collection".format(right_row, left_row, self.collection))
+				print(u"+ Added {} to {} into {} collection".format(right_row, left_row, self.collection))
 
 class updater_helper:
 	def __init__(self):

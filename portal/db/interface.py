@@ -16,13 +16,20 @@ IBGroup = db.table_string_to_class('IBGroup')
 
 import hashlib # so we can store unique IDs for busadmins
 
+import click
+
 class DatabaseSetterUpper(object):
 
 	def __init__(self, lazy=True, verbose=False):
 		self.database = Database()
+		self.verbose = verbose
 		#gns.setup_verbosity(self)
 		if not lazy:
 			self.setup_database()
+
+	def default_logger(self, s):
+		if self.verbose:
+			click.echo(s)
 
 	def update_status(self):
 		with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
@@ -48,7 +55,7 @@ class DatabaseSetterUpper(object):
 
 					# FIXME: Why is db_student.status always None here?
 					if db_student and db_student.status != student.get('status'):
-						print('\t Changed status of {} from {} to {}'.format(db_student, db_student.status, student.get('status')))
+						print(u'\t Changed status of {} from {} to {}'.format(db_student, db_student.status, student.get('status')))
 						db_student.status = student.get('status')
 
 					else:
@@ -90,11 +97,10 @@ class DatabaseSetterUpper(object):
 			for busadmin in busadmins:
 				u.update_or_add(busadmin)
 
-
 			# Section refers to users, groups, etc
 
 			for gns.section in gns.config.managebac.sections.split(','):
-				#self.default_logger(gns("Setup {section} on database"))
+				self.default_logger(gns("Setup {section} on database"))
 
 				with open(gns('{config.paths.jsons}/{section}.json')) as _f:
 					this_json = json.load(_f)
@@ -122,7 +128,6 @@ class DatabaseSetterUpper(object):
 
 					# Convert any empty string values to None
 					item = {k: v if not v == "" else None for k,v in item.items()}
-
 					table_class = self.database.table_string_to_class(_type)
 					instance = table_class()
 					for item_key in item:
@@ -160,7 +165,7 @@ class DatabaseSetterUpper(object):
 				with open(gns('{config.paths.jsons}/users.json')) as _f:
 					this_json = json.load(_f)
 
-				#self.default_logger("Setting up student-parent relations on database")
+				self.default_logger("Setting up student-parent relations on database")
 				for user in this_json['users']:
 					_type = user.get('type')
 					if _type == "Students":
@@ -169,7 +174,7 @@ class DatabaseSetterUpper(object):
 							stu_par.append(student_id, parent_id)
 
 			with u.collection(Student, IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
-				#self.default_logger("Setting up student IB Group membership on database")
+				self.default_logger("Setting up student IB Group membership on database")
 				with open(gns('{config.paths.jsons}/ib_groups.json')) as _f:
 					this_json = json.load(_f)
 
@@ -189,7 +194,7 @@ class DatabaseSetterUpper(object):
 						stu_ibgroup.append(gns.student_id, gns.group_id)						
 
 			with u.collection(Teacher, Course, 'classes') as teacher_course:
-				#self.default_logger("Setting up teacher class assignments on database")
+				self.default_logger("Setting up teacher class assignments on database")
 				with open(gns('{config.paths.jsons}/classes.json')) as _f:
 					this_json = json.load(_f)
 				for clss in this_json['classes']:
@@ -202,7 +207,7 @@ class DatabaseSetterUpper(object):
 
 			with u.collection(Student, Course, 'classes', left_column='student_id') as stu_course:
 
-				#self.default_logger("Setting up student class enrollments on database")
+				self.default_logger("Setting up student class enrollments on database")
 				for path in glob.glob(gns('{config.paths.jsons}/groups-*-members.json')):
 					with open(path) as _f:
 						this_json = json.load(_f)
@@ -211,13 +216,14 @@ class DatabaseSetterUpper(object):
 						course_id = re.match(gns('{config.paths.jsons}/groups-(\d+)-members.json'), path).group(1)
 						for course in this_json['members']:
 							student_id = course.get('student_id')
-							if student_id is None:
-								continue
 							try:
-								stu_course.append(student_id, course_id)
+								student = session.query(Student).filter(Student.student_id==student_id).one()
 							except NoResultFound:
-								pass
-								#print('course_id {} or student_id {} not found'.format(course_id, student_id))
+								self.default_logger("Student {} not found".format(student_id))
+							try:
+								stu_course.append(str(student.id), course_id)
+							except NoResultFound:
+								self.default_logger('course_id {} or student_id {} not found'.format(course_id, student_id))
 
 		# Now let's look at open_apply and update status, but only if the student is already in there.
 		# We won't use the manager because this is more of a piece-meal thing

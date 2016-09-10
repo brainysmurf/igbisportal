@@ -13,24 +13,38 @@ import re, sys
 from functools import partial
 import requests
 import gns
+import click
+
+class Mock:
+	def __init__(self, args, kwargs):
+		self.args = args
+		self.kwargs = kwargs
+		self.ok = True
+
+	def json(self):
+		return {
+			'args': self.args,
+			'kwargs': self.kwargs
+		}
 
 class APIDownloader(object):
 	"""
 	Responsible for initial downloads from API
 	"""	
 
-	def __init__(self, prefix=None, api_token=None, lazy=True, verbose=False):
+	def __init__(self, prefix=None, api_token=None, lazy=True, verbose=False, mock=False):
 		"""
 		Sent in optional params can override settings.ini, useful for debugging
 		"""
-		self.debug = True
 		self.verbose = verbose
+		self.mock = mock
 
 		self.prefix = prefix or gns.config.managebac.prefix
 
 		self.url = 'https://{prefix}.managebac.com/api/{{uri}}'.format(prefix=self.prefix)
 		self.api_token = api_token or gns.config.managebac.api_token
 
+		# derive the mapping needed for the URLs
 		self.section_urls = {}
 		for section in gns.config.managebac.sections.split(','):
 			try:
@@ -39,7 +53,7 @@ class APIDownloader(object):
 					self.section_urls[section] = value
 			except AttributeError:
 				pass
-
+		self.verbose and self.default_logger(self.section_urls)
 		self.container = Container()
 
 		if not lazy:
@@ -48,12 +62,14 @@ class APIDownloader(object):
 			self.open_apply_download(overwrite=True)
 
 	def default_logger(self, *args, **kwargs):
-		#print(args)   # uncomment this line
-		pass
+		click.echo(args)
 
 	def download_get(self, *args, **kwargs):
-		print("Downloading via api: {}".format(args[0]))
-		return requests.get(*args, **kwargs)
+		if self.mock == True:
+			return Mock(args, kwargs)
+		else:
+			self.default_logger(click.style('.', fg="green"), nl=False)
+			return requests.get(*args, **kwargs)
 
 	def build_json_path(self, *args):
 		"""
@@ -63,9 +79,12 @@ class APIDownloader(object):
 		return gns("{config.paths.jsons}/{tmp}")
 
 	def write_to_disk(self, obj, path):
-		self.debug and self.default_logger('Writing to disk @ {}'.format(path))
-		with open(path, 'w') as _f:
-			json.dump(obj, _f, indent=4)
+		self.verbose and self.default_logger('Writing to disk @ {}'.format(path))
+		if self.mock:
+			self.default_logger(click.style("obj: {}, path: {}".format(obj, path), fg='yellow'))
+		else:
+			with open(path, 'w') as _f:
+				json.dump(obj, _f, indent=4)
 
 	def managebac_users_download(self):
 		api_token = gns.config.managebac.api_token
@@ -100,7 +119,7 @@ class APIDownloader(object):
 				))
 
 			if not r.ok:
-				self.debug and self.default_logger('Download request did not return "OK"')
+				self.verbose and self.default_logger('Download request did not return "OK"')
 				since_id = -1
 			else:
 				json_info = r.json()
@@ -123,37 +142,41 @@ class APIDownloader(object):
 		"""
 		Downloads known paths from api and places it onto directories
 		"""
+		if self.mock:
+			overwrite = False  # Force false
 		if overwrite:
-			self.debug and self.default_logger('Overwriting')
+			self.verbose and self.default_logger('Overwriting')
 			if os.path.isdir(self.build_json_path()):
 				import shutil
-				self.debug and self.default_logger("Removing everything now")
+				self.verbose and self.default_logger("Removing everything now")
 				shutil.rmtree(self.build_json_path())
 			else:
 				pass
 
 		if not os.path.isdir(self.build_json_path()):
-			self.debug and self.default_logger('Making the json directory')
+			self.verbose and self.default_logger('Making the json directory')
 			os.mkdir(self.build_json_path())
 
 		for gns.section in gns.config.managebac.sections.split(','):
-			self.debug and self.default_logger(gns('On section {section}'))
+			self.verbose and self.default_logger(gns('On section {section}'))
 			file_path = self.build_json_path(gns.section, '.json')
 			fileexists = os.path.isfile(file_path)
 
 			if not fileexists:
 				url = self.url.format(uri=gns.section)
-				self.debug and self.default_logger('Downloading {}'.format(url))
+				self.verbose and self.default_logger('Downloading {}'.format(url))
 
 				r = self.download_get(url, params=dict(
-					auth_token=self.api_token
+					auth_token=self.api_token,
 					))
+				if not r.ok:
+					self.verbose and self.default_logger('Download request did not return "OK"')
+					continue
 				try:
-					if not r.ok:
-						self.debug and self.default_logger('Download request did not return "OK"')
 					json_info = r.json()
 				except ValueError:
-					self.debug and self.default_logger('Invalid json after download. Oops?')
+					self.verbose and self.default_logger('Invalid json after download. Oops?')
+					continue
 
 			else:
 				with open(file_path) as _f:
@@ -163,43 +186,47 @@ class APIDownloader(object):
 				self.write_to_disk(json_info, file_path)
 
 			if gns.section in json_info:
-				self.debug and self.default_logger('Section found in json')
+				self.verbose and self.default_logger('Section found in json')
 				for item in json_info[gns.section]:
 					self.container.add(item, gns.section)
+
+		if self.verbose:
+			# Output the container
+			self.default_logger(self.container)
 
 		for gns.section in gns.config.managebac.sections.split(','):
 			section_url = self.section_urls.get(gns.section)
 			if not section_url:
-				self.debug and self.default_logger(gns('Skipping section {section}'))
+				self.verbose and self.default_logger(gns('Skipping section {section}'))  # no users
 				continue
 
 			container_area = getattr(self.container, gns.section)
-			self.debug and self.default_logger(gns('On section {section}'))
+			self.verbose and self.default_logger(gns('On section {section}'))
 
 			for item in container_area:
 				if not item:
-					self.debug and self.default_logger('Skipping because item is None')
+					self.verbose and self.default_logger('Skipping because item is None')
 					continue
 				this_url = section_url.format(id=item.id)
 				this_filename = this_url.replace('/', '-')
 				file_path = self.build_json_path(this_filename, '.json')
 				fileexists = os.path.isfile(file_path)
-				if not fileexists:
-					self.debug and self.default_logger('Downloading {}'.format(this_filename))
+				if self.mock or not fileexists:
+					self.verbose and self.default_logger('Downloading {}'.format(this_filename))
 					try:
 						r = self.download_get(self.url.format(uri=this_url), params=dict(
-						auth_token=self.api_token
+						auth_token=self.api_token,
 						))
 					except requests.exceptions.SSLError:
 						continue
 					try:
 						json_info = r.json()
 					except ValueError:
-						self.debug and self.default_logger('Trouble with json')
+						self.verbose and self.default_logger('Trouble with json')
 						continue
 
 				else:
-					self.debug and self.default_logger('Found file {}, reading in json info'.format(file_path))
+					self.verbose and self.default_logger('Found file {}, reading in json info'.format(file_path))
 					with open(file_path) as _f:
 						json_info = json.load(_f)
 
@@ -211,7 +238,7 @@ if __name__ == "__main__":
 
 	go = APIDownloader()
 
-	go.open_apply_download(overwrite=True)
+	go.download(mock=True)
 
 
 

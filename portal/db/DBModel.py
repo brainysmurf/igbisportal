@@ -352,10 +352,10 @@ class Student(Base, User):
     status = Column(String(255))
 
     def __repr__(self):
-        return '<Student {}>'.format(self.first_nickname_last_studentid)
+        return u'<Student {}>'.format(self.first_nickname_last_studentid)
 
     def __str__(self):
-        return "<Student {}>".format(self.first_nickname_last_studentid)
+        return u"<Student {}>".format(self.first_nickname_last_studentid)
 
     @hybrid_property
     def start_date(self):
