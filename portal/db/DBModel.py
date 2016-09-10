@@ -503,6 +503,10 @@ class Student(Base, User):
         return (self.nickname + ' ' + self.last_name + ' (aka ' + self.first_name + ')' if self.nickname and self.nickname != self.first_name else self.first_name + ' ' + self.last_name) + ' [' + str(self.student_id) + ']'
 
     @hybrid_property
+    def nickname_last(self):
+        return (self.nickname + ' ' + self.last_name + ' (aka ' + self.first_name + ')' if self.nickname and self.nickname != self.first_name else self.first_name + ' ' + self.last_name)
+
+    @hybrid_property
     def last_first_nickname_studentid(self):
         return self.last_name + ', ' + self.first_name + (' (' + self.nickname + ')' if self.nickname and self.nickname != self.first_name else '') + ' [' + str(self.student_id) + ']'
 

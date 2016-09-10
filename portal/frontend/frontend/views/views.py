@@ -325,7 +325,8 @@ def mb_homeroom(request):
 
             teacher_emails = ",".join(set([t.email for t in teachers]))
             if teacher_emails:
-                data.append(dict(student_email=teacher_emails, student_name=student.first_name + ' ' + student.last_name))
+                data.append(dict(student_email=teacher_emails, student_name=student.nickname_last))
+    data.sort(key=lambda x: x['student_name'])
     return dict(message="Success", data=data)
 
 @view_config(route_name="mb_courses", renderer='json', http_cache=0)
