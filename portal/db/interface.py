@@ -32,21 +32,27 @@ class DatabaseSetterUpper(object):
 			click.echo(s)
 
 	def update_status(self):
+		"""
+		Special routine for updating status
+		Tricky because we cannot assume that student_id will be entered
+		Decided to update the status even if there is no student_id provided (which potentially could happen)
+		It looks at the student email instead
+		"""
 		with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
 			this_json = json.load(_f)
 
 			for student in this_json.get('students'):
 
-				student_mb_id = student.get('managebac_student_id')
+				student_student_id = student.get('custom_id')  # open applys stores student_id as custom_id
 				student_email = student.get('email')
 
 				with DBSession() as session:
 
 					try:
-						if student_mb_id is None:
+						if student_student_id is None:
 							# short-circuit to checking by email addy
 							raise NoResultFound
-						db_student = session.query(Student).filter(Student.id==student_mb_id).one()
+						db_student = session.query(Student).filter(Student.student_id==student_student_id).one()
 					except NoResultFound:
 						try:
 							db_student = session.query(Student).filter(Student.email==student_email).one()
@@ -57,10 +63,10 @@ class DatabaseSetterUpper(object):
 					if db_student and db_student.status != student.get('status'):
 						print(u'\t Changed status of {} from {} to {}'.format(db_student, db_student.status, student.get('status')))
 						db_student.status = student.get('status')
-
+						session.commit()
 					else:
+						# Fails silently, expected behavour for a many of them
 						pass
-						#print("\t ----")
 
 	def setup_database(self):
 		"""
