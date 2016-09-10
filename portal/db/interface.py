@@ -61,11 +61,11 @@ class DatabaseSetterUpper(object):
 
 					# FIXME: Why is db_student.status always None here?
 					if db_student and db_student.status != student.get('status'):
-						print(u'\t Changed status of {} from {} to {}'.format(db_student, db_student.status, student.get('status')))
+						click.echo(u'\t Changed status of {} from {} to {}'.format(db_student, db_student.status, student.get('status')))
 						db_student.status = student.get('status')
 						session.commit()
 					else:
-						# Fails silently, expected behavour for a many of them
+						# Fails silently, expected behavour for a many (no student_id, email doesn't match anymore...)
 						pass
 
 	def setup_database(self):
@@ -142,26 +142,17 @@ class DatabaseSetterUpper(object):
 							setattr(instance, item_key, item[item_key])
 
 						except AttributeError:
+							#TODO: Make this part of the logger
+							click.echo(click.style("Warning, no attribute {} for {} detected".format(item_key, item), fg='red'))
 							if item[item_key] is None:
-								raw_input("Class {} does not have attribute {}".format(table_class, item_key))
-								
+								pass # doesn't seem to be happening								
 							else:
-								# TODO: Figure this out
-								# print?
-								# print('here')
-								# from IPython import embed
-								# embed()
-								# exit()
-								raw_input("Class {} does not have attribute {}".format(table_class, item_key))
+								pass  # doesn't seem to be happening
 
-					# Filter out things
 					# Don't go ahead unless a studentid has been given
-					# TODO: Shouldn't this really be enforced in the model?
-					# 		Maybe check for constaints? 
 					if _type == "Student":
 						if hasattr(item, 'student_id') and not item['student_id'] is None:
-							# TODO: Inform someone?
-							print('Student without student_id: {}'.format(item))
+							click.echo(click.style("Warning, student_id not present for {}".format(item)))
 							continue
 
 					u.update_or_add(instance)

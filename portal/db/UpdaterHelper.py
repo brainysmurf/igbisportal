@@ -5,6 +5,7 @@ import sys
 
 # Makes an object so we can use dot notation
 DO = lambda name, **kwargs: type(name, (), kwargs)
+import click
 
 class collection_obj:
 	def __init__(self, left_table, right_table, collection, left_column='id', right_column='id'):
@@ -123,7 +124,6 @@ class updater_helper:
 		TODO: Make a logger so I can track changes
 		"""
 		verbose = False
-
 		with DBSession() as session:
 			try:
 				row = session.query(obj.__class__).filter_by(id=obj.id).one()
@@ -139,17 +139,22 @@ class updater_helper:
 			column_names = [c.name for c in row.__table__.columns if c.name != 'id']
 			column_names = [c for c in column_names if hasattr(obj, c)]
 
-			# if hasattr(row, 'student_id') and row.student_id == '20300008':
-			# 	from IPython import embed;embed();exit()
-
 			for column in column_names:
+				if obj.__table__.name.endswith('students') and column == 'status':
+					# FIXME: Because status in the students table is not present in the json of the need side
+					# and status is defined on the database as having the default value of null
+					# we end up not being able to correctly ascertain, so just skip the column entirely
+					continue
 				if verbose:
 					pass #sys.stdout.write('Column {}'.format(column))
-				left = getattr(row, column)  # has
-				right = getattr(obj, column) # needs
+				left = getattr(row, column, '<missing>')  # has
+				right = getattr(obj, column, '<missing>') # needs
 				if verbose:
 					if left is not None or right is not None:
 						pass #sys.stdout.write(u' has: {}; needs : {} '.format(left, right))
+
+				if right == '<missing>' or left == '<missing>':
+					continue  # Just in case
 
 				# If there are some values that are different, construct an update object
 				# and execute with the session obj
@@ -161,15 +166,14 @@ class updater_helper:
 							where(obj.__table__.c.id == obj.id).\
 							values(**values_statement)
 						session.execute(update_obj)
-					if verbose: 
-						sys.stdout.write(u'CHANGED id: {} column {} from {} to {}\n'.format(obj.id, column, left, right))
+					click.echo(u'CHANGED id: {} in table {} column {} from {} to {}'.format(obj.id, row.__table__.name, column, left, right))
 
 					# TODO: Log this
 				else:
 					if verbose:
 						pass #sys.stdout.write(u'... no change needed\n'.format(left or "<None>"))
 		else:
-			if verbose:
+			if self.verbose:
 				print('no row?')
 
 	def collection(self, left, right, attr, left_column='id', right_column='id'):

@@ -520,6 +520,14 @@ def teacher_classes(ctx, id):
 def test():
     pass
 
+@test.command('test_status_updater')
+@click.pass_obj
+def test_status_updater(obj):
+    from portal.db.interface import DatabaseSetterUpper
+    go = DatabaseSetterUpper(lazy=True, verbose=True)
+    go.update_status()
+
+
 @test.command('test_api_downloader')
 @click.pass_obj
 def test_api_downloader(obj):
