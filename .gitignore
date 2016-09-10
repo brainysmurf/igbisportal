@@ -21,3 +21,4 @@ student_photos/
 *.sublime-project
 *.sublime-workspace
 build/
+allteam_output.txt
