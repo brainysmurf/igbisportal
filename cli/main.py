@@ -37,18 +37,32 @@ def sync():
     pass
 
 @sync.command("destiny")
+@click.option("--dontput", is_flag=True, default=False, help="Turn off the putting to the file, for debugging")
 @click.pass_obj
-def destiny(obj):
+def destiny(obj, dontput):
     """
     Writes to a location on the server
     Internal use only
     """
     import requests, gns
     secret = gns.config.api.secret
+    # field_districtID={1,omit}
+    # field_siteShortName={2,omit}
+    # field_barcode={3,omit}
+    # field_lastName={4,omit}
+    # field_firstName={5,omit}
+    # field_nickname={6,omit}
+    # field_patronType={7,omit}
+    # field_homeroom={8,omit}
+    # field_gradeLevel={9,omit}
+    # field_graduationYear={10,omit}
+    # field_gender={11,omit}
+    # field_username={12,omit}
+    # field_emailPrimary={13,omit}
+
     payload = {
         'secret': secret,
         'columns': [
-                    'first_nickname_last_studentid', 
                     'student_id',
                     'destiny_site_information',
                     'barcode',
@@ -56,9 +70,10 @@ def destiny(obj):
                     'first_name',
                     'nickname',
                     'destiny_patron_type',
-                    'homeroom_abbrev',
-                    'grade',
+                    'homeroom_abbrev_destiny',
+                    'abbrev_grade_destiny',
                     'year_of_graduation',
+                    'gender_abbrev',
                     'username',
                     'email',
                 ],
@@ -80,15 +95,17 @@ def destiny(obj):
                     if i == 0 or i == len(line):
                         pass # don't write a comma
                     else:
-                        _f.write(',')
+                        _f.write(','.encode(encoding))
                     _f.write( unicode(l).encode(encoding) )
-                _f.write(u'\n'.encode(encoding))
+                _f.write(u'\r\n'.encode(encoding))
         import pysftp
 
         path = gns.config.destiny.path
         host = gns.config.destiny.host
         username = gns.config.destiny.username
         password = gns.config.destiny.password
+        if dontput:
+            return
         with pysftp.Connection(host, username=username, password=password) as conn:
             with conn.cd(path):
                 conn.put(path_to_output)
