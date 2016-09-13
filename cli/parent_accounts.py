@@ -29,7 +29,7 @@ homeroom_mapping = {
     'diane.douglas': (11, '11'),
     'matthew.marshall': (11, '11'),
     'christopher.thompson': (12, '12'),
-    'natalie.chotard': (12, '12'),
+    'nathalie.chotard': (12, '12'),
 
     'mary.richards': (-1, 'eyr'),
     'deborah.king': (-1, 'eyk'),
