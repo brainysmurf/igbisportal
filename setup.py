@@ -11,7 +11,7 @@ setup(
         [console_scripts]
         portal=cli.main:main
     ''',
-    install_requires = ['sqlalchemy', 'scrapy',
+    install_requires = ['click', 'pillow', 'sqlalchemy', 'scrapy',
     'pyramid',
     'pyramid_chameleon',
     'pyramid_debugtoolbar',
