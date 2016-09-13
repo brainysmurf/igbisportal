@@ -86,7 +86,7 @@ def destiny(obj, dontput):
             print("BAD")
             return
 
-        path_to_output = '/home/vagrant/igbisportal/portal/output/destinysync.csv'  
+        path_to_output = gns.config.paths.portal_home + '/output/destinysync.csv'  
         encoding = 'cp1252'    # 'utf-8' or 'cp-1252'
         with open(path_to_output, 'w') as _f:
             for line in data:
