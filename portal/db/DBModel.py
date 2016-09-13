@@ -645,6 +645,27 @@ class Student(Base, User):
             else_ = '-10')
 
     @hybrid_property
+    def abbrev_grade_destiny(self):
+        return {
+                'Grade 12':'Grade 12', 
+                'Grade 11':'Grade 11', 
+                'Grade 10':'Grade 10', 
+                'Grade 9': 'Grade 9', 
+                'Grade 8': 'Grade 8', 
+                'Grade 7': 'Grade 7', 
+                'Grade 6': 'Grade 6', 
+                'Grade 5': 'Grade 5', 
+                'Grade 4': 'Grade 4', 
+                'Grade 3': 'Grade 3', 
+                'Grade 2': 'Grade 2', 
+                'Grade 1': 'Grade 1', 
+                'Early Years 1': 'Early Years 1', 
+                'Early Years 2': 'Early Years 2',
+                'Kindergarten': 'Kindergarten',
+                'Fireflies': 'Fireflies',
+            }.get(self.class_grade, '<ng>')
+
+    @hybrid_property
     def health_information(self):
         from portal.db import DBSession, Database
         db = Database()
@@ -701,38 +722,49 @@ class Student(Base, User):
         TODO: This is very make-shift
         """
         homeroom_mapping = {
-            'rachel.fleury':(6, '6'),
-            'tim.bartle': (7, '7'),
-            'sheena.kelly': (7, '7'), 
-            'benjamin.wylie': (8, '8'),
-            'emily.heys': (8, '8'),
-            'dean.watters':(9, '9'),
-            'glen.fleury': (9, '9'),
-            'marcus.wetherell': (10, '10'),
-            'diane.douglas': (10, '10'),
-            'paul.skadsen': (11, '11'),
-            'nathalie.chotard': (11, '11'),
-            'gabriel.evans': (11, '11'),
-            'michael.hawkes': (12, '12'),
-            'mary.richards': (-9, 'EY{}R'),
-            'deborah.king': (-9, 'EY{}K'),
-            'sally.watters': (-9, 'EY{}W'),
-            'leanne.harvey':(0, 'KH'),
-            'lisa.mcclurg': (0, 'KM'),
-            'shireen.blakeway': (1, '1B'),
-            'kath.kummerow': (2, '2K'),
-            'michelle.ostiguy': (3, '3O'),
-            'marshall.hudson': (3, '3H'),
-            'kari.twedt': (4, '4T'),
-            'steven.harvey': (4, '4H'),
-            'kathy.mckenzie': (5, '5M'),
-            'yolaine.johanson': (5, '5J'),
+    'jade.saba':(6, '6'),
+    'sheena.kelly':(6, '6'),
+    'glen.fleury': (7, '7'),
+    'jo.spivey-jones': (7, '7'),
+    'adam.morris': (8, '8'),
+    'silvana.evans': (8, '8'),
+    'mick.smith': (9, '9'),
+    'dean.watters':(9, '9'),
+    'marcus.wetherell': (10, '10'),
+    'scott.cameron': (10, '10'),
+    'diane.douglas': (11, '11'),
+    'matthew.marshall': (11, '11'),
+    'christopher.thompson': (12, '12'),
+    'nathalie.chotard': (12, '12'),
+
+    'mary.richards': (-1, 'eyr'),
+    'deborah.king': (-1, 'eyk'),
+    'tamara.snooks': (-1, 'eys'),
+
+    'leanne.harvey':(0, 'kh'),
+    'megan.ngatai': (0, 'kn'),
+
+    'sally.watters': (1, '1w'),
+    'shireen.blakeway': (1, '1b'),
+
+    'stephanie.wafzig': (2, '2w'),
+    'clare.demnar': (2, '2d'),
+
+    'lisa.mcclurg': (3, '3m'),
+    'marshall.hudson': (3, '3h'),
+
+    'kari.twedt': (4, '4t'),
+    'steven.harvey': (4, '4h'),
+
+    'yolaine.johanson': (5, '5j'),
+    'kathy.mckenzie': (5, '5m')
             }
         if not self.homeroom_teacher:
             return "<HR>"
         username = self.homeroom_teacher.username_handle
         grade, homeroom = homeroom_mapping.get(username, (None, None))
         if grade is None or homeroom is None:
+            print(username)
             return "<HR?>"
         if grade >= 6:
             return "{}{}".format(self.grade, (self.homeroom_teacher.username_handle.split('.')[1][0]).upper())
@@ -749,6 +781,54 @@ class Student(Base, User):
             elif grad_year - this_year == (12 + 1): 
                 # early years 2
                 return homeroom.format(2)
+
+    @hybrid_property
+    def homeroom_abbrev_destiny(self):
+        """
+        TODO: This is very make-shift
+        """
+        homeroom_mapping = {
+            'jade.saba':'Grade 6S',
+            'sheena.kelly':'Grade 6K',
+            'glen.fleury': 'Grade 7F',
+            'jo.spivey-jones': 'Grade 7S',
+            'adam.morris': 'Grade 8M',
+            'silvana.evans': 'Grade 8E',
+            'mick.smith': 'Grade 9S',
+            'dean.watters':'Grade 9W',
+            'marcus.wetherell':'Grade 10W',
+            'scott.cameron': 'Grade 10C',
+            'diane.douglas':  'Grade 11D',
+            'matthew.marshall':  'Grade 11M',
+            'christopher.thompson': 'Grade 12T',
+            'nathalie.chotard': 'Grade 12C',
+
+            'mary.richards': 'Early Years 1/2R',
+            'deborah.king': 'Early Years 1/2K',
+            'tamara.snooks': 'Early Years 1/2S',
+
+            'leanne.harvey': 'Kindergarten H',
+            'megan.ngatai': 'Kindergarten N',
+
+            'sally.watters':  'Grade 1W',
+            'shireen.blakeway': 'Grade 1B',
+
+            'stephanie.wafzig': 'Grade 2W',
+            'clare.demnar': 'Grade 2D',
+
+            'lisa.mcclurg': 'Grade 3M',
+            'marshall.hudson': 'Grade 3H',
+
+            'kari.twedt': 'Grade 4T',
+            'steven.harvey': 'Grade 4H',
+
+            'yolaine.johanson': 'Grade 5J',
+            'kathy.mckenzie': 'Grade 5M'
+            }
+        if not self.homeroom_teacher:
+            return "<No HR in MB>"
+        else:
+            return homeroom_mapping.get(self.homeroom_teacher.username_handle.lower(), self.homeroom_teacher)
 
     @hybrid_property
     def homeroom_full(self):
