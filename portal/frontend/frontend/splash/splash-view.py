@@ -134,6 +134,7 @@ parent_buttons = [
         }),
     button(name="Parent Sports Field sign-ups", externalid=-9, size="", color="blue", url="https://docs.google.com/a/igbis.edu.my/forms/d/1Fj8ah4IuFn6PdE5a9XZfwzZ3ANJ9AdQo5-67ROwjCnU/viewform?c=0&w=1", icon="plus-circle", id="", context_menu=None),
     counselor_button_parents,
+    button(name="PVO", externalid=-9, size="", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu=None),
 ]
 
 administration_buttons = [
