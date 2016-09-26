@@ -358,7 +358,8 @@ def splash(request):
         button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", id="", context_menu={
         'items': [
             menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),
-            menu_item(icon="apple", display=" Digital Literacy Site", url="https://sites.google.com/igbis.edu.my/digitalliteracy"),
+            menu_item(icon="apple", display="Digital Literacy Site", url="https://sites.google.com/igbis.edu.my/digitalliteracy"),
+            menu_item(icon="apple", display="IT Committee", url="https://sites.google.com/igbis.edu.my/itcommittee"),
         ]}),
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
@@ -407,6 +408,7 @@ def splash(request):
         'items': [
             menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),
             menu_item(icon="apple", display=" Digital Literacy Site", url="https://sites.google.com/igbis.edu.my/digitalliteracy"),
+            menu_item(icon="apple", display="IT Committee", url="https://sites.google.com/igbis.edu.my/itcommittee"),
         ]}),
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         bookings_button,
