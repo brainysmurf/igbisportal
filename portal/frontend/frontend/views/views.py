@@ -98,44 +98,7 @@ def session_user(request):
                 user = parent
 
         if not user: # authenticated, but not in MB, so just put in users table
-
-            raise HTTPForbidden()
-
-            gl_user = session.query(Users).filter(func.lower(Users.email) == user_email.lower()).first()
-
-            if not gl_user:
-
-                raise exc.HTTPFound(request.route_url("user_not_found"))
-
-                new_user = Users(email=user_email, igbid=0)
-                # TODO: This isn't the best way to get the name info...
-                # Can use scope userinfo.profile
-                handle = re.sub('@.*', '', user_email)
-                if '.' in handle:
-                    hsplit = handle.split('.')
-                    if len(hsplit) == 2:
-                        new_user.first_name, new_user.last_name = [h.title() for h in hsplit]
-                    elif len(hsplit) > 2:
-                        first, extra, last = [h.title() for h in handle.split('.')]
-                    else:
-                        new_user.first_name = handle
-                        new_user.last_name = ""
-                else:
-                    new_user.first_name, new_user.last_name = ['*Unknown*', 'Name']
-                new_user.type = "Other"
-
-                new_user.g_plus_unique_id = unique_id
-                request.session['mb_user'] = None
-                request.session['gl_user'] = user
-                unique_id = credentials.id_token['sub']
-                request.session['g_plus_unique_id'] = unique_id
-
-                session.add(new_user)
-
-            else:
-                request.session['mb_user'] = None
-                request.session['gl_user'] = gl_user
-
+            return dict(message="HTTPForbidden")
 
         else:  # found within managebac
 
