@@ -404,7 +404,7 @@ def splash(request):
         'items':[
             menu_item(icon="gear", display="ATL on the OCC", url="https://xmltwo.ibo.org/publications/DP/Group0/d_0_dpatl_gui_1502_1/static/dpatl/"),
         ]}),
-        button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", id="", context_menu={
+        button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/igbis.edu.my/digitalliteracy", icon="arrows", id="", context_menu={
         'items': [
             menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),
             menu_item(icon="apple", display=" Digital Literacy Site", url="https://sites.google.com/igbis.edu.my/digitalliteracy"),
