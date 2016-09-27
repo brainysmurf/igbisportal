@@ -10,7 +10,6 @@ function signInCallback(authResult) {
     // Hide the sign-in button now that the user is authorized, for example:
     
     $('#signinButton').fadeOut("slow", function () {
-        do_settings_dialog();
         $('#button_list').fadeIn("slow");
       });
 
@@ -21,7 +20,11 @@ function signInCallback(authResult) {
       url: 'signinCallback?' + unique,
       contentType: 'application/json; charset=utf-8',
       success: function(result) {
-          window.location.reload(true);   // don't reload from cache, ugh....
+          if (result.message == "HTTPForbidden") {
+            $('#userButton').text('Non-IGBIS Account!');
+          } else {
+            window.location.reload(true);   // don't reload from cache, ugh....
+          }
         },
       data: JSON.stringify({'authResult':authResult, 'code':authResult['code']})
       });
@@ -32,6 +35,6 @@ function signInCallback(authResult) {
     //   "immediate_failed" - Could not automatially log in the user
     console.log('There was an error: ' + authResult['error']);
     // do this just in case we have the user anyway
-    do_update();
+    //do_update();
   }
 }
