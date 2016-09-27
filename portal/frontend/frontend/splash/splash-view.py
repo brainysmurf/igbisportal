@@ -355,7 +355,7 @@ def splash(request):
         ibo_button,
         counselor_button_not_students,
         button(name="Reports Hub", externalid=-9, size="", color="orange", url="reports_hub", icon="gavel", id="", context_menu=None),
-        button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/plehhcet/", icon="arrows", id="", context_menu={
+        button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/igbis.edu.my/digitalliteracy", icon="arrows", id="", context_menu={
         'items': [
             menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),
             menu_item(icon="apple", display="Digital Literacy Site", url="https://sites.google.com/igbis.edu.my/digitalliteracy"),
