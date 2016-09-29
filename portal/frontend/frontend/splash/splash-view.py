@@ -280,7 +280,7 @@ def splash(request):
                 menu_separator(),
                 menu_item(icon="folder", display="Timetables Semester One 2016/17", url="https://drive.google.com/drive/folders/0By9YOJwliLtBSnFXUnhWcUdPdms"),
                 menu_item(icon="folder", display="Duties", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1lhsGHubespv-sVI1RPcTYJDf_NKNGft983PJ5R_BrVs/edit?usp=sharing"),
-                menu_item(icon="folder", display="Cover Rota (not available yet)", url="#"),
+                menu_item(icon="folder", display="Cover Rota", url="https://docs.google.com/spreadsheets/d/1-sToLnPqBtZdDJBnjZaShVU4a9d_x5WjiJBGUvgEyU4/edit?ts=57ed1253#gid=1615996677"),
                 menu_item(icon="folder", display="Meeting Minutes 2016-2017", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERfkxJcEhDaURrcXRQRXU0bkwwUWUybG9fc3E4cG5vUkE3c3FZdTZhT3hldEE")
             ]
             }),
