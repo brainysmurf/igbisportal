@@ -63,7 +63,12 @@ daily_notices_button = button(name="Communications", externalid=-9, size="large"
 emergency_button = button(name="Emergency Contact", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", id="", context_menu=None)
 
 ela_button = button(name="ELA Department", externalid=-9, size="", color="orange", url="https://sites.google.com/a/igbis.edu.my/igb-ela/", icon="folder-open", id="", context_menu=None)
-bookings_button = button(name="Bookings", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/bookings/", icon="bookmark", id="", context_menu=None)
+bookings_button = button(name="Events &amp;&nbsp; Bookings Spaces", externalid=-9, size="", color="peach", url="javascript:void(0)", icon="bookmark", id="", context_menu={
+    'items': [
+        menu_item(icon="globe", display="Events & Field Trips", url="https://sites.google.com/a/igbis.edu.my/igbis-whole-school-procedures/events-at-igbis"),
+        menu_item(icon="globe", display="Bookable Spaces", url="https://sites.google.com/a/igbis.edu.my/bookings/")
+    ]
+    })
 ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="http://www.ibo.org/", icon="globe", id="", 
         context_menu={
         'items': [
