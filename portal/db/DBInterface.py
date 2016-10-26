@@ -12,7 +12,7 @@ from sqlalchemy import and_, not_, or_
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy import desc, asc
 from sqlalchemy import func, case, Integer, String
-from sqlalchemy.dialects.postgres import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import aliased
 from collections import defaultdict
 from sqlalchemy.sql.expression import cast
