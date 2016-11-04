@@ -41,16 +41,10 @@ class GNS(object):
         settings = ConfigParser.ConfigParser()
         results = settings.read(self.config.paths.settings_ini)
 
-        # # config.paths is special, so let's process it specially
-        # SECTION = 'PATHS'
-        # for OPTION in settings.options(SECTION):
-        #     option = OPTION.lower()
-        #     if option != 'home':
-        #         setattr(self.config.paths, option, settings.get(SECTION, OPTION))
-        #     else:
-        #         home_value = settings.get(SECTION, OPTION)
-        #         if home_value != 'auto':
-        #             self.config.paths.home = home_value
+        if not settings.sections():
+            # If no settings file or a file without settings, we should exit early
+            print("No sections named, is there any legit file at {}?".format(self.config.paths.settings_ini))
+            exit()
 
         for SECTION in [s for s in settings.sections()]:
             section = SECTION.lower()

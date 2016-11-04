@@ -221,7 +221,7 @@ class DatabaseSetterUpper(object):
 								self.default_logger("Student {} not found".format(student_id))
 							except MultipleResultsFound:
 								if student_id is None:
-									print("student_id is None!")
+									print("student_id is None for course_id {}!".format(course_id))
 								else:
 									print("Found this student twice! {}".format(student_id))
 							if successful:							

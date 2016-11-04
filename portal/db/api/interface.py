@@ -62,7 +62,7 @@ class APIDownloader(object):
 			self.open_apply_download(overwrite=True)
 
 	def default_logger(self, *args, **kwargs):
-		click.echo(args)
+		click.echo(*args, **kwargs)
 
 	def download_get(self, *args, **kwargs):
 		if self.mock == True:
