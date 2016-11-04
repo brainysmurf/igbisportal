@@ -1,5 +1,5 @@
 from portal.db import Database, DBSession
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import IntegrityError
 import gns
 import re, json, glob
@@ -213,14 +213,22 @@ class DatabaseSetterUpper(object):
 						course_id = re.match(gns('{config.paths.jsons}/groups-(\d+)-members.json'), path).group(1)
 						for course in this_json['members']:
 							student_id = course.get('student_id')
+							successful = False
 							try:
 								student = session.query(Student).filter(Student.student_id==student_id).one()
+								successful = True
 							except NoResultFound:
 								self.default_logger("Student {} not found".format(student_id))
-							try:
-								stu_course.append(str(student.id), course_id)
-							except NoResultFound:
-								self.default_logger('course_id {} or student_id {} not found'.format(course_id, student_id))
+							except MultipleResultsFound:
+								if student_id is None:
+									print("student_id is None!")
+								else:
+									print("Found this student twice! {}".format(student_id))
+							if successful:							
+								try:
+									stu_course.append(str(student.id), course_id)
+								except NoResultFound:
+									self.default_logger('course_id {} or student_id {} not found'.format(course_id, student_id))
 
 		# Now let's look at open_apply and update status, but only if the student is already in there.
 		# We won't use the manager because this is more of a piece-meal thing
