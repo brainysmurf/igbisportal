@@ -173,7 +173,7 @@ class updater_helper:
 					if verbose:
 						pass #sys.stdout.write(u'... no change needed\n'.format(left or "<None>"))
 		else:
-			if self.verbose:
+			if verbose:
 				print('no row?')
 
 	def collection(self, left, right, attr, left_column='id', right_column='id'):
