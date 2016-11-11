@@ -166,6 +166,8 @@ class updater_helper:
 							where(obj.__table__.c.id == obj.id).\
 							values(**values_statement)
 						session.execute(update_obj)
+					if column == 'profile_photo':
+						continue
 					click.echo(u'CHANGED id: {} in table {} column {} from {} to {}'.format(obj.id, row.__table__.name, column, left, right))
 
 					# TODO: Log this
