@@ -402,7 +402,6 @@ def students_program_filter(request):
 
     return dict(title="All Students", items=students)
 
-
 @view_config(route_name='students_ind', renderer='templates/student.pt')
 def students_ind(request):
     return dict(title="Student View", item=None)

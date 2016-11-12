@@ -96,9 +96,9 @@ def destiny(obj, dontput):
                     if i == 0 or i == len(line):
                         pass # don't write a comma
                     else:
-                        _f.write(','.encode(encoding))
-                    _f.write( unicode(l).encode(encoding) )
-                _f.write(u'\r\n'.encode(encoding))
+                        _f.write(',')
+                    _f.write( str(l) )
+                _f.write('\r\n')
         import pysftp
 
         path = gns.config.destiny.path

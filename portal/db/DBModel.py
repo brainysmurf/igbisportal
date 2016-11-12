@@ -757,7 +757,8 @@ class Student(Base, User):
     'steven.harvey': (4, '4h'),
 
     'yolaine.johanson': (5, '5j'),
-    'kathy.mckenzie': (5, '5m')
+    'kathy.mckenzie': (5, '5m'),
+    'indra.lina': (-2, 'ff'),
             }
         if not self.homeroom_teacher:
             return "<HR>"
@@ -823,12 +824,13 @@ class Student(Base, User):
             'steven.harvey': 'Grade 4H',
 
             'yolaine.johanson': 'Grade 5J',
-            'kathy.mckenzie': 'Grade 5M'
+            'kathy.mckenzie': 'Grade 5M',
+             'indra.lina': 'Fireflies',
             }
         if not self.homeroom_teacher:
             return "<No HR in MB>"
         else:
-            return homeroom_mapping.get(self.homeroom_teacher.username_handle.lower(), self.homeroom_teacher)
+            return homeroom_mapping.get(self.homeroom_teacher.username_handle.lower(), '<homeroom mapping wrong>')
 
     @hybrid_property
     def homeroom_full(self):
