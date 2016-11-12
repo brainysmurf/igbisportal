@@ -95,9 +95,9 @@ def destiny(obj, dontput):
                     if i == 0 or i == len(line):
                         pass # don't write a comma
                     else:
-                        _f.write(','.encode(encoding))
-                    _f.write( unicode(l).encode(encoding) )
-                _f.write(u'\r\n'.encode(encoding))
+                        _f.write(',')
+                    _f.write( str(l) )
+                _f.write('\r\n')
         import pysftp
 
         path = gns.config.destiny.path
@@ -108,9 +108,7 @@ def destiny(obj, dontput):
             return
         with pysftp.Connection(host, username=username, password=password) as conn:
             with conn.cd(path):
-                conn.put(path_to_output)
-
-
+                result = conn.put(path_to_output)
     else:
         print(result.status_code)
 
@@ -603,8 +601,8 @@ def inspect_student(obj):
 def test_api_students(obj, column, destiny, every_column, order_by, inspect, output_sids):
     if destiny:
         column = ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
-    if column is None:
-        print("No columns..")
+    if column == ():
+        print("You must specify --columm blah")
         return
 
     options = {
@@ -640,19 +638,6 @@ def test_api_students(obj, column, destiny, every_column, order_by, inspect, out
 
     for data in json['data']:
         pass
-
-@test.command('api_lastlogins')
-@click.pass_obj
-def test_api_lastlogins(obj):
-    options = {
-        'secret': 'phillies',
-    }
-
-    url = 'http://portal.igbis.edu.my/api/students'
-    #url = 'http://localhost:6543/api/lastlogins'
-    result = requests.post(url, json=options)
-    print(result.json())
-    from IPython import embed;embed()
 
 @test.command('api_teachers')
 @click.option('--columns')

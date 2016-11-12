@@ -191,7 +191,7 @@ def signinCallback(request):
     """
 
     try:
-        unique = request.params.keys()[0]
+        unique = list(request.params.keys())[0]
     except KeyError:
         return dict(message="error, identifier not passed!")
 
@@ -401,7 +401,6 @@ def students_program_filter(request):
         students = statement.all()
 
     return dict(title="All Students", items=students)
-
 
 @view_config(route_name='students_ind', renderer='templates/student.pt')
 def students_ind(request):

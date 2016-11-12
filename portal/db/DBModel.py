@@ -825,7 +825,7 @@ class Student(Base, User):
 
             'yolaine.johanson': 'Grade 5J',
             'kathy.mckenzie': 'Grade 5M',
-            'indra.lina': 'Fireflies',
+             'indra.lina': 'Fireflies',
             }
         if not self.homeroom_teacher:
             return "<No HR in MB>"

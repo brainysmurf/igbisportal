@@ -48,17 +48,15 @@ class OrderedDictForJSONItem(scrapy.item.DictItem):
             raise KeyError("%s does not support field: %s" %
                 (self.__class__.__name__, key))
 
-	def __setattr__(self, name, value):
-		if not name.startswith('_'):
-			raise AttributeError("Use item[%r] = %r to set field value" %
-				(name, value))
-		super(OrderedDictItem, self).__setattr__(name, value)
+    def __setattr__(self, name, value):
+        if not name.startswith('_'):
+            raise AttributeError("Use item[%r] = %r to set field value" %
+                (name, value))
+        super(OrderedDictItem, self).__setattr__(name, value)
 
     def __repr__(self):
         return repr(self._values.values())
 
 @six.add_metaclass(scrapy.item.ItemMeta)
 class OrderedItem(OrderedDictForJSONItem):
-	pass
-
-
+    pass

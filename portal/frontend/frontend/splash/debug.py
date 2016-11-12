@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # DELETE ME
 
 # from portal.db import Database, DBSession
