@@ -79,6 +79,7 @@ def destiny(obj, dontput):
                 ],
     }
     result = requests.get('http://0.0.0.0:6543/api/students', json=payload)
+    from IPython import embed;embed()
     if result.ok:
         json = result.json()
         data = json.get('data')
@@ -108,9 +109,7 @@ def destiny(obj, dontput):
             return
         with pysftp.Connection(host, username=username, password=password) as conn:
             with conn.cd(path):
-                conn.put(path_to_output)
-
-
+                result = conn.put(path_to_output)
     else:
         print(result.status_code)
 

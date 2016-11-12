@@ -191,7 +191,7 @@ def signinCallback(request):
     """
 
     try:
-        unique = request.params.keys()[0]
+        unique = list(request.params.keys())[0]
     except KeyError:
         return dict(message="error, identifier not passed!")
 

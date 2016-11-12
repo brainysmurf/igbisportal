@@ -6,7 +6,7 @@ Reads in settings.ini and provides logging as well
 """
 
 import contextlib, os, logging
-import ConfigParser
+import configparser
 import datetime
 
 class GNS(object):
@@ -38,7 +38,7 @@ class GNS(object):
 
         self.config.paths.home = os.sep.join(os.path.realpath(__file__).split(os.sep)[:-2]) + os.sep
         self.config.paths.settings_ini = self.config.paths.home + 'settings.ini'
-        settings = ConfigParser.ConfigParser()
+        settings = configparser.ConfigParser()
         results = settings.read(self.config.paths.settings_ini)
 
         if not settings.sections():

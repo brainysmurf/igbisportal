@@ -61,14 +61,14 @@ def drop_all_tables_and_sequences():
     for table in get_table_list_from_db():
         try:
             execute(text("DROP TABLE %s CASCADE" % table))
-        except SQLAlchemyError, e:
-            print e
+        except (SQLAlchemyError, e):
+            print(e)
 
     for seq in get_seq_list_from_db():
         try:
             execute(text("DROP SEQUENCE %s CASCADE" % table))
-        except SQLAlchemyError, e:
-            print e
+        except (SQLAlchemyError, e):
+            print(e)
 
 
 metadata.create_all(engine)  # creates the database tables and things for us
