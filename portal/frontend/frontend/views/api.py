@@ -28,29 +28,6 @@ class dummy_row:
     def as_dict(self):
        return {c: getattr(self, c) for c in self._columns}
 
-@view_config(route_name='api-lastlogins', renderer='json', http_cache=0)
-def api_lastlogins(request):
-    json_body = request.json_body
-    secret = json_body.get('secret')
-    if secret != gns.config.api.secret:
-        return dict(message="IGBIS api is not for public consumption.", data=[])
-    data = []
-    with open(gns.config.api.lastloginpath) as f:
-        readin = csv.reader(f, delimiter=',')
-        for row in readin:
-            username = row[0]
-            this_date = row[1]
-            if this_date == 'lastLoginTime':
-                data.append(['Username', 'Lastlogin'])
-                continue
-            if this_date == 'Never':
-                d = 'Never'
-            else:
-                dte = datetime.datetime.strptime(this_date, '%Y-%m-%dT%H:%M:%S.000Z')
-                d = datetime.datetime.strftime(dte, '%A %B %d, %Y @ %I:%M %p')
-            data.append([username, d])
-    return dict(message="Success", data=data)
-
 @view_config(route_name='api-students', renderer='json', http_cache=0)
 def api_students(request):
     try:

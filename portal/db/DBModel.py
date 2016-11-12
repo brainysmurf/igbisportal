@@ -903,6 +903,12 @@ class Student(Base, User):
         else:
             return "<unknown program>"
 
+    @hybrid_property
+    def link_to_managebac(self):
+        return 'https://igbis.managebac.com/users/{}'.format(self.id)
+
+    
+
 class Parent(Base, User):
     """
     I am a parent in ManageBac
