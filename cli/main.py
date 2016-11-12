@@ -340,7 +340,6 @@ def family_info(obj):
             click.echo('{}\t{}'.format(student.email, family.family_id))
         for parent in family.parents:
             click.echo('{}\t{}'.format(parent.igbis_email_address, family.family_id))
-    from IPython import embed;embed()
 
 @output.command()
 @click.pass_obj
@@ -657,6 +656,21 @@ def test_api_teachers(obj):
     print(result.json())
     from IPython import embed;embed()
 
+@test.command('api_family_info')
+@click.pass_obj
+def test_api_teachers(obj):
+    options = {
+        'secret': 'phillies',
+        'human_columns': True,
+        'google_sheets_format': True,
+        'column_map': {},
+        'columns': ['email', 'grades_taught']
+    }
+
+    url = 'http://localhost:6543/api/family_info'
+    result = requests.post(url, json=options)
+    print(result)
+    print(result.json())
 
 @main.group()
 @click.pass_context

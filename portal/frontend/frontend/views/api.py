@@ -204,3 +204,21 @@ def api_teachers(request):
             columns = [column_map.get(c) for c in columns]
         return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
 
+@view_config(route_name='api-family-info', renderer='json', http_cache=0)
+def api_family_info(request):
+
+    json_body = request.json_body
+    secret = json_body.get('secret')
+    if secret != gns.config.api.secret:
+        return dict(message="IGBIS api is not for public consumption.", data=[])
+
+    from cli.parent_accounts import ParentAccounts
+    parent = ParentAccounts()
+    ret = []
+    columns = ['email_address', 'family_id']
+    for family in parent.family_accounts:
+        for student in family.students:
+            ret.append((student.email, family.family_id))
+        for parent in family.parents:
+            ret.append((parent.igbis_email_address, family.family_id))
+    return dict(message="Success", columns=columns, data=ret)
