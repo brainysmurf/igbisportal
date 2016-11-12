@@ -111,18 +111,8 @@ def api_students(request):
 
         data = query.all()
 
-    #columns = list(Students.__table__.columns.keys())
-    # Don't use columns because we have defined stuff at the instance level instead of class level
-    # Remove 'id' because we want that at the start
-
-    # insp = inspect(Students)
-    # column_attrs = [c.name for c in insp.columns if c.name != 'student_id']
-    # column_attrs.extend( [item.__name__ for item in insp.all_orm_descriptors if item.extension_type is HYBRID_PROPERTY and item.__name__ != '<lambda>'] )
-    # column_attrs.sort()
-
     if awesome_table_filters:
         # Add an extra row so that our awesome tables solution works right
-        # boo!
 
         second_row = dummy_row()
         for column in columns:
@@ -149,6 +139,7 @@ def api_students(request):
             columns = [[column_map.get(columns[column]) or columns[column] for column in range(len(columns))] for row in range(1)]
         else:
             columns = [[column_map.get(columns[column]).replace('_', '').title() if column_map.get(columns[column]) else columns[column].replace('_', ' ').title() for column in range(len(columns))] for row in range(1)]
+
         return dict(message="Success, as array", columns=columns, data=ret)
     else:
         if human_columns:

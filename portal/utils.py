@@ -23,8 +23,6 @@ html_escape_table = {
 
 html_unescape_table = {v:k for k, v in html_escape_table.items()}
 
-from htmlentitydefs import name2codepoint
-
 def get_this_academic_year():
     now = datetime.date.today()
     year, month = int(str(now.year)[2:]), now.month
