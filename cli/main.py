@@ -635,9 +635,6 @@ def test_api_students(obj, column, destiny, every_column, order_by, inspect, out
     if inspect:
         from IPython import embed;embed()
 
-    for data in json['data']:
-        pass
-
 @test.command('api_teachers')
 @click.option('--columns')
 @click.pass_obj
@@ -658,7 +655,7 @@ def test_api_teachers(obj):
 
 @test.command('api_family_info')
 @click.pass_obj
-def test_api_teachers(obj):
+def test_family_info(obj):
     options = {
         'secret': 'phillies',
         'human_columns': True,

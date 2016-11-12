@@ -215,7 +215,7 @@ def api_family_info(request):
     from cli.parent_accounts import ParentAccounts
     parent = ParentAccounts()
     ret = []
-    columns = ['email_address', 'family_id']
+    columns = [['email_address', 'family_id']]
     for family in parent.family_accounts:
         for student in family.students:
             ret.append((student.email, family.family_id))
