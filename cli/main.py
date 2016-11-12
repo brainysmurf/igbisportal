@@ -601,8 +601,8 @@ def inspect_student(obj):
 def test_api_students(obj, column, destiny, every_column, order_by, inspect, output_sids):
     if destiny:
         column = ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
-    if column is None:
-        print("No columns..")
+    if column == ():
+        print("You must specify --columm blah")
         return
 
     options = {
