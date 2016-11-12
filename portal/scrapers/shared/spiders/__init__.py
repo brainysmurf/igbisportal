@@ -46,7 +46,7 @@ class Login(scrapy.Spider):
 
     def after_login(self, response):
         # check login succeed before going on
-        if response.status != 200 or "authentication failed" in response.body:
+        if response.status != 200 or "authentication failed" in response.body_as_unicode():
             self.warning("Authentication failed", level=log.WARNING)            
             return
 

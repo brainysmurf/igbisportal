@@ -1,6 +1,5 @@
 import scrapy
-from ordereditem import OrderedItem
-
+from portal.scrapers.mb_scraper.mb_scraper.ordereditem import OrderedItem
 
 class AuditLogItem(OrderedItem):
     # define the fields for your item here like:
