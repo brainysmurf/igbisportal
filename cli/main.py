@@ -639,19 +639,6 @@ def test_api_students(obj, column, destiny, every_column, order_by, inspect, out
     for data in json['data']:
         pass
 
-@test.command('api_lastlogins')
-@click.pass_obj
-def test_api_lastlogins(obj):
-    options = {
-        'secret': 'phillies',
-    }
-
-    url = 'http://portal.igbis.edu.my/api/students'
-    #url = 'http://localhost:6543/api/lastlogins'
-    result = requests.post(url, json=options)
-    print(result.json())
-    from IPython import embed;embed()
-
 @test.command('api_teachers')
 @click.option('--columns')
 @click.pass_obj
