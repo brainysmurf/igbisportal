@@ -79,7 +79,6 @@ def destiny(obj, dontput):
                 ],
     }
     result = requests.get('http://0.0.0.0:6543/api/students', json=payload)
-    from IPython import embed;embed()
     if result.ok:
         json = result.json()
         data = json.get('data')
