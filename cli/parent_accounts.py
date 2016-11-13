@@ -112,20 +112,18 @@ class ParentAccounts:
     parents = {}                        # hash of all the parents
     classes = {}
 
-    family_id_index = 0
-
     family_accounts = {}                # hash of all the family accounts 
 
     def __init__(self, since=None):
         self._since = since
         self._tomorrow = datetime.datetime.now().date() + datetime.timedelta(days=1)
+        self.family_id_index = 0
         self.build()
         self._echo_count = 0
 
-    @classmethod
-    def make_family_id(cls):
-        ret = str(cls.family_id_index).zfill(4)
-        cls.family_id_index += 1
+    def make_family_id(self):
+        ret = str(self.family_id_index).zfill(4)
+        self.family_id_index += 1
         return ret
 
     @classmethod
@@ -292,7 +290,7 @@ class ParentAccounts:
             # loop through the family information
             for key in ParentAccounts.families.keys():
                 fam = Family()   # makes a new object. TODO: this should be a table in the database
-                family_id = ParentAccounts.make_family_id() 
+                family_id = self.make_family_id() 
 
                 # derive family_id, and save it in the object
                 fam.family_id = family_id
@@ -349,7 +347,7 @@ class ParentAccounts:
             statement = session.query(Students).options(joinedload('parents')).order_by(Students.student_id)
             for student in statement.all():
                 for parent in student.parents:
-                    click.echo("\t{} {}".format(ParentAccounts.make_family_id(student, parent), parent))
+                    click.echo("\t{} {}".format(self.make_family_id(student, parent), parent))
 
     def output_for_email(self):
 

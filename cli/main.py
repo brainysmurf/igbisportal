@@ -340,6 +340,7 @@ def family_info(obj):
             click.echo('{}\t{}'.format(student.email, family.family_id))
         for parent in family.parents:
             click.echo('{}\t{}'.format(parent.igbis_email_address, family.family_id))
+    from IPython import embed;embed()
 
 @output.command()
 @click.pass_obj
@@ -534,6 +535,22 @@ def teacher_classes(ctx, id):
 def test():
     pass
 
+@test.command('api_family_info')
+@click.pass_obj
+def test_family_info(obj):
+    options = {
+        'secret': 'phillies',
+        'human_columns': True,
+        'google_sheets_format': True,
+        'column_map': {},
+        'columns': ['email', 'grades_taught']
+    }
+
+    url = 'http://localhost:6543/api/family_info'
+    result = requests.post(url, json=options)
+    print(result)
+    print(result.json())
+
 @test.command('test_status_updater')
 @click.pass_obj
 def test_status_updater(obj):
@@ -600,8 +617,8 @@ def inspect_student(obj):
 def test_api_students(obj, column, destiny, every_column, order_by, inspect, output_sids):
     if destiny:
         column = ['student_id', 'barcode', 'homeroom_teacher_email', 'homeroom_full', 'program_of_study', 'destiny_site_information', 'destiny_patron_type', 'username', 'last_name', 'first_name', 'nickname', 'class_grade', 'email', 'gender', 'parent_email_1', 'year_of_graduation']
-    if column == ():
-        print("You must specify --columm blah")
+    if column is None:
+        print("No columns..")
         return
 
     options = {
@@ -635,6 +652,9 @@ def test_api_students(obj, column, destiny, every_column, order_by, inspect, out
     if inspect:
         from IPython import embed;embed()
 
+    for data in json['data']:
+        pass
+
 @test.command('api_teachers')
 @click.option('--columns')
 @click.pass_obj
@@ -653,21 +673,6 @@ def test_api_teachers(obj):
     print(result.json())
     from IPython import embed;embed()
 
-@test.command('api_family_info')
-@click.pass_obj
-def test_family_info(obj):
-    options = {
-        'secret': 'phillies',
-        'human_columns': True,
-        'google_sheets_format': True,
-        'column_map': {},
-        'columns': ['email', 'grades_taught']
-    }
-
-    url = 'http://localhost:6543/api/family_info'
-    result = requests.post(url, json=options)
-    print(result)
-    print(result.json())
 
 @main.group()
 @click.pass_context
