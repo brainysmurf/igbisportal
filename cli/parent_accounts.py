@@ -51,8 +51,9 @@ homeroom_mapping = {
     'steven.harvey': (4, '4h'),
 
     'yolaine.johanson': (5, '5j'),
-    'kathy.mckenzie': (5, '5m')
+    'kathy.mckenzie': (5, '5m'),
 
+    'indra.lina': (-2, 'ff'),
     }
 
 class Error(Exception):
