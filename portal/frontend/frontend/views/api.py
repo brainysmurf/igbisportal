@@ -215,7 +215,6 @@ def api_family_info(request):
     from cli.parent_accounts import ParentAccounts
     families = ParentAccounts()
 
-    from IPython import embed;embed()
     ret = []
     columns = [['email_address', 'family_id']]
     for family in families.family_accounts:
