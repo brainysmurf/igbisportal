@@ -115,9 +115,21 @@ class ParentAccounts:
     family_accounts = {}                # hash of all the family accounts 
 
     def __init__(self, since=None):
+        self.parent_links = defaultdict(list)    # data construct: a hash with each item an array
+        self.families = defaultdict(list)        # data construct: a hash with each item an array
+        self.groups = {}
+
+        self.students = {}                       # hash of all the students
+        self.parents = {}                        # hash of all the parents
+        self.classes = {}
+
+        family_accounts = {}                # hash of all the family accounts 
+
+
         self._since = since
         self._tomorrow = datetime.datetime.now().date() + datetime.timedelta(days=1)
         self.family_id_index = 0
+
         self.build()
         self._echo_count = 0
 
@@ -126,9 +138,8 @@ class ParentAccounts:
         self.family_id_index += 1
         return ret
 
-    @classmethod
-    def make_parent_link(cls, parent, student):
-        ParentAccounts.parent_links[parent.id].append(student)
+    def make_parent_link(self, parent, student):
+        self.parent_links[parent.id].append(student)
 
     def echo(self, *args, **kwargs):
         """
@@ -141,18 +152,18 @@ class ParentAccounts:
         click.echo(*args, **kwargs)
 
     def make_parent_group(self, group, email=None):
-        ParentAccounts.groups[group] = type('Parents Group', (), {})
-        ParentAccounts.groups[group].name = "Parents of " + group
-        ParentAccounts.groups[group].email = group if email is None else email
-        ParentAccounts.groups[group].email += '.parents@igbis.edu.my'
-        ParentAccounts.groups[group].list = []
+        self.groups[group] = type('Parents Group', (), {})
+        self.groups[group].name = "Parents of " + group
+        self.groups[group].email = group if email is None else email
+        self.groups[group].email += '.parents@igbis.edu.my'
+        self.groups[group].list = []
 
     def make_class_group(self, group, email=None):
-        if not group in ParentAccounts.classes:
-            ParentAccounts.classes[group] = type("Parents Classes Group", (), {})
-            ParentAccounts.classes[group].name = "Parents of children enrolled in class " + group
-            ParentAccounts.classes[group].email = group if email is None else email
-            ParentAccounts.classes[group].list = []
+        if not group in self.classes:
+            self.classes[group] = type("Parents Classes Group", (), {})
+            self.classes[group].name = "Parents of children enrolled in class " + group
+            self.classes[group].email = group if email is None else email
+            self.classes[group].list = []
 
     def build_query(self, session):
         if not self._since:
@@ -184,7 +195,6 @@ class ParentAccounts:
         gns.suffix = '.parent'
         gns.domain = '@igbis.edu.my'
 
-
         # First do the groups
 
         for group in ['Secondary', 'Elementary', 'Whole School', 'Grade 12', 'Grade 11', "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kindergarten", "Early Years 1", "Early Years 2", "Fireflies"]:
@@ -211,7 +221,7 @@ class ParentAccounts:
             # in the end we'll have a data construct with parent links
             for student in students:
                 # save the student information, we'll grab this later
-                ParentAccounts.students[str(student.id)] = student
+                self.students[str(student.id)] = student
 
                 if student.grade != -10:
                     # Filter out students who do not have a grade assigned.
@@ -236,7 +246,7 @@ class ParentAccounts:
 
                         try:
                             for parent in student.parents:
-                                ParentAccounts.groups[homeroom_level_group].list.append(parent.igbis_email_address)
+                                self.groups[homeroom_level_group].list.append(parent.igbis_email_address)
                         except KeyError:
                             print("Key Error: {}".format(homeroom_level_group))
                             #from IPython import embed;embed()
@@ -245,28 +255,28 @@ class ParentAccounts:
                     if class_.uniq_id:
                         self.make_class_group(class_.uniq_id)
                         for parent in student.parents:
-                            ParentAccounts.classes[class_.uniq_id].list.append(parent.email)
+                            self.classes[class_.uniq_id].list.append(parent.email)
 
                 for parent in student.parents:
                     # Add the more global ones whole school and school-based ones
 
 
                     # save the parent inforamtion, we'll grab this later
-                    ParentAccounts.parents[parent.id] = parent
+                    self.parents[parent.id] = parent
 
                     # Add this student onto the array stored where parent.id is the key
                     # Guaranteed to work because the parent info are just links to the same database entry
                     # So even if they change their name, or anything, still all good
-                    ParentAccounts.make_parent_link(parent, student)
+                    self.make_parent_link(parent, student)
 
                     if student.class_grade is not None:
-                        ParentAccounts.groups[student.class_grade].list.append(parent.igbis_email_address)
-                        ParentAccounts.groups['Whole School'].list.append(parent.igbis_email_address)
+                        self.groups[student.class_grade].list.append(parent.igbis_email_address)
+                        self.groups['Whole School'].list.append(parent.igbis_email_address)
                         if student.grade is not None:
                             if student.grade >= 6:
-                                ParentAccounts.groups['Secondary'].list.append(parent.igbis_email_address)
+                                self.groups['Secondary'].list.append(parent.igbis_email_address)
                             else:
-                                ParentAccounts.groups['Elementary'].list.append(parent.igbis_email_address)
+                                self.groups['Elementary'].list.append(parent.igbis_email_address)
 
                     else:
                         print("Student without a grade level {}".format(student))
@@ -276,9 +286,9 @@ class ParentAccounts:
             # loop through each of the parent links, making a new data construct (families)
             # this time the keys is the student ids as a string concated, with "+"" as delimiter
             # we'll unpack this later
-            for parent_id, students in ParentAccounts.parent_links.items():
+            for parent_id, students in self.parent_links.items():
                 student_ids = "+".join([str(s.id) for s in students])
-                ParentAccounts.families[student_ids].append(parent_id)
+                self.families[student_ids].append(parent_id)
 
 
             # at this point we have families with the key being a concat of the student ids
@@ -288,7 +298,7 @@ class ParentAccounts:
             self.parent_accounts = []
 
             # loop through the family information
-            for key in ParentAccounts.families.keys():
+            for key in self.families.keys():
                 fam = Family()   # makes a new object. TODO: this should be a table in the database
                 family_id = self.make_family_id() 
 
@@ -302,7 +312,7 @@ class ParentAccounts:
                 # FIXME: Check for _sid and _pid collisions
 
                 for student_id in key.split('+'):                  # loop through each student ID contained in this key
-                    student = ParentAccounts.students[student_id]  # grab the student that we saved before
+                    student = self.students[student_id]  # grab the student that we saved before
                     _sid = "{}{}".format(family_id, stu_index)     # derive the student igbid
 
                     fam.students.append(student)                    # append student info to the family object
@@ -311,8 +321,8 @@ class ParentAccounts:
                     stu_index += 1
 
                     parent_index = 9   # first parent is 9, counting down
-                    for parent_id in ParentAccounts.families[key]:
-                        parent = ParentAccounts.parents[parent_id]
+                    for parent_id in self.families[key]:
+                        parent = self.parents[parent_id]
 
                         # derive the parent igbid, which we'll set
                         # second line actually emits update sql

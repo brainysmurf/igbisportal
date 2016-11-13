@@ -217,9 +217,9 @@ def api_family_info(request):
 
     ret = []
     columns = [['email_address', 'family_id']]
-    for family in families.family_accounts:
-        for student in family.students:
-            ret.append((student.email, family.family_id))
-        for parent in family.parents:
-            ret.append((parent.igbis_email_address, family.family_id))
+    for fam in families.family_accounts:
+        for student in fam.students:
+            ret.append((student.email, fam.family_id))
+        for parent in fam.parents:
+            ret.append((parent.igbis_email_address, fam.family_id))
     return dict(message="Success", columns=columns, data=ret)
