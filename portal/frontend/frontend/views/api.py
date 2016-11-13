@@ -213,10 +213,12 @@ def api_family_info(request):
         return dict(message="IGBIS api is not for public consumption.", data=[])
 
     from cli.parent_accounts import ParentAccounts
-    parents = ParentAccounts()
+    families = ParentAccounts()
+
+    from IPython import embed;embed()
     ret = []
     columns = [['email_address', 'family_id']]
-    for family in parents.family_accounts:
+    for family in families.family_accounts:
         for student in family.students:
             ret.append((student.email, family.family_id))
         for parent in family.parents:
