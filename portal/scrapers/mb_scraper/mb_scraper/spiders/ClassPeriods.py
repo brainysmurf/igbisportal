@@ -212,7 +212,7 @@ class PYPClassReportTemplate(ClassReports):
 
 class PYPStudentAttendance(ManageBacLogin):
     name = "PYPStudentAttendance"
-    path = '/admin/reports/attendance/cumulative?program=pyp&term=42556&grade={}&cumulative_view=homeroom'
+    path = '/admin/attendance_manager/reporting?program=pyp&term=42556&grade={}&cumulative_view=homeroom'
 
     def __init__(self, *args, **kwargs):
         self.grades = [-2, -1, 0, 1, 2, 3, 4, 5]
