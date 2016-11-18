@@ -308,7 +308,7 @@ def mb_courses(request):
         else:
             grade_str = ""
         if grade_str is not None:
-            data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
+            data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id or ""), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
     return dict(message="Success", data=sorted(data, key= lambda x: x['sortby'], reverse=True))
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
@@ -533,7 +533,7 @@ def footer_html(request):
         student = session.query(Students).filter_by(id=student_id).one()
         report  = session.query(PrimaryReport).\
             options(joinedload('course')).\
-            filter_by(student_id=student.id, term_id=term_id).one()
+            filter(PrimaryReport.student_id==student.id, PrimaryReport.term_id==term_id, PrimaryReport.homeroom_comment!="").one()
 
     # FIXME: Including the below makes the footer always appear
     # I have no idea why, uncaching it???
