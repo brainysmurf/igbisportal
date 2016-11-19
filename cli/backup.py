@@ -24,22 +24,22 @@ connection = req.build_opener(SMBHandler)
 # Loop through file that needs to be backed up...
 for backup_file in backup_files.split(' '):
 
-	# ... derive the full path to the file
-	full_path = os.path.join(gns.config.backup.path, backup_file)
+    # ... derive the full path to the file
+    full_path = os.path.join(gns.config.backup.path, backup_file)
 
-	# ... open the file
-	with open(full_path, 'rb') as file_fh:
+    # ... open the file
+    with open(full_path, 'rb') as file_fh:
 
-		# ... attempt to connect the external file and copy the data
-		try:
-			url_including_file_path = os.path.join(url, backup_file)
-			fh = connection.open(url, data = file_fh)
-			fh.close()
-		except Exception as e:
-			# ... if there is an exception, output it
-			print(e)
+        # ... attempt to connect the external file and copy the data
+        try:
+            url_including_file_path = os.path.join(url, backup_file)
+            fh = connection.open(url, data = file_fh)
+            fh.close()
+        except Exception as e:
+            # ... if there is an exception, output it
+            print(e)
 
-	# repeat for
+    # repeat for
 
 
 
