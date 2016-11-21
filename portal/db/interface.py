@@ -170,6 +170,18 @@ class DatabaseSetterUpper(object):
 						for parent_id in user.get('parents_ids'):
 							stu_par.append(student_id, parent_id)
 
+			# TODO: OpenApply has the sibling information
+			# with u.collection(Student, Student, 'siblings', left_column='student_id', right_column='id') as stu_par:
+
+			# 	with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
+			# 		this_json = json.load(_f)
+
+			# 	self.default_logger("Setting up student-sibling relations on database from OpenApply")
+			# 	for user in this_json['students']:
+			# 		student_id = user.get('custom_id')	
+			# 		for sibling_id in user.get('sibling_ids'):
+			# 			stu_par.append(student_id, parent_id)
+
 			with u.collection(Student, IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
 				self.default_logger("Setting up student IB Group membership on database")
 				with open(gns('{config.paths.jsons}/ib_groups.json')) as _f:
