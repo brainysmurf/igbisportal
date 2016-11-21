@@ -95,7 +95,7 @@ class DatabaseSetterUpper(object):
 
 						# This gets a usable unique ID integer to use for IDs
 						# very unlikely to produce collisions
-						id_ = int(hashlib.md5(handle).hexdigest()[:12], 16)
+						id_ = int(hashlib.md5(handle.encode('utf-8')).hexdigest()[:12], 16)
 						busadmins.append(BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
 
 		with updater_helper() as u:
