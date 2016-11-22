@@ -166,9 +166,13 @@ class DatabaseSetterUpper(object):
 				for user in this_json['users']:
 					_type = user.get('type')
 					if _type == "Students":
-						student_id = user.get('student_id')	
-						for parent_id in user.get('parents_ids'):
-							stu_par.append(student_id, parent_id)
+						student_id = user.get('student_id')
+						if student_id:
+							for parent_id in user.get('parents_ids'):
+								print('Sending student_id {} and parent_id {}'.format(student_id, parent_id))
+								stu_par.append(student_id, parent_id)
+						else:
+							pass # Expected: There are loads of students without any student_id (either none or blank) that are in there for testing, etc
 
 			# TODO: OpenApply has the sibling information
 			# with u.collection(Student, Student, 'siblings', left_column='student_id', right_column='id') as stu_par:
@@ -224,9 +228,10 @@ class DatabaseSetterUpper(object):
 					with DBSession() as session:
 						course_id = re.match(gns('{config.paths.jsons}/groups-(\d+)-members.json'), path).group(1)
 						for course in this_json['members']:
+							# DEBUGGING
 							student_id = course.get('student_id')
 							successful = False
-							try:
+							try:	
 								student = session.query(Student).filter(Student.student_id==student_id).one()
 								successful = True
 							except NoResultFound:
@@ -238,7 +243,8 @@ class DatabaseSetterUpper(object):
 									print("Found this student twice! {}".format(student_id))
 							if successful:							
 								try:
-									stu_course.append(str(student.id), course_id)
+									#print("sending student.id: {} and course_id: {}".format(str(student_id), course_id))
+									stu_course.append(str(student_id), course_id)
 								except NoResultFound:
 									self.default_logger('course_id {} or student_id {} not found'.format(course_id, student_id))
 
