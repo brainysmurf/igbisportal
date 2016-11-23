@@ -24,10 +24,38 @@ class Database:
     """
     Implements lower-level convenience methods that handles sessions, transactions, queries
     Errors are not trapped, should be handled at higher level
+    Provides interface to low-level things, like SQLAlchemy references to tables
     """
     def __init__(self):
         self.logger = logging.getLogger('Database')
         self.default_logger = self.logger.info
+
+        self.table = type("Tables", (), {})
+
+        # Use singluar form in order to highlight that "it" is a table, and not the members
+        # TODO: Make this dyanmic
+
+        self.table.Student = self.table_string_to_class('Student')
+        self.table.Teacher = self.table_string_to_class('Advisor')
+        self.table.BusAdmin = self.table_string_to_class('BusAdmin')
+        self.table.Parent = self.table_string_to_class('Parent')
+        self.table.Course = self.table_string_to_class('Course')
+        self.table.IBGroup = self.table_string_to_class('IBGroup')
+        self.table.Enrollment = self.table_string_to_class('Enrollment')
+        self.table.Assignment = self.table_string_to_class('Assignment')
+        self.table.ReportComment = self.table_string_to_class('ReportComments')
+        self.table.Term = self.table_string_to_class('terms')
+        self.table.PrimaryReport = self.table_string_to_class('PrimaryReport')
+        self.table.Absences = self.table_string_to_class('PrimaryStudentAbsences')
+        self.table.HRTeachers = self.table_string_to_class('SecondaryHomeroomTeachers')
+        self.table.GSignIn = self.table_string_to_class('GoogleSignIn')
+        self.table.UserSplashJson = self.table_string_to_class('user_splash_json')
+        self.table.TeacherAssign = self.table_string_to_class('Primary_Teacher_Assignments')
+        self.table.PrimaryReportSection = self.table_string_to_class('Primary_Report_Section')
+        self.table.PrimaryReportStrand = self.table_string_to_class('Primary_Report_Strand')
+        self.table.PrimaryReportLo = self.table_string_to_class('Primary_Report_Lo')
+        self.table.PrimaryStudentAbsences = self.table_string_to_class('PrimaryStudentAbsences')
+        self.table.UserSettings = self.table_string_to_class('UserSettings')
 
     def table_string_to_class(self, table):
         """

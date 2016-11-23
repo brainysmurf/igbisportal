@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Defines the frontend behaviour
 """
@@ -39,21 +37,6 @@ class ReportIncomplete(Exception):
     def __init__(self, msg):
         self.msg = msg
 
-Students = db.table_string_to_class('student')
-Parents = db.table_string_to_class('parent')
-Teachers = db.table_string_to_class('advisor')
-BusAdmin = db.table_string_to_class('BusAdmin')
-Users = db.table_string_to_class('users')
-Enrollments = db.table_string_to_class('enrollment')
-Assignments = db.table_string_to_class('assignment')
-ReportComments = db.table_string_to_class('report_comments')
-PrimaryReport = db.table_string_to_class('primary_report')
-Courses = db.table_string_to_class('course')
-Absences = db.table_string_to_class('PrimaryStudentAbsences')
-HRTeachers = db.table_string_to_class('secondary_homeroom_teachers')
-GSignIn = db.table_string_to_class('google_sign_in')
-UserSettings = db.table_string_to_class('user_settings')
-
 @view_config(route_name="get_session_user", renderer="json")
 def get_session_user(request):
     return request.session.get('mb_user')
@@ -81,11 +64,11 @@ def session_user(request):
     user = None
 
     with DBSession() as session:
-        student = session.query(Students).filter(func.lower(Students.email)==user_email).options(joinedload('classes')).first()
+        student = session.query(db.table.Student).filter(func.lower(db.table.Student.email)==user_email).options(joinedload('classes')).first()
         if student:
             user = student
         if not user:
-            teacher = session.query(Teachers).filter(func.lower(Teachers.email)==user_email).options(joinedload('classes')).first()
+            teacher = session.query(db.table.Teacher).filter(func.lower(db.table.Teacher.email)==user_email).options(joinedload('classes')).first()
             if teacher:
                 user = teacher
         if not user:
@@ -93,7 +76,6 @@ def session_user(request):
             if busadmin:
                 user = busadmin
         if not user:
-            parent = session.query(Parents).filter(func.lower(Parents.igbis_email_address)==user_email).first()
             if parent:
                 user = parent
 
@@ -156,7 +138,7 @@ def credentials_flow(request, code):
 
         with DBSession() as session:
             try:
-                exists = session.query(GSignIn).filter_by(unique_id=unique_id).one()
+                exists = session.query(db.table.GSignIn).filter_by(unique_id=unique_id).one()
                 if exists:
                     # update it!
                     if exists.access_token != credentials.access_token:
@@ -165,7 +147,7 @@ def credentials_flow(request, code):
                         exists.refresh_token = credentials.refresh_token
 
             except NoResultFound:
-                sign_in = GSignIn(
+                sign_in = db.table.GSignIn(
                     unique_id=credentials.id_token['sub'],  # always unique
                     auth_code=code,
                     access_token=credentials.access_token,
@@ -234,7 +216,7 @@ def mb_grade_teachers(request):
 
     raw_data = defaultdict(list)
     with DBSession() as session:
-        records = session.query(Teachers).options(joinedload('classes')).all()
+        records = session.query(db.table.Teacher).options(joinedload('classes')).filter(db.table.Teacher.archived == False).all()
         for record in records:
             for course in record.classes:
                 g = re.sub('[^0-9]', '', course.grade)
@@ -244,10 +226,6 @@ def mb_grade_teachers(request):
                 if grade < 6:
                     continue
                 if record.email.startswith('superadmin'):
-                    continue
-                if record.email.startswith('abena'):
-                    continue
-                if record.email == 'supply@igbis.edu.my':
                     continue
                 raw_data[grade].append(record.email)
 
@@ -273,15 +251,16 @@ def mb_homeroom(request):
         return dict(message="Not a teacher", data=[])
     data = []
     with DBSession() as session:
-        students = session.query(Students).filter_by(homeroom_advisor=user.id).all()
+        students = session.query(db.table.Student).filter_by(homeroom_advisor=user.id).all()
         for student in students:
             try:
-                teachers = session.query(Teachers.email).\
-                    select_from(Students).\
-                        join(Enrollments, Enrollments.c.student_id == student.id).\
-                        join(Courses, Courses.id == Enrollments.c.course_id).\
-                        join(Assignments, Assignments.c.course_id == Courses.id).\
-                        join(Teachers, Teachers.id == Assignments.c.teacher_id).\
+                teachers = session.query(db.table.Teacher.email).\
+                    select_from(db.table.Student).\
+                        join(db.table.Enrollment, db.table.Enrollment.c.student_id == student.id).\
+                        join(db.table.Course,     db.table.Course.id              == db.table.Enrollment.c.course_id).\
+                        join(db.table.Assignment, db.table.Assignment.c.course_id  == db.table.Course.id).\
+                        join(db.table.Teacher,    db.table.Teacher.id              == db.table.Assignment.c.teacher_id).\
+                        filter(not db.table.Teacher.archived).\
                             all()
             except NoResultFound:
                 continue
@@ -328,7 +307,7 @@ def grade_course(request):
     grade = request.params.get('grade')
     if not grade:
         with DBSession() as session:
-            statement = session.query(Courses).\
+            statement = session.query(db.table.Course).\
                 options(joinedload('students')).\
                 options(joinedload('teachers')).\
                 options(joinedload('timetables'))
@@ -340,7 +319,7 @@ def grade_course(request):
 
 
     with DBSession() as session:
-        statement = session.query(Courses).\
+        statement = session.query(db.table.Course).\
         options(joinedload('students')).\
         options(joinedload('teachers')).\
         options(joinedload('timetables'))
@@ -378,14 +357,14 @@ def students(request):
 
     if not params:
         with DBSession() as session:
-            statement = session.query(Students)
+            statement = session.query(db.table.Student)
             students = statement.all()
 
         return dict(title="All Students", items=students)
 
     else:
         with DBSession() as session:
-            statement = session.query(Students).filter_by(**params)
+            statement = session.query(db.table.Student).filter_by(**params)
             students = statement.all()            
 
         return dict(title="Filtered Students", items=students)
@@ -397,7 +376,7 @@ def students_program_filter(request):
     program_string = dict(pyp='IB PYP', dp="IB DP", myp="IB MYP")
 
     with DBSession() as session:
-        statement = session.query(Students).filter_by(program=program_string.get(program))
+        statement = session.query(db.table.Student).filter_by(program=program_string.get(program))
         students = statement.all()
 
     return dict(title="All Students", items=students)
@@ -411,7 +390,7 @@ def students_ind(request):
         return dict(items=[])
 
     with DBSession() as session:
-        statement = session.query(Students).filter(Students.id == student_id)
+        statement = session.query(db.table.Student).filter(db.table.Student.id == student_id)
         student = statement.one()
 
     return dict(title="Student View", item=student)
@@ -433,7 +412,7 @@ def get_user_settings(request):
     if g_plus_unique_id:
         with DBSession() as session:
             try:
-                settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
+                settings = session.query(db.table.UserSettings).filter_by(unique_id=g_plus_unique_id).one()
             except NoResultFound:
                 pass
     else:
@@ -482,10 +461,11 @@ def reports_ind(request):
     
 
     with DBSession() as session:
-        statement = session.query(ReportComments).join(Students, Students.id == ReportComments.student_id).\
-            options(joinedload(ReportComments.atl_comments)).\
-            options(joinedload(ReportComments.course)).\
-        filter(Students.id == student_id)
+        statement = session.query(db.table.ReportComment).\
+            join(db.table.Student, db.table.Student.id == db.table.ReportComment.student_id).\
+                options(joinedload(db.table.ReportComment.atl_comments)).\
+                options(joinedload(db.table.ReportComment.course)).\
+        filter(db.table.Student.id == student_id)
         reports = statement.all()
 
     return dict(
@@ -501,7 +481,8 @@ def reports(request):
     db = Database()
 
     with DBSession() as session:
-        statement = session.query(Students).join(ReportComments, ReportComments.student_id == Students.id)
+        statement = session.query(db.table.Students).\
+            join(db.table.ReportComments, db.table.ReportComments.student_id == db.table.Students.id)
         students_with_report = statement.all()
 
     return dict(
@@ -530,7 +511,7 @@ def footer_html(request):
     student_id = request.GET.get('student_id')
     term_id = 42556
     with DBSession() as session:
-        student = session.query(Students).filter_by(id=student_id).one()
+        student = session.query(db.table.Students).filter_by(id=student_id).one()
         report  = session.query(PrimaryReport).\
             options(joinedload('course')).\
             filter(PrimaryReport.student_id==student.id, PrimaryReport.term_id==term_id, PrimaryReport.homeroom_comment!="").one()

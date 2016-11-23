@@ -1,3 +1,8 @@
+"""
+
+FIXME: Do not print to stdout	
+"""
+
 from portal.db import Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import IntegrityError
@@ -7,12 +12,6 @@ import re, json, glob
 from portal.db.UpdaterHelper import updater_helper
 
 db = Database()
-Student = db.table_string_to_class('Student')
-Teacher = db.table_string_to_class('Advisor')
-BusAdmin = db.table_string_to_class('BusAdmin')
-Parent = db.table_string_to_class('Parent')
-Course = db.table_string_to_class('Course')
-IBGroup = db.table_string_to_class('IBGroup')
 
 import hashlib # so we can store unique IDs for busadmins
 
@@ -52,10 +51,10 @@ class DatabaseSetterUpper(object):
 						if student_student_id is None:
 							# short-circuit to checking by email addy
 							raise NoResultFound
-						db_student = session.query(Student).filter(Student.student_id==student_student_id).one()
+						db_student = session.query(db.table.Student).filter(db.table.Student.student_id==student_student_id).one()
 					except NoResultFound:
 						try:
-							db_student = session.query(Student).filter(Student.email==student_email).one()
+							db_student = session.query(db.table.Student).filter(db.table.Student.email==student_email).one()
 						except NoResultFound:
 							db_student = None
 
@@ -96,7 +95,7 @@ class DatabaseSetterUpper(object):
 						# This gets a usable unique ID integer to use for IDs
 						# very unlikely to produce collisions
 						id_ = int(hashlib.md5(handle.encode('utf-8')).hexdigest()[:12], 16)
-						busadmins.append(BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
+						busadmins.append(db.table.BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
 
 		with updater_helper() as u:
 
@@ -129,8 +128,7 @@ class DatabaseSetterUpper(object):
 						else:
 							_type = 'Course' if item.get('class_type') else None
 					if not _type:
-						print("Object is causing us trouble can't go on without resolving: 'item' doesn't have legit 'type'?")
-						exit()
+						raise Exception("Object is causing us trouble can't go on without resolving: 'item' doesn't have legit 'type'?")
 
 					# Convert any empty string values to None
 					item = {k: v if not v == "" else None for k,v in item.items()}
@@ -157,7 +155,7 @@ class DatabaseSetterUpper(object):
 
 					u.update_or_add(instance)
 
-			with u.collection(Student, Parent, 'parents', left_column='student_id') as stu_par:
+			with u.collection(db.table.Student, db.table.Parent, 'parents', left_column='student_id') as stu_par:
 
 				with open(gns('{config.paths.jsons}/users.json')) as _f:
 					this_json = json.load(_f)
@@ -169,7 +167,6 @@ class DatabaseSetterUpper(object):
 						student_id = user.get('student_id')
 						if student_id:
 							for parent_id in user.get('parents_ids'):
-								print('Sending student_id {} and parent_id {}'.format(student_id, parent_id))
 								stu_par.append(student_id, parent_id)
 						else:
 							pass # Expected: There are loads of students without any student_id (either none or blank) that are in there for testing, etc
@@ -186,7 +183,7 @@ class DatabaseSetterUpper(object):
 			# 		for sibling_id in user.get('sibling_ids'):
 			# 			stu_par.append(student_id, parent_id)
 
-			with u.collection(Student, IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
+			with u.collection(db.table.Student, db.table.IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
 				self.default_logger("Setting up student IB Group membership on database")
 				with open(gns('{config.paths.jsons}/ib_groups.json')) as _f:
 					this_json = json.load(_f)
@@ -206,7 +203,7 @@ class DatabaseSetterUpper(object):
 							continue
 						stu_ibgroup.append(gns.student_id, gns.group_id)						
 
-			with u.collection(Teacher, Course, 'classes') as teacher_course:
+			with u.collection(db.table.Teacher, db.table.Course, 'classes') as teacher_course:
 				self.default_logger("Setting up teacher class assignments on database")
 				with open(gns('{config.paths.jsons}/classes.json')) as _f:
 					this_json = json.load(_f)
@@ -218,7 +215,7 @@ class DatabaseSetterUpper(object):
 						if teacher_id and course_id:
 							teacher_course.append(teacher_id, course_id)
 
-			with u.collection(Student, Course, 'classes', left_column='student_id') as stu_course:
+			with u.collection(db.table.Student, db.table.Course, 'classes', left_column='student_id') as stu_course:
 
 				self.default_logger("Setting up student class enrollments on database")
 				for path in glob.glob(gns('{config.paths.jsons}/groups-*-members.json')):
@@ -230,23 +227,26 @@ class DatabaseSetterUpper(object):
 						for course in this_json['members']:
 							# DEBUGGING
 							student_id = course.get('student_id')
-							successful = False
-							try:	
-								student = session.query(Student).filter(Student.student_id==student_id).one()
-								successful = True
-							except NoResultFound:
-								self.default_logger("Student {} not found".format(student_id))
-							except MultipleResultsFound:
-								if student_id is None:
-									print("student_id is None for course_id {}!".format(course_id))
-								else:
-									print("Found this student twice! {}".format(student_id))
-							if successful:							
-								try:
-									#print("sending student.id: {} and course_id: {}".format(str(student_id), course_id))
-									stu_course.append(str(student_id), course_id)
+							if not student_id:
+								pass # expected
+							else:
+								successful = False
+								try:	
+									student = session.query(db.table.Student).filter(db.table.Student.student_id==student_id).one()
+									successful = True
 								except NoResultFound:
-									self.default_logger('course_id {} or student_id {} not found'.format(course_id, student_id))
+									self.default_logger("Student {} not found".format(student_id))
+								except MultipleResultsFound:
+									if student_id is None:
+										print("student_id is None for course_id {}!".format(course_id))
+									else:
+										print("Found this student twice! {}".format(student_id))
+								if successful:							
+									try:
+										#print("sending student.id: {} and course_id: {}".format(str(student_id), course_id))
+										stu_course.append(str(student_id), course_id)
+									except NoResultFound:
+										self.default_logger('course_id {} or student_id {} not found'.format(course_id, student_id))
 
 		# Now let's look at open_apply and update status, but only if the student is already in there.
 		# We won't use the manager because this is more of a piece-meal thing

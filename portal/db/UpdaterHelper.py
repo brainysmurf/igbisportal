@@ -1,7 +1,13 @@
+"""
+UpdateHelper.py
+Implements contextmanagers that can add and update to the database any changes made
+"""
+
 from portal.db import Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from collections import defaultdict
 import sys
+from portal.exceptions import DoesNotExist, MultipleResults
 
 # Makes an object so we can use dot notation
 DO = lambda name, **kwargs: type(name, (), kwargs)
@@ -62,11 +68,9 @@ class collection_obj:
 				left_row = session.query(ti.left.table).filter_by(**ti.left.by).one()
 			except MultipleResultsFound:
 				# FIXME: Check for constraint on database...
-				# print('Multiple Results Found: You passed {} as the primary ID to use in the table {}, is it unique?'.format(self.left_column, self.left_table))
-				return
+				raise MultipleResults('Multiple Results Found: You passed {} as the primary ID to use in the table {}, is it unique?'.format(ti.left.by, ti.left.table.__name__))
 			except NoResultFound:
-				#print('Lookup {} does not exist'.format(ti.left.by))
-				return
+				raise DoesNotExist('Lookup {} does not exist in table {}'.format(ti.left.by, ti.left.table.__name__))
 
 			right_row = session.query(ti.right.table).filter_by(**ti.right.by).one()
 
@@ -77,11 +81,10 @@ class collection_obj:
 
 			if right_row.id in [item.id for item in getattr(left_row, self.collection)]:
 				pass
-				#print(" {} is already present as {} in {}".format(right_row, self.collection, left_row))
 			else:
 				# This actually emits the sql:
 				getattr(left_row, self.collection).append(right_row)
-				print(u"+ Added {} to {} into {} collection".format(right_row, left_row, self.collection))
+				click.echo("+ Added {} to {} into {} collection".format(right_row, left_row, self.collection))
 
 class updater_helper:
 	def __init__(self):
@@ -108,8 +111,8 @@ class updater_helper:
 						# Look for items that are in ids_on_db but not in ids_appended, because that means we should delete them
 						for id_to_delete in set(ids_on_db) - set(ids_appended):
 							right_row = session.query(collection.right_table).filter_by(id=id_to_delete).one()
-							print('- Removed {} from {} in collection {}'.format(right_row.id, left_row.id, collection.collection))
 							getattr(left_row, collection.collection).remove(right_row)
+							click.echo('- Removed {} from {} in collection {}'.format(right_row.id, left_row.id, collection.collection))
 
 	@classmethod
 	def update_or_add(cls, obj):
@@ -123,14 +126,11 @@ class updater_helper:
 		TODO: Self is not used, should probably be a class method?
 		TODO: Make a logger so I can track changes
 		"""
-		verbose = False
 		with DBSession() as session:
 			try:
 				row = session.query(obj.__class__).filter_by(id=obj.id).one()
 			except NoResultFound:
 				# workaround a thing with managebac where the the uniq_id has not changed, but the course ID has..
-				if verbose:
-					print("added")
 				session.add(obj)
 				row = None
 
@@ -145,14 +145,8 @@ class updater_helper:
 					# and status is defined on the database as having the default value of null
 					# we end up not being able to correctly ascertain, so just skip the column entirely
 					continue
-				if verbose:
-					pass #sys.stdout.write('Column {}'.format(column))
 				left = getattr(row, column, '<missing>')  # has
 				right = getattr(obj, column, '<missing>') # needs
-				if verbose:
-					if left is not None or right is not None:
-						pass #sys.stdout.write(u' has: {}; needs : {} '.format(left, right))
-
 				if right == '<missing>' or left == '<missing>':
 					continue  # Just in case
 
@@ -172,11 +166,9 @@ class updater_helper:
 
 					# TODO: Log this
 				else:
-					if verbose:
-						pass #sys.stdout.write(u'... no change needed\n'.format(left or "<None>"))
+					pass # no change needed
 		else:
-			if verbose:
-				print('no row?')
+			pass
 
 	def collection(self, left, right, attr, left_column='id', right_column='id'):
 		"""

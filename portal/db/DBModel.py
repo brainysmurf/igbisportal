@@ -84,6 +84,7 @@ ADVISORS = "{}teachers".format(PREFIX)
 COURSES = "{}courses".format(PREFIX)
 BUSADMIN = "{}busadmin".format(PREFIX)
 PARENTCHILDREN = "{}parentchildren".format(PREFIX)
+SIBLINGS = "{}siblings".format(PREFIX)
 ASSIGNMENT = "{}assignment".format(PREFIX)
 ENROLLMENT = "{}enrollment".format(PREFIX)
 TIMETABLES = "{}timetables".format(PREFIX)
@@ -287,7 +288,18 @@ ParentChildren = Table(
     PARENTCHILDREN, Base.metadata,
     Column('parent_id', BigInteger, ForeignKey(PARENTS+'.id'), primary_key=True),
     Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
-    )
+)
+
+"""
+One-to-many relationship for siblings, 
+http://stackoverflow.com/questions/9116924/how-can-i-achieve-a-self-referencing-many-to-many-relationship-on-the-sqlalchemy
+"""
+# Siblings = Table(
+#     SIBLINGS, Base.metadata,
+#     Column('user_id', Integer, ForeignKey(STUDENTS+'.id'), index=True),
+#     Column('sibling_id', Integer, ForeignKey(STUDENTS+'.id')),
+#     UniqueConstraint('user_id', 'sibling_id', name='unique_siblings')
+# )
 
 """
 Many to many relationships need an association table, this is it for teacher/course links
@@ -297,7 +309,7 @@ Assignment = Table(
     ASSIGNMENT, Base.metadata,
     Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
     Column('teacher_id', BigInteger, ForeignKey(ADVISORS+'.id'), primary_key=True)
-    )
+)
 
 """
 Many to many relationships need an association table, this is it for student/course links
@@ -306,7 +318,7 @@ Enrollment = Table(
     ENROLLMENT, Base.metadata,
     Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
     Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
-    )
+)
 
 """
 Many to many relationships need an association table, this is it for IBGroups/members links
@@ -316,7 +328,7 @@ IBGroupMembership = Table(
     IBGROUPSMEMBERSHIP, Base.metadata,
     Column('ib_group_id', BigInteger, ForeignKey(IBGROUPS+'.id'), primary_key=True),
     Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
-    )
+)
 
 class Student(Base, User):
     """
@@ -335,6 +347,7 @@ class Student(Base, User):
     nickname = Column(String(255))
 
     parents = relationship('Parent', secondary=ParentChildren, backref='children')
+    #siblings = relationship('Student', secondary=Siblings, primaryjoin=id==Siblings.c.user_id, secondaryjoin=id==Siblings.c.sibling_id)
 
     classes = relationship('Course', secondary=Enrollment, backref='students')
     ib_groups = relationship('IBGroup', secondary=IBGroupMembership, backref='students')
@@ -995,6 +1008,7 @@ class Advisor(Base, User):
     national_id = Column(String(255))
     classes = relationship('Course', secondary=Assignment, backref='teachers')
     homeroom_students = relationship('Student', backref="homeroom_teacher")
+    archived = Column(Boolean)
 
     @hybrid_property
     def username_handle(self):

@@ -16,23 +16,6 @@ import gns
 
 from sqlalchemy.orm import joinedload
 
-""" 
-FIXME: There has got to be a better way to do this
-"""
-Students = db.table_string_to_class('student')
-Teachers = db.table_string_to_class('advisor')
-Enrollments = db.table_string_to_class('enrollment')
-Assignments = db.table_string_to_class('assignment')
-ReportComments = db.table_string_to_class('report_comments')
-PrimaryReport = db.table_string_to_class('primary_report')
-Courses = db.table_string_to_class('course')
-Absences = db.table_string_to_class('PrimaryStudentAbsences')
-GSignIn = db.table_string_to_class('google_sign_in')
-UserSettings = db.table_string_to_class('user_settings')
-# UserDefinedTabs = db.table_string_to_class('user_defined_tabs')
-# UserDefinedButtons = db.table_string_to_class('user_defined_buttons')
-UserSplashJson = db.table_string_to_class('user_splash_json')
-
 button = namedtuple('button', ['externalid', 'name', 'color', 'size', 'url', 'icon', 'id', 'context_menu'])
 
 menu_item = namedtuple('menu_item', ['display', 'url', 'icon'])
@@ -180,10 +163,10 @@ def update_buttons(request):
         return HTTPForbidden()
     with DBSession() as session:
         try:
-            this = session.query(UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
+            this = session.query(db.table.UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
             this.json = json.dumps(request.json)
         except NoResultFound:
-            new = UserSplashJson(id=gplus, json=request.body)
+            new = db.table.UserSplashJson(id=gplus, json=request.body)
             session.add(new)
             return request.json
     return dict(message="Success")
@@ -195,7 +178,7 @@ def get_buttons(request):
         return "[]"  # fake array
     with DBSession() as session:
         try:
-            this = session.query(UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
+            this = session.query(db.table.UserSplashJson).filter_by(id=request.session.get('g_plus_unique_id')).one()
         except NoResultFound:
             return "[]" # fake array
     return this.json
@@ -232,9 +215,9 @@ def splash(request):
     ])
 
     with DBSession() as session:
-        hroom_teachers = session.query(Teachers.email, Students.class_year).\
-            select_from(Students).\
-            join(Teachers, Teachers.id == Students.homeroom_advisor).\
+        hroom_teachers = session.query(db.table.Teacher.email, db.table.Student.class_year).\
+            select_from(db.table.Student).\
+            join(db.table.Teacher, db.table.Teacher.id == db.table.Student.homeroom_advisor).\
             all()
 
         homeroom_teachers = defaultdict(list)
@@ -460,7 +443,7 @@ def splash(request):
     if g_plus_unique_id:
         with DBSession() as session:
             try:
-                settings = session.query(UserSettings).filter_by(unique_id=g_plus_unique_id).one()
+                settings = session.query(db.table.UserSettings).filter_by(unique_id=g_plus_unique_id).one()
                 # tabs = session.query(UserDefinedTabs).\
                 #     options(joinedload('buttons')).\
                 #     filter_by(unique_id=g_plus_unique_id).all()
