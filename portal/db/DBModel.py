@@ -9,20 +9,7 @@ for example national_id not = password_number
 So I guess we'll have to figure that out if we choose to go to production quality
 """
 
-course_abbreviations = {
-    'English Language Acquisition':'ELA',
-    'English Language and Literature':'EL&amp;L',
-    'Physical and Health Education': 'PSHE',
-    'Korean Language and Literature': 'Kor Lang & Lit',
-    'Bahasa Malaysia Language and Literature': 'BML&L',
-    'Bahasa Malaysia Language Acquisition': 'BMLA',
-    'Chinese Langauge and Literature': 'CL&L',
-    'Chinese Language Acquisition': 'CLA',
-    'Host Nation Studies': 'Host Nations',
-    'Spanish Language Acquisition': 'SLA',
-    'French Language Acquisition': 'FLA', 
-    'Individuals and Societies - Integrated Humanities': "I&amp;S",
-}
+from portal.utils import course_abbreviations, grade_string_to_integer_map
 
 import unicodedata
 def normalize(this_string): 
@@ -560,24 +547,7 @@ class Student(Base, User):
 
     @hybrid_property
     def grade(self):
-        return {
-                'Grade 12':12, 
-                'Grade 11':11, 
-                'Grade 10':10, 
-                'Grade 9': 9, 
-                'Grade 8': 8, 
-                'Grade 7': 7, 
-                'Grade 6': 6, 
-                'Grade 5': 5, 
-                'Grade 4': 4, 
-                'Grade 3': 3, 
-                'Grade 2': 2, 
-                'Grade 1': 1, 
-                'Fireflies': -3,
-                'Early Years 1':-2, 
-                'Early Years 2':-1, 
-                'Kindergarten': 0,
-            }.get(self.class_grade, -10)
+        return grade_string_to_integer_map.get(self.class_grade, -10)
 
     @grade.expression
     def grade_expression(cls):
@@ -1042,11 +1012,16 @@ class Course(Base):
     name = Column(String(255))
     grade = Column(String(255))
     uniq_id = Column(String(255), nullable=True, server_default=None)
+    class_section = Column(String(10), nullable=True, server_default=None)
 
     @hybrid_property
     def abbrev_name(self):
         pattern = re.compile(r'\b(' + '|'.join(course_abbreviations.keys()) + r')\b')
         return pattern.sub(lambda x: course_abbreviations[x.group()], self.name)
+
+    @hybrid_property
+    def grade_integer(self):
+        return grade_string_to_integer_map.get(self.grade, -10)
 
     # timetables relation defined by Timetable.course 'backref'
     def __repr__(self):

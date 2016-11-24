@@ -280,15 +280,8 @@ def mb_courses(request):
         return dict(message="User doesn't have classes?")
     data = []
     for klass in user.classes:
-        grade_str = re.search('\((.*?)\)', klass.name)
-        if grade_str:
-            str = grade_str.group(1)
-            grade_str = {0:None, 'Grade 10': 10, 'Grade 11': 11, 'Grade 12': 12}.get(str, int(re.sub('[^0-9]', '', str) or 0))
-        else:
-            grade_str = ""
-        if grade_str is not None:
-            data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id or ""), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
-    return dict(message="Success", data=sorted(data, key= lambda x: x['sortby'], reverse=True))
+        data.append( dict(name=klass.abbrev_name, sortby=(klass.grade_integer, klass.name or "", klass.class_section or "0"), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
+    return dict(message="Success", data=sorted(data, key= lambda x: x['sortby']))
 
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
 def auditlog(request):
