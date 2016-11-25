@@ -250,6 +250,12 @@ def splash(request):
                 menu_placeholder('mb_classes')
             ],
             }),
+        button(name="Blogs", externalid=-9, size="large", color="orange", url="https://igbis.managebac.com", icon="rss-square", id="",
+            context_menu={
+            'items': [
+                menu_placeholder('mb_blogs')
+            ],
+            }),        
         button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
             context_menu={
             'items': [

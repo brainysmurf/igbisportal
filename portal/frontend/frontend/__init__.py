@@ -41,6 +41,7 @@ def main(global_config, **settings):
     config.add_route('mb_courses', '/mb_courses')
     config.add_route('mb_homeroom', '/mb_homeroom')
     config.add_route('mb_grade_teachers', '/mb_grade_teachers')
+    config.add_route('mb_blogs', '/mb_blogs')
 
     config.add_route('frontpage', '/')
     config.add_route('auditlog', '/auditlog')

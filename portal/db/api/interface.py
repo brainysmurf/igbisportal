@@ -61,7 +61,6 @@ class APIDownloader(object):
         if not lazy:
             # Immediately do our thang.
             self.download(overwrite=True)
-            self.open_apply_download(overwrite=True)
             click.echo()
 
     def default_logger(self, *args, **kwargs):
@@ -102,7 +101,7 @@ class APIDownloader(object):
             path = self.build_json_path('users', '.json')
             self.write_to_disk(json_obj, path)
 
-    def open_apply_download(self, overwrite=False):
+    async def open_apply_async_download(self, overwrite=False):
         """
         Open apply's API uses step-by-step downloads, 
         so we have to use since_id to get the latest
@@ -196,12 +195,9 @@ class APIDownloader(object):
                 url = self.url.format(uri=gns.section)
                 self.verbose and self.default_logger('Downloading {}'.format(url))
 
-                # r = self.download_get(url, params=dict(
-                #     auth_token=self.api_token,
-                #     ))
-
                 urls[url] = (file_path, gns.section)
 
+        loop.call_soon( asyncio.ensure_future(self.open_apply_async_download()) )
         loop.run_until_complete( asyncio.ensure_future(self.async_download_url_paths(urls)) )
 
         # 

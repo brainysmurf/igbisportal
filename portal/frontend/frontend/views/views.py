@@ -76,6 +76,7 @@ def session_user(request):
             if busadmin:
                 user = busadmin
         if not user:
+            parent = session.query(db.table.Parent).filter(func.lower(db.table.Parent.email)==user_email).options().first()
             if parent:
                 user = parent
 
@@ -260,7 +261,7 @@ def mb_homeroom(request):
                         join(db.table.Course,     db.table.Course.id              == db.table.Enrollment.c.course_id).\
                         join(db.table.Assignment, db.table.Assignment.c.course_id  == db.table.Course.id).\
                         join(db.table.Teacher,    db.table.Teacher.id              == db.table.Assignment.c.teacher_id).\
-                        filter(not db.table.Teacher.archived).\
+                        filter(db.table.Teacher.archived == False).\
                             all()
             except NoResultFound:
                 continue
@@ -269,6 +270,35 @@ def mb_homeroom(request):
             if teacher_emails:
                 data.append(dict(student_email=teacher_emails, student_name=student.nickname_last))
     data.sort(key=lambda x: x['student_name'])
+    return dict(message="Success", data=data)
+
+@view_config(route_name="mb_blogs", renderer="json")
+def mb_blogs(request):
+    """
+    Return teacher emails for every student who is in my homeroom
+    """
+
+    user = request.session.get('mb_user')
+    if not user:
+        return dict(message="No user in session?", data=[])
+    if not user.type in ['Advisor', 'Advisors', 'Account Admins']:
+        return dict(message="Not a teacher", data=[])
+    data = []
+    with DBSession() as session:
+        students = session.query(db.table.Student).\
+            select_from(db.table.Student).\
+                join(db.table.Enrollment, db.table.Enrollment.c.student_id == db.table.Student.id).\
+                join(db.table.Course,     db.table.Course.id              == db.table.Enrollment.c.course_id).\
+                join(db.table.Assignment, db.table.Assignment.c.course_id  == db.table.Course.id).\
+                join(db.table.Teacher,    db.table.Teacher.id              == db.table.Assignment.c.teacher_id).\
+                filter(db.table.Teacher.id == user.id).\
+                    all()
+
+        if students:
+            for student in students:
+                data.append(dict(blog_url='http://igbis-{}.blogspot.my'.format(student.student_id), student_name=student.grade_last_first_nickname_studentid, grade=student.grade))
+
+    data.sort(key=lambda x: (x['grade'], x['student_name']))
     return dict(message="Success", data=data)
 
 @view_config(route_name="mb_courses", renderer='json', http_cache=0)
