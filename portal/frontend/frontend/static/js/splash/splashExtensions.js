@@ -34,6 +34,27 @@ Splash.defineExtentions = function () {
 
   $.ajax({
     type:'POST',
+    url: 'mb_blogs',
+    contentType: 'application/json; charset=utf-8',
+    success: function(result) {
+      if (result.hasOwnProperty('data') && result.data.length > 0) {
+        var link_list = '';
+        var saved_grade = 0;
+        for (var i=0; i < result.data.length; i++) {
+          if (result.data[i].grade != saved_grade) {
+            if (saved_grade != 0) link_list += '<li><hr /></li>';
+            link_list += '<li class="buttonSubHeading">Grade ' + result.data[i].grade + ':</li>';
+            saved_grade = result.data[i].grade;
+          }
+          link_list += '<li><a href="' + result.data[i].blog_url + '">&nbsp; ' + result.data[i].student_name + '</a></li>';
+        }
+      }
+      $('#mb_blogs').parent().replaceWith(link_list);
+    }
+  });
+
+  $.ajax({
+    type:'POST',
     url: 'mb_courses',
     contentType: 'application/json; charset=utf-8',
     success: function(result) {

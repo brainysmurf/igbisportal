@@ -250,12 +250,6 @@ def splash(request):
                 menu_placeholder('mb_classes')
             ],
             }),
-        button(name="Blogs", externalid=-9, size="large", color="orange", url="https://igbis.managebac.com", icon="rss-square", id="",
-            context_menu={
-            'items': [
-                menu_placeholder('mb_blogs')
-            ],
-            }),        
         button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
             context_menu={
             'items': [
@@ -374,7 +368,7 @@ def splash(request):
             menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
         ]}),
         emergency_button,
-        cashless_button
+        cashless_button,
         ])
 
 
@@ -414,7 +408,13 @@ def splash(request):
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         bookings_button,
         emergency_button,
-        cashless_button
+        cashless_button,
+        button(name="Blogs", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="rss-square", id="",
+            context_menu={
+            'items': [
+                menu_placeholder('mb_blogs')
+            ],
+            }),
     ])
 
     buttons = OrderedDict()
