@@ -140,6 +140,10 @@ class ClassReports(ClassLevelManageBac):
             return [s.id for s in statement.all()]
 
     def determine_current_term(self, response):
+        """
+        FIXME: This buries the code that makes the terms live in the database, far better would be to have a 
+        way to launch this seperately through cli code
+        """
         current_term_id = None # if remove the below block, you'll still need to derive this
         if self.manually_do_terms:
             for term_item in response.xpath("//select[@id='term']//option"):
@@ -163,7 +167,7 @@ class ClassReports(ClassLevelManageBac):
                 exists = self.db.get_rows_in_table('terms', id=term_id)
                 if not exists:
                     with DBSession() as session:
-                        term = self.db.Terms(
+                        term = self.db.table.Term(
                                 id=term_id,
                                 name=name,
                                 current=current,
