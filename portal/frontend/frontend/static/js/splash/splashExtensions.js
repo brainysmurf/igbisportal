@@ -19,6 +19,22 @@ Splash.defineExtentions = function () {
 
   $.ajax({
     type:'POST',
+    url: 'mb_blogs',
+    contentType: 'application/json; charset=utf-8',
+    success: function(result) {
+      console.log(result.data);
+      if (result.hasOwnProperty('data') && result.data.length > 0) {
+        var link_list = '';
+        for (var i=0; i < result.data.length; i++) {
+          link_list += '<li><a target="_blank" href="' + result.data[i].blog_url + '">&nbsp;' + result.data[i].student_name + '</a></li>';
+        }
+        $('#mb_blogs').parent().replaceWith(link_list);
+      }
+    }
+  });
+
+  $.ajax({
+    type:'POST',
     url: 'mb_grade_teachers',
     contentType: 'application/json; charset=utf-8',
     success: function(result) {

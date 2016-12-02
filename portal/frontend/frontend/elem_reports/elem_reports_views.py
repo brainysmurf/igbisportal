@@ -67,56 +67,71 @@ def pyp_reports(request):
     # This bit is the only manual info that isn't on managebac
     uoi_table = {
         -1: {
-            1: dict(title="Sharing The Planet", central_idea="We have a responsibility to share our environment for a peaceful world"),
-            2: dict(title="Who We Are", central_idea="Knowing about our body helps us keep healthy."),
+            # ey sem 1
+            1: dict(title="Who We Are", central_idea="Playing and learning together enables us to come to new understandings."),
+            2: dict(title="Sharing The Planet", central_idea="Our lives are interconnected with living things."),
+            # ey sem 2
             3: dict(title="How the World Works", central_idea="Water is all around us and has many uses."),
             4: dict(title="How We Express Ourselves", central_idea="Stories inform, provoke us and provide enjoyment."),
         },
         0: {
-            1: dict(title="Who We Are", central_idea="We are part of a community who work, live and learn together"),
-            2: dict(title="How We Organise Ourselves", central_idea="People create systems, procedures and routines to fulfill a need."),
-            3: dict(title="Where We Are in Place and Time", central_idea="Where we live determines what our home is like."),
+            # kg sem 1
+            1: dict(title="Who We Are", central_idea="We are part of a community who work, learn, and play together"),
+            2: dict(title="How We Organise Ourselves", central_idea="Communities create systems to fullfill a need."),
+            3: dict(title="Where We Are in Place and Time", central_idea="Shelters look different and serve a purpose."),
+
+            # kg sem 2
             4: dict(title="Sharing the Planet", central_idea="People's choices and actions impact the environment and their community."),
             5: dict(title="How the World Works", central_idea="Our body and man made resources help protect us from the natural environment."),
             6: dict(title="How We Express Ourselves", central_idea="An audience can be engaged through performance.")
         },
         1: {
+            # gr1 sem 1
             1: dict(title="How we organize ourselves", central_idea="Humans use tools and strategies to understand and organise their environment."),
-            2: dict(title="Who We Are", central_idea="Exploring how people learn helps individuals understand themselves and others better"),
-            3: dict(title="How We Express Ourselves", central_idea="Celebrations are an opportunity to reflect and appreciate cultures and beliefs"),
+            2: dict(title="Who We Are", central_idea="Games provide us with opportunities to develop an understanding of ourselves and others."),
+            3: dict(title="How We Express Ourselves", central_idea="Celebrations are an opportunity to reflect and appreciate cultures and beliefs."),
+            # gr1 sem 2
             4: dict(title="How the World Works", central_idea="Machines make a difference to the way we live our lives."),
             5: dict(title="Sharing the Planet", central_idea="Water is essential to life and is a limited resource to many."),
             6: dict(title="Where We Are in Place and Time", central_idea="Clocks are a universal measurement tool of time that have had an impact in the past and the present."),
         },
         2: {
-            1: dict(title="Who We Are", central_idea="All humans have rights and responsibilities which help them live together"),
-            2: dict(title="Sharing The Planet", central_idea="Plants sustain life on earth and we have a responsible role to play"),
-            3: dict(title="Where we are in Place and Time", central_idea="Influence can change people and their environment."),
-            4: dict(title="How the World Works", central_idea="Forces are a vital part of our survival."),
-            5: dict(title="How We Express Ourselves", central_idea="Cultures tell stories in different ways and for different reasons."),
-            6: dict(title="How We Organize Ourselves", central_idea="Number system provide a common language we can use to make sense of the world."),
+            # gr2 sem 1
+            1: dict(title="Who We Are", central_idea="With rights come responsibilities."),
+            2: dict(title="How We Express Ourselves", central_idea="Cultures tell stories in different ways and for different reasons."),
+            3: dict(title="How We Organize Ourselves", central_idea="Number system provide a common language we can use to make sense of the world."),
+            # gr2 sem 2
+            4: dict(title="Sharing The Planet", central_idea="Plants sustain life on earth and we have a responsible role to play"),
+            5: dict(title="Where we are in Place and Time", central_idea="Influence can change people and their environment."),
+            6: dict(title="How the World Works", central_idea="Forces are a vital part of our survival."),
         },
         3: {
-            1: dict(title="Sharing the Planet", central_idea="People can conserve the world's resources through responsible behaviours"),
-            2: dict(title="Where We are in Place and Time", central_idea="Innovations from past civilizations have an influence on the present"),
-            3: dict(title="How the World Works", central_idea="Safe structures are designed and built for purpose and consider the environment and materials."),
-            4: dict(title="Who We Are", central_idea="Communication connects people and communities."),
-            5: dict(title="How We Organise Ourselves", central_idea="Our bodies are made up of systems, which need to be maintained for healthy functioning."),
+            # gr3 sem 1
+            1: dict(title="How We Organise Ourselves", central_idea="Communication connects people."),
+            2: dict(title="Sharing the Planet", central_idea="People can conserve the world's resources through responsible behaviours"),
+            3: dict(title="Where We are in Place and Time", central_idea="Innovations from past civilizations have an influence on the present"),
+            # gr3 sem 2
+            4: dict(title="How the World Works", central_idea="Safe structures are designed and built for purpose and consider the environment and materials."),
+            5: dict(title="Who We Are", central_idea="Communication connects people and communities."),
             6: dict(title="How We Express Ourselves", central_idea="Nature can inspire people to express their creativity."),
         },
         4: {
-            1: dict(title="Sharing the Planet", central_idea="Children should have access to equal opportunities"),
-            2: dict(title="How We Express Ourselves", central_idea="Media influences how we think and the choices we make"),
-            3: dict(title="Where We Are in Place and Time", central_idea="The quest for understanding has led to exploration and discovery."),
-            4: dict(title="How The World Works", central_idea="Earth has formed over time and is still changing."),
-            5: dict(title="How we Organise Ourselves", central_idea="Societies establish systems for trade and commerce to meet needs and wants."),
+            # gr4 sem 1 
+            1: dict(title="How We Express Ourselves", central_idea="Media influences how we think and the choices we make."),
+            2: dict(title="Sharing the Planet", central_idea="Organisms rely on one another to balance ecosystems."),
+            3: dict(title="How we Organise Ourselves", central_idea="Societies establish systems for trade and commerce to meet needs and wants."),
+            # gr4 sem 2
+            4: dict(title="Where We Are in Place and Time", central_idea="The quest for understanding has led to exploration and discovery."),
+            5: dict(title="How The World Works", central_idea="Earth has formed over time and is still changing."),
             6: dict(title="Who We Are", central_idea="People's beliefs influence their actions."),
         },
         5: {
-            1: dict(title="Where We Are in Place and Time", central_idea="The choices people make change their personal histories and shape their future lives"),
-            2: dict(title="Sharing The Planet", central_idea="The choices we make during moments of conflict affect our relationships"),
-            3: dict(title="How we Organise Ourselves", central_idea="All societies have rules and reasons for these rules"),
-            4: dict(title="How the World Works", central_idea="Electricity is an energy source that humans use to enhance their lives."),
+            # gr5 sem 1        
+            1: dict(title="How we Organise Ourselves", central_idea="All societies have rules and reasons for these rules."),
+            2: dict(title="Where We Are in Place and Time", central_idea="Malaysia's cultural diversity has been shaped by its history."),
+            3: dict(title="How the World Works", central_idea="Changes to matter can be of a chemical and/or physical nature."),
+            # gr5 sem 2
+            4: dict(title="Sharing The Planet", central_idea="The choices we make during moments of conflict affect our relationships"),
             5: dict(title="How We Express Ourselves: Exhibition", central_idea="Artists seek to evoke an emotional response from their audience."),
             6: dict(title="Who We Are", central_idea="External and internal factors cause changes in our lives"),
         },
