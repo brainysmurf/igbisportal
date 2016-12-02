@@ -64,14 +64,16 @@ class APIDownloader(object):
             click.echo()
 
     def default_logger(self, *args, **kwargs):
-        click.echo(*args, **kwargs)
+        click.echo(message=" ".join(args), **kwargs)
 
     def download_get(self, *args, **kwargs):
         if self.mock == True:
             return Mock(args, kwargs)
         else:
-            self.default_logger(click.style('.', fg="green"), nl=False)
-            return requests.get(*args, **kwargs)
+            self.default_logger('Get: ', click.style(args[0], fg="yellow"), ': ', click.style(str(list(kwargs.items())), fg="yellow"), nl=True)
+            resp = requests.get(*args, **kwargs)
+            self.default_logger('Rev: ', click.style(args[0], fg="green"), ': ', click.style(str(list(kwargs.items())), fg="green"), nl=True)
+            return resp
 
     def build_json_path(self, *args):
         """
@@ -125,6 +127,8 @@ class APIDownloader(object):
                 self.verbose and self.default_logger('Download request did not return "OK"')
                 since_id = -1
             else:
+                # Wait for Python 3.6 to do this:
+                # yield  # flow back to the event loop controller
                 json_info = r.json()
                 # make since_id the id for the last id passed
                 these_students = json_info.get('students')
@@ -142,8 +146,13 @@ class APIDownloader(object):
         self.write_to_disk(compiled_json_obj, path)
 
     async def async_fetch_write(self, session, url, path, section=None):
+
+        self.default_logger('Get:', click.style(url, fg='yellow'))
+
         async with session.request('get', url, params=dict(auth_token=self.api_token)) as response:
-            self.default_logger(click.style('.', fg="green"), nl=False)
+
+            self.default_logger('Rev:', click.style(url, fg="green"), nl=True)
+
             t = await response.text()
             async with aiofiles.open(path, 'w') as f:
                 await f.write(t)
@@ -152,13 +161,15 @@ class APIDownloader(object):
                     for item in json_info[section]:
                         self.container.add(item, gns.section)
 
-    async def async_download_url_paths(self, url_dict):
+    async def async_download_url_paths(self, url_dict, concurrent_tasks=[]):
         async with aiohttp.ClientSession() as session:
             tasks = []
 
             for url in url_dict:
                 path, section = url_dict[url]
                 tasks.append( asyncio.ensure_future( self.async_fetch_write(session, url, path, section) ) )
+
+            tasks.extend(concurrent_tasks)
 
             await asyncio.gather(*tasks)
 
@@ -197,7 +208,6 @@ class APIDownloader(object):
 
                 urls[url] = (file_path, gns.section)
 
-        loop.call_soon( asyncio.ensure_future(self.open_apply_async_download()) )
         loop.run_until_complete( asyncio.ensure_future(self.async_download_url_paths(urls)) )
 
         # 
@@ -228,7 +238,8 @@ class APIDownloader(object):
                     url = self.url.format(uri=this_url)
                     urls[url] = (file_path, None)
 
-        loop.run_until_complete( asyncio.ensure_future(self.async_download_url_paths(urls)) )
+        also_do = [loop.create_task( self.open_apply_async_download() )]
+        loop.run_until_complete( asyncio.ensure_future(self.async_download_url_paths(urls, concurrent_tasks=also_do)))
 
 if __name__ == "__main__":
 
