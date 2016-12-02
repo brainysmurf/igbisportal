@@ -18,7 +18,7 @@ class PYPTeacherAssignments(PostgresPipeline):
     BLANK_TOLERANCE = 1
 
     def database_add(self, key, item):
-        TeacherAssign = self.database.table_string_to_class('Primary_Teacher_Assignments')
+        TeacherAssign = self.database.table.TeacherAssign
         subject_id = int(item['subject_id'])
         teacher_id = int(item['teacher_id'])
         class_id = int(item['class_id'])
@@ -127,9 +127,9 @@ class PYPClassReportsPipline(PostgresPipeline):
     def make_primary_report_section(self, term_id, subject_id, course_id, student_id, comment="", name =""):
         exists = None
         comment = string_to_entities(comment)
-        PrimaryReportSection = self.database.table_string_to_class('Primary_Report_Section')
-        Teacher = self.database.table_string_to_class('Advisor')
-        TeacherAssignments = self.database.table_string_to_class('Primary_Teacher_Assignments')
+        PrimaryReportSection = self.database.table.PrimaryReportSection
+        Teacher = self.database.table.Teacher
+        TeacherAssignments = self.database.table.TeacherAssign
 
         with DBSession() as session:
 
@@ -179,12 +179,12 @@ class PYPClassReportsPipline(PostgresPipeline):
                 return primary_report_section
 
     def database_add(self, key, item):
-        Teacher = self.database.table_string_to_class('Advisor')
-        TeacherAssignments = self.database.table_string_to_class('Primary_Teacher_Assignments')
-        PrimaryReport = self.database.table_string_to_class('Primary_Report')
-        PrimaryReportSection = self.database.table_string_to_class('Primary_Report_Section')
-        PrimaryReportStrand = self.database.table_string_to_class('Primary_Report_Strand')
-        PrimaryReportLo = self.database.table_string_to_class('Primary_Report_Lo')
+        Teacher = self.database.table.Teacher
+        TeacherAssignments = self.database.table.TeacherAssign
+        PrimaryReport = self.database.table.PrimaryReport
+        PrimaryReportSection = self.database.table.PrimaryReportSection
+        PrimaryReportStrand = self.database.table.PrimaryReportStrand
+        PrimaryReportLo = self.database.table.PrimaryReportLo
 
         if item.__class__ is PrimaryReportItem:
             term_id = int(item.get('term_id'))
@@ -271,7 +271,7 @@ class PYPStudentAttendance(PostgresPipeline):
     BLANK_TOLERANCE = 100
 
     def database_add(self, key, item):
-        Absences = self.database.table_string_to_class('PrimaryStudentAbsences')
+        PrimaryStudentAbsences = self.database.table.PrimaryStudentAbsences
 
         term_id = item['term_id']
         student_id = item['student_id']
@@ -281,7 +281,7 @@ class PYPStudentAttendance(PostgresPipeline):
         with DBSession() as session:
 
             try:
-                exists = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
+                exists = session.query(PrimaryStudentAbsences).filter_by(term_id=term_id, student_id=student_id).one()
                 if exists:
                     exists.absences = absences
                 if exists:
@@ -290,7 +290,7 @@ class PYPStudentAttendance(PostgresPipeline):
 
             except NoResultFound:
 
-                new = Absences(
+                new = PrimaryStudentAbsences(
                     student_id=student_id,
                     term_id = term_id,
                     absences=absences,
