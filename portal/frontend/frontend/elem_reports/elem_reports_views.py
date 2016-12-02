@@ -4,8 +4,8 @@ from pyramid.renderers import render
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, joinedload_all
 
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
-from sqlalchemy.orm.exc import NoResultFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden, HTTPInternalServerError
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 db = Database()
 import re
 import gns
@@ -48,12 +48,16 @@ def pyp_reports(request):
         if api_token != gns.config.managebac.api_token:
             return HTTPForbidden()
 
-    term_id = 42556  # m.get('term_id')
+    term_id = 55048  # m.get('term_id')
     with DBSession() as session:
         try:
             report = session.query(PrimaryReport).\
                 options(joinedload('course')).\
-                filter_by(term_id=term_id, student_id=student_id).one()
+                filter(
+                        PrimaryReport.term_id==term_id, 
+                        PrimaryReport.student_id==student_id, 
+                        PrimaryReport.homeroom_comment!=''
+                    ).one()
             student = session.query(Students).filter_by(id=student_id).one()
         except NoResultFound:
             if pdf:
@@ -61,6 +65,9 @@ def pyp_reports(request):
                 raise HTTPNotFound()
             else:
                 raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
+        # except MultipleResultsFound:
+        #     from IPython import embed;
+        #     embed();exit()
 
     title = u"IGB International School (June 2016): Student Report for {} {}".format(student.first_name, student.last_name)
 
@@ -137,7 +144,12 @@ def pyp_reports(request):
         },
     }
 
-    chinese_teachers = {11256632: [11173388, 11204340, 11203889, 11324799, 11203892, 11124222, 10893375, 11080391, 11135112, 10856826, 11270692, 11135108, 10834640, 10866877, 10856824, 10865037, 11324785, 11204392, 10986488, 11563304, 11124212, 11538429, 10834648, 11201785, 11203952, 10834651, 10912649, 10837002, 11200870, 10882162, 11204001, 11204385, 10863230, 10867796, 11203954, 10834633, 11609996, 10973671, 10882159, 11204008, 11182305, 11203950, 11153067, 10856827, 10868400, 11221516, 11204401, 10882152, 11203997], 11303618: [11124209, 11204331, 11392152, 11153071, 11203893, 11124216, 11203938, 11203926, 11203933, 11502297, 10867797, 11124210, 11578945, 10882226, 11476123, 10834622, 10834621, 11203946, 11124223, 10836999, 10882227, 11204637, 11203961, 10893379, 11190071, 11182291, 11204641, 10834628, 10836994, 10834616, 10834636, 11153068, 11611847, 11274132, 11274133, 10908165, 10834656, 11204044, 11201788, 11153073], 10792613: [11490303, 11203911, 11471843, 11204634, 11203902, 11204319, 10834635, 10866876, 10837001, 11190340, 11203970, 11203923, 10882225, 11124215, 10834630, 10834649, 11204631, 10834618, 10834617, 11544715, 11274134, 10856823, 10866874, 11204383, 11274137, 11426392, 10863222, 11203979, 11581741, 10834643, 11578839, 11203988, 10834645, 11204609, 11611841, 11204605, 11153066, 11124219, 11364525, 11204000, 11204640, 10856636, 11173915, 10834625, 11274131, 10912651, 10834661, 10866873, 11182284, 11464377, 10834642, 11204017, 10913691, 11080380, 11135103, 11204377, 11204026, 11204303, 11124218, 11173912, 10836998, 10834637, 11204035]}
+    chinese_teachers = {
+        10792613: [11203970,10836999,10912649,10863230,11544715,11707916,11609996,11707918,11708046,10912651,11707928,11274137,11707932,11707934,11204000,11204641,11204001,11708067,11270692,11707940,11204385,11563304,11204008,11153068,11573550,11707952,10882225,11204017,11707957,10834618,10866874,11080380,10893375,11707840,11190340,10834630,11611847,10834633,10834636,11693517,11707984,11203923,11707859,10834645,10834648,10834649,10834651,11707870,11182305,11203938,11200870,10973671,11707882,11708014,11203950,11203952,11708018,11203954,10882162,11633398,11707900,11538429,11124222,11135103,11737995,11621139,11707870,10882159],  # xiaopiong
+        11256632: [11204609,10836994,11707907,11135108,10836999,11135112,10837001,11203979,10865037,11707924,11621141,11203988,11204377,11173915,10913691,11204637,10856823,11204383,11204640,11707939,11204392,11614634,11364525,10882226,11204660,11190071,10834616,10834617,11464377,10866873,10866876,10834621,10834622,10866877,10856636,11578945,11611841,10893379,10834628,10834625,11611847,10834635,10834640,10834642,10834643,11930324,11707860,11203926,11707990,11426392,11502297,11578839,11707869,11708005,10834661,11203946,11324785,11124210,10863222,11124215,10856824,11203961,10856826,11124219,11204605,11707902],  # nancy
+    }
+
+
 
     students_chinese_teachers = {}
 
@@ -170,7 +182,7 @@ def pyp_reports(request):
                     options(joinedload('sections.teachers')).\
                     options(joinedload('sections.strands')).\
                     options(joinedload('teacher')).\
-                    filter_by(term_id=term_id, student_id=student_id).one()
+                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id, PrimaryReport.homeroom_comment!="").one()
                 student = session.query(Students).filter_by(id=student_id).one()
                 attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
             except NoResultFound:
@@ -355,7 +367,7 @@ def pyp_reports(request):
                     options(joinedload('sections.learning_outcomes')).\
                     options(joinedload('sections.teachers')).\
                     options(joinedload('teacher')).\
-                    filter_by(term_id=term_id, student_id=student_id).one()
+                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id, PrimaryReport.homeroom_comment!="").one()
                 student = session.query(Students).filter_by(id=student_id).one()
                 attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
             except NoResultFound:
@@ -508,9 +520,13 @@ def pyp_reports(request):
                         ),
                     request=request)
         import pdfkit   # import here because installation on server is hard
-        path = u'/home/vagrant/igbisportal/pdf-downloads/{}/{}-Grade {}-{}.pdf'.format(which_folder, '42556', grade_norm, student.first_name + ' ' + student.last_name)
-        print(path)
-        pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
+        path = u'/home/vagrant/igbisportal/pdf-downloads/{}/{}-Grade {}-{}.pdf'.format(which_folder, '55048', grade_norm, student.first_name + ' ' + student.last_name)
+
+        try:
+            pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
+        except OSError as e:
+            from IPython import embed;embed();exit()
+            return HTTPInternalServerError("")
         if pdf.lower() == "download":
             content_type = "application/octet-stream"
 

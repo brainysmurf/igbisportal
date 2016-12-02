@@ -24,7 +24,7 @@ class DoIt:
 			self.filter = None
 
 	def go(self, starting_from=None):
-		term_id = 42556
+		term_id = 55048
 
 		api_token = gns.config.managebac.api_token
 
@@ -62,7 +62,7 @@ class DoIt:
 						self.output("Nope {}: {}, {}".format(r.status_code, student.student_id, text.encode('utf-8')))
 
 	def dates(self):
-		term_id = 42556
+		term_id = 55048
 
 		base_url = 'http://localhost:6543/students/{student_id}/pyp_report/download?api_token={api_token}'
 

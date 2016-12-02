@@ -249,7 +249,6 @@ class ParentAccounts:
                                 self.groups[homeroom_level_group].list.append(parent.igbis_email_address)
                         except KeyError:
                             print("Key Error: {}".format(homeroom_level_group))
-                            #from IPython import embed;embed()
 
                 for class_ in student.classes:
                     if class_.uniq_id:

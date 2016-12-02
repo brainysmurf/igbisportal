@@ -311,9 +311,14 @@ def photos(obj):
                     _f.write(r.content)
 
                 i = Image.open(path + file_name)
+                i.thumbnail((300,300), Image.ANTIALIAS)
                 ext = i.format.lower()
 
-                os.rename(path + file_name, path + file_name + '.' + ext)
+                final_name = path + file_name + '.' + ext
+                i.save(final_name)
+
+                # Now that saved it, remove the old one
+                os.remove(path + file_name)
 
                 with open(path + 'idlink.txt', 'a') as _f:
                     _f.write("{},{}\n".format(student.barcode, file_name + '.' + ext))
@@ -534,6 +539,35 @@ def teacher_classes(ctx, id):
 @main.group()
 def test():
     pass
+
+import asyncio
+
+import aiohttp
+import asyncio
+import async_timeout
+
+async def fetch(session, url):
+    with async_timeout.timeout(10):
+        async with session.get(url) as response:
+            return await response.text()
+
+async def download_urls(urls):
+    tasks = []
+
+    async with aiohttp.ClientSession() as session:
+        for url in urls:
+            tasks.append( asyncio.ensure_future( fetch(session, url) ) )
+
+        responses = await asyncio.gather(*tasks)
+
+        print(responses)
+
+@test.command('async')
+@click.pass_obj
+def test_async(obj):
+    urls = ['https://igbis.managebac.com/api/groups/10414844/members', 'https://igbis.managebac.com/api/groups/10414842/members', 'https://igbis.managebac.com/api/groups/10414843/members', 'https://igbis.managebac.com/api/groups/10414846/members', 'https://igbis.managebac.com/api/groups/10414845/members', 'https://igbis.managebac.com/api/groups/10438827/members', 'https://igbis.managebac.com/api/groups/10430067/members', 'https://igbis.managebac.com/api/groups/10414856/members', 'https://igbis.managebac.com/api/groups/10414857/members', 'https://igbis.managebac.com/api/groups/10414849/members', 'https://igbis.managebac.com/api/groups/10414852/members', 'https://igbis.managebac.com/api/groups/10414854/members', 'https://igbis.managebac.com/api/groups/10238978/members', 'https://igbis.managebac.com/api/groups/10238982/members', 'https://igbis.managebac.com/api/groups/10414853/members', 'https://igbis.managebac.com/api/groups/10414847/members', 'https://igbis.managebac.com/api/groups/10414850/members', 'https://igbis.managebac.com/api/groups/10414855/members', 'https://igbis.managebac.com/api/groups/10414848/members', 'https://igbis.managebac.com/api/groups/10414851/members', 'https://igbis.managebac.com/api/groups/10414861/members']
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete( asyncio.ensure_future(download_urls(urls)) )
 
 @test.command('api_family_info')
 @click.pass_obj

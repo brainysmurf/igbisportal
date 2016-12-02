@@ -14,9 +14,9 @@
 <div id="wrapper">
     <div id="contentwrap">
       <!-- <img src="${static_url}header.png" width="1100px" /> -->
-      <div class="tabs_holder">
+      <!-- <div class="tabs_holder">
         <div metal:define-slot="tabs_bar"></div>
-      </div>
+      </div> -->
 	  <div class="content_holder">
 	  	<div class="content">
 	    	<p>

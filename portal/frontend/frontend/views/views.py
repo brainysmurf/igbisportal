@@ -296,7 +296,7 @@ def mb_blogs(request):
 
         if students:
             for student in students:
-                data.append(dict(blog_url='http://igbis-{}.blogspot.my'.format(student.student_id), student_name=student.grade_last_first_nickname_studentid, grade=student.grade))
+                data.append(dict(blog_url='http://igbis-{}.blogspot.my'.format(student.student_id), student_name=student.nickname_last, grade=student.grade))
 
     data.sort(key=lambda x: (x['grade'], x['student_name']))
     return dict(message="Success", data=data)
@@ -532,7 +532,7 @@ def footer_html(request):
     Just return the footer
     """
     student_id = request.GET.get('student_id')
-    term_id = 42556
+    term_id = 55048
     with DBSession() as session:
         student = session.query(db.table.Students).filter_by(id=student_id).one()
         report  = session.query(PrimaryReport).\

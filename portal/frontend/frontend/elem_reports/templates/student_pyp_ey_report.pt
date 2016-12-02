@@ -5,10 +5,10 @@
   </div>
  -->
 
- <div metal:fill-slot="additional-css">
+ <metal:additional-css fill-slot="additional-css">
   <link rel="stylesheet" href="${static_url}css/pyp_ey_reports.css" media="screen">
   <link rel="stylesheet" href="${static_url}css/pyp_ey_reports_pdf.css" media="print">
- </div>
+ </metal:additional-css>
 
   <div metal:fill-slot="content">
       <!-- The front cover -->
