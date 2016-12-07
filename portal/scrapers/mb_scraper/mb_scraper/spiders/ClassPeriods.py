@@ -140,40 +140,44 @@ class ClassReports(ClassLevelManageBac):
             return [s.id for s in statement.all()]
 
     def determine_current_term(self, response):
-        return 55880
-        current_term_id = None # if remove the below block, you'll still need to derive this
-        if self.manually_do_terms:
-            for term_item in response.xpath("//select[@id='term']//option"):
-                name = term_item.xpath('.//text()').extract()
-                if name:
-                    name = name[0]
-                term_id = term_item.xpath('./@value').extract()
-                if term_id:
-                    term_id = term_id[0]
-                current = term_item.xpath("./@selected='selected'").extract() == [u'1']
-                if current:
-                    current_term_id = term_id
-                    if '(current)' in name:
-                        # remove (current) and any surrounding whitespace from name if it's there. Ugh. Sorry.
-                        name = re.sub('\W?\(current\)\W?', '', name)
+        """
+        FIXME: This buries the code that makes the terms live in the database, far better would be to have a 
+        way to launch this seperately through cli code
+        """
+        return 55880  # UGH
+        # current_term_id = None # if remove the below block, you'll still need to derive this
+        # if self.manually_do_terms:
+        #     for term_item in response.xpath("//select[@id='term']//option"):
+        #         name = term_item.xpath('.//text()').extract()
+        #         if name:
+        #             name = name[0]
+        #         term_id = term_item.xpath('./@value').extract()
+        #         if term_id:
+        #             term_id = term_id[0]
+        #         current = term_item.xpath("./@selected='selected'").extract() == [u'1']
+        #         if current:
+        #             current_term_id = term_id
+        #             if '(current)' in name:
+        #                 # remove (current) and any surrounding whitespace from name if it's there. Ugh. Sorry.
+        #                 name = re.sub('\W?\(current\)\W?', '', name)
 
-                if not term_id or not name:
-                    # handle this error
-                    pass
+        #         if not term_id or not name:
+        #             # handle this error
+        #             pass
 
-                exists = self.db.get_rows_in_table('terms', id=term_id)
-                if not exists:
-                    with DBSession() as session:
-                        term = self.db.Terms(
-                                id=term_id,
-                                name=name,
-                                current=current,
-                                #TODO: Have to get these from the settings
-                                start_date=None,
-                                end_date=None
-                            )
-                        session.add(term)
-        return current_term_id
+        #         exists = self.db.get_rows_in_table('terms', id=term_id)
+        #         if not exists:
+        #             with DBSession() as session:
+        #                 term = self.db.table.Term(
+        #                         id=term_id,
+        #                         name=name,
+        #                         current=current,
+        #                         #TODO: Have to get these from the settings
+        #                         start_date=None,
+        #                         end_date=None
+        #                     )
+        #                 session.add(term)
+        # return current_term_id
 
     def class_reports(self):
         """
