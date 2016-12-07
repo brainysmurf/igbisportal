@@ -63,8 +63,8 @@ class OpenApplyLogin(Login):
     name = "OpenApplyLogin"
     allowed_domains = [gns.config.openapply.url]
     start_urls = [gns.config.openapply.login_url]
-    username_field = 'user[email]'
-    password_field = 'user[password]'
+    username_field = 'login' #'user[email]'
+    password_field = 'password' #'user[password]'
 
     username = gns.config.openapply.admin_username
     password = gns.config.openapply.admin_password

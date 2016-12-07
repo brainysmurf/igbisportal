@@ -10,10 +10,10 @@ db = Database()
 import re
 import gns
 
-PrimaryReport = db.table_string_to_class('primary_report')
-Students = db.table_string_to_class('student')
-Teachers = db.table_string_to_class('advisor')
-Absences = db.table_string_to_class('PrimaryStudentAbsences')
+PrimaryReport = db.table.PrimaryReport #table_string_to_class('primary_report')
+Students = db.table.Student #table_string_to_class('student')
+Teachers = db.table.Teacher #table_string_to_class('advisor')
+Absences = db.table.Absences #table_string_to_class('PrimaryStudentAbsences')
  
 def get_from_matchdict(key, matchdict, default=None):
     this = matchdict.get(key, default)
@@ -27,7 +27,7 @@ def pyp_reports(request):
     """
     Construct the data into a format that the report format needs for output
     """
-    student_id = get_from_matchdict('id', request.matchdict)
+    student_id = int(get_from_matchdict('id', request.matchdict))
     api_token = request.params.get('api_token')
     pdf = get_from_matchdict('pdf', request.matchdict)
     check = request.params.get('check')
@@ -48,7 +48,7 @@ def pyp_reports(request):
         if api_token != gns.config.managebac.api_token:
             return HTTPForbidden()
 
-    term_id = 55048  # m.get('term_id')
+    term_id = 55880  # m.get('term_id')
     with DBSession() as session:
         try:
             report = session.query(PrimaryReport).\
@@ -56,16 +56,19 @@ def pyp_reports(request):
                 filter(
                         PrimaryReport.term_id==term_id, 
                         PrimaryReport.student_id==student_id, 
-                        PrimaryReport.homeroom_comment!=''
+                        # PrimaryReport.homeroom_comment!=''
                     ).one()
             student = session.query(Students).filter_by(id=student_id).one()
         except NoResultFound:
+            from IPython import embed;embed()
             if pdf:
                 #raw_input('no report entry for this student: {} with term_id {}'.format(student_id, term_id))
+                print('No such report for {}'.format(student_id))
                 raise HTTPNotFound()
             else:
+                print('No such report')
                 raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
-        # except MultipleResultsFound:
+        # except MultipleResultsFound
         #     from IPython import embed;
         #     embed();exit()
 
@@ -367,7 +370,11 @@ def pyp_reports(request):
                     options(joinedload('sections.learning_outcomes')).\
                     options(joinedload('sections.teachers')).\
                     options(joinedload('teacher')).\
-                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id, PrimaryReport.homeroom_comment!="").one()
+                    filter(
+                        PrimaryReport.term_id==term_id, 
+                        PrimaryReport.student_id==student_id, 
+                        #PrimaryReport.homeroom_comment!=""
+                        ).one()
                 student = session.query(Students).filter_by(id=student_id).one()
                 attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
             except NoResultFound:
@@ -525,7 +532,7 @@ def pyp_reports(request):
         try:
             pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
         except OSError as e:
-            from IPython import embed;embed();exit()
+            from IPython import embed;embed()
             return HTTPInternalServerError("")
         if pdf.lower() == "download":
             content_type = "application/octet-stream"

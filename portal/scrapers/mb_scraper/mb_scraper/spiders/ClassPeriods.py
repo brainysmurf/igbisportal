@@ -131,7 +131,7 @@ class SecondaryHomeroomAdvisors(ClassLevelManageBac):
 class ClassReports(ClassLevelManageBac):
     #name = 'no name because I don't want this to run separetly'
     program = '#'  # myp, dp, or pyp
-    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=55048'
+    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=55880'
 
     def _initial_query(self):
         Course = self.db.Course
@@ -140,6 +140,7 @@ class ClassReports(ClassLevelManageBac):
             return [s.id for s in statement.all()]
 
     def determine_current_term(self, response):
+        return 55880
         current_term_id = None # if remove the below block, you'll still need to derive this
         if self.manually_do_terms:
             for term_item in response.xpath("//select[@id='term']//option"):
@@ -212,7 +213,7 @@ class PYPClassReportTemplate(ClassReports):
 
 class PYPStudentAttendance(ManageBacLogin):
     name = "PYPStudentAttendance"
-    path = '/admin/attendance_manager/reporting?program=pyp&term=55048&grade={}&cumulative_view=homeroom'
+    path = '/admin/attendance_manager/reporting?program=pyp&term=55880&grade={}&cumulative_view=homeroom'
 
     def __init__(self, *args, **kwargs):
         self.grades = [-2, -1, 0, 1, 2, 3, 4, 5]
@@ -278,7 +279,7 @@ class PYPStudentAttendance(ManageBacLogin):
                 item['student_id'] = user_id
                 item['absences'] = absences
                 item['total_days'] = total_present
-                item['term_id'] = 55048
+                item['term_id'] = 55880
 
                 yield item
 
@@ -350,7 +351,7 @@ class PYPTeacherAssignments(PYPClassReportTemplate):
 class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inheritence?
     name = "PYPClassReports"
     program = 'pyp'
-    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=55048'
+    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=55880'
 
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')

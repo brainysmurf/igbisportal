@@ -504,8 +504,8 @@ def reports(request):
     db = Database()
 
     with DBSession() as session:
-        statement = session.query(db.table.Students).\
-            join(db.table.ReportComments, db.table.ReportComments.student_id == db.table.Students.id)
+        statement = session.query(db.table.Student).\
+            join(db.table.ReportComments, db.table.ReportComments.student_id == db.table.Student.id)
         students_with_report = statement.all()
 
     return dict(
@@ -532,10 +532,11 @@ def footer_html(request):
     Just return the footer
     """
     student_id = request.GET.get('student_id')
-    term_id = 55048
+    term_id = 55880
+    PrimaryReport = db.table.PrimaryReport
     with DBSession() as session:
-        student = session.query(db.table.Students).filter_by(id=student_id).one()
-        report  = session.query(PrimaryReport).\
+        student = session.query(db.table.Student).filter_by(id=student_id).one()
+        report  = session.query(db.table.PrimaryReport).\
             options(joinedload('course')).\
             filter(PrimaryReport.student_id==student.id, PrimaryReport.term_id==term_id, PrimaryReport.homeroom_comment!="").one()
 

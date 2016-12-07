@@ -24,7 +24,7 @@ class DoIt:
 			self.filter = None
 
 	def go(self, starting_from=None):
-		term_id = 55048
+		term_id = 55880
 
 		api_token = gns.config.managebac.api_token
 
@@ -48,7 +48,8 @@ class DoIt:
 					#raw_input('no report!')
 					continue
 
-				r = requests.get(self.base_url.format(student_id=student.id, api_token=api_token))
+				url = self.base_url.format(student_id=student.id, api_token=api_token)
+				r = requests.get(url)
 
 				if r.status_code == 200:
 					print("All is well with {}".format(student))
@@ -59,10 +60,10 @@ class DoIt:
 					if message:
 						print(message[0])
 					else:
-						self.output("Nope {}: {}, {}".format(r.status_code, student.student_id, text.encode('utf-8')))
+						self.output("Nope {}: {}, {}".format(r.status_code, student.student_id, url))
 
 	def dates(self):
-		term_id = 55048
+		term_id = 55880
 
 		base_url = 'http://localhost:6543/students/{student_id}/pyp_report/download?api_token={api_token}'
 
@@ -93,37 +94,19 @@ class CheckIt(DoIt):
 
 if __name__ == "__main__":
 
-	#do = DoIt(one_student="20280001")  # Kindergarten
-	#do = DoIt(one_student="20270014")  # Grade 1
-	#do = DoIt(one_student="20290017")  # Cedric
-	do = DoIt()
-	#do = DoIt(one_student="20270004")
-	#do = DoIt(one_student="20280009")  # Ryan (no chinese report, indicators changed)
+	do = DoIt(one_student="20260001")
 	do.go()
-	#do = DoIt(one_student="20290006") #mattieus
-	#do = DoIt(one_student="20290016")
-	#do = DoIt(one_student="20290008")  # min zhou lee
-	#do = DoIt(one_student="20260006") # test error
-	#do = DoIt(one_student="20280001")  # Arlo: Early Years
-	#do = DoIt(one_student='20250002')   # Zilin
-	#do = DoIt(one_student="20240002")   # Calvin
-	#do = DoIt(one_student='20220011')
-	#do = DoIt(one_student="20280018")   # Narissa
-	#do = DoIt(one_student="20250010")    # Bryce	
-	#do = CheckIt(one_student="20280004")   # Aiden Junio
-	#do = CheckIt()
-	#do = DoIt(one_student="20280024")
-	#do = DoIt(one_student="20240023")  # jack dabbs grade 4
-	#do = DoIt(one_student="20240019")   # Will Mullen
-	#do = DoIt(one_student="20290016")  # Alessandro
-	#do = DoIt(one_student="20300006")   # early years
-	#do = DoIt(one_student="20260005")  # not found? Ainee	Mohamed	Grade 1  NOT LISTED
-	#do = DoIt(one_student="20270012")  #Momo	Inoue	20270012	Grade 1")  BAD pagination  
-	#do = DoIt(one_student="20220005")   # U	Song	20220005	Grade 5  NOT LISTED IN GRADES
+	do = DoIt(one_student="20220013")
+	do.go()
+	do = DoIt(one_student="20290015")
+	do.go()
+	do = DoIt(one_student="20290024")
+	do.go()
+	do = DoIt(one_student="20280003")
+	do.go()
+	do = DoIt(one_student="20300017")
+	do.go()
 
-	#do = DoIt(one_student="20240003")   # Yaish	Mohamed	20240003	Grade 3  NOT LISTED
-	#do = DoIt(one_student="20290010")   #Tea (with accent)	Millward	20290010	Early Years 1  UNICODE
-	#do = DoIt(one_student="20270013")  #Sungmin	Ahn	20270013	Grade 1") NOT LISTED
 	#Shah Reza	Shahabudin	20230006	Grade 5 NOT LISTED
 	#Seth	Lee	20040003	  NOT LISTED
 	# Neve	Riseley	20240006	Grade 3  NOT LISTED
