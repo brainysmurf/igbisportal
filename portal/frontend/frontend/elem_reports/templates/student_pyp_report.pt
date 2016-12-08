@@ -116,11 +116,11 @@
 
               <th tal:condition="section.organization_header">
                 <h3 tal:condition="not section.organization_header == 'skip'">${section.organization_header}</h3>
-                <h4>${section.name}: <span style="font-weight:normal;">${section.name_after}</span></h4>
+                <h4 tal:condition="section.organization_header == 'Units of Inquiry'">${section.name}: <span style="font-weight:normal;">${section.name_after}</span></h4>
               </th>
 
               <th tal:condition="not section.organization_header">
-                <h3>${section.name}${section.name_after}:</h3>
+                <h4>${section.name}${section.name_after}:</h4>
               </th>
 
               <th class="rotate-45"><div><span>Working towards</span></div></th>
@@ -134,10 +134,9 @@
 
           <thead tal:condition="not section.display_rotated">
             <tr>
-
               <th tal:condition="section.organization_header">
+                <h4 tal:condition="section.organization_header == 'skip'">${section.name}: <span style="font-weight: normal;">${section.name_after}</span></h4>
                 <h3 tal:condition="not section.organization_header == 'skip'">${section.organization_header}</h3>
-                <h4 style="margin-top: 0px;">${section.name}: <span style="font-weight:normal;">${section.name_after}</span></h4>
               </th>
 
               <th tal:condition="not section.organization_header">
@@ -157,7 +156,7 @@
             <tal:block tal:repeat="outcome section.learning_outcomes">
               <tr class="effort" tal:condition="hasattr(outcome, 'effort')">
                 <td><strong>${outcome.heading}</strong>
-                  <nobr><span style="float:right;white-space: nowrap;"><em>Effort:&nbsp;${outcome.effort}</em></span></nobr>
+                  <nobr><span style="float:right;white-space: nowrap;"><em>Effort:&nbsp;${section.overall_comment if section.overall_comment != 'N/A' else outcome.effort}</em></span></nobr>
                 </td>
               </tr>
               <tr tal:condition="outcome.label">

@@ -36,6 +36,7 @@ class PrimaryReportSectionItem(scrapy.Item):
     term_id = scrapy.Field()
     subject_id = scrapy.Field()
     subject_name = scrapy.Field()
+    overall_comment = scrapy.Field()
 
     name = scrapy.Field()
     comment = scrapy.Field()

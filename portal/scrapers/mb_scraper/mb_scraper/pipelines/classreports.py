@@ -124,9 +124,10 @@ class PYPClassReportsPipline(PostgresPipeline):
                 session.add(primary_report)
                 return primary_report
 
-    def make_primary_report_section(self, term_id, subject_id, course_id, student_id, comment="", name =""):
+    def make_primary_report_section(self, term_id, subject_id, course_id, student_id, comment="", name ="", overall_comment=None):
         exists = None
         comment = string_to_entities(comment)
+        overall_comment = string_to_entities(overall_comment)
         PrimaryReportSection = self.database.table.PrimaryReportSection
         Teacher = self.database.table.Teacher
         TeacherAssignments = self.database.table.TeacherAssign
@@ -142,12 +143,18 @@ class PYPClassReportsPipline(PostgresPipeline):
             primary_report = self.make_primary_report(term_id, course_id, student_id)
 
             try:
-                exists = session.query(PrimaryReportSection).filter_by(primary_report_id=primary_report.id, subject_id=subject_id).one()
+                exists = session.query(PrimaryReportSection).filter_by(
+                        primary_report_id=primary_report.id, 
+                        subject_id=subject_id
+                    ).one()
                 if exists:
                     if comment: 
                         exists.comment = comment
                     if name:
                         exists.name = name
+                    if overall_comment is not None:
+                        exists.overall_comment = overall_comment
+
                 session.add(exists)
 
                 # Sync the teachers, removing those that are gone, adding if any needed to be added
@@ -170,6 +177,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                         subject_id = subject_id,
                         comment = comment,
                         name = name,
+                        overall_comment = overall_comment
                     )
                 session.add(primary_report_section)
 
@@ -202,7 +210,7 @@ class PYPClassReportsPipline(PostgresPipeline):
             subject_id = int(item.get('subject_id'))
 
             self.make_primary_report_section(term_id, subject_id, course_id, student_id,
-                comment=item.get('comment'), name=item.get('subject_name')
+                comment=item.get('comment'), name=item.get('subject_name'), overall_comment=item.get('overall_comment')
                 )
 
         elif issubclass(item.__class__, PrimaryReportSupplementItem):

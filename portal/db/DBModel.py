@@ -1164,6 +1164,7 @@ class PrimaryReportSection(Base):
 
     name = Column(String(500))
     comment = Column(String(2000))
+    overall_comment = Column(String(10))
     
     teachers = relationship('Advisor', secondary=primary_report_section_teacher_association)
     strands = relationship('PrimaryReportStrand')

@@ -36,6 +36,7 @@ class ClassLevelManageBac(ManageBacLogin):
         self.db.DBSession = DBSession
 
         class_id = kwargs.get('class_id')
+        self.student_id = kwargs.get('student_id') or None
 
         if not class_id:
             rows = self.db.get_rows_in_table('course')
@@ -419,6 +420,7 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
         current_term_id = self.determine_current_term(response)
 
         student_id = response.xpath("//input[@id='pyp_final_grade_user_id']/@value")[0].extract() or None
+        if self.student_id and self.student_id != student_id: return
 
         if student_id is None:
             print("NO STUDENT ID??")
@@ -454,15 +456,16 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
         subject_name = response.xpath("//h2[@class='vac']")[0].xpath('./text()').extract()
         subject_name = "".join([l.strip('\n') for l in subject_name if l.strip('\n')])
 
-
         for student in response.xpath("//td[@class='student-assessment']"):
             student_id = student.xpath('./div/@id').extract()[0].split('_')[-1]
+            if self.student_id and self.student_id != student_id:
+                continue
 
             # First we have to set up and get the report section (subject) in the database
             item = PrimaryReportSectionItem()
             comment = response.xpath("//div[@id='user_comments_{}']".format(student_id))
             comment = comment.xpath('./textarea/text()').extract()
-            comment = comment[0] if comment else ""
+            comment = comment[  0] if comment else ""
             item['student_id'] = student_id
             item['course_id'] = response.meta.get('class_id')
             item['term_id'] = current_term_id
@@ -471,9 +474,19 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
             item['subject_name'] = subject_name
             item['comment'] = comment
 
+            strands = response.xpath("//div[@id='user_strand_marks_{}']".format(student_id))
+            if not strands:
+                # This is a single subject that has been changed from strands to just an overall comment
+                overall_comment = response.xpath("//div[@id='user_final_grade_marks_{}']".format(student_id))[0]
+                selection = overall_comment.xpath("./table/tbody/tr/td/select/option[@selected='selected']/text()").extract()
+                selection = selection[0] if selection else ""
+                item['overall_comment'] = {'G': 'Good', 'O':'Outstanding', 'N':'Needs Improvement'}.get(selection, '')
+            else:
+                item['overall_comment'] = "N/A"
+
             yield item
 
-            for student_strand in response.xpath("//div[@id='user_strand_marks_{}']".format(student_id)):
+            for student_strand in strands:
                 which = 1
                 for strand in student_strand.xpath('./table/tbody/tr'):
                     strand_label = (strand.xpath('./td[1]/text()').extract()[0]).strip('\n').strip()

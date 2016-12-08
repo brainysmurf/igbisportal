@@ -10,10 +10,10 @@ db = Database()
 import re
 import gns
 
-PrimaryReport = db.table.PrimaryReport #table_string_to_class('primary_report')
-Students = db.table.Student #table_string_to_class('student')
-Teachers = db.table.Teacher #table_string_to_class('advisor')
-Absences = db.table.Absences #table_string_to_class('PrimaryStudentAbsences')
+PrimaryReport = db.table.PrimaryReport
+Students = db.table.Student
+Teachers = db.table.Teacher
+Absences = db.table.Absences
  
 def get_from_matchdict(key, matchdict, default=None):
     this = matchdict.get(key, default)
@@ -60,7 +60,6 @@ def pyp_reports(request):
                     ).one()
             student = session.query(Students).filter_by(id=student_id).one()
         except NoResultFound:
-            from IPython import embed;embed()
             if pdf:
                 #raw_input('no report entry for this student: {} with term_id {}'.format(student_id, term_id))
                 print('No such report for {}'.format(student_id))
@@ -223,14 +222,8 @@ def pyp_reports(request):
         else:
             grade_norm = int(re.sub("[^0-9]", "", report.course.grade))
 
-        if 'Grade 1' in report.course.name:
-            # Grade 1 has three uois
-            rotate_list = [0, 1, 4.1, 5, 8, 9]   # what about if there is no chinese?
-            pagination_list = [0, 1, 4.3, 7, 10]
-        else:
-            # everyone else has four
-            rotate_list = [0, 1, 2, 4, 5, 9]
-            pagination_list = [0, 1, 4.2, 4.3, 7, 10]
+        rotate_list = [0, 1, 2, 5, 9]
+        pagination_list = [0, 1, 4, 7, 10]
 
         for section in report.sections:
             section.rank = subject_rank.get(section.name.lower())
@@ -244,18 +237,18 @@ def pyp_reports(request):
                 # Host Nations? and Bahasa mixed up maybe?
                 section.teachers = [students_bahasa_teachers.get(student.id)]
 
-            section.append_uoi_table = section.rank == 4.3
+            section.append_uoi_table = section.rank == 4
             section.display_rotated = section.rank in rotate_list
 
-            if ('Grade 1' in report.course.name and section.rank == 4.1) or (section.rank == 4):
-                section.organization_header = "Units of Inquiry"
+            if section.rank in [2]:
+                section.organization_header = 'Units of Inquiry'
                 section.name_after = ""
-            elif section.rank in [3, 4, 4.1, 4.2, 4.3]:
+            elif section.rank in [3, 4]:
                 section.organization_header = 'skip'
                 section.name_after = ""
             else:
-                section.organization_header = None
-                section.name_after = ' (' + " & ".join([s.first_name + ' ' + s.last_name for s in section.teachers]) + ')'
+                section.organization_header = section.name + ' (' + " & ".join([s.first_name + ' ' + s.last_name for s in section.teachers]) + ')'
+                section.name_after = ""
 
             # Set the unit title if it needs to be
             if section.rank in [2, 3, 4, 4.1, 4.2, 4.3]:
@@ -318,12 +311,7 @@ def pyp_reports(request):
                 if not outcome.selection and internal_check:
                     raise ReportIncomplete('something')
 
-        if report.course.grade in ['Kindergarten', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5']:
-            # two
-            report.sections = [s for s in report.sections if s.rank not in [2,3]]
-        elif report.course.grade in ['Grade 1']:
-            # three
-            report.sections = [s for s in report.sections if s.rank not in [2,3,4]]
+        report.sections = [s for s in report.sections if s.rank not in [4.1, 4.2, 4.3]]   # skip  
 
     elif 'Early' in report.course.name:
         which_folder = 'early_years'
@@ -414,7 +402,7 @@ def pyp_reports(request):
 
         grade_norm = -1
 
-        pagination_list = [0, 4.1,7,10]
+        pagination_list = [0, 3, 7,10]
 
         for section in report.sections:
 
@@ -464,7 +452,7 @@ def pyp_reports(request):
             section.learning_outcomes = sorted(section.learning_outcomes, key=lambda x: x.which)
 
         # ey sections
-        report.sections = [s for s in report.sections if s.rank not in [2,3]]
+        report.sections = [s for s in report.sections if s.rank not in [4, 4.1]]
 
 
     options={
@@ -500,12 +488,16 @@ def pyp_reports(request):
             if s.learning_outcomes and not 'Early' in report.course.name:
 
                 for o in s.learning_outcomes:
-                    if hasattr(o, 'effort') and not o.effort:
-                        teachers = ",".join([t.username_handle for t in s.teachers])
-                        message.append('{} did not enter {} effort for {}'.format(teachers, o.heading, s.name))
-                        #raise HTTPNotFound()
+                    if s.overall_comment == 'N/A':
+                        if hasattr(o, 'effort') and not o.effort:
+                            teachers = ",".join([t.username_handle for t in s.teachers])
+                            message.append('{} did not enter {} effort for {}'.format(teachers, o.heading, s.name))
+                            #raise HTTPNotFound()
+                    elif s.overall_comment == '':
+                            teachers = ",".join([t.username_handle for t in s.teachers])
+                            message.append('{} did not enter {} effort for {}'.format(teachers, o.heading, s.name))                        
 
-                    if not o.selection and 'Early Years' not in report.course.name:
+                    if not o.selection:
                         teachers = ",".join([t.username_handle for t in s.teachers])
 
                         message.append('{} did not enter {} indication for {}'.format(teachers, o.heading, s.name))
@@ -532,7 +524,7 @@ def pyp_reports(request):
         try:
             pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
         except OSError as e:
-            from IPython import embed;embed()
+            #from IPython import embed;embed()
             return HTTPInternalServerError("")
         if pdf.lower() == "download":
             content_type = "application/octet-stream"
