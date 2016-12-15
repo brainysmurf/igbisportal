@@ -15,7 +15,7 @@
 			console.log(ui.item);
 			$('#studentID').val(ui.item.id);
 			//$('#userSubmit').removeAttr('disabled');
-			var url = "students/" + $('#studentID').val() + "/pyp_report"
+			var url = "students/" + $('#studentID').val() + "/pyp_report?api_token=" + $('#api_token').text();
 			window.location.href = url;
 		},
 
@@ -24,4 +24,5 @@
 		// }
 
 	});
+
 })();

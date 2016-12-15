@@ -326,5 +326,9 @@
     color: #404040;
   }
 
+  .download_button {
+    display: none;
+  }
+
 }
 

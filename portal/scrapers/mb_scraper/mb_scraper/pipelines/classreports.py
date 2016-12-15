@@ -8,11 +8,10 @@ from portal.scrapers.mb_scraper.mb_scraper.items import \
     PrimaryReportSectionItem, PrimaryReportStrandItem, \
     PrimaryReportOutcomeItem, PrimaryStudentAbsences
 
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from portal.utils import string_to_entities
-
-from scrapy import log
+import datetime
 
 class PYPTeacherAssignments(PostgresPipeline):
     BLANK_TOLERANCE = 1
@@ -202,6 +201,27 @@ class PYPClassReportsPipline(PostgresPipeline):
             homeroom_comment = item.get('homeroom_comment')
 
             self.make_primary_report(term_id, course_id, student_id, teacher_id, homeroom_comment)
+
+            with DBSession() as session:
+                try:
+                    record = session.query(
+                        self.database.table.PrimaryReportLastUpdated
+                    ).filter(
+                        self.database.table.PrimaryReportLastUpdated.student_id == student_id
+                    ).one()
+
+                    record.timestamp = datetime.datetime.now()
+
+                except NoResultFound:
+                    record = self.database.table.PrimaryReportLastUpdated(
+                        student_id=student_id,
+                        # timestamp will be automatically added
+                    )
+
+                except MultipleResultsFound:
+                    raise Exception("Multiple results found for student_id field, don't I need constraint?")
+
+                session.add(record)
 
         elif item.__class__ is PrimaryReportSectionItem:
             term_id = int(item.get('term_id'))

@@ -8,6 +8,8 @@ import scrapy
 from scrapy.http.cookies import CookieJar
 import gns
 import re
+import logging
+
 
 FIRSTCAP_RE = re.compile('(.)([A-Z][a-z]+)')
 ALLCAP_RE = re.compile('([a-z0-9])([A-Z])')
@@ -21,7 +23,7 @@ def convert(name):
 
 class Login(scrapy.Spider):
     """
-    Subclass me and get the following free behaviour:
+    Subclass me and get the following behaviour:
     * Logs in, printing a warning if does not authenticate
     * Routes to method with same name as class converted from CamelCase to camel_case
     """
@@ -33,9 +35,10 @@ class Login(scrapy.Spider):
     password = None
 
     def warning(self, log):
-        scrapy.log.msg(log, level=scrapy.log.WARNING)
+        logging.warning(log)
 
     def parse(self, response):
+        """ Initiate login """
         login_request = scrapy.FormRequest.from_response(
             response,
             formdata={self.username_field: self.username, self.password_field: self.password},
@@ -45,7 +48,9 @@ class Login(scrapy.Spider):
         return login_request
 
     def after_login(self, response):
-        # check login succeed before going on
+        """
+        Confirm authentication, dispatch to the method that matches the name of the class
+        """
         if response.status != 200 or "authentication failed" in response.body_as_unicode():
             self.warning("Authentication failed", level=log.WARNING)            
             return

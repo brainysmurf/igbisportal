@@ -306,5 +306,32 @@
     color: #404040;
   }
 
+  .download_button {
+    background-color:#8f0303;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    border-color: #999;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    min-width:200px;
+    font-size:14px;
+    padding:13px 13px;
+    text-decoration:none;
+  }
+
+  #progress {
+    position: fixed;
+    left:50%;
+    top: 50%;
+    background-color: #eee;
+    padding:10px;
+    margin: auto;
+    width: 200px;
+  }
+
+
 }
 

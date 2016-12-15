@@ -48,7 +48,7 @@ def pyp_reports(request):
         if api_token != gns.config.managebac.api_token:
             return HTTPForbidden()
 
-    term_id = 55880  # m.get('term_id')
+    term_id = gns.config.managebac.current_term_id
     with DBSession() as session:
         try:
             report = session.query(PrimaryReport).\
@@ -62,14 +62,14 @@ def pyp_reports(request):
         except NoResultFound:
             if pdf:
                 #raw_input('no report entry for this student: {} with term_id {}'.format(student_id, term_id))
-                print('No such report for {}'.format(student_id))
                 raise HTTPNotFound()
             else:
-                print('No such report')
                 raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
-        # except MultipleResultsFound
-        #     from IPython import embed;
-        #     embed();exit()
+        except MultipleResultsFound:
+            print("Issue with database!")
+            raise HTTPInternalServerError()
+
+
 
     title = u"IGB International School (June 2016): Student Report for {} {}".format(student.first_name, student.last_name)
 
@@ -184,10 +184,11 @@ def pyp_reports(request):
                     options(joinedload('sections.teachers')).\
                     options(joinedload('sections.strands')).\
                     options(joinedload('teacher')).\
-                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id, PrimaryReport.homeroom_comment!="").one()
+                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id).one()
                 student = session.query(Students).filter_by(id=student_id).one()
                 attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
             except NoResultFound:
+                from IPython import embed;embed()
                 if pdf:
                     #raw_input("No K-5 report entry")
                     raise HTTPNotFound()
@@ -211,7 +212,7 @@ def pyp_reports(request):
             'host nation':10, 
             'self-management':10000
             }
-        report.sections = sorted([section for section in report.sections if subject_rank.get(section.name.lower()) < 10000], key=lambda x: subject_rank.get(x.name.lower(), 1000))
+        report.sections = sorted([section for section in report.sections if subject_rank.get(section.name.lower(), 10001) < 10000], key=lambda x: subject_rank.get(x.name.lower(), 1000))
 
         # Only output sections that have any data in them
         # Comment out during development
@@ -366,8 +367,8 @@ def pyp_reports(request):
                 student = session.query(Students).filter_by(id=student_id).one()
                 attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
             except NoResultFound:
+                from IPython import embed;embed()
                 if pdf:
-                    #raw_input("no ey report found")
                     raise HTTPNotFound()
                 else:
                     raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
@@ -487,21 +488,21 @@ def pyp_reports(request):
 
             if s.learning_outcomes and not 'Early' in report.course.name:
 
-                for o in s.learning_outcomes:
-                    if s.overall_comment == 'N/A':
+                if s.overall_comment == 'N/A':
+                    for o in s.learning_outcomes:
                         if hasattr(o, 'effort') and not o.effort:
                             teachers = ",".join([t.username_handle for t in s.teachers])
                             message.append('{} did not enter {} effort for {}'.format(teachers, o.heading, s.name))
                             #raise HTTPNotFound()
-                    elif s.overall_comment == '':
+                        if not o.selection:
                             teachers = ",".join([t.username_handle for t in s.teachers])
-                            message.append('{} did not enter {} effort for {}'.format(teachers, o.heading, s.name))                        
+                            message.append('{} did not enter {} indication for {}'.format(teachers, o.heading, s.name))
+                            #raise HTTPNotFound('##{} did not enter indication for {} in {}##'.format(teachers, s.name, stu))
 
-                    if not o.selection:
-                        teachers = ",".join([t.username_handle for t in s.teachers])
+                elif s.overall_comment == '':
+                    teachers = ",".join([t.username_handle for t in s.teachers])
+                    message.append('{} did not enter effort for single subject {}'.format(teachers, s.name))                        
 
-                        message.append('{} did not enter {} indication for {}'.format(teachers, o.heading, s.name))
-                        #raise HTTPNotFound('##{} did not enter indication for {} in {}##'.format(teachers, s.name, stu))
 
         if message:
             raise HTTPNotFound('##\n({}) {}:\n\t{}##'.format(student.grade, student.first_nickname_last_studentid, "\n\t".join(message)))
@@ -515,7 +516,10 @@ def pyp_reports(request):
                         report=report,
                         student=student,
                         attendance=attendance,
-                        pdf=True
+                        pdf=True,
+                        download_url="",
+                        link_to_mb="",
+                        last_updated="",
                         ),
                     request=request)
         import pdfkit   # import here because installation on server is hard
@@ -524,13 +528,12 @@ def pyp_reports(request):
         try:
             pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
         except OSError as e:
-            #from IPython import embed;embed()
             return HTTPInternalServerError("")
         if pdf.lower() == "download":
             content_type = "application/octet-stream"
 
             response = FileResponse(path, request=request, content_type=content_type)
-            response.content_disposition = u"attachment; filename='{}.pdf'".format(title)
+            response.content_disposition = u"attachment; filename={}.pdf".format(title)
             return response
 
         else:
@@ -539,13 +542,26 @@ def pyp_reports(request):
             return response
 
     else:
+        # Check when it was last updated
+        with DBSession() as session:
+            try:
+                record = session.query(db.table.PrimaryReportLastUpdated).filter(db.table.PrimaryReportLastUpdated.student_id == student.id).one()
+                last_updated = record.timestamp
+            except NoResultFound:
+                last_updated = 'Unknown'
+            except MultipleResultsFound:
+                last_updated = 'Internal DB Error: Multiple results found'
+
         result = render(template,
                     dict(
                         title=title,
                         report=report,
                         student=student,
                         attendance = attendance,
-                        pdf=False
+                        pdf=False,
+                        download_url="/students/{}/pyp_report/download/?api_token={}".format(student.id, gns.config.managebac.api_token),
+                        link_to_mb = "https://igbis.managebac.com/classes/{}/pyp-gradebook/tasks/term_grades?student={}&term={}".format(report.course.id, student.id, gns.config.managebac.current_term_id),
+                        last_updated=last_updated,
                         ),
                     request=request)
         response = Response(result)

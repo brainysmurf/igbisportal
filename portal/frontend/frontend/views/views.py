@@ -7,7 +7,7 @@ from pyramid.view import view_config, forbidden_view_config
 from pyramid.renderers import render
 
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import joinedload, joinedload_all
 from sqlalchemy import inspect
@@ -31,7 +31,7 @@ from sqlalchemy import func
 
 from collections import namedtuple, OrderedDict
 
-import gns
+import gns, uuid, os
 
 class ReportIncomplete(Exception):
     def __init__(self, msg):
@@ -361,7 +361,7 @@ def grade_course_info(request):
 
 @view_config(route_name='schedule', renderer='frontend:templates/schedule.pt')
 def schedule(request):
-    return dict(api_key='a473e92458548d66c06fe83f69831fd5')
+    return dict(api_key=gns.config.managebac.api_token)
 
 @view_config(route_name='schedule_data', renderer='json')
 def schedule_data(request):
@@ -538,7 +538,7 @@ def footer_html(request):
         student = session.query(db.table.Student).filter_by(id=student_id).one()
         report  = session.query(db.table.PrimaryReport).\
             options(joinedload('course')).\
-            filter(PrimaryReport.student_id==student.id, PrimaryReport.term_id==term_id, PrimaryReport.homeroom_comment!="").one()
+            filter(PrimaryReport.student_id==student.id, PrimaryReport.term_id==term_id).one()
 
     # FIXME: Including the below makes the footer always appear
     # I have no idea why, uncaching it???
@@ -557,6 +557,49 @@ def footer_html(request):
 @view_config(route_name='frontpage')
 def frontpage(request):
     raise HTTPFound(request.route_url("splash"))
+
+@view_config(route_name="update_report_internal", renderer='json')
+def update_report_internal(request):
+    """
+    Generates a unique identification, which it returns
+    """
+    print(request.url)
+    student_id = request.params.get('student_id')
+    if not student_id:
+        return dict(message="Boo")
+    uniq_id = str(uuid.uuid4())
+    # Let's add an entry to the callback and database, return the callback_id so the browser can poll
+    with DBSession() as session:
+        new_entry = db.table.Callback()
+        new_entry.uniq_id = uniq_id
+        new_entry.done = False
+        session.add(new_entry)
+
+    # Not using submodule.call because we don't need to communicate with it
+    # just a background process is fine, communication happens via the database
+    # lp for "list" and "path"
+    # Two portals, one is the path?
+    os.spawnlp(os.P_NOWAIT, 'portal', 'portal', 'pyp_reports', 'scrape', 'reports', '--this_student', student_id, '--callback_id', uniq_id)
+
+    return dict(uniq_id=uniq_id)
+
+@view_config(route_name="update_report_poll", renderer='json')
+def update_report_poll(request):
+    uniq_id = request.params.get('uniq_id')
+    if not uniq_id:
+        return dict(message="No Valid uniq_id sent")
+    with DBSession() as session:
+        try:
+            record = session.query(
+                db.table.Callback
+            ).filter(
+                db.table.Callback.uniq_id == uniq_id
+            ).one()
+        except NoResultFound:
+            return dict(message="No such record found with callback id {}".format(uniq_id), done=False, error=True)
+        except MultipleResultsFound:
+            return dict(message="More than one with that id: {}".format(uniq_id), done=False, error=True)
+        return dict(message="", done=record.done, error=False)
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

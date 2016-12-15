@@ -78,6 +78,9 @@ def main(global_config, **settings):
     config.add_route('splash', '/splash')
     config.add_route('get_session_user', '/get_session_user')
 
+    config.add_route('update_report_internal', '/update_report_internal')
+    config.add_route('update_report_poll', '/update_report_poll')
+
     config.add_route('reports_hub', '/reports_hub')
     config.scan()
     return config.make_wsgi_app()

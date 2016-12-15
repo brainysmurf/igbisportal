@@ -56,6 +56,9 @@ class Database:
         self.table.PrimaryReportLo = self.table_string_to_class('Primary_Report_Lo')
         self.table.PrimaryStudentAbsences = self.table_string_to_class('PrimaryStudentAbsences')
         self.table.UserSettings = self.table_string_to_class('UserSettings')
+        self.table.IBGroupMembership = self.table_string_to_class('IB_Group_Membership')
+        self.table.Callback = self.table_string_to_class('Callback_Internal')
+        self.table.PrimaryReportLastUpdated = self.table_string_to_class('Primary_Report_Lastupdated')
 
     def table_string_to_class(self, table):
         """

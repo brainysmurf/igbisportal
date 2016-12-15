@@ -1,9 +1,4 @@
-  <metal:main use-macro="load: pyp_report_main.pt">
-
-<!--   <div metal:fill-slot="tabs_bar">
-    <ul><li><a href="/">Home</a></li><li><a href="/students">Students</a></li></ul>
-  </div>
- -->
+<metal:main use-macro="load: pyp_report_main.pt">
 
  <div metal:fill-slot="additional-css">
   <link rel="stylesheet" href="${static_url}css/pyp_reports.css" media="screen">

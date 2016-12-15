@@ -426,61 +426,279 @@ def openapply_from_api(obj, path=None):
     medical_importer = OA_Medical_Importer.from_api()
     medical_importer.read_in()
 
-def run_scraper(spider, subpath):
+def run_scraper(spider, subpath, **kwargs):
 
-    os.chdir(gns('{config.paths.scrapers}/{subpath}'))
-
-    from twisted.internet import reactor
-    from scrapy.crawler import Crawler
+    import scrapy
+    from scrapy.crawler import CrawlerProcess
     from scrapy.utils.project import get_project_settings
-    from scrapy import log, signals
-    settings = get_project_settings()
 
-    sp = spider()
-    crawler = Crawler(settings)
-    crawler.configure()
-    crawler.crawl(sp)
-    crawler.start()  
+    os.chdir(os.path.join(gns.config.paths.scrapers, subpath))
 
-    log.start()
-    reactor.run()
+    process = CrawlerProcess(get_project_settings())
+    process.crawl(spider, **kwargs)  # TODO: add kwargs here for options
+    process.start()
 
 @main.group()
-def scrape():
+@click.pass_context
+# @click.option('--student_id', default=None, help="MB student ID of student")
+# @click.option('--student_name', default=None, help="MB name of student in lastfirst style")
+# @click.option('--grade', default=None, help="Ex) Early Years 2")
+def pyp_reports(ctx):
     """
-    Commands to fetch and populate postgres database
+    Commands for implementing PYP Reports
     """
     pass
 
-@scrape.command()
-def pyp_reports():
-    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPClassReports
-    run_scraper(PYPClassReports, 'mb_scraper')
+@pyp_reports.command('save')
+@click.option('--check', is_flag=True, default=False, help="Launch a check instead")
+@click.option('--students', multiple=True, default=[], help="")
+@click.option('--grades', multiple=True, default=[], help="")
+@click.option('--classes', multiple=True, default=[], help="")
+@click.pass_obj
+def pyp_reports_save(obj, check, students, grades, classes):
+    from portal.db import Database, DBSession
+    from sqlalchemy.orm.exc import NoResultFound
+    import pdfkit
+    import gns
+    import re
+    from sqlalchemy import and_
 
-@scrape.command()
-@click.option('--class_id', default=None)
-def pyp_reports(class_id):
+    import requests
+
+    db = Database()
+    Students = db.table_string_to_class('Student')
+    Parents = db.table_string_to_class('Parent')
+    PrimaryReport = db.table_string_to_class('primary_report')
+
+    class DoIt:
+        base_url = 'http://igbisportal.vagrant:6543/students/{student_id}/pyp_report/download?api_token={api_token}'
+
+        def __init__(self, one_student=None, one_grade=None):
+            if one_student:
+                self.filter = Students.student_id == one_student
+            elif one_grade:
+                self.filter = Students.class_grade == one_grade
+            else:
+                self.filter = None
+
+        def go(self, starting_from=None):
+            term_id = 55880
+
+            api_token = gns.config.managebac.api_token
+
+            with DBSession() as session:            
+                if self.filter is not None:
+
+                    students = session.query(
+                        Students
+                    ).filter(
+                        self.filter
+                    ).order_by(
+                        Students.grade
+                    ).all()
+
+                else:
+
+                    students = session.query(
+                        Students
+                    ).filter(
+                        and_(
+                            Students.grade < 6, 
+                            Students.is_archived==False, 
+                            Students.student_id != None
+                        )
+                    ).order_by(
+                        Students.grade
+                    ).all()
+
+                    if starting_from:
+                        index = [i for i in range(len(students)) if students[i].student_id==starting_from]
+                        if index:
+                            index = index[0]
+                            students = students[index:]
+                        else:
+                            students = []
+
+                for student in students:
+                    try:
+                        report = session.query(PrimaryReport).filter_by(id=student.id)
+                    except NoResultFound:
+                        #raw_input('no report!')
+                        continue
+
+                    url = self.base_url.format(student_id=student.id, api_token=api_token)
+                    print(url)
+                    r = requests.get(url)
+
+                    if r.status_code == 200:
+                        print("All is well with {}".format(student))
+                        #print(r.url)
+
+                    if r.status_code != 200:
+                        #print(url.replace('localhost', 'igbisportal.vagrant'))
+                        text = r.text
+                        message = re.findall('##(.*)##', text, re.DOTALL)
+                        if message:
+                            print(message[0])
+                        else:
+                            self.output("Nope {}: {}, {}".format(r.status_code, student.student_id, url))
+
+        def dates(self):
+            term_id = gns.config.managebac.current_term_id
+
+            base_url = 'http://localhost:6543/students/{student_id}/pyp_report/download?api_token={api_token}'
+
+            import portal.settings as settings
+
+            api_token = settings.get('MANAGEBAC', 'mb_api_token')
+
+            with DBSession() as session:            
+                if self.filter is not None:
+                    parents = session.query(Parents).filter(self.filter).all()
+                else:
+                    parents = session.query(Parents).all()
+
+                for parent in parents:
+                    parent.google_account_sunset('1 month')
+            print('Done!')
+
+        def output(self, msg):
+            print(msg)
+
+    class CheckIt(DoIt):
+
+        base_url = 'http://localhost:6543/students/{student_id}/pyp_report/download?api_token={api_token}&check=True'
+
+        def output(self, msg):
+            pass
+
+    for student in students:
+        if student == "all":
+            do = CheckIt() if check else DoIt()
+        else:
+            do = CheckIt(one_student=student) if check else DoIt(one_student=student)
+        do.go()
+
+    for grade in grades:
+        if grade == "all":
+            do = CheckIt() if check else DoIt()
+        else:
+            do = CheckIt(one_grade=grade) if check else DoIt(one_grade=grade)
+        do.go()
+
+    for class_ in classes:
+        if class_ == "all":
+            do = CheckIt() if check else DoIt()
+            do.go()
+        else:
+            with DBSession() as session:
+                students = session.query(
+                    db.table.Student.student_id
+                ).select_from(
+                    db.table.Student
+                ).join(
+                    db.table.Enrollment,
+                    db.table.Enrollment.c.student_id == db.table.Student.id
+                ).filter(
+                    db.table.Course.uniq_id == class_
+                )
+                for student in students.all():
+                    do = CheckIt(one_student=student) if check else DoIt(one_student=student)
+                    do.go()
+
+@pyp_reports.group('scrape')
+def pyp_reports_scrape():
     """
-    Sets up things for pyp reporting system
+    Download info
     """
-    from scrapy import cmdline
+    # Whenever we scape, we want to make it play nice with other processes
+    os.nice(15)
 
-    os.chdir(gns('{settings.path_to_scrapers}/mb_scraper'))
+    # Limit execution time to one hour
+    import resource
+    resource.setrlimit(
+        resource.RLIMIT_CPU,
+        (3600, 4000)
+    )
 
-    if not class_id:
-        cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments'])
-        cmdline.execute(['scrapy', 'crawl', 'PYPClassReports'])
-    else:
-        cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments', '-a', 'class_id={}'.format(class_id)])
-        cmdline.execute(['scrapy', 'crawl', 'PYPClassReports', '-a', 'class_id={}'.format(class_id)])
+@pyp_reports_scrape.command('reports')    
+@click.option('--this_student', default=None, help="MB student ID of student")
+@click.option('--callback_id', default=None, help="Internal use only")
+@click.pass_obj
+def pyp_reports_scrape_reports(obj, this_student, callback_id):
+    """
+    Download specific info
+    """
+    kwargs = {}
+    if this_student is not None:
+        # Use the db to get the student id and relevant class id in order
+        from portal.db import Database, DBSession
+        db = Database()
 
-@scrape.command()
-def pyp_assignments():
-    from portal.scrapers.mb_scraper.mb_scraper.spiders.ClassPeriods import PYPTeacherAssignments
-    run_scraper(PYPTeacherAssignments, 'mb_scraper')
+        with DBSession() as session:
+            statement = session.query(
+                    db.table.Student.id, db.table.Course.id
+                ).select_from(
+                    db.table.Student
+                ).join(
+                    db.table.Enrollment,
+                    db.table.Enrollment.c.student_id == db.table.Student.id
+                ).join(
+                    db.table.Course,
+                    db.table.Course.id == db.table.Enrollment.c.course_id
+                ).filter(
+                    db.table.Student.student_id == this_student
+                )
 
-    # os.chdir(gns('{settings.path_to_scrapers}/oa_scraper'))
-    # cmdline.execute(['scrapy', 'crawl', 'AuditLog'])
+            results = statement.all()
+
+            if len(results) == 1:
+                student_id, class_id = results[0]
+                student_id = str(student_id)  # FIXME: This really should be an integer in the db
+                kwargs = dict(student_id=student_id, class_id=class_id)
+            elif len(results) == 0:
+                print("No classes, is the ID right?")
+                return
+            else:
+                print("More than one class?")
+                return
+
+    if callback_id or click.confirm('Continue?'):
+        # if sent callback_id, don't confirm
+        run_scraper('PYPClassReports', 'mb_scraper', **kwargs)
+
+    if callback_id:
+        with DBSession() as session:
+            record = session.query(
+                db.table.Callback
+            ).filter(
+                db.table.Callback.uniq_id == callback_id
+            ).one()
+            record.done = True
+
+# @scrape.command()
+# @click.option('--class_id', default=None)
+# def pyp_reports(class_id):
+#     """
+#     Sets up things for pyp reporting system
+#     """
+#     from scrapy import cmdline
+
+#     os.chdir(gns('{settings.path_to_scrapers}/mb_scraper'))
+
+#     if not class_id:
+#         cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments'])
+#         cmdline.execute(['scrapy', 'crawl', 'PYPClassReports'])
+#     else:
+#         cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments', '-a', 'class_id={}'.format(class_id)])
+#         cmdline.execute(['scrapy', 'crawl', 'PYPClassReports', '-a', 'class_id={}'.format(class_id)])
+
+@pyp_reports_scrape.command('teacher_assign')
+def pyp_reports_scrape_teacher_assign():
+    """
+    Download the teacher assignment info
+    """
+    run_scraper('PYPTeacherAssignments', 'mb_scraper')
 
 @main.group()
 def utils():
@@ -495,7 +713,17 @@ def serve():
     Launches the webserver for debugging
     """
     import subprocess
-    subprocess.call(['pserve', '--reload', '/home/vagrant/igbisportal/development.ini'])
+    click.echo("'screen -ls'")
+    subprocess.call(['screen', '-ls'])
+    confirm = click.confirm("Create screen called 'pserve'?")
+    if not confirm:
+        return
+    os.chdir(gns.config.paths.frontend_home)
+    deploy_file = os.path.join(gns.config.paths.frontend_home, 'production.ini')
+    # screen -ls | grep pserve
+    subprocess.call(['screen', '-dm', '-S', 'pserve'])
+    subprocess.call(['screen', '-r', 'pserve', '-X', 'stuff', 'pserve --reload {}\n'.format(deploy_file)])
+    click.echo(message="Deployed: " + "'screen -r pserve' to view server output")
 
 @utils.command()
 def create_all_tables():
@@ -538,6 +766,9 @@ def teacher_classes(ctx, id):
 
 @main.group()
 def test():
+    """
+    Commands for testing purposes
+    """
     pass
 
 import asyncio
@@ -707,16 +938,21 @@ def test_api_teachers(obj):
     print(result.json())
     from IPython import embed;embed()
 
-
 @main.group()
 @click.pass_context
-def update(ctx):
+def _one_time(ctx):
+    """
+    Commands intended to be launched once, kept for posterity
+    """
     pass
 
-@update.command('igbis_email_transition')
+@_one_time.command('igbis_email_transition')
 @click.option('--dry/--wet', default=True, help="dry run by default only outputs")
 @click.pass_obj
 def igbis_email_transition(obj, dry):
+    """
+    One-time operation to transition parents into our Google domain
+    """
     from portal.db import Database, DBSession
     db = Database()
     Parents = db.table_string_to_class('parent')
@@ -877,11 +1113,17 @@ def test_openapply_put(obj, _id):
 @main.group()
 @click.pass_obj
 def status(obj):
+    """
+    Commands that compare and contrast
+    """
     pass
 
 @status.command('compare')
 @click.pass_obj
 def compare(obj):
+    """
+    Compare parents on google with those in database?
+    """
     from portal.db import Database, DBSession
     db = Database()
     from sqlalchemy.orm import joinedload

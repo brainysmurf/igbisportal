@@ -6,6 +6,7 @@
 	</div>
 
 	<div metal:fill-slot="content">
+		<div id="api_token" style="display:none;">${api_token}</div>
 		<p>(NOTE: The contents of these reports are updated hourly, on the 00, and takes a few minutes each time. Also note that this is a screen version of the final product, so some minor details may differ. In particular, attendance, may not be exactly correct.)
 			<div class="ui-font">Enter any part of the name:</div>
 			<div class="area">

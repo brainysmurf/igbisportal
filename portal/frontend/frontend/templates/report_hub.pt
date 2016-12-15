@@ -7,7 +7,7 @@
 
   <div metal:fill-slot="content">
       <p tal:repeat="student students">
-         <a href="/reports/${student.id}">${str(student)}</a>
+         <a href=${"/reports/{}?api_token={}".format(student.id, 'bblah')}></a>
       </p>
   </div>
 </metal:main>

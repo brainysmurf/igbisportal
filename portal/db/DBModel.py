@@ -15,7 +15,7 @@ import unicodedata
 def normalize(this_string): 
     return unicodedata.normalize('NFKD', this_string).encode('ascii', 'ignore')
 
-from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date, case, select
+from sqlalchemy import BigInteger, Boolean, Enum, Column, Float, Index, Integer, Numeric, SmallInteger, String, Table, Text, ForeignKey, Date, case, select, DateTime
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
@@ -92,6 +92,8 @@ PYPSTUDENTABSENCES = "{}primary_student_absences".format(PREFIX)
 SECHRTEACHERS = "{}sec hr teachers".format(PREFIX)
 SETTINGS = "{}settings".format(PREFIX)
 MEDINFO = "{}medinfo".format(PREFIX)
+CALLBACK = "{}callback_internal".format(PREFIX)
+LASTUPDATED = "{}primary_report_lastupdated".format(PREFIX)
 
 class PortalORM(object):
     def as_dict(self):
@@ -1226,6 +1228,20 @@ class UserSettings(Base):
     unique_id = Column(String(255))
     icon_size = Column(String(2))
     new_tab = Column(Boolean)
+
+class CallbackInternal(Base):
+    __tablename__ = CALLBACK
+    id = Column(BigInteger, primary_key=True)
+    uniq_id = Column(String(255))
+    done = Column(Boolean, default=False)
+    student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+class PrimaryReportLastupdated(Base):   # lowercase u is required
+    __tablename__ = LASTUPDATED
+    id = Column(BigInteger, primary_key=True)
+    student_id = Column(BigInteger, ForeignKey(STUDENTS+'.id'))
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
 class MedInfo(Base):
     __tablename__ = MEDINFO

@@ -3,14 +3,39 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="UTF-8">
-  <title></title> 
+  <title>${title}</title> 
 `
   <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="${static_url}bootstrap/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
   <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
-  <div metal:define-slot="additional-css"></div>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+  <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
+  <script type="text/javascript" src="${static_url}js/reports_hub/update.js"></script>
+
+  <div metal:define-slot="additional-css" tal:omit-tag=""></div>
 </head>
+
 <body>
+<div style="display:none;" id="student_id">${student.student_id}</div>
+
+<div style="display:none;" id="progress_dialog" title="Downloading…">
+  <center>
+  <p><i class="fa fa-spinner fa-spin fa-5x"></i></p>
+  </center>
+  <p>Information from ManageBac is currently being downloaded and updated in the background.</p>
+  <p>This operation is time-intensive and may take a few minutes to complete.</p>
+  <p>Please allow the page to refresh automatically upon completion.</p>
+</div>
+
+<center>
+<a href="/reports_hub" class="download_button"><i style="color: #fff;" class="fa fa-backward fa-fw" aria-hidden="true"></i>&nbsp; Back</a>
+<button href="#" id="update_button" class="download_button"><i style="color: #fff;" class="fa fa-refresh fa-fw" aria-hidden="true"></i>&nbsp; Update</button>
+<a href="${download_url}" class="download_button"><i style="color: #fff;" class="fa fa-download fa-fw" aria-hidden="true"></i>&nbsp; Download PDF</a>
+<a target="_blank" href="${link_to_mb}" class="download_button"><i style="color: #fff;" class="fa fa-link fa-fw" aria-hidden="true"></i>&nbsp; Link to MB</a><br />
+<em style="padding-top:50px;font-size:12pt;">Last Updated: ${last_updated}</em>
+</center>
+
 <div id="wrapper">
     <div id="contentwrap">
       <!-- <img src="${static_url}header.png" width="1100px" /> -->

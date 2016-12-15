@@ -14,12 +14,12 @@ from portal.scrapers.mb_scraper.mb_scraper.items import \
     SecHRItem
 from portal.db import \
     Database, DBSession
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 import datetime, re
 from collections import defaultdict
 from scrapy.exceptions import CloseSpider
 import scrapy
-from scrapy import log
 import gns
 
 """
@@ -132,7 +132,7 @@ class SecondaryHomeroomAdvisors(ClassLevelManageBac):
 class ClassReports(ClassLevelManageBac):
     #name = 'no name because I don't want this to run separetly'
     program = '#'  # myp, dp, or pyp
-    path = '/classes/{}/{}-gradebook/tasks/term-grades?term=55880'
+    path = '/classes/{{}}/{{}}-gradebook/tasks/term-grades?term={}'.format(gns.config.managebac.current_term_id)
 
     def _initial_query(self):
         Course = self.db.Course
@@ -145,7 +145,7 @@ class ClassReports(ClassLevelManageBac):
         FIXME: This buries the code that makes the terms live in the database, far better would be to have a 
         way to launch this seperately through cli code
         """
-        return 55880  # UGH
+        return gns.config.managebac.current_term_id  # UGH
         # current_term_id = None # if remove the below block, you'll still need to derive this
         # if self.manually_do_terms:
         #     for term_item in response.xpath("//select[@id='term']//option"):
@@ -218,7 +218,7 @@ class PYPClassReportTemplate(ClassReports):
 
 class PYPStudentAttendance(ManageBacLogin):
     name = "PYPStudentAttendance"
-    path = '/admin/attendance_manager/reporting?program=pyp&term=55880&grade={}&cumulative_view=homeroom'
+    path = '/admin/attendance_manager/reporting?program=pyp&term={}&grade={{}}&cumulative_view=homeroom'.format(gns.config.managebac.current_term_id)
 
     def __init__(self, *args, **kwargs):
         self.grades = [-2, -1, 0, 1, 2, 3, 4, 5]
@@ -284,7 +284,7 @@ class PYPStudentAttendance(ManageBacLogin):
                 item['student_id'] = user_id
                 item['absences'] = absences
                 item['total_days'] = total_present
-                item['term_id'] = 55880
+                item['term_id'] = gns.config.managebac.current_term_id
 
                 yield item
 
@@ -354,9 +354,13 @@ class PYPTeacherAssignments(PYPClassReportTemplate):
 
 
 class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inheritence?
+    """
+    FIXME: Early Years and excetera are not complete, may need different processing
+    """
+
     name = "PYPClassReports"
     program = 'pyp'
-    path = '/classes/{}/pyp-gradebook/tasks/term_grades?term=55880'
+    path = '/classes/{{}}/pyp-gradebook/tasks/term_grades?term={}'.format(gns.config.managebac.current_term_id)
 
     def _initial_query(self):
         Course = self.db.table_string_to_class('Course')
@@ -375,7 +379,6 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
 
             for s in statement.all():
                 ret.append(s.id)
-
         return ret
 
     def pyp_class_reports(self):
@@ -385,12 +388,12 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
         """
         Cycle through each PYP subject
         """
-
         # Dispatch to parse_subject per each subject on right side
         # Code this first because this will actually be deferred until last
         for subject_url in response.xpath("//ul[@class='small_right_tabs']/li/a/@href").extract():
+            url = gns.config.managebac.url + subject_url
             request = scrapy.Request(
-                url=gns.config.managebac.url + subject_url,
+                url=url,
                 callback=self.parse_subject,
                 errback=self.error_parsing,
                 dont_filter=True,
@@ -398,15 +401,49 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
                 )
             yield request
 
-        # Dispatch to parse_student per each student on left side
+        # Cycle through each student on the left side
+        # And dispatch to `parse_student`
         for student_url in response.xpath("//li[@class='selected own-pyp-class']/ul/li/a/@href").extract():
+
+            # If we only have one student in mind,
+            # Short-circuit it so that we only end up doing the one request we are interested in
+            if self.student_id:
+
+                # Sanity check:
+                if not '/' in student_url:
+                    print('Expecting "/" in student_url while scraping, found {} instead.'.format(student_url))
+                    continue
+                #
+
+                # Extract the mb id from the url we scraped
+                # anc check the database
+                student_mb_id = int(student_url.split('/')[2])
+                with DBSession() as session:
+                    try:
+                        student = session.query(
+                            self.db.table.Student
+                        ).filter(
+                            self.db.table.Student.id == student_mb_id
+                        ).one()
+                    except (NoResultFound, MultipleResultsFound):
+                        continue
+                    if student.student_id != self.student_id:
+                        continue
+                # if still here, we continue
+
+            url = gns.config.managebac.url + student_url
+            #
+
+            # Build the request for scrapy
+            # and callback
             request = scrapy.Request(
-                url=gns.config.managebac.url + student_url,
-                callback=self.parse_student,
+                url=url,
+                callback=self.parse_student,   # callback
                 errback=self.error_parsing,
                 dont_filter=True,
                 meta=dict(class_id = self.class_id)
                 )
+            # yielding a request will put it in the twisted event loop
             yield request
 
         # Goes on to the next class
@@ -445,7 +482,6 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
 
         yield item
 
-
     def parse_subject(self, response):
         """
         Collects the existing PrimaryReport objects and adds data to them
@@ -465,7 +501,8 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
             item = PrimaryReportSectionItem()
             comment = response.xpath("//div[@id='user_comments_{}']".format(student_id))
             comment = comment.xpath('./textarea/text()').extract()
-            comment = comment[  0] if comment else ""
+            comment = comment[0] if comment else ""
+
             item['student_id'] = student_id
             item['course_id'] = response.meta.get('class_id')
             item['term_id'] = current_term_id
@@ -477,10 +514,14 @@ class PYPClassReports(PYPClassReportTemplate):  # Later, re-factor this inherite
             strands = response.xpath("//div[@id='user_strand_marks_{}']".format(student_id))
             if not strands:
                 # This is a single subject that has been changed from strands to just an overall comment
-                overall_comment = response.xpath("//div[@id='user_final_grade_marks_{}']".format(student_id))[0]
-                selection = overall_comment.xpath("./table/tbody/tr/td/select/option[@selected='selected']/text()").extract()
-                selection = selection[0] if selection else ""
-                item['overall_comment'] = {'G': 'Good', 'O':'Outstanding', 'N':'Needs Improvement'}.get(selection, '')
+                overall_comment = response.xpath("//div[@id='user_final_grade_marks_{}']".format(student_id))
+                if overall_comment:
+                    overall_comment = overall_comment[0]
+                    selection = overall_comment.xpath("./table/tbody/tr/td/select/option[@selected='selected']/text()").extract()
+                    selection = selection[0] if selection else ""
+                    item['overall_comment'] = {'G': 'Good', 'O':'Outstanding', 'N':'Needs Improvement'}.get(selection, '')
+                else:
+                    item['overall_comment'] = "N/A"
             else:
                 item['overall_comment'] = "N/A"
 
