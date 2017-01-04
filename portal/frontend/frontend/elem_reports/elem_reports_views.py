@@ -9,12 +9,56 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 db = Database()
 import re
 import gns
+import glob, os
 
 PrimaryReport = db.table.PrimaryReport
 Students = db.table.Student
 Teachers = db.table.Teacher
 Absences = db.table.Absences
- 
+
+from pyramid.request import Request
+
+@view_config(route_name='download_pyp_reports', http_cache=0, renderer='json')
+def download_pyp_reports(request):
+    mb_user = request.session.get('mb_user', None)
+    if not mb_user:
+        api_token = request.params.get('api_token')
+        if not api_token or api_token != gns.config.managebac.api_token:
+            return HTTPForbidden()
+    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+        # let them in
+        pass
+    else:
+        return HTTPForbidden()
+
+    term_id = gns.config.managebac.current_term_id
+
+    # Get every student who has a report this term
+    with DBSession() as session:
+        statement = session.query(
+            db.table.Student
+        ).select_from(
+            db.table.PrimaryReport
+        ).filter(
+            PrimaryReport.student_id == db.table.Student.id,
+            PrimaryReport.term_id == term_id,
+        )
+
+    students = statement.all()
+    gns.tutorial("Got students with reports", edit=(students, '.pretty'))
+    responses = []
+
+    for i, student in enumerate(statement.all()):
+        gns.tutorial("Stop here with student {}".format(student.first_nickname_last_studentid), banner=True)
+        subreq = Request.blank('/students/{id}/pyp_report/download?api_token={api_token}'.format(id=student.id, api_token=gns.config.managebac.api_token))
+        responses.append( request.invoke_subrequest(subreq, use_tweens=True) )
+        if i >= 2: 
+            break
+
+    return dict(message=", ".join([str(r) for r in responses]))
+
+
+
 def get_from_matchdict(key, matchdict, default=None):
     this = matchdict.get(key, default)
     if this and len(this) == 1:
@@ -28,7 +72,7 @@ def pyp_reports(request):
     Construct the data into a format that the report format needs for output
     """
     student_id = int(get_from_matchdict('id', request.matchdict))
-    api_token = request.params.get('api_token')
+    
     pdf = get_from_matchdict('pdf', request.matchdict)
     check = request.params.get('check')
     if check and check.lower() == 'true':
@@ -38,27 +82,32 @@ def pyp_reports(request):
 
     internal_check = request.params.get('internal_check')
 
-    # Lock down so that only those who are logged in or those that pass that managebac api can access
-    # TODO: shouldn't be done here but in a class somewhere
-    if not api_token:
-        mb_user = request.session.get('mb_user', None)
-        if not mb_user or not mb_user.type.startswith('Advisor'):
+    mb_user = request.session.get('mb_user', None)
+    if not mb_user:
+        api_token = request.params.get('api_token')
+        if not api_token or api_token != gns.config.managebac.api_token:
             return HTTPForbidden()
+    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+        # let them in
+        pass
     else:
-        if api_token != gns.config.managebac.api_token:
-            return HTTPForbidden()
+        return HTTPForbidden()
 
     term_id = gns.config.managebac.current_term_id
     with DBSession() as session:
         try:
-            report = session.query(PrimaryReport).\
+            rep_statement = session.query(PrimaryReport).\
                 options(joinedload('course')).\
                 filter(
                         PrimaryReport.term_id==term_id, 
                         PrimaryReport.student_id==student_id, 
                         # PrimaryReport.homeroom_comment!=''
-                    ).one()
-            student = session.query(Students).filter_by(id=student_id).one()
+                    )
+            stu_statement = session.query(Students).filter_by(id=student_id)
+            student = stu_statement.one()
+            report = rep_statement.one()
+            gns.tutorial("Got the target student",edit=(stu_statement, '.sql'))
+            gns.tutorial("Got Primary report with course information", edit=(rep_statement, '.sql'))
         except NoResultFound:
             if pdf:
                 #raw_input('no report entry for this student: {} with term_id {}'.format(student_id, term_id))
@@ -67,9 +116,7 @@ def pyp_reports(request):
                 raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
         except MultipleResultsFound:
             print("Issue with database!")
-            raise HTTPInternalServerError()
-
-
+            raise HTTPInternalServerError("Issue with database!")
 
     title = u"IGB International School (June 2016): Student Report for {} {}".format(student.first_name, student.last_name)
 
@@ -151,8 +198,6 @@ def pyp_reports(request):
         11256632: [11204609,10836994,11707907,11135108,10836999,11135112,10837001,11203979,10865037,11707924,11621141,11203988,11204377,11173915,10913691,11204637,10856823,11204383,11204640,11707939,11204392,11614634,11364525,10882226,11204660,11190071,10834616,10834617,11464377,10866873,10866876,10834621,10834622,10866877,10856636,11578945,11611841,10893379,10834628,10834625,11611847,10834635,10834640,10834642,10834643,11930324,11707860,11203926,11707990,11426392,11502297,11578839,11707869,11708005,10834661,11203946,11324785,11124210,10863222,11124215,10856824,11203961,10856826,11124219,11204605,11707902],  # nancy
     }
 
-
-
     students_chinese_teachers = {}
 
     for teacher_id, student_ids in chinese_teachers.items():
@@ -177,18 +222,21 @@ def pyp_reports(request):
 
         with DBSession() as session:
             try:
-                report = session.query(PrimaryReport).\
+                rep_statement = session.query(PrimaryReport).\
                     options(joinedload('course')).\
                     options(joinedload('sections')).\
                     options(joinedload('sections.learning_outcomes')).\
                     options(joinedload('sections.teachers')).\
                     options(joinedload('sections.strands')).\
                     options(joinedload('teacher')).\
-                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id).one()
-                student = session.query(Students).filter_by(id=student_id).one()
-                attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
+                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id)
+                att_statement = session.query(Absences).filter_by(term_id=term_id, student_id=student_id)
+
+                attendance = att_statement.one()
+                report = rep_statement.one()
+
+                gns.tutorial("Got K-5 report info with joined information", edit=(rep_statement, '.sql'), banner=True)
             except NoResultFound:
-                from IPython import embed;embed()
                 if pdf:
                     #raw_input("No K-5 report entry")
                     raise HTTPNotFound()
@@ -228,7 +276,10 @@ def pyp_reports(request):
 
         for section in report.sections:
             section.rank = subject_rank.get(section.name.lower())
+        report.sections = [s for s in report.sections if s.rank not in [4.1, 4.2, 4.3]]   # skip  
 
+        gns.tutorial("Formatting each subject area in this order: {}".format(", ".join([r.name for r in report.sections])), banner=True)
+        for section in report.sections:
             # Substitute the correct Chinese teachers based on manual info above
             # Do first so all subsequent operations take place properly
             if section.rank == 9 and student.id in students_chinese_teachers:
@@ -311,6 +362,7 @@ def pyp_reports(request):
 
                 if not outcome.selection and internal_check:
                     raise ReportIncomplete('something')
+            gns.tutorial("Completed formatting of {} section".format(section.name))
 
         report.sections = [s for s in report.sections if s.rank not in [4.1, 4.2, 4.3]]   # skip  
 
@@ -362,12 +414,10 @@ def pyp_reports(request):
                     filter(
                         PrimaryReport.term_id==term_id, 
                         PrimaryReport.student_id==student_id, 
-                        #PrimaryReport.homeroom_comment!=""
                         ).one()
                 student = session.query(Students).filter_by(id=student_id).one()
                 attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
             except NoResultFound:
-                from IPython import embed;embed()
                 if pdf:
                     raise HTTPNotFound()
                 else:
@@ -509,6 +559,16 @@ def pyp_reports(request):
 
         raise HTTPFound()
 
+    with DBSession() as session:
+        try:
+            record = session.query(db.table.PrimaryReportLastUpdated).filter(db.table.PrimaryReportLastUpdated.student_id == student.id).one()
+            last_updated = record.timestamp
+            last_updated_date = last_updated.strftime(gns.config.reports.last_updated_format)
+        except NoResultFound:
+            last_updated_date = '<Unknown>'
+        except MultipleResultsFound:
+            last_updated_date = '<Internal DB Error: Multiple results found>'
+
     if pdf:
         result = render(template,
                     dict(
@@ -523,12 +583,37 @@ def pyp_reports(request):
                         ),
                     request=request)
         import pdfkit   # import here because installation on server is hard
-        path = u'/home/vagrant/igbisportal/pdf-downloads/{}/{}-Grade {}-{}.pdf'.format(which_folder, '55048', grade_norm, student.first_name + ' ' + student.last_name)
 
+        prefix_file_name = '{}/pdf-downloads/{}/{}-Grade{}-{}-'.format(
+            gns.config.paths.home,
+            which_folder, 
+            '55048', 
+            grade_norm, 
+            student.first_name + '-' + student.last_name, 
+        )
+
+        full_file = '{}({}).pdf'.format(prefix_file_name, last_updated_date)
+
+        for _file in glob.glob("{}.*".format(prefix_file_name)):
+            # Remove any old stuff still lingering in there
+            if _file != full_file:
+                os.remove(_file)
+
+        path = '{}/pdf-downloads/{}/{}-Grade{}-{}-({}).pdf'.format(
+            gns.config.paths.home,
+            which_folder, 
+            '55048', 
+            grade_norm, 
+            student.first_name + '-' + student.last_name, 
+            last_updated_date
+        )
+
+        gns.tutorial("Sending to pdfkit, also saving to {path}".format(path=path), edit=(result, '.pretty'), banner=True)
         try:
             pdffile = pdfkit.from_string(result, path, options=options)   # render as HTML and return as a string
-        except OSError as e:
-            return HTTPInternalServerError("")
+        except OSError as err:
+            return HTTPInternalServerError("Problem with file? {}".format(err))
+
         if pdf.lower() == "download":
             content_type = "application/octet-stream"
 
@@ -543,15 +628,14 @@ def pyp_reports(request):
 
     else:
         # Check when it was last updated
-        with DBSession() as session:
-            try:
-                record = session.query(db.table.PrimaryReportLastUpdated).filter(db.table.PrimaryReportLastUpdated.student_id == student.id).one()
-                last_updated = record.timestamp
-            except NoResultFound:
-                last_updated = 'Unknown'
-            except MultipleResultsFound:
-                last_updated = 'Internal DB Error: Multiple results found'
 
+        if gns.tutorial_on:
+            import pkg_resources
+            package, filename = template.split(":")
+            abspath = pkg_resources.resource_filename(*template.split(":"))
+            from chameleon import PageTemplateFile
+            template_file = PageTemplateFile(abspath)
+            gns.tutorial("Loaded the template", edit=(template_file.read(), '.html'), banner=True)
         result = render(template,
                     dict(
                         title=title,
@@ -559,9 +643,9 @@ def pyp_reports(request):
                         student=student,
                         attendance = attendance,
                         pdf=False,
-                        download_url="/students/{}/pyp_report/download/?api_token={}".format(student.id, gns.config.managebac.api_token),
+                        download_url="/students/{}/pyp_report/download/".format(student.id),
                         link_to_mb = "https://igbis.managebac.com/classes/{}/pyp-gradebook/tasks/term_grades?student={}&term={}".format(report.course.id, student.id, gns.config.managebac.current_term_id),
-                        last_updated=last_updated,
+                        last_updated=last_updated_date,
                         ),
                     request=request)
         response = Response(result)

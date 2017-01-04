@@ -5,13 +5,9 @@
 # FIX ME: Prune the below
 from portal.scrapers.mb_scraper.mb_scraper.spiders.templates import \
     ClassReports
-from portal.scrapers.mb_scraper.mb_scraper.items import \
-    ClassPeriodItem, ClassReportItem, GradeBookDataDumpItem
-from portal.scrapers.mb_scraper.mb_scraper.items import \
+from portal.scrapers.pyp_class_reports.pyp_class_reports.items import \
     PrimaryReportItem, PrimaryReportStrandItem, \
-    PrimaryReportOutcomeItem, PrimaryReportSectionItem, \
-    TeacherAssignmentItem, PrimaryStudentAbsences, \
-    SecHRItem
+    PrimaryReportOutcomeItem, PrimaryReportSectionItem
 from portal.db import \
     Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -47,12 +43,12 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
             statement = session.query(Course.id).select_from(Course).filter(Course.name.like('%{} Kindergarten%'.format(self.program.upper())))
 
-            for s in statement.all():
-                ret.append(s.id)
+            s = list(statement.all())
+            gns.tutorial("Queried database for all pyp courses and got back: {ret}".format(ret=ret))
         return ret
 
-    def build_request(self, *kwargs):
-        return scrapy.Request(kwargs)
+    def build_request(self, **kwargs):
+        return scrapy.Request(**kwargs)
 
     def pyp_class_reports(self):
         """ entry point """
@@ -62,11 +58,19 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         """
         Entry point, after getting the base url
         """
-
-        # Dispatch to parse_subject per each subject on right side
+        # Dispatch to parse_subject per eacfh subject on right side
         # Code this first because this will actually be deferred until last
-        for subject_url in response.xpath("//ul[@class='small_right_tabs']/li/a/@href").extract():
+
+        gns.tutorial("Received data rom base url: {response.url}".format(response=response), edit=(response.text, '.html'))
+
+        xpath = "//ul[@class='small_right_tabs']/li/a/@href"
+        xpaths = response.xpath(xpath)
+        gns.tutorial("Scraping response with xpath {xpath}".format(xpath=xpath), edit=(response.text,'.html'))
+        gns.tutorial("Found {len(xpath)} url items to follow.", edit=(xpaths.extract(), '.pretty'))
+
+        for subject_url in xpaths.extract():
             url = gns.config.managebac.url + subject_url
+            gns.tutorial("Found link, following: {url}".format(url=url.replace(gns.config.managebac.url, '')))
             request = self.build_request(
                 url=url,
                 callback=self.parse_subject,
@@ -78,10 +82,11 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
         # Cycle through each student on the left side
         # And dispatch to `parse_student`
-        for student_url in response.xpath("//li[@class='selected own-pyp-class']/ul/li/a/@href").extract():
 
+        for student_url in response.xpath("//li[@class='selected own-pyp-class']/ul/li/a/@href").extract():
             # If we only have one student in mind,
             # Short-circuit it so that we only end up doing the one request we are interested in
+
             if self.student_id:
 
                 # Sanity check:
@@ -92,21 +97,13 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
                 # Extract the mb id from the url we scraped
                 # anc check the database
-                student_mb_id = int(student_url.split('/')[2])
-                with DBSession() as session:
-                    try:
-                        student = session.query(
-                            self.db.table.Student
-                        ).filter(
-                            self.db.table.Student.id == student_mb_id
-                        ).one()
-                    except (NoResultFound, MultipleResultsFound):
-                        continue
-                    if student.student_id != self.student_id:
-                        continue
+                student_mb_id = int(re.search('=(\d+)?', student_url).group(1))
+                if student_mb_id != self.student_id:
+                    continue
                 # if still here, we continue
 
             url = gns.config.managebac.url + student_url
+ 
             #
 
             # Build the request for scrapy
@@ -131,7 +128,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         """
         current_term_id = self.determine_current_term(response)
 
-        student_id = response.xpath("//input[@id='pyp_final_grade_user_id']/@value")[0].extract() or None
+        student_id = int(response.xpath("//input[@id='pyp_final_grade_user_id']/@value")[0].extract())
         if self.student_id and self.student_id != student_id: 
             print("Nothing for this student: {}".format(student_id))
             return
@@ -166,13 +163,16 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         Collects the existing PrimaryReport objects and adds data to them
         """
         current_term_id = self.determine_current_term(response)
-        subject_id = re.search('\?subject=(\d+)', response.url).group(1)
+        url = response.url
+        regexp = '\?subject=(\d+)'
+        subject_id = re.search(regexp, url).group(1)
+        gns.tutorial("Extracted subject_id {subject_id} from the url {url} with reg exp {regexp}".format(subject_id=subject_id, url=url, regexp=regexp))
 
         subject_name = response.xpath("//h2[@class='vac']")[0].xpath('./text()').extract()
         subject_name = "".join([l.strip('\n') for l in subject_name if l.strip('\n')])
 
         for student in response.xpath("//td[@class='student-assessment']"):
-            student_id = student.xpath('./div/@id').extract()[0].split('_')[-1]
+            student_id = int(student.xpath('./div/@id').extract()[0].split('_')[-1])
             if self.student_id and self.student_id != student_id:
                 continue
 

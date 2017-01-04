@@ -82,5 +82,10 @@ def main(global_config, **settings):
     config.add_route('update_report_poll', '/update_report_poll')
 
     config.add_route('reports_hub', '/reports_hub')
+    config.add_route('student_enrollments_by_course_id', '/student_enrollments_by_course_id/{id}')
+
+    config.add_route('lastupdated', '/lastupdated')
+    config.add_route('download_pyp_reports', '/download_pyp_reports')
+
     config.scan()
     return config.make_wsgi_app()

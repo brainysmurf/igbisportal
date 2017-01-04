@@ -322,7 +322,7 @@
     text-decoration:none;
   }
 
-  #progress {
+  #progress_dialog {
     position: fixed;
     left:50%;
     top: 50%;
@@ -330,6 +330,10 @@
     padding:10px;
     margin: auto;
     width: 200px;
+  }
+
+  .no-close .ui-dialog-titlebar-close {
+    display: none;
   }
 
 

@@ -4,6 +4,7 @@ import os, datetime
 import requests, json
 import re, csv
 from PIL import Image
+from portal.db import Database, DBSession
 
 class Object(object):
     def __init__(self):
@@ -13,21 +14,23 @@ class Object(object):
     # define common methods here
 
 @click.group()
-@click.option('--verbose/--not_verbose', default=False, help="Outputs loads more info")
+@click.option('--tutorial/--notutorial', default=False, help="Enable step-by-step explanations")
 @click.pass_context
-def main(ctx, verbose):
+def main(ctx, tutorial):
     # Doesn't do much now, but leave it as boilerplate for when there are global flags n such
     ctx.obj = Object()
-    ctx.obj.verbose = verbose
+    if tutorial:
+        gns.set_debug(True)
 
-def dl(lazy=False, verbose=False):
-    from portal.db.api.interface import APIDownloader
-    go = APIDownloader(lazy=lazy, verbose=verbose)    
+def dl():
+    from portal.db.api.interface import AsyncAPIDownloader
+    go = AsyncAPIDownloader()
+    go.download()
 
-def db_setup(lazy, verbose):
+def db_setup(fake=False):
     from portal.db.interface import DatabaseSetterUpper
-    go = DatabaseSetterUpper(lazy=lazy, verbose=verbose)
-    go.setup_database()
+    go = DatabaseSetterUpper()
+    go.setup_database(fake)
 
 @main.group()
 def sync():
@@ -115,13 +118,16 @@ def destiny(obj, dontput):
 @sync.command()
 @click.option('--download/--dontdownload', default=True, help='default is --download')
 @click.option('--setupdb/--dontsetupdb', default=True, help='default is --setupdb')
+@click.option('--fake', is_flag=True, default=False, help='Replace downloaded with fake names')
 @click.pass_obj
-def managebac(obj, download, setupdb):
+def managebac(obj, download, setupdb, fake):
     """
     Downloads data from ManageBac APIs, and updates database
     """
-    dl(lazy=not download, verbose=obj.verbose)
-    db_setup(lazy=not setupdb, verbose=obj.verbose)
+    if download:
+        dl()
+    if setupdb:
+        db_setup(fake)
 
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
@@ -193,11 +199,10 @@ def new_students(obj):
 @click.pass_obj
 def update_users(obj, download, update):
     from portal.db.api.interface import APIDownloader
-    dload = APIDownloader(lazy=True) 
+    dload = APIDownloader() 
 
     if download:
-        dload.managebac_users_download()
-        dload.open_apply_download()
+        dload.download_all()
 
     path = dload.build_json_path('users', '.json')
     with open(path, 'r') as _f:
@@ -236,7 +241,6 @@ def photos(obj):
     Get all the student photos you can and download them
     """
     import shutil
-    from portal.db import Database, DBSession
     db = Database()
 
     rootpath = '/home/vagrant/igbisportal/'
@@ -350,7 +354,6 @@ def family_info(obj):
 @output.command()
 @click.pass_obj
 def student_columns(obj):
-    from portal.db import Database, DBSession
     db = Database()
     Students = db.table_string_to_class('student')
     from IPython import embed;embed()
@@ -434,7 +437,13 @@ def run_scraper(spider, subpath, **kwargs):
 
     os.chdir(os.path.join(gns.config.paths.scrapers, subpath))
 
-    process = CrawlerProcess(get_project_settings())
+    settings = get_project_settings()
+    # Chance here to mod settings
+    if kwargs.get('--nolog'):
+        gns.tutorial("Turned off scrapy's logging with LOG_ENABLED")
+        settings['LOG_ENABLED'] = 0
+
+    process = CrawlerProcess(settings)
     process.crawl(spider, **kwargs)  # TODO: add kwargs here for options
     process.start()
 
@@ -456,7 +465,6 @@ def pyp_reports(ctx):
 @click.option('--classes', multiple=True, default=[], help="")
 @click.pass_obj
 def pyp_reports_save(obj, check, students, grades, classes):
-    from portal.db import Database, DBSession
     from sqlalchemy.orm.exc import NoResultFound
     import pdfkit
     import gns
@@ -607,11 +615,14 @@ def pyp_reports_save(obj, check, students, grades, classes):
                     do.go()
 
 @pyp_reports.group('scrape')
-def pyp_reports_scrape():
+@click.option('--log/--nolog', default=True, help="Toggle logging")
+@click.pass_context
+def pyp_reports_scrape(ctx, log):
     """
     Download info
     """
     # Whenever we scape, we want to make it play nice with other processes
+    ctx.obj.logging = {'LOG_ENABLED': int(log)}
     os.nice(15)
 
     # Limit execution time to one hour
@@ -624,15 +635,18 @@ def pyp_reports_scrape():
 @pyp_reports_scrape.command('reports')    
 @click.option('--this_student', default=None, help="MB student ID of student")
 @click.option('--callback_id', default=None, help="Internal use only")
+@click.option('--fake', is_flag=True, default=False, help="Make fake data")
 @click.pass_obj
-def pyp_reports_scrape_reports(obj, this_student, callback_id):
+def pyp_reports_scrape_reports(obj, this_student, callback_id, fake):
     """
-    Download specific info
+    This program will download PYP report data as entered
+    by teachers from ManageBac
     """
-    kwargs = {}
+    gns.tutorial(pyp_reports_scrape_reports.__doc__)
+    kwargs = obj.logging
+    kwargs['fake'] = fake
     if this_student is not None:
         # Use the db to get the student id and relevant class id in order
-        from portal.db import Database, DBSession
         db = Database()
 
         with DBSession() as session:
@@ -649,13 +663,13 @@ def pyp_reports_scrape_reports(obj, this_student, callback_id):
                 ).filter(
                     db.table.Student.student_id == this_student
                 )
-
+            gns.tutorial("Collecting data for only one student", edit=(statement, '.sql'), stop=True)
             results = statement.all()
 
             if len(results) == 1:
                 student_id, class_id = results[0]
-                student_id = str(student_id)  # FIXME: This really should be an integer in the db
-                kwargs = dict(student_id=student_id, class_id=class_id)
+                gns.tutorial("Got the student mb id ({}) and the course id ({}) they are enrolled in.".format(student_id, class_id))
+                kwargs.update(dict(student_id=student_id, class_id=class_id))
             elif len(results) == 0:
                 print("No classes, is the ID right?")
                 return
@@ -663,11 +677,11 @@ def pyp_reports_scrape_reports(obj, this_student, callback_id):
                 print("More than one class?")
                 return
 
-    if callback_id or click.confirm('Continue?'):
-        # if sent callback_id, don't confirm
-        run_scraper('PYPClassReports', 'mb_scraper', **kwargs)
+    gns.tutorial("Sending to scraper with kwargs: {}".format(kwargs))
+    run_scraper('PYPClassReports', 'pyp_class_reports', **kwargs)
 
     if callback_id:
+        gns.tutorial("Need to update the callback with uniq_id = {}".format(callback_id))
         with DBSession() as session:
             record = session.query(
                 db.table.Callback
@@ -771,35 +785,6 @@ def test():
     """
     pass
 
-import asyncio
-
-import aiohttp
-import asyncio
-import async_timeout
-
-async def fetch(session, url):
-    with async_timeout.timeout(10):
-        async with session.get(url) as response:
-            return await response.text()
-
-async def download_urls(urls):
-    tasks = []
-
-    async with aiohttp.ClientSession() as session:
-        for url in urls:
-            tasks.append( asyncio.ensure_future( fetch(session, url) ) )
-
-        responses = await asyncio.gather(*tasks)
-
-        print(responses)
-
-@test.command('async')
-@click.pass_obj
-def test_async(obj):
-    urls = ['https://igbis.managebac.com/api/groups/10414844/members', 'https://igbis.managebac.com/api/groups/10414842/members', 'https://igbis.managebac.com/api/groups/10414843/members', 'https://igbis.managebac.com/api/groups/10414846/members', 'https://igbis.managebac.com/api/groups/10414845/members', 'https://igbis.managebac.com/api/groups/10438827/members', 'https://igbis.managebac.com/api/groups/10430067/members', 'https://igbis.managebac.com/api/groups/10414856/members', 'https://igbis.managebac.com/api/groups/10414857/members', 'https://igbis.managebac.com/api/groups/10414849/members', 'https://igbis.managebac.com/api/groups/10414852/members', 'https://igbis.managebac.com/api/groups/10414854/members', 'https://igbis.managebac.com/api/groups/10238978/members', 'https://igbis.managebac.com/api/groups/10238982/members', 'https://igbis.managebac.com/api/groups/10414853/members', 'https://igbis.managebac.com/api/groups/10414847/members', 'https://igbis.managebac.com/api/groups/10414850/members', 'https://igbis.managebac.com/api/groups/10414855/members', 'https://igbis.managebac.com/api/groups/10414848/members', 'https://igbis.managebac.com/api/groups/10414851/members', 'https://igbis.managebac.com/api/groups/10414861/members']
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete( asyncio.ensure_future(download_urls(urls)) )
-
 @test.command('api_family_info')
 @click.pass_obj
 def test_family_info(obj):
@@ -828,8 +813,8 @@ def test_status_updater(obj):
 @click.pass_obj
 def test_api_downloader(obj):
     from portal.db.api.interface import APIDownloader
-    dl = APIDownloader(lazy=True, mock=True, verbose=True)
-    dl.download()
+    dl = APIDownloader()
+    dl.download_all()
     from portal.db.interface import DatabaseSetterUpper
     go = DatabaseSetterUpper(lazy=True, verbose=True)
     go.setup_database()

@@ -1,94 +1,18 @@
 # -*- coding: utf-8 -*-
-from portal.db import Database, DBSession  
 
 from portal.scrapers.shared.pipelines import \
     PostgresPipeline
-from portal.scrapers.mb_scraper.mb_scraper.items import \
+from portal.scrapers.pyp_class_reports.pyp_class_reports.items import \
     PrimaryReportItem, PrimaryReportSupplementItem, \
     PrimaryReportSectionItem, PrimaryReportStrandItem, \
-    PrimaryReportOutcomeItem, PrimaryStudentAbsences
+    PrimaryReportOutcomeItem
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from portal.utils import string_to_entities
 import datetime
 
-class PYPTeacherAssignments(PostgresPipeline):
-    BLANK_TOLERANCE = 1
-
-    def database_add(self, key, item):
-        TeacherAssign = self.database.table.TeacherAssign
-        subject_id = int(item['subject_id'])
-        teacher_id = int(item['teacher_id'])
-        class_id = int(item['class_id'])
-
-        with DBSession() as session:
-            try:
-                exists = session.query(TeacherAssign).filter_by(class_id=class_id, subject_id=subject_id, teacher_id=teacher_id).one()
-                if exists:
-                    print("Already: {}".format(item))
-            except NoResultFound:
-                teacher_assign = TeacherAssign(
-                        teacher_id = teacher_id,
-                        subject_id = subject_id,
-                        class_id = class_id
-                    )
-                print('Added: {}'.format(item))
-                session.add(teacher_assign)
-
-class ClassReportsPipeline(PostgresPipeline):
-    BLANK_TOLERANCE = 100
-
-    def allow_this_spider(self, spider):
-        """
-        Override...
-        """
-        return spider.name.startswith('ClassReports')
-
-    def database_add(self, key, item):
-        ReportComments = self.database.table_string_to_class('Report_Comments')
-        AtlComments = self.database.table_string_to_class('Atl_Comments')
-        with DBSession() as session:
-            report_comment = ReportComments(
-                    course_id = int(item['course_id']),
-                    term_id = int(item['term_id']),
-                    text = string_to_entities(item['text']),
-                    teacher_id = int(item['teacher_id']) if not item['teacher_id'] is None else None,  # When this becomes an int, change it to an int...
-                    student_id = int(item['student_id'])
-                )
-            session.add(report_comment)
-
-            for atl_comment in item['atl_comments']:
-                alt_comment = AtlComments(
-                        label = atl_comment['name'],
-                        selection = atl_comment['selection']
-                    )
-                session.add(alt_comment)
-
-                # okay, now that both records are all good, make the relationship link
-                report_comment.atl_comments.append(alt_comment)
-
-class SecHRPipeline(ClassReportsPipeline):
-    def allow_this_spider(self, spider):
-        return spider.name == 'SecondaryHomeroomAdvisors'
-
-    def database_add(self, key, item):
-        SecHrTeachers = self.database.table_string_to_class('secondary_homeroom_teachers')
-        student_id = item['student_id']
-        teacher_id = item['teacher_id']
-        with DBSession() as session:
-            try:
-                exists = session.query(SecHrTeachers).filter_by(
-                    teacher_id=teacher_id,
-                    student_id=student_id
-                    ).one()
-            except NoResultFound:
-                exists = False
-            if exists:
-                return exists
-
-            assign = SecHrTeachers(teacher_id=teacher_id, student_id=student_id)
-            session.add(assign)
+import gns
 
 class PYPClassReportsPipline(PostgresPipeline):
     """
@@ -96,43 +20,46 @@ class PYPClassReportsPipline(PostgresPipeline):
     """
     BLANK_TOLERANCE = 100   # Could use this for different things
 
-    def allow_this_spider(self, spider):
-        return spider.name.startswith('PYPClassReports')
-
     def make_primary_report(self, term_id, course_id, student_id, teacher_id=None, homeroom_comment=None):
         PrimaryReport = self.database.table_string_to_class('Primary_Report')
-        homeroom_comment = string_to_entities(homeroom_comment)
+        homeroom_comment = string_to_entities(homeroom_comment) if not self.fake else self.fake.text(max_nb_chars=len(homeroom_comment) if homeroom_comment and len(homeroom_comment) > 5 else 10)
         exists = None
-        with DBSession() as session:
+        with self.DBSession() as session:
+            statement = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id)
             try:
-                exists = session.query(PrimaryReport).filter_by(term_id=term_id, course_id=course_id, student_id=student_id).one()
+                exists = statement.one()
                 if exists and homeroom_comment is not None:
                     exists.homeroom_comment = homeroom_comment
                 if exists and teacher_id is not None:
                     exists.teacher_id = teacher_id
                 session.add(exists)
+                if homeroom_comment:
+                    gns.tutorial('There is already a report available, so execute update on database', edit=(statement, '.sql'))
                 ret = exists
             except NoResultFound:
                 primary_report = PrimaryReport(
                         course_id = course_id,
                         term_id = term_id,
-                        homeroom_comment = homeroom_comment,
+                        homeroom_comment = homeroom_comment if not self.fake else self.fake.text(max_nb_chars=len(self.homeroom_comment) or 10),
                         teacher_id = teacher_id if not teacher_id is None else None,  # When this becomes an int, change it to an int...
                         student_id = student_id
                     )
                 session.add(primary_report)
+                gns.tutorial('No report yet, so execute insert on database:\n{}'.format(gns.rawsql(statement)))
                 ret = primary_report
         return ret
 
     def make_primary_report_section(self, term_id, subject_id, course_id, student_id, comment="", name ="", overall_comment=None):
         exists = None
         comment = string_to_entities(comment)
+        if comment and self.fake:
+            comment = self.fake.text(max_nb_chars=len(comment) if len(comment) > 5 else 10)
         overall_comment = string_to_entities(overall_comment)
         PrimaryReportSection = self.database.table.PrimaryReportSection
         Teacher = self.database.table.Teacher
         TeacherAssignments = self.database.table.TeacherAssign
 
-        with DBSession() as session:
+        with self.DBSession() as session:
 
             # Set up the teachers
             teachers = []
@@ -186,7 +113,10 @@ class PYPClassReportsPipline(PostgresPipeline):
 
                 return primary_report_section
 
-    def database_add(self, key, item):
+    def process_item(self, item, spider):
+        """
+        Entry point, item are sent here
+        """
         Teacher = self.database.table.Teacher
         TeacherAssignments = self.database.table.TeacherAssign
         PrimaryReport = self.database.table.PrimaryReport
@@ -194,36 +124,43 @@ class PYPClassReportsPipline(PostgresPipeline):
         PrimaryReportStrand = self.database.table.PrimaryReportStrand
         PrimaryReportLo = self.database.table.PrimaryReportLo
 
+        ret = None
+
+        gns.tutorial("Processsing scraped item", edit=(item, '.pretty'), onlyif=item.get('course_id')==10589151 and item.get('teacher_id')==11256636, banner=True)
         if item.__class__ is PrimaryReportItem:
-            from IPython import embed;embed()
             term_id = int(item.get('term_id'))
             course_id = int(item.get('course_id'))
             student_id = int(item.get('student_id'))
             teacher_id = int(item.get('teacher_id'))
-            homeroom_comment = item.get('homeroom_comment')
+            homeroom_comment = item.get('homeroom_comment') if not self.fake else self.fake.text(max_nb_chars=len(item.get('homeroom_comment')) if item.get('homeroom_comment') and len(item['homeroom_comment']) > 5 else 10)
 
             self.make_primary_report(term_id, course_id, student_id, teacher_id, homeroom_comment)
+            gns.tutorial("This is the homeroom report", banner=True, edit=(item, '.pretty'))
 
-            with DBSession() as session:
+            with self.DBSession() as session:
                 try:
-                    record = session.query(
+                    statement = session.query(
                         self.database.table.PrimaryReportLastUpdated
                     ).filter(
                         self.database.table.PrimaryReportLastUpdated.student_id == student_id
-                    ).one()
-
+                    )
+                    record = statement.one()
                     record.timestamp = datetime.datetime.now()
+                    gns.tutorial("Update last_updated fields", edit=(statement, '.sql'), stop=True)
 
                 except NoResultFound:
                     record = self.database.table.PrimaryReportLastUpdated(
                         student_id=student_id,
                         # timestamp will be automatically added
                     )
+                    gns.tutorial("Create last_updated fields:\n{}".format(record), stop=True)
 
                 except MultipleResultsFound:
                     raise Exception("Multiple results found for student_id field, don't I need constraint?")
 
                 session.add(record)
+
+            ret = dict(message="Added primary homeroom report, and updated last_updated")
 
         elif item.__class__ is PrimaryReportSectionItem:
             term_id = int(item.get('term_id'))
@@ -234,6 +171,8 @@ class PYPClassReportsPipline(PostgresPipeline):
             self.make_primary_report_section(term_id, subject_id, course_id, student_id,
                 comment=item.get('comment'), name=item.get('subject_name'), overall_comment=item.get('overall_comment')
                 )
+
+            ret = dict(message="Added report section")
 
         elif issubclass(item.__class__, PrimaryReportSupplementItem):
             # First get the id of the primary report, for convenience
@@ -252,13 +191,15 @@ class PYPClassReportsPipline(PostgresPipeline):
 
             if issubclass(item.__class__, PrimaryReportStrandItem):
 
-                with DBSession() as session:
+                with self.DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportStrand).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
                         exists.label = item['strand_label']
                         exists.label_titled = item['strand_label_titled']
                         exists.selection = item['strand_text']
                         session.add(exists)
+                        ret = dict(message="Updated primary report strand")
+
 
                     except NoResultFound:
                         primary_report_strand = PrimaryReportStrand(
@@ -269,6 +210,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                                 which = item['which']
                             )
                         session.add(primary_report_strand)
+                        ret = dict(message="Added primary report strand")
 
             elif issubclass(item.__class__, PrimaryReportOutcomeItem):
 
@@ -276,7 +218,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                 outcome_label = string_to_entities(ol)
                 outcome_label_titled = string_to_entities(ol)
 
-                with DBSession() as session:
+                with self.DBSession() as session:
                     try:
                         exists = session.query(PrimaryReportLo).filter_by(primary_report_section_id=primary_report_section_id, which=which).one()
                         exists.heading = item['heading']
@@ -284,6 +226,7 @@ class PYPClassReportsPipline(PostgresPipeline):
                         exists.selection = item['outcome_text']
                         exists.label_titled = outcome_label_titled
                         session.add(exists)
+                        ret = dict(message="Updated primary report outcome")
 
                     except NoResultFound:
                         primary_report_outcome = PrimaryReportLo(
@@ -296,35 +239,10 @@ class PYPClassReportsPipline(PostgresPipeline):
                             )
 
                         session.add(primary_report_outcome)
+                        ret = dict(message="Added primary report outcome")
 
-class PYPStudentAttendance(PostgresPipeline):
-    BLANK_TOLERANCE = 100
+            else:
+                ret = dict(message="Item type not a recognized subclass:\n{}".format(item))
 
-    def database_add(self, key, item):
-        PrimaryStudentAbsences = self.database.table.PrimaryStudentAbsences
+        return ret
 
-        term_id = item['term_id']
-        student_id = item['student_id']
-        absences = item['absences']
-        total_days = item['total_days']
-
-        with DBSession() as session:
-
-            try:
-                exists = session.query(PrimaryStudentAbsences).filter_by(term_id=term_id, student_id=student_id).one()
-                if exists:
-                    exists.absences = absences
-                if exists:
-                    exists.total_days = total_days
-                session.add(exists)
-
-            except NoResultFound:
-
-                new = PrimaryStudentAbsences(
-                    student_id=student_id,
-                    term_id = term_id,
-                    absences=absences,
-                    total_days=total_days
-                    )
-
-                session.add(new)

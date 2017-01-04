@@ -2,11 +2,18 @@
 <html lang="en" tal:define="role request.GET.get('role', 'student')" tal:define="static_url request.static_url('frontend:static/')">
 <head>
   <link rel="stylesheet" href="${static_url}font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="${static_url}bootstrap/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+
   <link rel="stylesheet" href="${static_url}css/pyp_reports.css" media="screen">
   <link rel="stylesheet" href="${static_url}css/pyp_reports_pdf.css" media="print">
+
+  <link rel="stylesheet" type="text/css" href="${static_url}css/reports_hub/reports_hub.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.css"/>
+
+
+ 
   <title>${title}</title>
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
 <div metal:define-slot="additional-css"></div>
 </head>
 <body>
@@ -25,8 +32,13 @@
 	  </div>
     </div>
 </div>
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js"></script>
-<div metal:define-slot="additional_js"></div>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.1.1.min.js" defer></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js" defer></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js" defer></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js" defer></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.13/sorting/datetime-moment.js" defer></script>
+<script type="text/javascript" src="${static_url}js/reports_hub/init.js" defer></script>
+<script type="text/javascript" src="${static_url}js/reports_hub/update.js" defer></script>
+
 </body>
 </html>

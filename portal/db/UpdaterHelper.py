@@ -8,7 +8,7 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from collections import defaultdict
 import sys
 from portal.exceptions import DoesNotExist, MultipleResults
-
+import gns
 # Makes an object so we can use dot notation
 DO = lambda name, **kwargs: type(name, (), kwargs)
 import click
@@ -87,6 +87,8 @@ class collection_obj:
 				click.echo("+ Added {} to {} into {} collection".format(right_row, left_row, self.collection))
 
 class updater_helper:
+	db = Database()
+
 	def __init__(self):
 		self._collections = {}
 
@@ -95,6 +97,8 @@ class updater_helper:
 		return self
 
 	def __exit__(self, exc_type, exc_value, traceback):
+		gns.tutorial("Checking for anything that needs to be removed. " 
+			"This happens at the __exit__ block")
 		if not all([exc_type, exc_value, traceback]):
 			# automatically see if there are any to be deleted
 			for key in self._collections.keys():
@@ -112,7 +116,7 @@ class updater_helper:
 						for id_to_delete in set(ids_on_db) - set(ids_appended):
 							right_row = session.query(collection.right_table).filter_by(id=id_to_delete).one()
 							getattr(left_row, collection.collection).remove(right_row)
-							click.echo('- Removed {} from {} in collection {}'.format(right_row.id, left_row.id, collection.collection))
+							gns.tutorial('- Removed {} from {} in collection {}'.format(right_row.id, left_row.id, collection.collection), banner=False)
 
 	@classmethod
 	def update_or_add(cls, obj):
@@ -154,15 +158,16 @@ class updater_helper:
 				# and execute with the session obj
 				# Second boolean discovers cases where field was cleared
 				if ((right==False or right) and left != right) or (right is None and (left or None) != (right or None)):
+					if column in ['profile_photo', 'openapply_parent_id']:
+						continue
 					values_statement = {column: right}
 					with DBSession() as session:
 						update_obj = obj.__table__.update().\
 							where(obj.__table__.c.id == obj.id).\
 							values(**values_statement)
 						session.execute(update_obj)
-					if column == 'profile_photo':
-						continue
-					click.echo(u'CHANGED id: {} in table {} column {} from {} to {}'.format(obj.id, row.__table__.name, column, left, right))
+					# FIXME: OpenApplyID is not useful, delete them
+					gns.tutorial('Updated {}\'s {} from {} to {}'.format(cls.db.session.query(row.__table__).filter_by(id=obj.id).one(), column, left, right), banner=True)
 
 					# TODO: Log this
 				else:

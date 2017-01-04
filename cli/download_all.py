@@ -53,8 +53,10 @@ class DoIt:
 
 				if r.status_code == 200:
 					print("All is well with {}".format(student))
+					#print(r.url)
 
 				if r.status_code != 200:
+					#print(url.replace('localhost', 'igbisportal.vagrant'))
 					text = r.text
 					message = re.findall('##(.*)##', text, re.DOTALL)
 					if message:
@@ -94,17 +96,25 @@ class CheckIt(DoIt):
 
 if __name__ == "__main__":
 
-	do = DoIt(one_student="20260001")
-	do.go()
-	do = DoIt(one_student="20220013")
-	do.go()
-	do = DoIt(one_student="20290015")
-	do.go()
-	do = DoIt(one_student="20290024")
-	do.go()
-	do = DoIt(one_student="20280003")
-	do.go()
-	do = DoIt(one_student="20300017")
+	# Departing
+	# do = DoIt(one_student="20260001")   # kayla
+	# do.go()
+	# do = DoIt(one_student="20280020")	# andre
+	# do.go()
+	# do = DoIt(one_student="20290015")	# asha
+	# do.go()
+	# do = DoIt(one_student="20290024")   # yazuiki
+	# do.go()
+	# do = DoIt(one_student="20280003")	# freya
+	# do.go()
+	# do = DoIt(one_student="20300002") 	# victor	
+	# do.go()
+
+	# 4T
+	#do = DoIt(one_student="20300002")
+
+	#do = DoIt()
+	do = DoIt(one_student="20300015")
 	do.go()
 
 	#Shah Reza	Shahabudin	20230006	Grade 5 NOT LISTED

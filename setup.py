@@ -27,7 +27,7 @@ setup(
     'pysftp',
     'oauth2client',
     'pysmb',
-    'aiohttp', 'cchardet', 'aiodns', 'aiofiles'
+    'aiohttp', 'cchardet', 'aiodns', 'aiofiles', 'uvloop', 'faker'
 ],
     # also requires?
     #'scrapyd', 'lxml', 'w3lib', 'cssselect', 'pysqlite'

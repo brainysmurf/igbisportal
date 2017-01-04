@@ -29,3 +29,5 @@ ITEM_PIPELINES = {
 	}
 
 FILES_STORE = "/home/vagrant/data_dump/grade_reports"
+LOG_LEVEL = gns.config.scrapy.log_level
+LOG_ENABLED = gns.config.scrapy.log_enabled

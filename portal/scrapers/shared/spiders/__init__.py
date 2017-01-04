@@ -10,7 +10,6 @@ import gns
 import re
 import logging
 
-
 FIRSTCAP_RE = re.compile('(.)([A-Z][a-z]+)')
 ALLCAP_RE = re.compile('([a-z0-9])([A-Z])')
 def convert(name):
@@ -34,17 +33,25 @@ class Login(scrapy.Spider):
     username = None
     password = None
 
+    def __init__(self, *args, fake=False, **kwargs):
+        #logging.getLogger('scrapy').propagate = False
+        self.fake = fake
+        super().__init__(*args, **kwargs)
+
     def warning(self, log):
         logging.warning(log)
 
     def parse(self, response):
         """ Initiate login """
+        formdata = {self.username_field: self.username, self.password_field: self.password}
+        gns.tutorial("Filling out login form at {response.url}".format(response=response), edit=(response.text, '.html'), banner=True)
+
         login_request = scrapy.FormRequest.from_response(
             response,
-            formdata={self.username_field: self.username, self.password_field: self.password},
+            formdata=formdata,
             callback=self.after_login,
             dont_filter=True  # because it's the same form
-        )        
+        )
         return login_request
 
     def after_login(self, response):

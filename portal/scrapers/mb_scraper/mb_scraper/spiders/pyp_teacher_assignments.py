@@ -1,6 +1,6 @@
 # TODO: Prune the below
-from portal.scrapers.shared.spiders import \
-    ManageBacLogin
+from portal.scrapers.mb_scraper.mb_scraper.spiders.templates import \
+    ClassReports
 from portal.scrapers.mb_scraper.mb_scraper.items import \
     ClassPeriodItem, ClassReportItem, GradeBookDataDumpItem
 from portal.scrapers.mb_scraper.mb_scraper.items import \
@@ -18,7 +18,7 @@ from scrapy.exceptions import CloseSpider
 import scrapy
 import gns
 
-class PYPTeacherAssignments(PYPClassReportTemplate):
+class PYPTeacherAssignments(ClassReports):
     name = "PYPTeacherAssignments"
     program = 'pyp'
     path = '/classes/{}/teachers'
@@ -38,7 +38,7 @@ class PYPTeacherAssignments(PYPClassReportTemplate):
                 ret.append(s.id)
         return ret
 
-    pyp_teacher_assignments = PYPClassReportTemplate.class_reports
+    pyp_teacher_assignments = ClassReports.class_reports
 
     def parse_items(self, response):
 

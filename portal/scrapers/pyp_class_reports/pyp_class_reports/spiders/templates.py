@@ -45,9 +45,10 @@ class ClassLevelManageBac(ManageBacLogin):
         else:
             rows = self.db.get_rows_in_table('course', id=class_id)
             if rows:
+                gns.tutorial('Passed class_id, so using course with id: {}'.format(class_id))
                 self.all_course_ids = [class_id]
             else:
-                print("Cannot find class with that id")
+                print("Cannot find class with id: {}".format(class_id))
                 exit()
 
         super(ClassLevelManageBac, self).__init__(*args, **kwargs)
@@ -147,39 +148,6 @@ class ClassReports(ClassLevelManageBac):
         way to launch this seperately through cli code
         """
         return gns.config.managebac.current_term_id  # UGH
-        # current_term_id = None # if remove the below block, you'll still need to derive this
-        # if self.manually_do_terms:
-        #     for term_item in response.xpath("//select[@id='term']//option"):
-        #         name = term_item.xpath('.//text()').extract()
-        #         if name:
-        #             name = name[0]
-        #         term_id = term_item.xpath('./@value').extract()
-        #         if term_id:
-        #             term_id = term_id[0]
-        #         current = term_item.xpath("./@selected='selected'").extract() == [u'1']
-        #         if current:
-        #             current_term_id = term_id
-        #             if '(current)' in name:
-        #                 # remove (current) and any surrounding whitespace from name if it's there. Ugh. Sorry.
-        #                 name = re.sub('\W?\(current\)\W?', '', name)
-
-        #         if not term_id or not name:
-        #             # handle this error
-        #             pass
-
-        #         exists = self.db.get_rows_in_table('terms', id=term_id)
-        #         if not exists:
-        #             with DBSession() as session:
-        #                 term = self.db.table.Term(
-        #                         id=term_id,
-        #                         name=name,
-        #                         current=current,
-        #                         #TODO: Have to get these from the settings
-        #                         start_date=None,
-        #                         end_date=None
-        #                     )
-        #                 session.add(term)
-        # return current_term_id
 
     def class_reports(self):
         """
@@ -195,68 +163,6 @@ class ClassReports(ClassLevelManageBac):
                 )
             yield request
 
-# TODO: Delete this, not sure why it's there
-# class ClassPeriods(ManageBacLogin):
-#     name = "ClassPeriods"
-#     path = '/classes/{}/edit'
-#     data = {}
-
-#     def class_periods(self):
-#         request = scrapy.Request(
-#             url=self.path_to_url(), 
-#             callback=self.parse_items,
-#             errback=self.error_parsing,
-#             dont_filter=True
-#             )
-#         self.next()
-#         return request
-
-#     def extract_day(self, selection):
-#         class_attributes = selection.xpath("./@class").extract()
-#         if not class_attributes:
-#             from IPython import embed; embed(); exit();
-#         else:
-#             class_attributes = class_attributes[0]
-#         for attr in class_attributes.split(' '):
-#             match = re.match('.*day-(\d)+$', attr)
-#             if match:
-#                 return match.group(1)
-#         return None
-
-#     def parse_items(self, response):
-#         self.warning("Parsing class edit page: {}".format(response.url))
-
-#         # Select every row with an id, who appears as a child of fileset id='attendance-section'
-#         drop_downs = response.xpath("//select[contains(@class, 'period-dropdown-for-day-')]")
-
-#         # Make a dict with keys with the days that have period info we want to store
-#         days = defaultdict(list)
-#         for dropdown in drop_downs:
-
-#             # We can access boolean attributes with the [@selected='selected'] idiom
-#             checked_items = dropdown.xpath("./option[@selected='selected']")
-#             for checked_item in checked_items:
-#                 values = checked_item.xpath('./@value').extract()
-#                 for value in values:
-#                     if value:
-#                         class_attributes = " ".join(dropdown.xpath('./@class').extract())
-#                         dropdown_for_day_x = int(re.search('(\d+)$', class_attributes).group(1))
-
-#                         if value.isdigit():
-#                             value = int(value)
-#                         days[dropdown_for_day_x].append(value)
-
-#         item = ClassPeriodItem()
-#         item['periods'] = days
-#         item['course'] = self.current_course_id
-#         yield item
-
-#         if self.current_course_id:
-#             yield self.class_periods()
-
-#     def done(self, response):
-#         pass
-
 class GradeBookDump(ClassReports):
     name = 'GradeBookDump'
     path = '/classes/{}/myp-gradebook/tasks/export_to_excel.xml?term=27814'
@@ -270,18 +176,3 @@ class GradeBookDump(ClassReports):
             item = GradeBookDataDumpItem()
             item.file_urls = self.path.format(self.current_course_id)
             yield request
-
-# TODO: Delete me if not needed 
-# class PYPClassReportTemplate(ClassReports):
-#     def _initial_query(self):
-#         with DBSession() as session:
-#             statement = session.query(self.db.Course.id).\
-#                 select_from(Course).\
-#                 filter(Course.name.like('%{} Grade%'.format(self.program.upper())))
-#             return [s.id for s in statemdent.all()]
-
-
-
-
-
-

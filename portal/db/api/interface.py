@@ -6,246 +6,154 @@ The file lets me sort out the model for myself
 Excuse the mess, it works well enough but isn't exactly clear what's happening
 In particular errors aren't handled (FIXME)
 """
-from portal.db.api.model import Container
-import json
-import os.path
-import re, sys
-from functools import partial
-import requests
+from portal.db.AsyncDownloader import AsyncDownloaderHelper, DefaultDownloader, DiscoveryDownloader, PagingDownloader
 import gns
 import click
-import asyncio, aiohttp, aiofiles
 
-class Mock:
-    def __init__(self, args, kwargs):
-        self.args = args
-        self.kwargs = kwargs
-        self.ok = True
+class Outputter:
+    def will_download(self, url):
+        click.echo("Q: {}".format(click.style(url, fg='yellow')))
 
-    def json(self):
-        return {
-            'args': self.args,
-            'kwargs': self.kwargs
-        }
+    def did_download(self, url):
+        click.echo("S: {}".format(click.style(url, fg='green')))
 
-class APIDownloader(object):
+    def did_write(self, path):
+        click.echo("P: {}".format(click.style(path, fg='magenta')))
+
+class MyDefaultDownloader(Outputter, DefaultDownloader):
+    pass
+
+class PathURLHelper():
+    mb_api_base = gns.config.managebac.api_url
+    oa_api_base = gns.config.openapply.api_url
+    jsons_base = gns.config.paths.jsons
+
+    @classmethod
+    def build_json_entrypoint_path(cls, filename):
+        return "{base}/{filename}.json".format(base=cls.jsons_base, filename=filename)
+
+    @classmethod
+    def build_entrypoint_url(cls, section):
+        return "{base}/{section}".format(base=cls.mb_api_base, section=section)
+
+    @classmethod
+    def build_members_url(cls, section, id_):
+        return "{base}/{section}/{id_}/members".format(base=cls.mb_api_base, section=section, id_=id_)
+
+    @classmethod
+    def build_oa_entrypoint_url(cls, section):
+        return "{base}/{section}".format(base=cls.oa_api_base, section=section)
+
+class MBSectionDiscovery(Outputter, DiscoveryDownloader):
+    klass = MyDefaultDownloader
+
+    def __init__(self, section, calledby, *args, **kwargs):
+        self.section = section
+        self.calledby = calledby
+        super().__init__(*args, **kwargs)
+
+    def discover_urls(self, resp_json):
+        ret = []
+        section = resp_json.get(self.section)
+        for i, group in enumerate(section):
+            group_id = group.get('id')
+            ret.append( PathURLHelper.build_members_url(self.calledby, group_id) )
+        return ret
+
+    def discover_path(self, resp, url):
+        tailend = url.split('/')[-2:]
+        tailend.insert(0, self.section)  # differentiate between classes and ibgroups this way
+        return PathURLHelper.build_json_entrypoint_path("-".join(tailend))
+
+class OpenApplyPaging(Outputter, PagingDownloader):
+
+    def will_download(self, url):
+        click.echo("Q: {} (since_id={})".format(click.style(url, fg='yellow'), self.params['since_id']))
+
+    def did_download(self, url):
+        click.echo("S: {}".format(click.style(url, fg='green'), self.params['since_id']))
+
+    def initial_json_value(self):
+        return {'students':[], 'parents':[]}
+
+    def update_json(self, response_json):
+        students = response_json.get('students')
+        links = response_json.get('links')
+        if students:
+            self._json['students'].extend(students)
+        if links:
+            parents = links.get('parents')
+            self._json['parents'].extend(parents)
+
+    def needs_next_page(self, response_json):
+        """ Determine whether or not """
+        return bool(response_json.get('students'))
+
+    def update_params_for_page(self, response_json):
+        """ Allows you to send new parameters in url to get the next page """
+        self.params['since_id'] = response_json['students'][-1].get('id')
+
+class AsyncAPIDownloader(AsyncDownloaderHelper):
     """
-    Responsible for initial downloads from API
-    At the moment is syncronous
-    """ 
+    Downloads all the user, classes, ib_groups information provided by ManageBac/OpenApply APIs
+    """
 
-    def __init__(self, prefix=None, api_token=None, lazy=True, verbose=False, mock=False):
+    def __init__(self, *args, **kwargs):
         """
-        Sent in optional params can override settings.ini, useful for debugging
+        Sets up the downloaders, using the class structure
         """
-        self.verbose = verbose
-        self.mock = mock
+        mb_api_token = gns.config.managebac.api_token
+        oa_api_token = gns.config.openapply.api_token
 
-        self.prefix = prefix or gns.config.managebac.prefix
+        super().__init__(*args, **kwargs)
 
-        self.url = 'https://{prefix}.managebac.com/api/{{uri}}'.format(prefix=self.prefix)
-        self.api_token = api_token or gns.config.managebac.api_token
+        urls_to_traverse = [
+            PathURLHelper.build_entrypoint_url('users'),
+            PathURLHelper.build_entrypoint_url('ib_groups'),
+            PathURLHelper.build_entrypoint_url('classes'),
+            PathURLHelper.build_oa_entrypoint_url('students'),
+        ]
+        gns.tutorial(self.__doc__, edit=(urls_to_traverse, '.pretty'), banner=True)
 
-        # derive the mapping needed for the URLs
-        self.section_urls = {}
-        for section in gns.config.managebac.sections.split(','):
-            try:
-                value = getattr(gns.config.managebac, '{}_section_url'.format(section))
-                if value:
-                    self.section_urls[section] = value
-            except AttributeError:
-                pass
-        self.verbose and self.default_logger(self.section_urls)
-        self.container = Container()
+        # These appear in order of how long it takes to download, each
+        self.add_downloader( 
+            OpenApplyPaging, 
+            urls_to_traverse[3],
+            params=dict(since_id=0, count=200, auth_token=oa_api_token), 
+            path=PathURLHelper.build_json_entrypoint_path("open_apply_users")
+        )
 
-        if not lazy:
-            # Immediately do our thang.
-            self.download(overwrite=True)
-            click.echo()
+        self.add_downloader( 
+            MBSectionDiscovery, 
+            'classes',
+            'groups',
+            urls_to_traverse[2], 
+            params=dict(auth_token=mb_api_token), 
+            path=PathURLHelper.build_json_entrypoint_path('classes')
+        )
 
-    def default_logger(self, *args, **kwargs):
-        click.echo(message=" ".join(args), **kwargs)
+        self.add_downloader( 
+            MBSectionDiscovery, 
+            'ib_groups',
+            'groups',
+            urls_to_traverse[1], 
+            params=dict(auth_token=mb_api_token), 
+            path=PathURLHelper.build_json_entrypoint_path('ib_groups')
+        )
 
-    def download_get(self, *args, **kwargs):
-        if self.mock == True:
-            return Mock(args, kwargs)
-        else:
-            self.default_logger('Get: ', click.style(args[0], fg="yellow"), ': ', click.style(str(list(kwargs.items())), fg="yellow"), nl=True)
-            resp = requests.get(*args, **kwargs)
-            self.default_logger('Rev: ', click.style(args[0], fg="green"), ': ', click.style(str(list(kwargs.items())), fg="green"), nl=True)
-            return resp
+        self.add_downloader( 
+            MyDefaultDownloader, 
+            urls_to_traverse[0], 
+            params=dict(auth_token=mb_api_token),
+            path=PathURLHelper.build_json_entrypoint_path('users')
+        )
 
-    def build_json_path(self, *args):
-        """
-        Pass it a variable number of parameters to build the path to json
-        """
-        gns.tmp = "".join(args)
-        return gns("{config.paths.jsons}/{tmp}")
 
-    def write_to_disk(self, obj, path):
-        self.verbose and self.default_logger('Writing to disk @ {}'.format(path))
-        if self.mock:
-            self.default_logger(click.style("obj: {}, path: {}".format(obj, path), fg='yellow'))
-        else:
-            with open(path, 'w') as _f:
-                json.dump(obj, _f, indent=4)
-
-    def managebac_users_download(self):
-        api_token = gns.config.managebac.api_token
-        url = gns.config.managebac.api_url + '/users'
-        r = self.download_get(url, params=dict(
-                auth_token=api_token,
-            ))
-        if not r.ok:
-            print("Failed")
-        else:
-            json_obj = r.json()
-            path = self.build_json_path('users', '.json')
-            self.write_to_disk(json_obj, path)
-
-    async def open_apply_async_download(self, overwrite=False):
-        """
-        Open apply's API uses step-by-step downloads, 
-        so we have to use since_id to get the latest
-        """
-        api_token = gns.config.openapply.api_token
-        url = "{}/{{uri}}".format(gns.config.openapply.api_url)
-        url = url.format(uri='students')
-
-        since_id = 0
-        compiled_json_obj = {'students':[], 'parents':[]}
-
-        while since_id >= 0:
-
-            r = self.download_get(url, params=dict(
-                auth_token=api_token,
-                count=500,
-                since_id=since_id
-                ))
-
-            if not r.ok:
-                self.verbose and self.default_logger('Download request did not return "OK"')
-                since_id = -1
-            else:
-                # Wait for Python 3.6 to do this:
-                # yield  # flow back to the event loop controller
-                json_info = r.json()
-                # make since_id the id for the last id passed
-                these_students = json_info.get('students')
-                these_links = json_info.get('linked')
-                if not these_students:
-                    since_id = -1
-                else:
-                    since_id = these_students[-1].get('id')
-                    if these_students:
-                        compiled_json_obj['students'].extend(these_students)
-                    if these_links:
-                        compiled_json_obj['parents'].extend(these_links.get('parents'))
-
-        path = self.build_json_path('open_apply_users', '.json')
-        self.write_to_disk(compiled_json_obj, path)
-
-    async def async_fetch_write(self, session, url, path, section=None):
-
-        self.default_logger('Get:', click.style(url, fg='yellow'))
-
-        async with session.request('get', url, params=dict(auth_token=self.api_token)) as response:
-
-            self.default_logger('Rev:', click.style(url, fg="green"), nl=True)
-
-            t = await response.text()
-            async with aiofiles.open(path, 'w') as f:
-                await f.write(t)
-                json_info = json.loads(t)
-                if section and section in json_info:
-                    for item in json_info[section]:
-                        self.container.add(item, gns.section)
-
-    async def async_download_url_paths(self, url_dict, concurrent_tasks=[]):
-        async with aiohttp.ClientSession() as session:
-            tasks = []
-
-            for url in url_dict:
-                path, section = url_dict[url]
-                tasks.append( asyncio.ensure_future( self.async_fetch_write(session, url, path, section) ) )
-
-            tasks.extend(concurrent_tasks)
-
-            await asyncio.gather(*tasks)
-
-    def download(self, overwrite=False):
-        """
-        Downloads known paths from api and places it onto directories
-        """
-        if self.mock:
-            overwrite = False  # Force false
-        if overwrite:
-            self.verbose and self.default_logger('Overwriting')
-            if os.path.isdir(self.build_json_path()):
-                import shutil
-                self.verbose and self.default_logger("Removing everything now")
-                shutil.rmtree(self.build_json_path())
-            else:
-                pass
-
-        if not os.path.isdir(self.build_json_path()):
-            self.verbose and self.default_logger('Making the json directory')
-            os.mkdir(self.build_json_path())
-
-        # 
-        # This block gets the main json for each section
-        #
-        loop = asyncio.get_event_loop()
-        urls = {}
-        for gns.section in gns.config.managebac.sections.split(','):
-            self.verbose and self.default_logger(gns('On section {section}'))
-            file_path = self.build_json_path(gns.section, '.json')
-            fileexists = os.path.isfile(file_path)
-
-            if not fileexists:
-                url = self.url.format(uri=gns.section)
-                self.verbose and self.default_logger('Downloading {}'.format(url))
-
-                urls[url] = (file_path, gns.section)
-
-        loop.run_until_complete( asyncio.ensure_future(self.async_download_url_paths(urls)) )
-
-        # 
-        # This block gets the membership files for each section
-        #   skips users, does groups and classes
-        # 
-        urls = {}
-        for gns.section in gns.config.managebac.sections.split(','):
-            
-            section_url = self.section_urls.get(gns.section)
-            if not section_url:
-                self.verbose and self.default_logger(gns('Skipping section {section}'))  # no users
-                continue
-
-            container_area = getattr(self.container, gns.section)
-            self.verbose and self.default_logger(gns('On section {section}'))
-
-            for item in container_area:
-                if not item:
-                    self.verbose and self.default_logger('Skipping because item is None')
-                    continue
-                this_url = section_url.format(id=item.id)
-                this_filename = this_url.replace('/', '-')
-                file_path = self.build_json_path(this_filename, '.json')
-                fileexists = os.path.isfile(file_path)
-                if self.mock or not fileexists:
-                    self.verbose and self.default_logger('Downloading {}'.format(this_filename))
-                    url = self.url.format(uri=this_url)
-                    urls[url] = (file_path, None)
-
-        also_do = [loop.create_task( self.open_apply_async_download() )]
-        loop.run_until_complete( asyncio.ensure_future(self.async_download_url_paths(urls, concurrent_tasks=also_do)))
 
 if __name__ == "__main__":
 
     go = APIDownloader()
-
-    go.download(mock=True)
+    go.download()
 
 
 

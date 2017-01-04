@@ -3,13 +3,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from contextlib import contextmanager
 from sqlalchemy.sql.expression import text
+import gns
 
-# ns = NS2()
-# ns.db_username = config['MOODLE'].get('db_username')
-# ns.db_prefix = config['MOODLE'].get('db_prefix')
-# ns.db_password = config['MOODLE'].get('db_password')
-# ns.db_host = config['MOODLE'].get('db_host')
-# ns.db_name = config['MOODLE'].get('db_name')
+database_url = gns.config.database.sqlalchemy_url
 
 @contextmanager
 def DBSession():
@@ -23,22 +19,20 @@ def DBSession():
     finally:
         session.close()
 
+engine =  create_engine(database_url, max_overflow=0, pool_size=100, echo=False)
+session_maker = sessionmaker(
+    bind=engine,
+    expire_on_commit=False
+    )
+
 from portal.db.DBInterface import Database
 from portal.db.DBModel import Student
 
 metadata = Student.metadata
 
-import gns
-database_url = gns.config.database.sqlalchemy_url
 
-engine =  create_engine(database_url, max_overflow=0, pool_size=100, echo=False)
 
 execute = engine.execute
-
-session_maker = sessionmaker(
-    bind=engine,
-    expire_on_commit=False
-    )
 
 def get_table_list_from_db():
     """
@@ -74,5 +68,4 @@ def drop_all_tables_and_sequences():
 metadata.create_all(engine)  # creates the database tables and things for us
 # TODO: Move this to first_launch
 
-__all__ = [DBSession, Database]
-
+__all__ = [DBSession, Database, session_maker]

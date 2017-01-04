@@ -5,7 +5,7 @@ Copied and pasted from something else I wrote, so a lot of these defined methods
 TODO: Delete those unused methods
 """
 
-from portal.db import DBSession
+from portal.db import DBSession, session_maker
 from portal.db import DBModel    # yes, import the module itself, used for getattr statements
 from portal.db.DBModel import *  # and, yes, import all the terms we need to refer to the tables as classes
 from sqlalchemy import and_, not_, or_
@@ -94,6 +94,10 @@ class Database:
                 setattr(instance, key, kwargs[key])
 
             session.add(instance)
+
+    @property
+    def session(self):
+        return session_maker()
 
     def get_rows_in_table(self, table, **kwargs):
         """

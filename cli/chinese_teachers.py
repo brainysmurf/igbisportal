@@ -19,7 +19,6 @@ if __name__ == "__main__":
 		if grade == None:
 			grade = click.prompt("Grade")
 			with DBSession() as session:
-
 				statement = session.query(Students).filter_by(grade=grade, archived=False).order_by(Students.nickname_last_studentid)
 				students = statement.all()
 

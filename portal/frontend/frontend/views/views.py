@@ -18,6 +18,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from chameleon import PageTemplate
 
+from sqlalchemy import and_
+
 from portal.db import Database, DBSession
 db = Database()
 
@@ -32,6 +34,7 @@ from sqlalchemy import func
 from collections import namedtuple, OrderedDict
 
 import gns, uuid, os
+
 
 class ReportIncomplete(Exception):
     def __init__(self, msg):
@@ -563,10 +566,22 @@ def update_report_internal(request):
     """
     Generates a unique identification, which it returns
     """
-    print(request.url)
+    mb_user = request.session.get('mb_user', None)
+    if not mb_user:
+        return HTTPForbidden()
+    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+        # let them in
+        pass
+    else:
+        return HTTPForbidden()
+
     student_id = request.params.get('student_id')
     if not student_id:
-        return dict(message="Boo")
+        return dict(message="No such student")
+    if student_id == "all":
+        if mb_user.type != 'Account Admins':
+            return dict(message="action to download all not allowed")
+
     uniq_id = str(uuid.uuid4())
     # Let's add an entry to the callback and database, return the callback_id so the browser can poll
     with DBSession() as session:
@@ -579,7 +594,10 @@ def update_report_internal(request):
     # just a background process is fine, communication happens via the database
     # lp for "list" and "path"
     # Two portals, one is the path?
-    os.spawnlp(os.P_NOWAIT, 'portal', 'portal', 'pyp_reports', 'scrape', 'reports', '--this_student', student_id, '--callback_id', uniq_id)
+    if student_id == 'all':
+        os.spawnlp(os.P_NOWAIT, 'portal', 'portal', 'pyp_reports', 'scrape', 'reports', '--callback_id', uniq_id)
+    else:
+        os.spawnlp(os.P_NOWAIT, 'portal', 'portal', 'pyp_reports', 'scrape', 'reports', '--this_student', student_id, '--callback_id', uniq_id)    
 
     return dict(uniq_id=uniq_id)
 
@@ -600,6 +618,65 @@ def update_report_poll(request):
         except MultipleResultsFound:
             return dict(message="More than one with that id: {}".format(uniq_id), done=False, error=True)
         return dict(message="", done=record.done, error=False)
+
+def get_from_matchdict(key, matchdict, default=None):
+    this = matchdict.get(key, default)
+    if this and len(this) == 1:
+        return this[0]
+    return this
+
+@view_config(route_name="student_enrollments_by_course_id", renderer='json')
+def student_enrollments_by_course_id(request):
+    mb_user = request.session.get('mb_user', None)
+    if not mb_user:
+        return HTTPForbidden()
+    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+        # let them in
+        pass
+    else:
+        return HTTPForbidden()
+
+    course_id = int(get_from_matchdict('id', request.matchdict))
+
+    with DBSession() as session:
+        records = session.query(
+            db.table.Student.id
+        ).join(
+            db.table.Enrollment, and_(
+                db.table.Enrollment.c.course_id == course_id,
+                db.table.Enrollment.c.student_id == db.table.Student.id
+            )
+        )
+
+        return dict(students=records.all())
+
+@view_config(route_name="lastupdated", renderer='json')
+def lastupdated(request):
+    mb_user = request.session.get('mb_user', None)
+    if not mb_user:
+        return HTTPForbidden()
+    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+        # let them in
+        pass
+    else:
+        return HTTPForbidden()
+
+    with DBSession() as session:
+        statement = session.query(
+            db.table.Student.id, db.table.Student.first_nickname_last, db.table.Student.grade, db.table.PrimaryReportLastUpdated.timestamp
+        ).select_from(
+            db.table.PrimaryReportLastUpdated
+        ).join(
+            db.table.Student, db.table.Student.id == db.table.PrimaryReportLastUpdated.student_id
+        )
+
+        data = []
+        for record in statement.all():
+            id_, n_, g_, timestamp = record
+
+            data.append( dict(name=n_, id=id_, grade=g_, date=timestamp.isoformat(), human=timestamp.strftime(gns.config.reports.last_updated_format)) )  # 
+
+        return dict(data=data)
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

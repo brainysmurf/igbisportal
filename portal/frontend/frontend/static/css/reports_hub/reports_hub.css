@@ -1,37 +1,64 @@
 body {
-	font-family: "Open Sans";
-	font-size: 14pt;
+	font-family: "Lora";
+	font-size: 12pt;
 }
 
 input {
-	font-family: "Open Sans";
-	font-size: 14pt;
+	font-family: "Lora";
+	font-size: 12pt;
 	padding: 5px;
 	margin: 0;
 }
 
 .area {
 	width: 100%;
+	margin-bottom: 50px;
 }
 
-#userEnter {
-	width: 80%;
-	font-size: 2em;
+.entry {
+	width: 100%;
+	font-size: 12pt;
 	margin: 0;
+	margin-bottom: 5px;
 	border-radius: 5px;
 }
 
-#userSubmit {
-	float:right;
-	font-size: 1em;
-	margin: 0;
-	height: 65px;
-	width: 18%;
-	background: #eee;
-	border-radius: 5px;
+.updateLink {
+	text-decoration: none;
+	color: #8f0303;	
 }
 
-.ui-font {
-	font-family: "Open Sans";
-	padding-right: 15px;
+.updateLink:visited {
+	color: #8f0303;
+}
+
+.updateLink:visited {
+	color: #8f0303;
+}
+
+.header {
+	font-weight: bold;
+	margin-bottom: 10px;
+	font-size: 18pt;
+}
+
+.clickableButton {
+	background-color:#8f0303;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	border: none;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	min-width:200px;
+	font-size:14px;
+	padding:13px 13px;
+	text-decoration:none;
+}
+
+.ui-font, .ui-menu-item {
+	font-family: "Lora";
+	font-size: 10pt;
 }

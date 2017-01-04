@@ -1,17 +1,57 @@
 <metal:main use-macro="load: main2.pt">
 
 	<div metal:fill-slot="additional-css">
-		<link rel="stylesheet" type="text/css" href="${static_url}css/reports_hub/reports_hub.css" />
-		<script type="text/javascript" src="${static_url}js/reports_hub/init.js" defer></script>
+
 	</div>
 
 	<div metal:fill-slot="content">
+
+		<div style="display:none;" id="progress_dialog" title="Downloading…">
+		  <center>
+		  <p><i class="fa fa-spinner fa-spin fa-5x"></i></p>
+		  </center>
+		  <p>Information from ManageBac is currently being downloaded en mass and updated in the background.</p>
+		  <p>This operation is very time-intensive and can take about 20 minutes to complete.</p>
+		  <p>You may close this window safely.</p>
+		</div>
+
+
 		<div id="api_token" style="display:none;">${api_token}</div>
-		<p>(NOTE: The contents of these reports are updated hourly, on the 00, and takes a few minutes each time. Also note that this is a screen version of the final product, so some minor details may differ. In particular, attendance, may not be exactly correct.)
-			<div class="ui-font">Enter any part of the name:</div>
+		<p class="area">Use this section to access PYP reports for students. Please note that only logged in users who are teachers/administrators in Managebac are able to access this area. 
+			<div class="header">Individual Lookup:</div>
 			<div class="area">
-				<input id="userEnter" type="text" name="userEnter" data-autocomplete-source="${auto_complete_source}" /><button id="userSubmit">Check out report</button><input type="hidden" id="studentID" />
+				<input id="individual" class="entry" type="text" name="userEnter" data-autocomplete-source="${individuals_autocomplete_source}" />
+				<button id="individualSubmit" class="clickableButton">View report</button>
+				<input type="hidden" id="studentID" />
 			</div>
+
+			<div class="header">Homeroom Lookup:</div>
+			<div class="area">
+				<input id="pyp_classroom" class="entry" type="text" name="individualEnter" data-autocomplete-source="${pyp_homerooms_autocomplete_source}" />
+				<button id="courseView" class="clickableButton">View reports</button>
+				<button id="courseDownload" class="clickableButton">Download reports</button>
+
+				<input type="hidden" id="courseID" />
+
+			</div>
+
+			<div tal:condition="update_section">
+			<div class="header">Browse:</div>
+				<div class="area">
+					<table id="lastUpdatedTable" class="display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			                <th>Name</th>
+			                <th>Grade</th>
+			                <th>Last Updated</th>
+			            </tr>
+			        </thead>
+        			</table>
+					<button id="updateAll" class="clickableButton">Update All</button>
+					<button id="downloadAll" class="clickableButton">Download All</button>
+				</div>
+			</div>
+
 		</p>
 
 	</div>

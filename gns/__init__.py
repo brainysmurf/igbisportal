@@ -8,6 +8,10 @@ Reads in settings.ini and provides logging as well
 import contextlib, os, logging
 import configparser
 import datetime
+import click
+import inspect
+import functools
+import pprint
 
 class GNS(object):
     def __init__(self, *args, **kwargs):
@@ -31,6 +35,8 @@ class GNS(object):
         self.DOT = '.'
         self.ASTER = '*'
 
+        self._tutorial_id = 0
+
         # Now, create namespaces associated with setting.ini and config
 
         self.set_namespace('config')
@@ -44,7 +50,7 @@ class GNS(object):
         if not settings.sections():
             # If no settings file or a file without settings, we should exit early
             print("No sections named, is there any legit file at {}?".format(self.config.paths.settings_ini))
-            exit()
+            os._exit()
 
         for SECTION in [s for s in settings.sections()]:
             section = SECTION.lower()
@@ -71,6 +77,200 @@ class GNS(object):
             stdout_handler = logging.StreamHandler(sys.stdout)
             stdout_handler.setLevel(logging.INFO)
             root.addHandler(stdout_handler)
+
+        # Look at settings to see what to do in terms of the step debugger
+        self.set_debug(self.config.defaults.debug or False)
+
+        env_var = os.environ.get('GNS_TUTORIAL_STOPS')
+        if env_var:
+            try:
+                self._tutorial_stops = sorted([int(v) for v in env_var.split(' ')])
+            except ValueError:
+                click.echo("BAD ENV VAR GNS_TUTORIAL_STOPS passed MUST BE INTEGER")
+                exit()
+        else:
+            self._tutorial_stops = []
+        env_var = os.environ.get("GNS_TUTORIAL_ON")
+        if env_var and env_var == "1":
+            self.set_debug(True)
+
+    def rawsql(self, statement, dialect=None, reindent=True):
+        """Generate an SQL expression string with bound parameters rendered inline
+        for the given SQLAlchemy statement. The function can also receive a
+        `sqlalchemy.orm.Query` object instead of statement.
+        can 
+
+        WARNING: Should only be used for debugging. Inlining parameters is not
+                 safe when handling user created data.
+
+        TODO: Colors?
+        """
+        import sqlparse
+        import sqlalchemy.orm
+        if isinstance(statement, sqlalchemy.orm.Query):
+            if dialect is None:
+                dialect = statement.session.get_bind().dialect
+            statement = statement.with_labels().statement
+        compiled = statement.compile(dialect=dialect,
+                                     compile_kwargs={'literal_binds': True})
+        return sqlparse.format(str(compiled), reindent=reindent)
+
+    def set_debug(self, value):
+        self._debug = value
+
+    def tut_defaultAcceptable(self):
+        return 'codx'
+
+    def tut_defaultMessage(self):
+        highlight = functools.partial(click.style, fg='green')
+        return highlight('C') + 'ontinue execution, turn ' + highlight('O') + 'ff tutorial, ' + highlight('D') + 'ebug here, or e' + highlight('x') + 'it completely?: '
+
+    def tut_defaultHandler(self, answer):
+        # Doens't do anything special
+        return answer
+
+    def tut_editAcceptable(self):
+        return 'vcodx'
+
+    def tut_editMessage(self):
+        highlight = functools.partial(click.style, fg='green')
+        return highlight('V') + 'iew text, ' + highlight('C') + 'ontinue execution, turn ' + highlight('O') + 'ff tutorial, ' + highlight('D') + 'ebug here, or e' + highlight('x') + 'it completely?: '
+
+    def tut_editHandler(self, answer, edit):
+        # Doens't do anything special
+        if answer == 'v':
+            extension = '.txt'
+            if hasattr(edit, '__len__') and len(edit) == 2:
+                edit, extension = edit
+            if extension == '.pretty':
+                # convert to pprint for us, ext is text
+                edit = pprint.pformat(edit)
+                extension = '.py'
+            if extension == '.sql':
+                edit = self.rawsql(edit)
+
+            if edit.startswith('filename:'):
+                _, edit = edit.split(':')
+                click.edit(filename=edit, editor='/usr/bin/nano', require_save=False)
+            click.edit(text=edit, editor='/usr/bin/nano', require_save=False, extension=extension)
+            return None
+        return answer
+
+    @property
+    def tutorial_on(self):
+        return self._debug
+
+    def tutorial(self, *args, bool=False, edit=None, pretty=[], stop=False, sql=None, banner=False, onlyif=None, **kwargs):
+        """
+        Put this in your code for two purposes:
+        (1) To document it
+        (2) To be able to step through just by changing a value
+        """
+        # If environment variable is defined, we act on that
+        if not self.tutorial_on:
+            return
+
+        self._tutorial_id += 1
+
+        if onlyif is False:
+            return
+
+        frame = inspect.currentframe().f_back
+
+        filename = frame.f_code.co_filename.replace(self.config.paths.home, '~')
+        class_name = frame.f_locals['self'].__class__.__name__ + '.' if frame.f_locals.get('self', False) else ""
+        where = click.style(' ' + class_name + frame.f_code.co_name, fg="green")
+        fileinfo = click.style(' ({0} L#{1.f_lineno})'.format(filename, frame), fg="yellow")
+        prefix = click.style(' ' + str(self._tutorial_id) + ' ', bg="green", fg="black")
+        indent = " " * (len(str(self._tutorial_id)) + 3)
+        if banner:
+            click.echo()
+            click.echo(prefix + where + fileinfo)
+            stop=True
+        else:
+            click.echo(prefix + " ", nl=False)
+            #stop = True
+        msg = " ".join(args)
+        message = indent + msg + '\n' + pprint.pformat(pretty) if pretty else "" + msg
+
+        if bool:
+            return click.confirm(message)
+
+        if edit is not None:
+            m, h = self.tut_editMessage, self.tut_editHandler
+        else:
+            m, h = self.tut_defaultMessage, self.tut_defaultHandler
+
+        if banner: 
+            click.echo(indent, nl=False)
+        click.echo(message)
+
+        if sql:
+            click.echo(self.rawsql(sql))
+        prompt = m()
+
+        if not stop and not self._tutorial_stops:
+            return True
+
+        if not stop and self._tutorial_id not in self._tutorial_stops:
+            # short circuit
+            return True
+
+        answer = None
+        while answer == None:
+            # handler can return None if we wish to recurse
+            click.echo(prompt, nl=False)
+            answer = click.getchar().lower()
+            click.secho(answer, fg="green")
+            if edit is not None:
+                answer = h(answer, edit)
+            else:
+                answer = h(answer)
+
+            if answer == "d":
+                # stolen from http://stackoverflow.com/questions/16867347/step-by-step-debugging-with-ipython
+                # adapted after depreciation warnings
+     
+                # First import the embed function
+                from IPython.terminal.embed import InteractiveShellEmbed
+                from traitlets.config.loader import Config
+
+                # Configure the prompt so that I know I am in a nested (embedded) shell
+                cfg = Config()
+
+                # Messages displayed when I drop into and exit the shell.
+                # banner_msg = ("\n**Nested Interpreter:\n"
+                # "Hit Ctrl-D to exit interpreter and continue program.\n"
+                # "Note that if you use %kill_embedded, you can fully deactivate\n"
+                # "This embedded instance so it will never turn on again")   
+                banner_msg = ''
+                exit_msg = ''
+
+                ipshell = InteractiveShellEmbed(config=cfg, banner1=banner_msg, exit_msg=exit_msg)
+                frame = inspect.currentframe().f_back
+                msg   = 'Debugging in fail {0.f_code.co_filename} L#{0.f_lineno}'.format(frame)
+                # Go back one level! 
+                # This is needed because the call to ipshell is inside this function!
+                ipshell(msg, stack_depth=2)
+                answer = None
+
+            elif answer == "o":
+                # Let it go after this if desired
+                self.set_debug(False)
+
+            elif answer == "x":
+                os._exit(0)
+
+            elif answer == "i":
+                # inspect what was passed
+                click.echo(pprint.pprint(frame.f_locals))
+                answer = None
+
+            elif answer == "c":
+                pass # no need to process
+
+            else:
+                answer == None
 
     @staticmethod
     def pythonize(value):
@@ -158,4 +358,4 @@ class GNS(object):
         return str(self.dict_not_underscore_not_upper)
 
 import sys
-sys.modules['gns'] = GNS()
+sys.modules['gns'] = GNS()e
