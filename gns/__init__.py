@@ -358,4 +358,4 @@ class GNS(object):
         return str(self.dict_not_underscore_not_upper)
 
 import sys
-sys.modules['gns'] = GNS()e
+sys.modules['gns'] = GNS()
