@@ -108,7 +108,7 @@ class DatabaseSetterUpper(object):
 						# very unlikely to produce collisions
 						id_ = int(hashlib.md5(handle.encode('utf-8')).hexdigest()[:12], 16)
 						gns.tutorial("Generated unique ID to use for id_: {}".format(id_), banner=False)
-						busadmins.append(db.table.BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
+						busadmins.append(self.db.table.BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
 
 		with updater_helper() as u:
 
