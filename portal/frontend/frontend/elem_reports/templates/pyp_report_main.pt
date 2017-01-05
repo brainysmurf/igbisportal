@@ -28,7 +28,7 @@
   <p>Please allow the page to refresh automatically upon completion (optionally, you may close this window safely).</p>
 </div>
 
-<div style="text-align:center;margin-bottom:10px;">
+<div style="display:none;text-align:center;margin-bottom:10px;">
   <em style="padding-top:50px;font-size:12pt;">Last Updated: ${last_updated}</em>
 </div>
 

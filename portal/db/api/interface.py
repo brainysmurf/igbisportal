@@ -37,8 +37,8 @@ class PathURLHelper():
         return "{base}/{section}".format(base=cls.mb_api_base, section=section)
 
     @classmethod
-    def build_members_url(cls, section, id_):
-        return "{base}/{section}/{id_}/members".format(base=cls.mb_api_base, section=section, id_=id_)
+    def build_members_url(cls, path, id_):
+        return "{base}/{path}".format(base=cls.mb_api_base, path=path.format(id=id_))
 
     @classmethod
     def build_oa_entrypoint_url(cls, section):
@@ -47,9 +47,9 @@ class PathURLHelper():
 class MBSectionDiscovery(Outputter, DiscoveryDownloader):
     klass = MyDefaultDownloader
 
-    def __init__(self, section, calledby, *args, **kwargs):
+    def __init__(self, section, api_path, *args, **kwargs):
         self.section = section
-        self.calledby = calledby
+        self.api_path = api_path
         super().__init__(*args, **kwargs)
 
     def discover_urls(self, resp_json):
@@ -57,7 +57,7 @@ class MBSectionDiscovery(Outputter, DiscoveryDownloader):
         section = resp_json.get(self.section)
         for i, group in enumerate(section):
             group_id = group.get('id')
-            ret.append( PathURLHelper.build_members_url(self.calledby, group_id) )
+            ret.append( PathURLHelper.build_members_url(self.api_path, group_id) )
         return ret
 
     def discover_path(self, resp, url):
@@ -125,8 +125,8 @@ class AsyncAPIDownloader(AsyncDownloaderHelper):
 
         self.add_downloader( 
             MBSectionDiscovery, 
-            'classes',
-            'groups',
+            'classes',              # section
+            'classes/{id}/members', # url after api/   
             urls_to_traverse[2], 
             params=dict(auth_token=mb_api_token), 
             path=PathURLHelper.build_json_entrypoint_path('classes')
@@ -134,19 +134,31 @@ class AsyncAPIDownloader(AsyncDownloaderHelper):
 
         self.add_downloader( 
             MBSectionDiscovery, 
-            'ib_groups',
-            'groups',
+            'ib_groups',            # section
+            'groups/{id}/members',  # url after api/
             urls_to_traverse[1], 
             params=dict(auth_token=mb_api_token), 
             path=PathURLHelper.build_json_entrypoint_path('ib_groups')
         )
 
         self.add_downloader( 
-            MyDefaultDownloader, 
+            MyDefaultDownloader,
             urls_to_traverse[0], 
             params=dict(auth_token=mb_api_token),
             path=PathURLHelper.build_json_entrypoint_path('users')
         )
+
+        # In case you want users-users-{id} jsons available
+        # but there doesn't seem to be much useful information in full profile
+
+        # self.add_downloader( 
+        #     MBSectionDiscovery,
+        #     'users',       # section
+        #     'users/{id}',  # url after api/
+        #     urls_to_traverse[0], 
+        #     params=dict(auth_token=mb_api_token),
+        #     path=PathURLHelper.build_json_entrypoint_path('users')
+        # )
 
 
 
