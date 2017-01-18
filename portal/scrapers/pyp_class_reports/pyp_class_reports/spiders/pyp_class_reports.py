@@ -1,8 +1,3 @@
-"""
-"""
-
-
-# FIX ME: Prune the below
 from portal.scrapers.mb_scraper.mb_scraper.spiders.templates import \
     ClassReports
 from portal.scrapers.pyp_class_reports.pyp_class_reports.items import \
@@ -12,7 +7,8 @@ from portal.db import \
     Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-import datetime, re
+import datetime
+import re
 from collections import defaultdict
 from scrapy.exceptions import CloseSpider
 import scrapy
@@ -65,7 +61,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
 
         xpath = "//ul[@class='small_right_tabs']/li/a/@href"
         xpaths = response.xpath(xpath)
-        gns.tutorial("Scraping response with xpath {xpath}".format(xpath=xpath), edit=(response.text,'.html'))
+        gns.tutorial("Scraping response with xpath {xpath}".format(xpath=xpath), edit=(response.text, '.html'))
         gns.tutorial("Found {len(xpath)} url items to follow.", edit=(xpaths.extract(), '.pretty'))
 
         for subject_url in xpaths.extract():
@@ -76,8 +72,8 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                 callback=self.parse_subject,
                 errback=self.error_parsing,
                 dont_filter=True,
-                meta=dict(class_id = self.class_id)
-                )
+                meta=dict(class_id=self.class_id)
+            )
             yield request
 
         # Cycle through each student on the left side
@@ -90,7 +86,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
             if self.student_id:
 
                 # Sanity check:
-                if not '/' in student_url:
+                if '/' not in student_url:
                     print('Expecting "/" in student_url while scraping, found {} instead.'.format(student_url))
                     continue
                 #
@@ -103,7 +99,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                 # if still here, we continue
 
             url = gns.config.managebac.url + student_url
- 
+
             #
 
             # Build the request for scrapy
@@ -113,8 +109,8 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                 callback=self.parse_student,   # callback
                 errback=self.error_parsing,
                 dont_filter=True,
-                meta=dict(class_id = self.class_id)
-                )
+                meta=dict(class_id=self.class_id)
+            )
             # yielding a request will put it in the twisted event loop
             yield request
 
@@ -129,7 +125,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
         current_term_id = self.determine_current_term(response)
 
         student_id = int(response.xpath("//input[@id='pyp_final_grade_user_id']/@value")[0].extract())
-        if self.student_id and self.student_id != student_id: 
+        if self.student_id and self.student_id != student_id:
             print("Nothing for this student: {}".format(student_id))
             return
 
@@ -176,6 +172,9 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
             if self.student_id and self.student_id != student_id:
                 continue
 
+            # if 'Chinese' in subject_name:
+            #     from IPython import embed;embed();exit()
+
             # First we have to set up and get the report section (subject) in the database
             item = PrimaryReportSectionItem()
             comment = response.xpath("//div[@id='user_comments_{}']".format(student_id))
@@ -198,7 +197,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                     overall_comment = overall_comment[0]
                     selection = overall_comment.xpath("./table/tbody/tr/td/select/option[@selected='selected']/text()").extract()
                     selection = selection[0] if selection else ""
-                    item['overall_comment'] = {'G': 'Good', 'O':'Outstanding', 'N':'Needs Improvement'}.get(selection, '')
+                    item['overall_comment'] = {'G': 'Good', 'O': 'Outstanding', 'N': 'Needs Improvement'}.get(selection, '')
                 else:
                     item['overall_comment'] = "N/A"
             else:
@@ -214,7 +213,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                     strand_label += "." if strand_label[-1] != '.' else ""
                     value = strand.xpath("./td[2]/select/option[@selected='selected']/text()").extract()
                     strand_value = value[0] if value else ""
- 
+
                     item = PrimaryReportStrandItem()
                     item['student_id'] = student_id
                     item['course_id'] = response.meta.get('class_id')
@@ -234,7 +233,7 @@ class PYPClassReports(ClassReports):  # Later, re-factor this inheritence?
                 which = 1
                 for outcome in student_outcome.xpath('./table'):
 
-                    # For this, we have to inspect the headers to see 
+                    # For this, we have to inspect the headers to see
 
                     for section_num in range(len(outcome.xpath('./thead'))):
 

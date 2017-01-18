@@ -1,22 +1,24 @@
+import re
+import gns
+import glob
+import os
+from sqlalchemy.orm import joinedload   # , joinedload_all
+from pyramid.request import Request
+
 from portal.db import Database, DBSession
 from pyramid.response import Response, FileResponse
 from pyramid.renderers import render
 from pyramid.view import view_config
-from sqlalchemy.orm import joinedload, joinedload_all
 
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden, HTTPInternalServerError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 db = Database()
-import re
-import gns
-import glob, os
 
 PrimaryReport = db.table.PrimaryReport
 Students = db.table.Student
 Teachers = db.table.Teacher
 Absences = db.table.Absences
 
-from pyramid.request import Request
 
 @view_config(route_name='download_pyp_reports', http_cache=0, renderer='json')
 def download_pyp_reports(request):
@@ -51,12 +53,11 @@ def download_pyp_reports(request):
     for i, student in enumerate(statement.all()):
         gns.tutorial("Stop here with student {}".format(student.first_nickname_last_studentid), banner=True)
         subreq = Request.blank('/students/{id}/pyp_report/download?api_token={api_token}'.format(id=student.id, api_token=gns.config.managebac.api_token))
-        responses.append( request.invoke_subrequest(subreq, use_tweens=True) )
-        if i >= 2: 
+        responses.append(request.invoke_subrequest(subreq, use_tweens=True))
+        if i >= 2:
             break
 
     return dict(message=", ".join([str(r) for r in responses]))
-
 
 
 def get_from_matchdict(key, matchdict, default=None):
@@ -65,6 +66,7 @@ def get_from_matchdict(key, matchdict, default=None):
         return this[0]
     return this
 
+
 @view_config(route_name='student_pyp_report_with_opt', http_cache=0)
 @view_config(route_name='student_pyp_report', http_cache=0)
 def pyp_reports(request):
@@ -72,7 +74,7 @@ def pyp_reports(request):
     Construct the data into a format that the report format needs for output
     """
     student_id = int(get_from_matchdict('id', request.matchdict))
-    
+
     pdf = get_from_matchdict('pdf', request.matchdict)
     check = request.params.get('check')
     if check and check.lower() == 'true':
@@ -84,9 +86,11 @@ def pyp_reports(request):
 
     mb_user = request.session.get('mb_user', None)
     if not mb_user:
-        api_token = request.params.get('api_token')
-        if not api_token or api_token != gns.config.managebac.api_token:
-            return HTTPForbidden()
+        # FIXME: Need to re-do it
+        pass
+        # api_token = request.params.get('api_token')
+        # if not api_token or api_token != gns.config.managebac.api_token:
+        #     return HTTPForbidden()
     elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
         # let them in
         pass
@@ -99,10 +103,10 @@ def pyp_reports(request):
             rep_statement = session.query(PrimaryReport).\
                 options(joinedload('course')).\
                 filter(
-                        PrimaryReport.term_id==term_id, 
-                        PrimaryReport.student_id==student_id, 
-                        # PrimaryReport.homeroom_comment!=''
-                    )
+                    PrimaryReport.term_id == term_id,
+                    PrimaryReport.student_id == student_id,
+                    # PrimaryReport.homeroom_comment!=''
+                )
             stu_statement = session.query(Students).filter_by(id=student_id)
             student = stu_statement.one()
             report = rep_statement.one()
@@ -110,7 +114,7 @@ def pyp_reports(request):
             gns.tutorial("Got Primary report with course information", edit=(rep_statement, '.sql'))
         except NoResultFound:
             if pdf:
-                #raw_input('no report entry for this student: {} with term_id {}'.format(student_id, term_id))
+                # raw_input('no report entry for this student: {} with term_id {}'.format(student_id, term_id))
                 raise HTTPNotFound()
             else:
                 raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
@@ -172,7 +176,7 @@ def pyp_reports(request):
             6: dict(title="How We Express Ourselves", central_idea="Nature can inspire people to express their creativity."),
         },
         4: {
-            # gr4 sem 1 
+            # gr4 sem 1
             1: dict(title="How We Express Ourselves", central_idea="Media influences how we think and the choices we make."),
             2: dict(title="Sharing the Planet", central_idea="Organisms rely on one another to balance ecosystems."),
             3: dict(title="How we Organise Ourselves", central_idea="Societies establish systems for trade and commerce to meet needs and wants."),
@@ -182,7 +186,7 @@ def pyp_reports(request):
             6: dict(title="Who We Are", central_idea="People's beliefs influence their actions."),
         },
         5: {
-            # gr5 sem 1        
+            # gr5 sem 1
             1: dict(title="How we Organise Ourselves", central_idea="All societies have rules and reasons for these rules."),
             2: dict(title="Where We Are in Place and Time", central_idea="Malaysia's cultural diversity has been shaped by its history."),
             3: dict(title="How the World Works", central_idea="Changes to matter can be of a chemical and/or physical nature."),
@@ -194,8 +198,8 @@ def pyp_reports(request):
     }
 
     chinese_teachers = {
-        10792613: [11203970,10836999,10912649,10863230,11544715,11707916,11609996,11707918,11708046,10912651,11707928,11274137,11707932,11707934,11204000,11204641,11204001,11708067,11270692,11707940,11204385,11563304,11204008,11153068,11573550,11707952,10882225,11204017,11707957,10834618,10866874,11080380,10893375,11707840,11190340,10834630,11611847,10834633,10834636,11693517,11707984,11203923,11707859,10834645,10834648,10834649,10834651,11707870,11182305,11203938,11200870,10973671,11707882,11708014,11203950,11203952,11708018,11203954,10882162,11633398,11707900,11538429,11124222,11135103,11737995,11621139,11707870,10882159],  # xiaopiong
-        11256632: [11204609,10836994,11707907,11135108,10836999,11135112,10837001,11203979,10865037,11707924,11621141,11203988,11204377,11173915,10913691,11204637,10856823,11204383,11204640,11707939,11204392,11614634,11364525,10882226,11204660,11190071,10834616,10834617,11464377,10866873,10866876,10834621,10834622,10866877,10856636,11578945,11611841,10893379,10834628,10834625,11611847,10834635,10834640,10834642,10834643,11930324,11707860,11203926,11707990,11426392,11502297,11578839,11707869,11708005,10834661,11203946,11324785,11124210,10863222,11124215,10856824,11203961,10856826,11124219,11204605,11707902],  # nancy
+        10792613: [11203970, 10836999, 10912649, 10863230, 11544715, 11707916, 11609996, 11707918, 11708046, 10912651, 11707928, 11274137, 11707932, 11707934, 11204000, 11204641, 11204001, 11708067, 11270692, 11707940, 11204385, 11563304, 11204008, 11153068, 11573550, 11707952, 10882225, 11204017, 11707957, 10834618, 10866874, 11080380, 10893375, 11707840, 11190340, 10834630, 11611847, 10834633, 10834636, 11693517, 11707984, 11203923, 11707859, 10834645, 10834648, 10834649, 10834651, 11707870, 11182305, 11203938, 11200870, 10973671, 11707882, 11708014, 11203950, 11203952, 11708018, 11203954, 10882162, 11633398, 11707900, 11538429, 11124222, 11135103, 11737995, 11621139, 11707870, 10882159],   # xiaopiong
+        11256632: [11204609, 10836994, 11707907, 11135108, 10836999, 11135112, 10837001, 11203979, 10865037, 11707924, 11621141, 11203988, 11204377, 11173915, 10913691, 11204637, 10856823, 11204383, 11204640, 11707939, 11204392, 11614634, 11364525, 10882226, 11204660, 11190071, 10834616, 10834617, 11464377, 10866873, 10866876, 10834621, 10834622, 10866877, 10856636, 11578945, 11611841, 10893379, 10834628, 10834625, 11611847, 10834635, 10834640, 10834642, 10834643, 11930324, 11707860, 11203926, 11707990, 11426392, 11502297, 11578839, 11707869, 11708005, 10834661, 11203946, 11324785, 11124210, 10863222, 11124215, 10856824, 11203961, 10856826, 11124219, 11204605, 11707902, 10986488],  # nancy
     }
 
     students_chinese_teachers = {}
@@ -229,7 +233,10 @@ def pyp_reports(request):
                     options(joinedload('sections.teachers')).\
                     options(joinedload('sections.strands')).\
                     options(joinedload('teacher')).\
-                    filter(PrimaryReport.term_id==term_id, PrimaryReport.student_id==student_id)
+                    filter(
+                        PrimaryReport.term_id == term_id,
+                        PrimaryReport.student_id == student_id
+                    )
                 att_statement = session.query(Absences).filter_by(term_id=term_id, student_id=student_id)
 
                 attendance = att_statement.one()
@@ -238,28 +245,28 @@ def pyp_reports(request):
                 gns.tutorial("Got K-5 report info with joined information", edit=(rep_statement, '.sql'), banner=True)
             except NoResultFound:
                 if pdf:
-                    #raw_input("No K-5 report entry")
+                    # raw_input("No K-5 report entry")
                     raise HTTPNotFound()
                 else:
                     raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
 
         subject_rank = {
-            'language':0, 
-            'mathematics':1, 
-            'unit of inquiry 1':2, 
-            'unit of inquiry 2':3, 
-            'unit of inquiry 3':4, 
-            'unit of inquiry 4': 4.1, 
-            'unit of inquiry 5': 4.2, 
-            'unit of inquiry 6': 4.3, 
-            'art':5, 
-            'music':6, 
-            'physical education':7, 
-            'bahasa melayu':8, 
-            'chinese':9, 
-            'host nation':10, 
-            'self-management':10000
-            }
+            'language': 0,
+            'mathematics': 1,
+            'unit of inquiry 1': 2,
+            'unit of inquiry 2': 3,
+            'unit of inquiry 3': 4,
+            'unit of inquiry 4': 4.1,
+            'unit of inquiry 5': 4.2,
+            'unit of inquiry 6': 4.3,
+            'art': 5,
+            'music': 6,
+            'physical education': 7,
+            'bahasa melayu': 8,
+            'chinese': 9,
+            'host nation': 10,
+            'self-management': 10000
+        }
         report.sections = sorted([section for section in report.sections if subject_rank.get(section.name.lower(), 10001) < 10000], key=lambda x: subject_rank.get(x.name.lower(), 1000))
 
         # Only output sections that have any data in them
@@ -276,7 +283,7 @@ def pyp_reports(request):
 
         for section in report.sections:
             section.rank = subject_rank.get(section.name.lower())
-        report.sections = [s for s in report.sections if s.rank not in [4.1, 4.2, 4.3]]   # skip  
+        report.sections = [s for s in report.sections if s.rank not in [4.1, 4.2, 4.3]]   # skip
 
         gns.tutorial("Formatting each subject area in this order: {}".format(", ".join([r.name for r in report.sections])), banner=True)
         for section in report.sections:
@@ -308,7 +315,7 @@ def pyp_reports(request):
                 section.name = uoi_table.get(grade_norm)[which_uoi]['title']
 
             # Determine pagination
-            if section.rank in pagination_list:  #TODO What about more than two inquiry units?
+            if section.rank in pagination_list:  # TODO What about more than two inquiry units?
                 section.pagination = True
             else:
                 section.pagination = False
@@ -337,7 +344,6 @@ def pyp_reports(request):
                     if match:
                         outcome.heading = match.group(1).strip()
 
-
             # Evaluates and adds data to items
             old_heading = None
             for outcome in section.learning_outcomes:
@@ -348,7 +354,7 @@ def pyp_reports(request):
                     if section.rank in [0, 1]:
                         # Determine the effort assigned by the teacher for this
                         effort = [s.selection for s in section.strands if s.label_titled.startswith(outcome.heading)]
-                        effort = effort[0] if len(effort) == 1 else (effort[0] if len(set(effort))==1 else "<?>")
+                        effort = effort[0] if len(effort) == 1 else (effort[0] if len(set(effort)) == 1 else "<?>")
                     else:
                         effort = [s.selection for s in section.strands if s.selection]
                         effort = effort[0] if len(set(effort)) == 1 else str(effort)
@@ -356,7 +362,7 @@ def pyp_reports(request):
 
                     if not outcome.effort and internal_check:
                         # Raise a problem here
-                        raise ReportIncomplete('something')
+                        raise ReportIncomplete('something')  # FIXME: There is no report incomplete exception
 
                 old_heading = outcome.heading
 
@@ -364,7 +370,7 @@ def pyp_reports(request):
                     raise ReportIncomplete('something')
             gns.tutorial("Completed formatting of {} section".format(section.name))
 
-        report.sections = [s for s in report.sections if s.rank not in [4.1, 4.2, 4.3]]   # skip  
+        report.sections = [s for s in report.sections if s.rank not in [4.1, 4.2, 4.3]]   # skip
 
     elif 'Early' in report.course.name:
         which_folder = 'early_years'
@@ -382,7 +388,7 @@ def pyp_reports(request):
                 ],
                 1: [
                     {'name': 'Number', 'content': 'Learners will understand that numbers are used for many different purposes in the real world. They will develop an understanding of one-to-one correspondence, be able to count and use number words and numerals to represent quantities.'},
-                    {'name': 'Shape and Space',  'content': 'Learners will develop an understanding that shapes have characteristics that can be described and compared.'},
+                    {'name': 'Shape and Space', 'content': 'Learners will develop an understanding that shapes have characteristics that can be described and compared.'},
                     {'name': 'Pattern', 'content': 'Learners will develop an understanding that patterns and sequences occur in everyday situations. They will be able to identify and extend patterns in various ways.'},
                     {'name': 'Measurement', 'content': 'Learners will develop an understanding of how measurement involves the comparison of objects and  ordering.They will be able to identify and compare attributes of real objects.'},
                     {'name': 'Data', 'content': 'Learners will develop an understanding of how the collection and organization of information helps to make sense of the world. They will sort and label objects by attributes and discuss information represented in graphs including pictographs and tally marks.'}
@@ -390,12 +396,12 @@ def pyp_reports(request):
             },
             2: {
                 0: [
-                    {'name':'Listening & Speaking', 'content': 'Learners will show an understanding of the value of speaking and listening to communicate. They will use language to name their environment, to get to know each other, to initiate and explore relationships, to question and inquire.'},
-                    {'name':'Viewing & Presenting', 'content': 'Learners will show an understanding that the world around them is full of visual language that conveys meaning. They will interpret and respond to visual texts. They will be extending and using visual language in more purposeful ways.'},
-                    {'name':'Reading & Writing', 'content': 'Learners will show an understanding that print represents the real or the imagined world. They will develop the concept of a &ldquo;book&rdquo;, and an awareness of some of its structural elements. They will use visual cues to recall sounds and the words they are &ldquo;reading&rdquo; to construct meaning.'},
+                    {'name': 'Listening & Speaking', 'content': 'Learners will show an understanding of the value of speaking and listening to communicate. They will use language to name their environment, to get to know each other, to initiate and explore relationships, to question and inquire.'},
+                    {'name': 'Viewing & Presenting', 'content': 'Learners will show an understanding that the world around them is full of visual language that conveys meaning. They will interpret and respond to visual texts. They will be extending and using visual language in more purposeful ways.'},
+                    {'name': 'Reading & Writing', 'content': 'Learners will show an understanding that print represents the real or the imagined world. They will develop the concept of a &ldquo;book&rdquo;, and an awareness of some of its structural elements. They will use visual cues to recall sounds and the words they are &ldquo;reading&rdquo; to construct meaning.'},
                 ],
                 1: [
-                    {'name':'Number', 'content': 'Learners will understand that numbers are used for many different purposes in the real world. They will develop an understanding of one-to-one correspondence, be able to count and use number words and numerals to represent quantities.'},
+                    {'name': 'Number', 'content': 'Learners will understand that numbers are used for many different purposes in the real world. They will develop an understanding of one-to-one correspondence, be able to count and use number words and numerals to represent quantities.'},
                     {'name': 'Shape and Space', 'content': 'Learners will understand and use common language to describe paths, regions and boundaries of their immediate environment.'},
                     {'name': 'Pattern', 'content': 'Learners will understand that patterns and sequences occur in everyday situations. They will be able to identify, describe, extend and create patterns in various ways.'},
                     {'name': 'Measurement', 'content': 'Learners will develop an understanding of how measurement involves the comparison of objects and the ordering and sequencing of events. They will be able to identify, compare and describe attributes of real objects as well as describe and sequence familiar events in their daily routine.'},
@@ -412,9 +418,9 @@ def pyp_reports(request):
                     options(joinedload('sections.teachers')).\
                     options(joinedload('teacher')).\
                     filter(
-                        PrimaryReport.term_id==term_id, 
-                        PrimaryReport.student_id==student_id, 
-                        ).one()
+                        PrimaryReport.term_id == term_id,
+                        PrimaryReport.student_id == student_id,
+                    ).one()
                 student = session.query(Students).filter_by(id=student_id).one()
                 attendance = session.query(Absences).filter_by(term_id=term_id, student_id=student_id).one()
             except NoResultFound:
@@ -424,36 +430,36 @@ def pyp_reports(request):
                     raise HTTPFound(location=request.route_url("student_pyp_report_no", id=student_id))
 
         subject_rank = {
-            'self-management':-1, 
-            'language':0, 
-            'mathematics':1, 
-            'unit of inquiry 1':2, 
-            'unit of inquiry 2':3, 
-            'unit of inquiry 3':4, 
-            'unit of inquiry 4': 4.1, 
-            'unit of inquiry 5': 4.2, 
-            'unit of inquiry 6':4.3, 
-            'art':5, 
-            'music':6, 
-            'physical education':7, 
-            'bahasa melayu':8, 
-            'chinese':9, 
-            'host nation':10
-            }
+            'self-management': -1,
+            'language': 0,
+            'mathematics': 1,
+            'unit of inquiry 1': 2,
+            'unit of inquiry 2': 3,
+            'unit of inquiry 3': 4,
+            'unit of inquiry 4': 4.1,
+            'unit of inquiry 5': 4.2,
+            'unit of inquiry 6': 4.3,
+            'art': 5,
+            'music': 6,
+            'physical education': 7,
+            'bahasa melayu': 8,
+            'chinese': 9,
+            'host nation': 10
+        }
 
         report.sections = sorted([section for section in report.sections if subject_rank.get(section.name.lower()) < 10000], key=lambda x: subject_rank.get(x.name.lower(), 1000))
-        #report.sections = report_sections
+        # report.sections = report_sections
         # Filter out the un-needed units of inquiry
-        #report.sections = [s for s in report.sections if s.rank <= 1 or (s.rank >= 4 and s.rank not in [4,4.1])]
+        # report.sections = [s for s in report.sections if s.rank <= 1 or (s.rank >= 4 and s.rank not in [4,4.1])]
 
 
         # Only output sections that have any data in them
         # Comment out during development
-        #report.sections = [section for section in report.sections if section.comment and subject_rank.get(section.name.lower()) not in [2, 3]]
+        # report.sections = [section for section in report.sections if section.comment and subject_rank.get(section.name.lower()) not in [2, 3]]
 
         grade_norm = -1
 
-        pagination_list = [0, 3, 7,10]
+        pagination_list = [0, 3, 7, 10]
 
         for section in report.sections:
 
@@ -543,16 +549,15 @@ def pyp_reports(request):
                         if hasattr(o, 'effort') and not o.effort:
                             teachers = ",".join([t.username_handle for t in s.teachers])
                             message.append('{} did not enter {} effort for {}'.format(teachers, o.heading, s.name))
-                            #raise HTTPNotFound()
+                            # raise HTTPNotFound()
                         if not o.selection:
                             teachers = ",".join([t.username_handle for t in s.teachers])
                             message.append('{} did not enter {} indication for {}'.format(teachers, o.heading, s.name))
-                            #raise HTTPNotFound('##{} did not enter indication for {} in {}##'.format(teachers, s.name, stu))
+                            # raise HTTPNotFound('##{} did not enter indication for {} in {}##'.format(teachers, s.name, stu))
 
                 elif s.overall_comment == '':
                     teachers = ",".join([t.username_handle for t in s.teachers])
                     message.append('{} did not enter effort for single subject {}'.format(teachers, s.name))                        
-
 
         if message:
             raise HTTPNotFound('##\n({}) {}:\n\t{}##'.format(student.grade, student.first_nickname_last_studentid, "\n\t".join(message)))
@@ -571,25 +576,26 @@ def pyp_reports(request):
 
     if pdf:
         result = render(template,
-                    dict(
-                        title=title,
-                        report=report,
-                        student=student,
-                        attendance=attendance,
-                        pdf=True,
-                        download_url="",
-                        link_to_mb="",
-                        last_updated="",
+                        dict(
+                            title=title,
+                            report=report,
+                            student=student,
+                            attendance=attendance,
+                            pdf=True,
+                            download_url="",
+                            link_to_mb="",
+                            last_updated="",
                         ),
-                    request=request)
+                        request=request)
         import pdfkit   # import here because installation on server is hard
 
-        prefix_file_name = '{}/pdf-downloads/{}/{}-Grade{}-{}-'.format(
+        prefix_file_name = '{}/pdf-downloads/{}/{}-Grade{}-{}-[{}]-'.format(
             gns.config.paths.home,
-            which_folder, 
-            '55048', 
-            grade_norm, 
-            student.first_name + '-' + student.last_name, 
+            which_folder,
+            '55048',
+            grade_norm,
+            student.first_name + '-' + student.last_name,
+            student.student_id
         )
 
         full_file = '{}({}).pdf'.format(prefix_file_name, last_updated_date)
@@ -599,12 +605,13 @@ def pyp_reports(request):
             if _file != full_file:
                 os.remove(_file)
 
-        path = '{}/pdf-downloads/{}/{}-Grade{}-{}-({}).pdf'.format(
+        path = '{}/pdf-downloads/{}/{}-Grade{}-{}-[{}]-({}).pdf'.format(
             gns.config.paths.home,
-            which_folder, 
-            '55048', 
-            grade_norm, 
-            student.first_name + '-' + student.last_name, 
+            which_folder,
+            '55048',
+            grade_norm,
+            student.first_name + '-' + student.last_name,
+            student.student_id,
             last_updated_date
         )
 
@@ -614,6 +621,7 @@ def pyp_reports(request):
         except OSError as err:
             return HTTPInternalServerError("Problem with file? {}".format(err))
 
+        pdffile  # not used
         if pdf.lower() == "download":
             content_type = "application/octet-stream"
 
@@ -637,17 +645,18 @@ def pyp_reports(request):
             template_file = PageTemplateFile(abspath)
             gns.tutorial("Loaded the template", edit=(template_file.read(), '.html'), banner=True)
         result = render(template,
-                    dict(
-                        title=title,
-                        report=report,
-                        student=student,
-                        attendance = attendance,
-                        pdf=False,
-                        download_url="/students/{}/pyp_report/download/".format(student.id),
-                        link_to_mb = "https://igbis.managebac.com/classes/{}/pyp-gradebook/tasks/term_grades?student={}&term={}".format(report.course.id, student.id, gns.config.managebac.current_term_id),
-                        last_updated=last_updated_date,
+                        dict(
+                            title=title,
+                            report=report,
+                            student=student,
+                            attendance=attendance,
+                            pdf=False,
+                            download_url="/students/{}/pyp_report/download/".format(student.id),
+                            link_to_mb="https://igbis.managebac.com/classes/{}/pyp-gradebook/tasks/term_grades?student={}&term={}".format(report.course.id, student.id, gns.config.managebac.current_term_id),
+                            last_updated=last_updated_date,
                         ),
-                    request=request)
+                        request=request
+                        )
         response = Response(result)
         return response
 

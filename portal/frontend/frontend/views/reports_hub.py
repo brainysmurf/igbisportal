@@ -12,7 +12,7 @@ import json, gns
 @view_config(route_name='reports_hub', renderer='{}:templates/reports_hub.pt'.format('frontend'), http_cache=0)
 def reports_hub(request):
     mb_user = request.session.get('mb_user', None)
-
+    
     if not mb_user:
         return HTTPForbidden()
     elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':

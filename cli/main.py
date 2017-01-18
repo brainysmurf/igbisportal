@@ -1,10 +1,14 @@
 import click
 import gns
-import os, datetime
-import requests, json
-import re, csv
+import os
+import datetime
+import requests
+import json
+import re
+import csv
 from PIL import Image
 from portal.db import Database, DBSession
+
 
 class Object(object):
     def __init__(self):
@@ -12,6 +16,7 @@ class Object(object):
         pass
 
     # define common methods here
+
 
 @click.group()
 @click.option('--tutorial/--notutorial', default=False, help="Enable step-by-step explanations")
@@ -22,15 +27,18 @@ def main(ctx, tutorial):
     if tutorial:
         gns.set_debug(True)
 
+
 def dl():
     from portal.db.api.interface import AsyncAPIDownloader
     go = AsyncAPIDownloader()
     go.download()
 
+
 def db_setup(fake=False):
     from portal.db.interface import DatabaseSetterUpper
     go = DatabaseSetterUpper()
     go.setup_database(fake)
+
 
 @main.group()
 def sync():
@@ -38,6 +46,7 @@ def sync():
     Commands that launches syncing with MB and OA
     """
     pass
+
 
 @sync.command("destiny")
 @click.option("--dontput", is_flag=True, default=False, help="Turn off the putting to the file, for debugging")
@@ -47,7 +56,7 @@ def destiny(obj, dontput):
     Writes to a location on the server
     Internal use only
     """
-    import requests, gns
+    import gns
     secret = gns.config.api.secret
     # field_districtID={1,omit}
     # field_siteShortName={2,omit}
@@ -66,20 +75,20 @@ def destiny(obj, dontput):
     payload = {
         'secret': secret,
         'columns': [
-                    'student_id',
-                    'destiny_site_information',
-                    'barcode',
-                    'last_name',
-                    'first_name',
-                    'nickname',
-                    'destiny_patron_type',
-                    'homeroom_abbrev_destiny',
-                    'abbrev_grade_destiny',
-                    'year_of_graduation',
-                    'gender_abbrev',
-                    'username',
-                    'email',
-                ],
+            'student_id',
+            'destiny_site_information',
+            'barcode',
+            'last_name',
+            'first_name',
+            'nickname',
+            'destiny_patron_type',
+            'homeroom_abbrev_destiny',
+            'abbrev_grade_destiny',
+            'year_of_graduation',
+            'gender_abbrev',
+            'username',
+            'email',
+        ],
     }
     result = requests.get('http://0.0.0.0:6543/api/students', json=payload)
     if result.ok:
@@ -89,17 +98,17 @@ def destiny(obj, dontput):
             print("BAD")
             return
 
-        path_to_output = gns.config.paths.portal_home + '/output/destinysync.csv'  
-        encoding = 'cp1252'    # 'utf-8' or 'cp-1252'
+        path_to_output = gns.config.paths.portal_home + '/output/destinysync.csv'
+        # encoding = 'cp1252'    # 'utf-8' or 'cp-1252'
         with open(path_to_output, 'w') as _f:
             for line in data:
                 for i in range(len(line)):
                     l = line[i]
                     if i == 0 or i == len(line):
-                        pass # don't write a comma
+                        pass  # don't write a comma
                     else:
                         _f.write(',')
-                    _f.write( str(l) )
+                    _f.write(str(l))
                 _f.write('\r\n')
         import pysftp
 
@@ -183,12 +192,12 @@ def new_students(obj):
             del student['tags']
             del student['status']
             student['welcome_email'] = "Yes"
-            data = {'user':student}
+            data = {'user': student}
             print("POST: {}\npayload:\n{}".format(new_user_url, json.dumps(data, indent=2)))
-            #result = requests.post(new_user_url, params={'auth_token':auth_token}, json=data)
-            #print(result.status_code)
-            #from IPython import embed;embed()
-            #assert result.status_code == 201
+            # result = requests.post(new_user_url, params={'auth_token':auth_token}, json=data)
+            # print(result.status_code)
+            # from IPython import embed;embed()
+            # assert result.status_code == 201
 
 
     #from IPython import embed;embed()
@@ -199,7 +208,7 @@ def new_students(obj):
 @click.pass_obj
 def update_users(obj, download, update):
     from portal.db.api.interface import APIDownloader
-    dload = APIDownloader() 
+    dload = APIDownloader()
 
     if download:
         dload.download_all()
@@ -223,14 +232,14 @@ def update_users(obj, download, update):
         put_url = gns.config.managebac.api_url + '/users/{}'.format(mb_student['id'])
         if update:
             r = requests.put(put_url, params=dict(
-                    auth_token = api_token
-                ), json={
-                    'user': 
-                        { 
-                            'parents_ids': student['parent_ids']
-                        }
+                auth_token=api_token
+            ), json={
+                'user':
+                    {
+                        'parents_ids': student['parent_ids']
                     }
-                )
+            }
+            )
         from IPython import embed;embed()
 
 
@@ -249,7 +258,7 @@ def photos(obj):
     except OSError:
         pass
     rootpath = rootpath + 'student_photos/'
-    paths = {'sec':rootpath+'sec/', 'elem':rootpath+'elem/'}
+    paths = {'sec': rootpath + 'sec/', 'elem': rootpath + 'elem/'}
 
     for pth in ['sec', 'elem']:
         p = paths.get(pth)
@@ -447,6 +456,7 @@ def run_scraper(spider, subpath, **kwargs):
     process.crawl(spider, **kwargs)  # TODO: add kwargs here for options
     process.start()
 
+
 @main.group()
 @click.pass_context
 # @click.option('--student_id', default=None, help="MB student ID of student")
@@ -458,15 +468,15 @@ def pyp_reports(ctx):
     """
     pass
 
+
 @pyp_reports.command('save')
 @click.option('--check', is_flag=True, default=False, help="Launch a check instead")
-@click.option('--students', multiple=True, default=[], help="")
+@click.option('--students', multiple=True, default=[], help="all for everyone")
 @click.option('--grades', multiple=True, default=[], help="")
 @click.option('--classes', multiple=True, default=[], help="")
 @click.pass_obj
 def pyp_reports_save(obj, check, students, grades, classes):
     from sqlalchemy.orm.exc import NoResultFound
-    import pdfkit
     import gns
     import re
     from sqlalchemy import and_
@@ -490,11 +500,9 @@ def pyp_reports_save(obj, check, students, grades, classes):
                 self.filter = None
 
         def go(self, starting_from=None):
-            term_id = 55880
 
             api_token = gns.config.managebac.api_token
-
-            with DBSession() as session:            
+            with DBSession() as session:
                 if self.filter is not None:
 
                     students = session.query(
@@ -506,21 +514,18 @@ def pyp_reports_save(obj, check, students, grades, classes):
                     ).all()
 
                 else:
-
                     students = session.query(
                         Students
                     ).filter(
-                        and_(
-                            Students.grade < 6, 
-                            Students.is_archived==False, 
-                            Students.student_id != None
-                        )
+                        Students.grade < 6,
+                        Students.is_archived == False,  # FIXME: This has never made much sense to me
+                        Students.student_id is not None
                     ).order_by(
                         Students.grade
                     ).all()
 
                     if starting_from:
-                        index = [i for i in range(len(students)) if students[i].student_id==starting_from]
+                        index = [i for i in range(len(students)) if students[i].student_id == starting_from]
                         if index:
                             index = index[0]
                             students = students[index:]
@@ -531,19 +536,20 @@ def pyp_reports_save(obj, check, students, grades, classes):
                     try:
                         report = session.query(PrimaryReport).filter_by(id=student.id)
                     except NoResultFound:
-                        #raw_input('no report!')
+                        # raw_input('no report!')
                         continue
 
+                    report  # not used
                     url = self.base_url.format(student_id=student.id, api_token=api_token)
-                    print(url)
                     r = requests.get(url)
 
                     if r.status_code == 200:
-                        print("All is well with {}".format(student))
-                        #print(r.url)
+                        if not check:
+                            print("All is well with {}".format(student))
+                        # print(r.url)
 
                     if r.status_code != 200:
-                        #print(url.replace('localhost', 'igbisportal.vagrant'))
+                        # print(url.replace('localhost', 'igbisportal.vagrant'))
                         text = r.text
                         message = re.findall('##(.*)##', text, re.DOTALL)
                         if message:
@@ -552,6 +558,7 @@ def pyp_reports_save(obj, check, students, grades, classes):
                             self.output("Nope {}: {}, {}".format(r.status_code, student.student_id, url))
 
         def dates(self):
+            """ FIXME is this used? if so, how """
             term_id = gns.config.managebac.current_term_id
 
             base_url = 'http://localhost:6543/students/{student_id}/pyp_report/download?api_token={api_token}'
@@ -560,7 +567,7 @@ def pyp_reports_save(obj, check, students, grades, classes):
 
             api_token = settings.get('MANAGEBAC', 'mb_api_token')
 
-            with DBSession() as session:            
+            with DBSession() as session:
                 if self.filter is not None:
                     parents = session.query(Parents).filter(self.filter).all()
                 else:
@@ -614,6 +621,7 @@ def pyp_reports_save(obj, check, students, grades, classes):
                     do = CheckIt(one_student=student) if check else DoIt(one_student=student)
                     do.go()
 
+
 @pyp_reports.group('scrape')
 @click.option('--log/--nolog', default=True, help="Toggle logging")
 @click.pass_context
@@ -631,6 +639,7 @@ def pyp_reports_scrape(ctx, log):
         resource.RLIMIT_CPU,
         (3600, 4000)
     )
+
 
 @pyp_reports_scrape.command('reports')    
 @click.option('--this_student', default=None, help="MB student ID of student")
@@ -651,18 +660,18 @@ def pyp_reports_scrape_reports(obj, this_student, callback_id, fake):
 
         with DBSession() as session:
             statement = session.query(
-                    db.table.Student.id, db.table.Course.id
-                ).select_from(
-                    db.table.Student
-                ).join(
-                    db.table.Enrollment,
-                    db.table.Enrollment.c.student_id == db.table.Student.id
-                ).join(
-                    db.table.Course,
-                    db.table.Course.id == db.table.Enrollment.c.course_id
-                ).filter(
-                    db.table.Student.student_id == this_student
-                )
+                db.table.Student.id, db.table.Course.id
+            ).select_from(
+                db.table.Student
+            ).join(
+                db.table.Enrollment,
+                db.table.Enrollment.c.student_id == db.table.Student.id
+            ).join(
+                db.table.Course,
+                db.table.Course.id == db.table.Enrollment.c.course_id
+            ).filter(
+                db.table.Student.student_id == this_student
+            )
             gns.tutorial("Collecting data for only one student", edit=(statement, '.sql'), stop=True)
             results = statement.all()
 
@@ -690,29 +699,22 @@ def pyp_reports_scrape_reports(obj, this_student, callback_id, fake):
             ).one()
             record.done = True
 
-# @scrape.command()
-# @click.option('--class_id', default=None)
-# def pyp_reports(class_id):
-#     """
-#     Sets up things for pyp reporting system
-#     """
-#     from scrapy import cmdline
-
-#     os.chdir(gns('{settings.path_to_scrapers}/mb_scraper'))
-
-#     if not class_id:
-#         cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments'])
-#         cmdline.execute(['scrapy', 'crawl', 'PYPClassReports'])
-#     else:
-#         cmdline.execute(['scrapy', 'crawl', 'PYPTeacherAssignments', '-a', 'class_id={}'.format(class_id)])
-#         cmdline.execute(['scrapy', 'crawl', 'PYPClassReports', '-a', 'class_id={}'.format(class_id)])
 
 @pyp_reports_scrape.command('teacher_assign')
 def pyp_reports_scrape_teacher_assign():
     """
     Download the teacher assignment info
     """
-    run_scraper('PYPTeacherAssignments', 'mb_scraper')
+    run_scraper('PYPTeacherAssignments', 'pyp_teacher_assignments')
+
+
+@pyp_reports_scrape.command('student_attendance')
+def pyp_reports_scrape_student_attendance():
+    """
+    Download the teacher assignment info
+    """
+    run_scraper('PYPStudentAttendance', 'pyp_student_attendance')
+
 
 @main.group()
 def utils():
@@ -720,6 +722,7 @@ def utils():
     Commands that form another category
     """
     pass
+
 
 @utils.command()
 def serve():
@@ -739,15 +742,18 @@ def serve():
     subprocess.call(['screen', '-r', 'pserve', '-X', 'stuff', 'pserve --reload {}\n'.format(deploy_file)])
     click.echo(message="Deployed: " + "'screen -r pserve' to view server output")
 
+
 @utils.command()
 def create_all_tables():
     from portal.db import metadata, engine
     metadata.create_all(engine)
     print('Done: metadata.create_all(engine)')
 
+
 @main.group()
 def debug():
     return
+
 
 @debug.command()
 @click.argument('id')
@@ -774,9 +780,10 @@ def teacher_classes(ctx, id):
                 grade_str = {'Grade 10': 10, 'Grade 11': 11, 'Grade 12': 12}.get(str, int(re.sub('[^0-9]', '', str)))
             else:
                 grade_str = ""
-            data.append( dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
+            data.append(dict(name=klass.abbrev_name, sortby=(grade_str, klass.uniq_id), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)))
         for item in sorted(data, key=lambda x: x['sortby'], reverse=True):
             print(item['name'])
+
 
 @main.group()
 def test():
@@ -784,6 +791,7 @@ def test():
     Commands for testing purposes
     """
     pass
+
 
 @test.command('api_family_info')
 @click.pass_obj
@@ -800,6 +808,7 @@ def test_family_info(obj):
     result = requests.post(url, json=options)
     print(result)
     print(result.json())
+
 
 @test.command('test_status_updater')
 @click.pass_obj
@@ -819,13 +828,13 @@ def test_api_downloader(obj):
     go = DatabaseSetterUpper(lazy=True, verbose=True)
     go.setup_database()
 
+
 @test.command('test_db')
-@click.argument('_id', default=11204340) # Fern
+@click.argument('_id', default=11204340)  # Fern
 @click.pass_obj
-def test_db(obj, _id):  
+def test_db(obj, _id):
     from portal.db import Database, DBSession
     db = Database()
-    Students = db.table_string_to_class('student')
     Teachers = db.table_string_to_class('advisor')
     from sqlalchemy.orm import joinedload
 
@@ -833,6 +842,7 @@ def test_db(obj, _id):
         teachers = session.query(Teachers).options(joinedload('classes')).all()
 
     from IPython import embed;embed()
+
 
 @test.command('inspect_student')
 @click.pass_obj
@@ -849,12 +859,13 @@ def inspect_student(obj):
             options(joinedload('parents')).\
             options(joinedload('ib_groups')).\
             options(joinedload_all('classes.teachers')).\
-            filter(Students.student_id=='20220018').\
+            filter(Students.student_id == '20220018').\
             order_by(Students.first_name)
 
         result = query.one()
 
         from IPython import embed;embed()
+
 
 @test.command('api_students')
 @click.option('--column', multiple=True, default=None, help="Any of the hybrid properties")
@@ -876,7 +887,7 @@ def test_api_students(obj, column, destiny, every_column, order_by, inspect, out
         'awesome_table_filters': {'student': 'StringFilter', 'grade': 'CategoryFilter'},
         'human_columns': True,
         'google_sheets_format': True,
-        'column_map': {'health_information': 'Health Info!'}, 
+        'column_map': {'health_information': 'Health Info!'},
         'columns': column,
     }
 
@@ -905,6 +916,7 @@ def test_api_students(obj, column, destiny, every_column, order_by, inspect, out
     for data in json['data']:
         pass
 
+
 @test.command('api_teachers')
 @click.option('--columns')
 @click.pass_obj
@@ -923,6 +935,7 @@ def test_api_teachers(obj):
     print(result.json())
     from IPython import embed;embed()
 
+
 @main.group()
 @click.pass_context
 def _one_time(ctx):
@@ -930,6 +943,7 @@ def _one_time(ctx):
     Commands intended to be launched once, kept for posterity
     """
     pass
+
 
 @_one_time.command('igbis_email_transition')
 @click.option('--dry/--wet', default=True, help="dry run by default only outputs")
@@ -944,22 +958,21 @@ def igbis_email_transition(obj, dry):
 
     with DBSession() as session:
 
-        parents = session.query(Parents) #.filter(Parents.id==10882228)
+        parents = session.query(Parents)  # .filter(Parents.id==10882228)
 
         for parent in parents.all():
  
             # Set up to the url to use the user id
             # ... and also the authorization token which will be passed to requests module
             gns.user_id = parent.id
-            params = {'auth_token': gns.config.managebac.api_token}
             url = gns('{config.managebac.url}/api/users/{user_id}')
-            #url = gns('{config.managebac.url}/api/v1/users/{user_id}/')
+            # url = gns('{config.managebac.url}/api/v1/users/{user_id}/')
 
             # Save the old email
             old_email = parent.email or ''
 
             # Check that we haven't already changed this
-            if not '.parent@igbis.edu.my' in old_email:
+            if '.parent@igbis.edu.my' not in old_email:
                 # ... keep going then
                 new = {}
                 new['email'] = parent.igbis_email_address
@@ -978,21 +991,23 @@ def igbis_email_transition(obj, dry):
                         print("{},{}".format(new['email'], new['work_email']))
                     else:
                         pass
-                        #print("Changed email to {}".format(new['email']))
+                        # print("Changed email to {}".format(new['email']))
                 else:
-                    result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user':new})
+                    result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user': new})
                     print('{} {}'.format(result.status_code, result.url))
                     # result = requests.put(url, headers={'auth_token': gns.config.openapply.api_token}, json={'user':new})
                     # from IPython import embed
                     # embed()
             else:
                 pass
-                #print("Did not update {} because it is already updated".format(parent))
+                # print("Did not update {} because it is already updated".format(parent))
+
 
 @main.group()
 @click.pass_context
 def test_api(ctx):
     pass
+
 
 @test_api.command('managebac')
 @click.argument('_id', default=10882228, )
@@ -1015,7 +1030,7 @@ def test_managebac_api(obj, _id, field, value):
             gns.user_id = parent.id
             params = {'auth_token': gns.config.managebac.api_token}
             url = gns('{config.managebac.url}/api/users/{user_id}')
-            #url = gns('{config.managebac.url}/api/v1/users/{user_id}/')
+            # url = gns('{config.managebac.url}/api/v1/users/{user_id}/')
 
             result = requests.get(url, params=params)
             print(result.json())
@@ -1039,6 +1054,7 @@ def test_managebac_get(obj, _id):
 
     print(result.json())
 
+
 @test_api.command('managebac_put')
 @click.argument('_id', default=10868315)  #10875405
 @click.pass_obj
@@ -1054,12 +1070,13 @@ def test_managebac_put(obj, _id):
 
     new = {'work_phone': 'success'}   #Magical Era (M) Sdn Bhd
 
-    result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user':new})
+    result = requests.put(url, headers={'auth_token': gns.config.managebac.api_token}, json={'user': new})
 
     print(result.json())
 
+
 @test_api.command('openapply_get')
-@click.argument('_id', default=27943)  #10875405
+@click.argument('_id', default=27943)  # 10875405
 @click.pass_obj
 def test_openapply_get(obj, _id):
 
@@ -1074,11 +1091,12 @@ def test_openapply_get(obj, _id):
     print(result.json())
     print(result.json()['student']['status'])
 
+
 @test_api.command('openapply_put')
 @click.argument('_id', default=27943)
 @click.pass_obj
 def test_openapply_put(obj, _id):
-    from portal.db import Database, DBSession
+    from portal.db import Database
     db = Database()
     Parents = db.table_string_to_class('parent')
 
@@ -1089,11 +1107,12 @@ def test_openapply_put(obj, _id):
 
     new = {}
     new['status'] = 60
-   
+
     result = requests.put(url, params={'auth_token': gns.config.openapply.api_token}, json=new)
     from IPython import embed;embed()
     print(result.json())
     print(result.json()['student']['status'])
+
 
 @main.group()
 @click.pass_obj
@@ -1102,6 +1121,7 @@ def status(obj):
     Commands that compare and contrast
     """
     pass
+
 
 @status.command('compare')
 @click.pass_obj
