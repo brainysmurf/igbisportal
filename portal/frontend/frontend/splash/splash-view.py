@@ -273,11 +273,12 @@ def splash(request):
                 menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc"),
                 menu_item(icon="folder", display="MYP Subject Overviews 2015-16", url="https://docs.google.com/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit#gid=0"),
                 menu_separator(),
-                menu_item(icon="folder", display="Timetables Semester One 2016/17", url="https://drive.google.com/drive/folders/0By9YOJwliLtBSnFXUnhWcUdPdms"),
-                menu_item(icon="folder", display="Duties", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1lhsGHubespv-sVI1RPcTYJDf_NKNGft983PJ5R_BrVs/edit?usp=sharing"),
-                menu_item(icon="folder", display="Cover Rota", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/14u_NYBQu7f1zcc0BzvluhMIhLEm8N9LNo4cIprm5O4A/edit?usp=drive_web"),
+                menu_item(icon="folder", display="Timetables (Semester Two)", url="https://docs.google.com/spreadsheets/d/1U2rLY8UvqyZ0I2u3CLYEjoUtu9WRWtakgRkLb_dw_gc/edit"),
+                menu_item(icon="folder", display="Class Timetables (Semester Two)", url="https://docs.google.com/spreadsheets/d/1W6xT-S7mOxX5IGBiTPIHiHMrNq5RIe1RgPund6Dln_Y/edit"),
+                menu_item(icon="folder", display="SS Duty Schedule (Semester 2)", url="https://docs.google.com/spreadsheets/d/14CQlr2G5k2nI1IjrzAvHBufJzGGEdFleUvfK2lYe7WA/edit"),
+                menu_item(icon="folder", display="Cover Semester Two", url="https://docs.google.com/spreadsheets/d/1cpZMc8ss_FMe_3-QDKJPdyFkddhoOPfM4zTj9Ff81VE/edit"),
                 menu_item(icon="folder", display="Meeting Minutes 2016-2017", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERfkxJcEhDaURrcXRQRXU0bkwwUWUybG9fc3E4cG5vUkE3c3FZdTZhT3hldEE"),
-                menu_item(icon="folder", display="Reporting Guidelines Semester 1", url="https://docs.google.com/document/d/19AA9VqmqD-pHLr0hhCrdoajZoD2XdozOf6CCR1W2Ey4")
+                #menu_item(icon="folder", display="Reporting Guidelines Semester 1", url="https://docs.google.com/document/d/19AA9VqmqD-pHLr0hhCrdoajZoD2XdozOf6CCR1W2Ey4")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
