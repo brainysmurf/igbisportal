@@ -214,6 +214,7 @@ def splash(request):
         button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
         counselor_button_students,
         button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
+        button(name="Help with Maths for Grade 6 and 7", externalid=-9, size="", color="grey", url="https://docs.google.com/a/igbis.edu.my/forms/d/e/1FAIpQLSftPRE_wM4KbxPiK9jSFHqOrwkbU_fuSH-1StIZ9x_SdpYSJw/viewform?c=0&w=1", icon="info-circle", id="", context_menu=None),
     ])
 
     with DBSession() as session:
