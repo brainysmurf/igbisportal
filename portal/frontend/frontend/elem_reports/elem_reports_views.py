@@ -268,6 +268,7 @@ def pyp_reports(request):
             'self-management': 10000
         }
         report.sections = sorted([section for section in report.sections if subject_rank.get(section.name.lower(), 10001) < 10000], key=lambda x: subject_rank.get(x.name.lower(), 1000))
+        report.sections = [section for section in report.sections if section.comment]
 
         # Only output sections that have any data in them
         # Comment out during development
