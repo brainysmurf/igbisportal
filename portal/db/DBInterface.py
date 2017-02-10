@@ -8,17 +8,10 @@ TODO: Delete those unused methods
 from portal.db import DBSession, session_maker
 from portal.db import DBModel    # yes, import the module itself, used for getattr statements
 from portal.db.DBModel import *  # and, yes, import all the terms we need to refer to the tables as classes
-from sqlalchemy import and_, not_, or_
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-from sqlalchemy import desc, asc
-from sqlalchemy import func, case, Integer, String
-from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import aliased
-from collections import defaultdict
-from sqlalchemy.sql.expression import cast
+from sqlalchemy.orm.exc import NoResultFound
 
 import logging
-import re
+
 
 class Database:
     """
@@ -132,17 +125,17 @@ class Database:
         with DBSession() as session:
             statement = session.query(Course.grade, Course.name, Timetable.day, Timetable.period).\
                 select_from(Course).\
-                    join(Timetable, Timetable.course_id == Course.id).\
-                    filter(Course.grade == grade)
+                join(Timetable, Timetable.course_id == Course.id).\
+                filter(Course.grade == grade)
         return statement.all()
 
     def get_timetable_info(self):
         with DBSession() as session:
             statement = session.query(Student.last_name, Student.first_name, Student.email, Timetable.day, Timetable.period, IBGroup.name, Course.name).\
                 select_from(Timetable).\
-                    join(Course, Course.id == Timetable.course_id).\
-                    join(Enrollment, Enrollment.c.course_id == Course.id).\
-                    join(Student, Student.student_id == Enrollment.c.student_id ).\
-                    join(IBGroupMembership, IBGroupMembership.c.student_id == Student.student_id).\
-                    join(IBGroup, IBGroup.id == IBGroupMembership.c.ib_group_id)
+                join(Course, Course.id == Timetable.course_id).\
+                join(Enrollment, Enrollment.c.course_id == Course.id).\
+                join(Student, Student.student_id == Enrollment.c.student_id).\
+                join(IBGroupMembership, IBGroupMembership.c.student_id == Student.student_id).\
+                join(IBGroup, IBGroup.id == IBGroupMembership.c.ib_group_id)
         return statement.all()
