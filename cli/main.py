@@ -362,6 +362,30 @@ def family_info(obj):
 
 @output.command()
 @click.pass_obj
+def stats(obj):
+    """ Output student/family info """
+    from cli.parent_accounts import ParentAccounts
+    parent = ParentAccounts()
+    family_count = 0
+    student_count = 0
+    secondary_student_count = 0
+    elementary_student_count = 0
+    for family in parent.family_accounts:
+        family_count += 1
+        for student in family.students:
+            student_count += 1
+            if student.grade >= 6:
+                secondary_student_count += 1
+            elif student.grade <= 5:
+                elementary_student_count += 1
+
+    click.echo("{:<35}: {}".format(click.style("Family Count", fg="green"), family_count))
+    click.echo("{:<35}: {}".format(click.style("Student Count", fg="green"), student_count))
+    click.echo("{:<35}: {}".format(click.style("Secondary Student Count", fg="green") , secondary_student_count))
+    click.echo("{:<35}: {}".format(click.style("Elementary Student Count", fg="green"), elementary_student_count))
+
+@output.command()
+@click.pass_obj
 def student_columns(obj):
     db = Database()
     Students = db.table_string_to_class('student')
