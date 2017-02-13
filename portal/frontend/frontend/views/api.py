@@ -30,6 +30,46 @@ class dummy_row:
        return {c: getattr(self, c) for c in self._columns}
 
 
+@view_config(route_name='api-hapara-integration', renderer='json', http_cache=0)
+def api_hapara_integration(request):
+    try:
+        json_body = request.json_body
+    except ValueError:
+        return dict(message="Expecting json body")
+    secret = json_body.get('secret')
+    if secret != gns.config.api.secret:
+        return dict(message="IGBIS api is not for public consumption.", data=[])
+
+    with DBSession() as session:
+
+        # TODO: Make database function that allows for filtering out students who
+        # are both enrolled and fall within the start date
+
+        query = session.query(Students).\
+            options(joinedload_all('classes')).\
+            filter(and_(
+                    Students.is_archived==False,
+                    Students.grade != -10,
+                    Students.student_id != None,
+                    Students.status == 'enrolled'
+                ))
+
+        query = query.order_by(Students.grade, Students.first_name)
+
+        students = query.all()
+
+    ret = []
+    columns = ['hapara_class_uniques']
+    for student in students:
+        for course in student.classes:
+            print(course)
+            for column in columns:
+                value = getattr(student, column)
+                for split in value.split(', '):
+                    ret.append([student.email, split])
+
+    return dict(message="Success, as array", columns=columns, data=ret)
+
 @view_config(route_name='api-students', renderer='json_with_date', http_cache=0)
 def api_students(request):
     try:
@@ -86,7 +126,7 @@ def api_students(request):
             if columns and columns[0].startswith('grade_'):
                 query = query.order_by(Students.grade, Students.first_name)
             else:
-                # FIXME: This has a bug when using hybrid property
+                # FIXME: This has a bug when getattr on hybrid property
                 try:
                     query = query.order_by(getattr(Students, columns[0]))
                 except NotImplementedError:

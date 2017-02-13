@@ -47,6 +47,7 @@ def main(global_config, **settings):
     config.add_route('api-students', '/api/students')
     config.add_route('api-teachers', '/api/teachers')
     config.add_route('api-family-info', '/api/family_info')
+    config.add_route('api-hapara-integration', '/api/hapara-integration')
     #config.add_route('api-test', '/api-test')
 
     config.add_route('mb_courses', '/mb_courses')

@@ -867,6 +867,24 @@ def inspect_student(obj):
         from IPython import embed;embed()
 
 
+@test.command('api_hapara')
+@click.pass_obj
+def test_api_hapara(obj):
+    options = {
+        'secret': gns.config.api.secret,
+    }
+    url = 'http://localhost:6543/api/hapara-integration'
+    print(options)
+    result = requests.post(url, json=options)
+    if not result.ok:
+        print("Bad result: {}".format(result.status_code))
+        print(result.text)
+        return
+    json = result.json()
+    for data in json['data']:
+        print(data)
+
+
 @test.command('api_students')
 @click.option('--column', multiple=True, default=None, help="Any of the hybrid properties")
 @click.option('--destiny', is_flag=True, default=False, help="Use destiny columns (overrides columns)")
