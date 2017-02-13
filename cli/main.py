@@ -926,6 +926,8 @@ def test_api_students(obj, column, destiny, every_column, order_by, inspect, out
     result = requests.post(url, json=options)
     if not result.ok:
         print("Bad result: {}".format(result.status_code))
+        print(result.text)
+        return
     json = result.json()
     for data in json['data']:
         if not output_sids is None:

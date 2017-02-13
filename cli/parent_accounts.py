@@ -11,6 +11,7 @@ from sqlalchemy import and_
 import gns
 import datetime
 
+
 """
 ManageBac doesn't export the grade information, just the homeroom advisor,
 So this provides a workaround
@@ -56,9 +57,11 @@ homeroom_mapping = {
     'indra.lina': (-2, 'ff'),
     }
 
+
 class Error(Exception):
     def __str__(self):
         return self.msg
+
 
 class NotFoundError(Error):
     pass
@@ -66,6 +69,7 @@ class NotFoundError(Error):
 class NoHomeroomTeacherFound(NotFoundError):
     def __init__(self, msg=""):
         self.msg = msg
+
 
 class Family:
     """
@@ -99,6 +103,7 @@ class Family:
         self.students = []
         self.parents = []
         self.family_id = None
+
 
 class ParentAccounts:
     """
@@ -236,7 +241,7 @@ class ParentAccounts:
                     if teacher:
                         grade, homeroom = homeroom_mapping.get(teacher.username_handle, (None, None))
                         if grade is None or homeroom is None:
-                            print('grade is None or homeroom is None')
+                            print('When determining homeroom for {}, grade is None or homeroom is None, teacher = {} homeroom_advisor = {}'.format(student, teacher, homeroom))
                             continue
 
                         if grade >= 6:

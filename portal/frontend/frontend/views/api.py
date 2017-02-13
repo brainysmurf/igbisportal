@@ -14,6 +14,7 @@ db = Database()
 Students = db.table_string_to_class('student')
 Teachers = db.table_string_to_class('advisor')
 
+
 class dummy_row:
     """
     Terrible. No good day I am having
@@ -28,7 +29,8 @@ class dummy_row:
     def as_dict(self):
        return {c: getattr(self, c) for c in self._columns}
 
-@view_config(route_name='api-students', renderer='json', http_cache=0)
+
+@view_config(route_name='api-students', renderer='json_with_date', http_cache=0)
 def api_students(request):
     try:
         json_body = request.json_body
@@ -84,7 +86,11 @@ def api_students(request):
             if columns and columns[0].startswith('grade_'):
                 query = query.order_by(Students.grade, Students.first_name)
             else:
-                query = query.order_by(getattr(Students, columns[0]))
+                # FIXME: This has a bug when using hybrid property
+                try:
+                    query = query.order_by(getattr(Students, columns[0]))
+                except NotImplementedError:
+                    pass
 
         data = query.all()
 
@@ -124,6 +130,7 @@ def api_students(request):
         else:
             columns = [column_map.get(c) for c in columns]
         return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
+
 
 @view_config(route_name='api-teachers', renderer='json', http_cache=0)
 def api_teachers(request):
@@ -203,6 +210,7 @@ def api_teachers(request):
         else:
             columns = [column_map.get(c) for c in columns]
         return dict(message="Success", columns=columns, data=[d.as_dict() for d in data])
+
 
 @view_config(route_name='api-family-info', renderer='json', http_cache=0)
 def api_family_info(request):

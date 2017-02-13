@@ -300,6 +300,7 @@ Assignment = Table(
     Column('teacher_id', BigInteger, ForeignKey(ADVISORS+'.id'), primary_key=True)
 )
 
+
 """
 Many to many relationships need an association table, this is it for student/course links
 """
@@ -308,6 +309,7 @@ Enrollment = Table(
     Column('course_id', BigInteger, ForeignKey(COURSES+'.id'), primary_key=True),
     Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
 )
+
 
 """
 Many to many relationships need an association table, this is it for IBGroups/members links
@@ -318,6 +320,7 @@ IBGroupMembership = Table(
     Column('ib_group_id', BigInteger, ForeignKey(IBGROUPS+'.id'), primary_key=True),
     Column('student_id', BigInteger, ForeignKey(STUDENTS+'.id'), primary_key=True)
 )
+
 
 class Student(Base, User):
     """
@@ -476,27 +479,49 @@ class Student(Base, User):
 
     @hybrid_property
     def teacher_emails(self):
-        lst = []
+        ret = []
         for course in self.classes:
             for teacher in course.teachers:
-                lst.append(teacher.email.lower())
-        return ",".join(set(lst))
+                ret.append(teacher.email.lower())
+        return ",".join(set(ret))
 
     @hybrid_property
     def teacher_usernames(self):
-        lst = []
+        ret = []
         for course in self.classes:
             for teacher in course.teachers:
-                lst.append(teacher.username_handle.lower())
-        return ",".join(set(lst))
+                ret.append(teacher.username_handle.lower())
+        return ",".join(set(ret))
 
     @hybrid_property
     def teacher_names(self):
-        lst = []
+        ret = []
         for course in self.classes:
             for teacher in course.teachers:
-                lst.append(teacher.first_name + ' ' + teacher.last_name)
-        return ", ".join(lst)
+                ret.append(teacher.first_name + ' ' + teacher.last_name)
+        return ", ".join(ret)
+
+    @hybrid_property
+    def class_names(self):
+        ret = []
+        for course in self.classes:
+            ret.append(course.name)
+        return ", ".join(ret)
+
+    @hybrid_property
+    def class_titles(self):
+        ret = []
+        for course in self.classes:
+            ret.append(course.title)
+        return ", ".join(ret)
+
+    @hybrid_property
+    def hapara_class_uniques(self):
+        ret = []
+        for course in self.classes:
+            if course.uniq_id is not None:
+                ret.append(course.uniq_id_hapara_suffix)
+        return ", ".join(ret)
 
     # FIXME: Cannot ascertain why order_by for the following produces results with ones out-of-order at the end...
 
@@ -684,7 +709,6 @@ class Student(Base, User):
 
         with DBSession() as session:
             try:
-                print("ID: {}".format(self.id))
                 med_info = session.query(MedInfo).filter_by(id=self.id).one()
             except NoResultFound:
                 return "<>"
@@ -1025,12 +1049,24 @@ class Course(Base):
     def grade_integer(self):
         return grade_string_to_integer_map.get(self.grade, -10)
 
+    @hybrid_property
+    def title(self):
+        ret = self.name.replace("IB MYP", '').replace('IB DP', '').replace('IB PYP', '').replace('Arts -', '').strip()
+        ret = re.sub('\(.*?\)', '', ret).strip()
+        ret = re.sub('  \d$', '', ret)
+        return ret
+
+    @hybrid_property
+    def uniq_id_hapara_suffix(self):
+        return "{}{}".format(self.uniq_id, gns.config.hapara.uniq_id_suffix)
+
     # timetables relation defined by Timetable.course 'backref'
     def __repr__(self):
         return '<Class ({}) '.format(self.id) + self.abbrev_name + '>'
 
     def __str__(self):
         return '<Class ({}) '.format(self.id) + self.abbrev_name + '>'
+
 
 class Timetable(Base):
     """

@@ -10,6 +10,14 @@ from .models import (
     Base,
     )
 
+import datetime
+
+from pyramid.renderers import JSON
+
+
+def datetime_adapter(obj, request):
+    return obj.isoformat()
+
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -24,6 +32,9 @@ def main(global_config, **settings):
     config.include('pyramid_beaker')
 
     config.add_static_view('static', 'static', cache_max_age=3600)
+    json_renderer_with_adapter = JSON()
+    json_renderer_with_adapter.add_adapter(datetime.datetime, datetime_adapter)
+    config.add_renderer('json_with_date', json_renderer_with_adapter)
 
     config.add_route('favicon', '/favicon.ico')
 
