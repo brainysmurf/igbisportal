@@ -68,7 +68,7 @@ def api_hapara_integration(request):
                 for split in value.split(', '):
                     ret.append([student.email, split])
 
-    return dict(message="Success, as array", columns=columns, data=ret)
+    return dict(message="Success, as array", columns=[['Student Email', 'Class']], data=ret)
 
 @view_config(route_name='api-students', renderer='json_with_date', http_cache=0)
 def api_students(request):
