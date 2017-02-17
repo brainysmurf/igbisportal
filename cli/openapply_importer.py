@@ -92,10 +92,10 @@ class OA_Medical_Importer:
                     try:
                         db_student = session.query(Students).filter(Students.student_id == student['custom_id']).one()
                     except NoResultFound:
-                        sys.stdout.write(u"{} not found in database, no student_id: {}\n".format(student['name'], student['custom_id']))
+                        sys.stdout.write(u"{} not found in database, no student_id: {}\n".format(student.get('name', 'noname'), student['custom_id']))
                         continue
                     except MultipleResultsFound:
-                        sys.stdout.write(u"Found multiple results when querying {}: {}".format(student['custom_id]'], student['name']))
+                        sys.stdout.write(u"Found multiple results when querying {}: {}".format(student.get('custom_id', 'nocustomid'), student.get('name', 'noname')))
                         continue
             
                 student['managebac_student_id'] = db_student.id
@@ -107,7 +107,7 @@ class OA_Medical_Importer:
                 # I am thinking that openapply does NOT play nicely with MB
                 #
                 if not student['custom_id']:
-                    sys.stdout.write(u"Cannot double-check student exists in table! {} no custom_id present!\n".format(student['name']))
+                    sys.stdout.write(u"Cannot double-check student exists in table! {} no custom_id present!\n".format(student.get('name') or 'noname'))
                     continue
                 with DBSession() as session:
                     try:

@@ -138,9 +138,6 @@ def managebac(obj, download, setupdb, fake):
     if setupdb:
         db_setup(fake)
 
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.poolmanager import PoolManager
-import ssl
 
 @sync.command()
 @click.pass_obj
@@ -340,12 +337,14 @@ def photos(obj):
         p = paths.get(pth)
         shutil.make_archive(p, 'zip', p)
 
+
 @main.group()
 def output():
     """
     Commands that displays information for reference
     """
     pass
+
 
 @output.command()
 @click.pass_obj
@@ -359,6 +358,7 @@ def family_info(obj):
         for parent in family.parents:
             click.echo('{}\t{}'.format(parent.igbis_email_address, family.family_id))
     from IPython import embed;embed()
+
 
 @output.command()
 @click.pass_obj
@@ -384,6 +384,7 @@ def stats(obj):
     click.echo("{:<35}: {}".format(click.style("Secondary Student Count", fg="green") , secondary_student_count))
     click.echo("{:<35}: {}".format(click.style("Elementary Student Count", fg="green"), elementary_student_count))
 
+
 @output.command()
 @click.pass_obj
 def student_columns(obj):
@@ -391,6 +392,7 @@ def student_columns(obj):
     Students = db.table_string_to_class('student')
     from IPython import embed;embed()
     click.echo(Students.columns)
+
 
 @output.command()
 @click.pass_obj
@@ -409,6 +411,7 @@ def who_does_not_have_parents(obj):
             results.append(user)
     print(len(results))
 
+
 @output.command()
 @click.option('--since', default=None, help="today for 'today'")
 @click.pass_obj
@@ -426,6 +429,7 @@ def parent_accounts(obj, since):
 
     parent_accounts.output()
 
+
 @output.command()
 @click.pass_obj
 def contact_information(obj):
@@ -435,6 +439,7 @@ def contact_information(obj):
     from cli.parent_accounts import ParentAccounts
     parent_accounts = ParentAccounts()
     parent_accounts.output_for_email()
+
 
 @sync.command()
 @click.option('path', '--path', type=click.Path(exists=True))
@@ -449,6 +454,7 @@ def openapply_from_file(obj, path=None):
     medical_importer = OA_Medical_Importer.from_file(f)
     medical_importer.read_in()
 
+
 @sync.command()
 @click.option('path', '--path', type=click.Path(exists=True))
 @click.pass_obj
@@ -461,6 +467,7 @@ def openapply_from_api(obj, path=None):
     f = path or gns.config.paths.medical_info
     medical_importer = OA_Medical_Importer.from_api()
     medical_importer.read_in()
+
 
 def run_scraper(spider, subpath, **kwargs):
 
