@@ -40,9 +40,11 @@ class ReportIncomplete(Exception):
     def __init__(self, msg):
         self.msg = msg
 
+
 @view_config(route_name="get_session_user", renderer="json")
 def get_session_user(request):
     return request.session.get('mb_user')
+
 
 @view_config(route_name="session_user", renderer="json")
 def session_user(request):
@@ -100,6 +102,7 @@ def session_user(request):
             request.session['g_plus_unique_id'] = unique_id
 
     return dict(message="User found on ManageBac")
+
 
 def credentials_flow(request, code):
     try:
@@ -166,9 +169,11 @@ def credentials_flow(request, code):
     else:
        return dict(message="Error: {}".format(result.status_code))    
 
+
 @forbidden_view_config(renderer="frontend:templates/forbidden.pt")
 def forbidden_view(exc, request):
     return dict(message="", title="No such user", name="Forbidden!")
+
 
 @view_config(route_name="signinCallback", renderer="json")
 def signinCallback(request):
@@ -275,6 +280,7 @@ def mb_homeroom(request):
     data.sort(key=lambda x: x['student_name'])
     return dict(message="Success", data=data)
 
+
 @view_config(route_name="mb_blogs", renderer="json")
 def mb_blogs(request):
     """
@@ -304,6 +310,7 @@ def mb_blogs(request):
     data.sort(key=lambda x: (x['grade'], x['student_name']))
     return dict(message="Success", data=data)
 
+
 @view_config(route_name="mb_courses", renderer='json', http_cache=0)
 def mb_courses(request):
     user = request.session.get('mb_user')
@@ -316,9 +323,11 @@ def mb_courses(request):
         data.append( dict(name=klass.abbrev_name, sortby=(klass.grade_integer, klass.name or "", klass.class_section or "0"), shortname=klass.uniq_id, link='https://igbis.managebac.com/classes/{}'.format(klass.id)) )
     return dict(message="Success", data=sorted(data, key= lambda x: x['sortby']))
 
+
 @view_config(route_name='auditlog', renderer='templates/auditlog.pt')
 def auditlog(request):
     return dict(project='test')
+
 
 @view_config(route_name='auditlog_data', renderer='json')
 def auditlog_data(request):
@@ -327,6 +336,7 @@ def auditlog_data(request):
         python_list = json.loads(serialized_item)
         data['data'].append(python_list)
     return data
+
 
 @view_config(route_name='grade_course', renderer='frontend:templates/grade_course.pt')
 def grade_course(request):
@@ -342,8 +352,6 @@ def grade_course(request):
 
         return dict(title="Grades", rows=items)
 
-
-
     with DBSession() as session:
         statement = session.query(db.table.Course).\
         options(joinedload('students')).\
@@ -352,8 +360,8 @@ def grade_course(request):
 
         items = statement.all()
 
-
     return dict(title="Grades", rows=items)
+
 
 @view_config(route_name='grade_course_data', renderer='json')
 def grade_course_info(request):
@@ -362,9 +370,11 @@ def grade_course_info(request):
 
     return data
 
+
 @view_config(route_name='schedule', renderer='frontend:templates/schedule.pt')
 def schedule(request):
     return dict(api_key=gns.config.managebac.api_token)
+
 
 @view_config(route_name='schedule_data', renderer='json')
 def schedule_data(request):
@@ -375,6 +385,7 @@ def schedule_data(request):
         data["data"].append(item)
 
     return data
+
 
 @view_config(route_name='students', renderer='frontend:templates/students.pt')
 def students(request):
@@ -395,6 +406,7 @@ def students(request):
 
         return dict(title="Filtered Students", items=students)
 
+
 @view_config(route_name='students_program_list', renderer='templates/students.pt')
 def students_program_filter(request):
     m = request.matchdict
@@ -406,6 +418,7 @@ def students_program_filter(request):
         students = statement.all()
 
     return dict(title="All Students", items=students)
+
 
 @view_config(route_name='students_ind', renderer='templates/student.pt')
 def students_ind(request):
@@ -421,6 +434,7 @@ def students_ind(request):
 
     return dict(title="Student View", item=student)
 
+
 @view_config(route_name='user_data', renderer='json', http_cache=0)
 def user_data(request):
     if not 'mb_user' in request.session:
@@ -428,6 +442,7 @@ def user_data(request):
 
     user = request.session.get('mb_user')
     return dict(message="success", data=user.first_name)
+
 
 @view_config(route_name='get_user_settings', renderer='json', http_cache=0)
 def get_user_settings(request):
@@ -481,6 +496,7 @@ def user_settings(request):
                 session.add(new_setting)
                 return dict(message="Created new setting record in db")
 
+
 @view_config(route_name='reports_ind', renderer='templates/report_ind.pt')
 def reports_ind(request):
     student_id = request.GET.get('student_id')
@@ -500,7 +516,6 @@ def reports_ind(request):
         )
 
 
-
 @view_config(route_name='reports', renderer='templates/report_list.pt')
 def reports(request):
 
@@ -516,11 +531,13 @@ def reports(request):
         title="List of students with reports"
         )
 
+
 @view_config(context=ReportIncomplete)
 def report_incomplete(request):
     response = Response()
     response.status_int = 500
     return response
+
 
 @view_config(route_name='header-html', renderer='frontend:templates/header-html.pt')
 def header_html(request):
@@ -528,6 +545,7 @@ def header_html(request):
     Just return the headers
     """
     return dict()
+
 
 @view_config(route_name='footer-html', renderer="frontend:templates/footer-html.pt")
 def footer_html(request):
@@ -557,9 +575,11 @@ def footer_html(request):
 
     return dict(student=student, report=report)
 
+
 @view_config(route_name='frontpage')
 def frontpage(request):
     raise HTTPFound(request.route_url("splash"))
+
 
 @view_config(route_name="update_report_internal", renderer='json')
 def update_report_internal(request):
@@ -600,6 +620,7 @@ def update_report_internal(request):
         os.spawnlp(os.P_NOWAIT, 'portal', 'portal', 'pyp_reports', 'scrape', 'reports', '--this_student', student_id, '--callback_id', uniq_id)    
 
     return dict(uniq_id=uniq_id)
+
 
 @view_config(route_name="update_report_poll", renderer='json')
 def update_report_poll(request):
@@ -650,6 +671,7 @@ def student_enrollments_by_course_id(request):
 
         return dict(students=records.all())
 
+
 @view_config(route_name="lastupdated", renderer='json')
 def lastupdated(request):
     mb_user = request.session.get('mb_user', None)
@@ -666,7 +688,7 @@ def lastupdated(request):
             db.table.Student.id, db.table.Student.first_nickname_last, db.table.Student.grade, db.table.PrimaryReportLastUpdated.timestamp
         ).select_from(
             db.table.PrimaryReportLastUpdated
-        ).join(
+        ).join( 
             db.table.Student, db.table.Student.id == db.table.PrimaryReportLastUpdated.student_id
         )
 

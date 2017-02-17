@@ -18,6 +18,7 @@ from portal.db.UpdaterHelper import updater_helper
 # Interface to the database
 updater = updater_helper.update_or_add
 
+
 class OA_Medical_Importer:
 
     def __init__(self, path, verbose=False):
@@ -115,7 +116,7 @@ class OA_Medical_Importer:
                     except NoResultFound:
                         continue
                     if student['managebac_student_id'] != db_student.id:
-                        sys.stdout.write("WORKAROUND for {}\n".format(student['name']))
+                        sys.stdout.write("WORKAROUND for {}\n".format(student.get('name', 'noname')))
                         student['managebac_student_id'] = db_student.id
 
             # Get the full information
@@ -183,6 +184,7 @@ class OA_Medical_Importer:
             self.read_in_from_file()
         else:
             self.read_in_from_api()
+
 
 if __name__ == "__main__":
     OA_Importer()
