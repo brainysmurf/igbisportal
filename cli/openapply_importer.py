@@ -87,7 +87,7 @@ class OA_Medical_Importer:
             if not student['managebac_student_id']:
                 if not student['custom_id']:
                     if student['status'] == 'enrolled':
-                        sys.stdout.write(u"Cannot update this student, no custom_id, no managebac_student_id: {}\n".format(student['name']))
+                        sys.stdout.write(u"Cannot update this student, no custom_id, no managebac_student_id: {}\n".format(student.get('name', 'noname')))
                     continue
                 with DBSession() as session:
                     try:
@@ -170,12 +170,12 @@ class OA_Medical_Importer:
                 # Is there something about a cron context where unicode is different?
                 if self.verbose:
                     try:
-                        sys.stdout.write(u"Updating record for {}\n".format(student['name']))
+                        sys.stdout.write(u"Updating record for {}\n".format(student.get('name', 'noname')))
                     except:
                         sys.stdout.write("Updating record for {}\n".format(student['id']))
                 updater(obj)
             else:
-                sys.stdout.write(u"No managebac_student_id for {}?\n".format(student['name']))
+                sys.stdout.write(u"No managebac_student_id for {}?\n".format(student.get('name', 'noname')))
 
             # print("{}: {}".format(len(list(all_columns)), all_columns))
 
