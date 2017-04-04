@@ -24,7 +24,7 @@ menu_placeholder = lambda x: menu_item(url=x, display='placeholder', icon=None)
 
 stndrdbttns = [
     button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
-    button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+    button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
         context_menu=None),
@@ -92,7 +92,7 @@ counselor_button_parents = button(name="Counseling", externalid=-9, size="", col
     })
 parent_buttons = [
     button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
-    button(name="Gmail", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
+    button(name="School Email", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="", color="aqua", url="https://drive.google.com", icon="files-o", id="", 
         context_menu=None),
@@ -151,7 +151,7 @@ administration_buttons = [
         menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
         menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
     ]}),
-    button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+    button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     bookings_button,
     button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
@@ -253,7 +253,7 @@ def splash(request):
                 menu_placeholder('mb_classes')
             ],
             }),
-        button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+        button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
             context_menu={
             'items': [
                 menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
@@ -314,7 +314,7 @@ def splash(request):
                 menu_placeholder('mb_classes')
             ],
             }),
-        button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+        button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
             context_menu={
             'items': [
                 menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
