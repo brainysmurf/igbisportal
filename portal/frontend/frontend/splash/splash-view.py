@@ -279,7 +279,7 @@ def splash(request):
                 menu_item(icon="folder", display="SS Duty Schedule (Semester 2)", url="https://docs.google.com/spreadsheets/d/14CQlr2G5k2nI1IjrzAvHBufJzGGEdFleUvfK2lYe7WA/edit"),
                 menu_item(icon="folder", display="Cover Semester Two", url="https://docs.google.com/spreadsheets/d/1cpZMc8ss_FMe_3-QDKJPdyFkddhoOPfM4zTj9Ff81VE/edit"),
                 menu_item(icon="folder", display="Meeting Minutes 2016-2017", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERfkxJcEhDaURrcXRQRXU0bkwwUWUybG9fc3E4cG5vUkE3c3FZdTZhT3hldEE"),
-                #menu_item(icon="folder", display="Reporting Guidelines Semester 1", url="https://docs.google.com/document/d/19AA9VqmqD-pHLr0hhCrdoajZoD2XdozOf6CCR1W2Ey4")
+                menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/a/igbis.edu.my/document/d/1OffFa6BIcyNnva8w0iF9JS5vDAdAUbtKvqXAJEay6Lo/edit?usp=sharing")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
