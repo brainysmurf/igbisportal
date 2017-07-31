@@ -18,6 +18,7 @@ from portal.db.UpdaterHelper import updater_helper
 # Interface to the database
 updater = updater_helper.update_or_add
 
+
 class OA_Medical_Importer:
 
     def __init__(self, path, verbose=False):
@@ -86,16 +87,16 @@ class OA_Medical_Importer:
             if not student['managebac_student_id']:
                 if not student['custom_id']:
                     if student['status'] == 'enrolled':
-                        sys.stdout.write(u"Cannot update this student, no custom_id, no managebac_student_id: {}\n".format(student['name']))
+                        sys.stdout.write(u"Cannot update this student, no custom_id, no managebac_student_id: {}\n".format(student.get('name', 'noname')))
                     continue
                 with DBSession() as session:
                     try:
                         db_student = session.query(Students).filter(Students.student_id == student['custom_id']).one()
                     except NoResultFound:
-                        sys.stdout.write(u"{} not found in database, no student_id: {}\n".format(student['name'], student['custom_id']))
+                        sys.stdout.write(u"{} not found in database, no student_id: {}\n".format(student.get('name', 'noname'), student['custom_id']))
                         continue
                     except MultipleResultsFound:
-                        sys.stdout.write(u"Found multiple results when querying {}: {}".format(student['custom_id]'], student['name']))
+                        sys.stdout.write(u"Found multiple results when querying {}: {}".format(student.get('custom_id', 'nocustomid'), student.get('name', 'noname')))
                         continue
             
                 student['managebac_student_id'] = db_student.id
@@ -107,7 +108,7 @@ class OA_Medical_Importer:
                 # I am thinking that openapply does NOT play nicely with MB
                 #
                 if not student['custom_id']:
-                    sys.stdout.write(u"Cannot double-check student exists in table! {} no custom_id present!\n".format(student['name']))
+                    sys.stdout.write(u"Cannot double-check student exists in table! {} no custom_id present!\n".format(student.get('name') or 'noname'))
                     continue
                 with DBSession() as session:
                     try:
@@ -115,7 +116,7 @@ class OA_Medical_Importer:
                     except NoResultFound:
                         continue
                     if student['managebac_student_id'] != db_student.id:
-                        sys.stdout.write("WORKAROUND for {}\n".format(student['name']))
+                        sys.stdout.write("WORKAROUND for {}\n".format(student.get('name', 'noname')))
                         student['managebac_student_id'] = db_student.id
 
             # Get the full information
@@ -169,12 +170,12 @@ class OA_Medical_Importer:
                 # Is there something about a cron context where unicode is different?
                 if self.verbose:
                     try:
-                        sys.stdout.write(u"Updating record for {}\n".format(student['name']))
+                        sys.stdout.write(u"Updating record for {}\n".format(student.get('name', 'noname')))
                     except:
                         sys.stdout.write("Updating record for {}\n".format(student['id']))
                 updater(obj)
             else:
-                sys.stdout.write(u"No managebac_student_id for {}?\n".format(student['name']))
+                sys.stdout.write(u"No managebac_student_id for {}?\n".format(student.get('name', 'noname')))
 
             # print("{}: {}".format(len(list(all_columns)), all_columns))
 
@@ -183,6 +184,7 @@ class OA_Medical_Importer:
             self.read_in_from_file()
         else:
             self.read_in_from_api()
+
 
 if __name__ == "__main__":
     OA_Importer()

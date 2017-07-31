@@ -24,7 +24,7 @@ menu_placeholder = lambda x: menu_item(url=x, display='placeholder', icon=None)
 
 stndrdbttns = [
     button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
-    button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+    button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
         context_menu=None),
@@ -92,7 +92,7 @@ counselor_button_parents = button(name="Counseling", externalid=-9, size="", col
     })
 parent_buttons = [
     button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
-    button(name="Gmail", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
+    button(name="School Email", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="", color="aqua", url="https://drive.google.com", icon="files-o", id="", 
         context_menu=None),
@@ -102,7 +102,7 @@ parent_buttons = [
     button(name="Classes", externalid=-9, size="", color="orange", url="", icon="star", id="", context_menu={
             'items': [
                 #menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
-                #menu_item(icon="globe", display="Early Years R", url="https://sites.google.com/a/igbis.edu.my/eyri/"),
+                menu_item(icon="globe", display="Fireflies", url="https://sites.google.com/a/igbis.edu.my/fireflies-16-17/"),
                 menu_item(icon="globe", display="Early Years", url="https://sites.google.com/a/igbis.edu.my/early-years-16-17/"),
                 menu_item(icon="globe", display="Kindergarten H", url="https://sites.google.com/a/igbis.edu.my/kgh/?pli=1"),
                 menu_item(icon="globe", display="Kindergarten N", url="https://sites.google.com/a/igbis.edu.my/igbis-kindergarten-n-1617/"),
@@ -151,7 +151,7 @@ administration_buttons = [
         menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
         menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
     ]}),
-    button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+    button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     bookings_button,
     button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
@@ -268,7 +268,7 @@ def splash(request):
                 menu_placeholder('mb_classes')
             ],
             }),
-        button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+        button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
             context_menu={
             'items': [
                 menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
@@ -291,10 +291,10 @@ def splash(request):
                 menu_separator(),
                 menu_item(icon="folder", display="Timetables (Semester Two)", url="https://docs.google.com/spreadsheets/d/1U2rLY8UvqyZ0I2u3CLYEjoUtu9WRWtakgRkLb_dw_gc/edit"),
                 menu_item(icon="folder", display="Class Timetables (Semester Two)", url="https://docs.google.com/spreadsheets/d/1W6xT-S7mOxX5IGBiTPIHiHMrNq5RIe1RgPund6Dln_Y/edit"),
-                menu_item(icon="folder", display="SS Duty Schedule (Semester 2)", url="https://docs.google.com/spreadsheets/d/14CQlr2G5k2nI1IjrzAvHBufJzGGEdFleUvfK2lYe7WA/edit"),
+                menu_item(icon="folder", display="SS Duty Schedule (Semester 2)", url="https://docs.google.com/spreadsheets/d/1U2JOqkWma-qpWAIRQSN2gxz5i3HhFCuKh9TY-xzr_WQ/edit?ts=5909cc14#gid=697749873"),
                 menu_item(icon="folder", display="Cover Semester Two", url="https://docs.google.com/spreadsheets/d/1cpZMc8ss_FMe_3-QDKJPdyFkddhoOPfM4zTj9Ff81VE/edit"),
                 menu_item(icon="folder", display="Meeting Minutes 2016-2017", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERfkxJcEhDaURrcXRQRXU0bkwwUWUybG9fc3E4cG5vUkE3c3FZdTZhT3hldEE"),
-                #menu_item(icon="folder", display="Reporting Guidelines Semester 1", url="https://docs.google.com/document/d/19AA9VqmqD-pHLr0hhCrdoajZoD2XdozOf6CCR1W2Ey4")
+                menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/a/igbis.edu.my/document/d/1OffFa6BIcyNnva8w0iF9JS5vDAdAUbtKvqXAJEay6Lo/edit?usp=sharing")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
@@ -330,7 +330,7 @@ def splash(request):
                 menu_placeholder('mb_classes')
             ],
             }),
-        button(name="Gmail", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+        button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
             context_menu={
             'items': [
                 menu_item(icon="pencil", display="Compose", url="https://mail.google.com/mail/u/0/#inbox?compose=new"),
