@@ -535,7 +535,7 @@ def footer_html(request):
     Just return the footer
     """
     student_id = request.GET.get('student_id')
-    term_id = 55880
+    term_id = 55051
     PrimaryReport = db.table.PrimaryReport
     with DBSession() as session:
         student = session.query(db.table.Student).filter_by(id=student_id).one()

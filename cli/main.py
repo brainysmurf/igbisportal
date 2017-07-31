@@ -411,8 +411,9 @@ def who_does_not_have_parents(obj):
 
 @output.command()
 @click.option('--since', default=None, help="today for 'today'")
+@click.option('--inspect', is_flag=True, default=False, help="Look...")
 @click.pass_obj
-def parent_accounts(obj, since):
+def parent_accounts(obj, since, inspect):
     from cli.parent_accounts import ParentAccounts
     if since=='today':
         since = datetime.datetime.now().date()
@@ -425,6 +426,10 @@ def parent_accounts(obj, since):
         parent_accounts = ParentAccounts()
 
     parent_accounts.output()
+
+    if inspect:
+        from IPython import embed;embed()
+
 
 @output.command()
 @click.pass_obj
@@ -699,15 +704,15 @@ def pyp_reports_scrape_reports(obj, this_student, callback_id, fake):
             gns.tutorial("Collecting data for only one student", edit=(statement, '.sql'), stop=True)
             results = statement.all()
 
-            if len(results) == 1:
+            if len(results) > 0:
+                if len(results) > 1:
+                    print("More than one class?")
+                    print(results)
                 student_id, class_id = results[0]
                 gns.tutorial("Got the student mb id ({}) and the course id ({}) they are enrolled in.".format(student_id, class_id))
                 kwargs.update(dict(student_id=student_id, class_id=class_id))
-            elif len(results) == 0:
-                print("No classes, is the ID right?")
-                return
             else:
-                print("More than one class?")
+                print("No classes, is the ID right?")
                 return
 
     gns.tutorial("Sending to scraper with kwargs: {}".format(kwargs))
