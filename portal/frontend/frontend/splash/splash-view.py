@@ -131,7 +131,7 @@ parent_buttons = [
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
     context_menu={
         'items': [
-            menu_item(icon="book", display="Overview", url="1dzZfzYOrWeOrpiw2ZFQAUL3th3VNFO1HbS7PvF3ECvQ/"),
+            menu_item(icon="book", display="Overview", url="https://docs.google.com/document/d/1dzZfzYOrWeOrpiw2ZFQAUL3th3VNFO1HbS7PvF3ECvQ/"),
             menu_item(icon="book", display="Organisation", url="https://docs.google.com/document/d/1ak57-lHwVvVLGKQdKKBVhWwFtbN_lE19ErRb9CkLTEE/"),
             menu_item(icon="book", display="Health and Safety", url="https://docs.google.com/document/d/1CttoZfwCbNW8fEQoAjzYj1cTQAxb3dRSxQ_KP2Py56I/"),
             menu_item(icon="book", display="Policies", url="https://docs.google.com/a/igbis.edu.my/document/d/1805nPKwKb6kiUQm4JcqmMSvWnxv3beSyrQa208Ku110/"),
