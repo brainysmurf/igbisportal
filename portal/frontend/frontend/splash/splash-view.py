@@ -243,7 +243,7 @@ def splash(request):
 
     homeroom_items.append(menu_placeholder("mb_homeroom"))
 
-    handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="", icon="book", id="",
+    handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
         context_menu={
             'items': [
                 menu_item(icon="book", display="Overview", url="https://docs.google.com/document/d/1fFD2m_tHKz_3mQaF1_huFcj8NwrYAczxUgJklz5JnTI/"),
@@ -303,7 +303,6 @@ def splash(request):
         button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
             context_menu=None),
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
-        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
 
         button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", 
         context_menu={
@@ -351,7 +350,7 @@ def splash(request):
         button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
             context_menu=None),
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
-        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
+        handbook_button,
 
         button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
             'items': [
@@ -388,7 +387,7 @@ def splash(request):
         ]}),
         emergency_button,
         cashless_button,
-        handbook_button,
+        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
         ])
 
 
@@ -435,7 +434,7 @@ def splash(request):
                 menu_placeholder('mb_blogs')
             ],
             }),
-        handbook_button,
+        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
     ])
 
     buttons = OrderedDict()
