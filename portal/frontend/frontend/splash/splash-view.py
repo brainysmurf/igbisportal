@@ -243,7 +243,7 @@ def splash(request):
 
     homeroom_items.append(menu_placeholder("mb_homeroom"))
 
-    handbook_button = button(name="Staff Handbook", externalid=-9, size="small", color="red", url="", icon="book", id="",
+    handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="", icon="book", id="",
         context_menu={
             'items': [
                 menu_item(icon="book", display="Overview", url="https://docs.google.com/document/d/1fFD2m_tHKz_3mQaF1_huFcj8NwrYAczxUgJklz5JnTI/"),
@@ -317,7 +317,6 @@ def splash(request):
             menu_placeholder('mb_grade_teachers')
         ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
-        handbook_button,
     ]
 
     elem_teacher_buttons = [
@@ -436,6 +435,7 @@ def splash(request):
                 menu_placeholder('mb_blogs')
             ],
             }),
+        handbook_button,
     ])
 
     buttons = OrderedDict()
