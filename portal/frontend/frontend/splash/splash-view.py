@@ -247,7 +247,7 @@ def splash(request):
                     homeroom_teachers[grade].append(item.email)
 
     homeroom_items = [
-        menu_item(icon="", display="Welfare Program", url="https://docs.google.com/document/d/1qc2CxmBiC3CNOtJguD4trMRmfJ4O2I_H0ryAFRmfFrM/edit"),
+        menu_item(icon="", display="Welfare Program", url="https://docs.google.com/document/d/1WeGO0RGizDMQ8gz-S-xtBT2xKdFc3AzPBH55agBw9Q0"),
         menu_item(icon="", display="Secondary HR Notices", url="https://sites.google.com/igbis.edu.my/secondary-school"),
     ]
     for grade in sorted(homeroom_teachers):
