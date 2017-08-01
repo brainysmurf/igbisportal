@@ -282,7 +282,6 @@ def splash(request):
                 menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
                 menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
-                menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
                 menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
                 menu_item(icon="folder", display="CIS/NEASC Accreditation", url="https://drive.google.com/drive/folders/0By9YOJwliLtBM0FxRHFEVWVEcVk"),
                 menu_separator(),
@@ -290,12 +289,12 @@ def splash(request):
                 menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc"),
                 menu_item(icon="folder", display="MYP Subject Overviews 2015-16", url="https://docs.google.com/spreadsheets/d/1appZRRDUA89QcW-6J2rYRyGg_bPP4FMXPM_bb6Z-h2s/edit#gid=0"),
                 menu_separator(),
-                menu_item(icon="folder", display="Timetables (Semester Two)", url="https://docs.google.com/spreadsheets/d/1U2rLY8UvqyZ0I2u3CLYEjoUtu9WRWtakgRkLb_dw_gc/edit"),
-                menu_item(icon="folder", display="Class Timetables (Semester Two)", url="https://docs.google.com/spreadsheets/d/1W6xT-S7mOxX5IGBiTPIHiHMrNq5RIe1RgPund6Dln_Y/edit"),
-                menu_item(icon="folder", display="SS Duty Schedule (Semester 2)", url="https://docs.google.com/spreadsheets/d/1U2JOqkWma-qpWAIRQSN2gxz5i3HhFCuKh9TY-xzr_WQ/edit?ts=5909cc14#gid=697749873"),
-                menu_item(icon="folder", display="Cover Semester Two", url="https://docs.google.com/spreadsheets/d/1cpZMc8ss_FMe_3-QDKJPdyFkddhoOPfM4zTj9Ff81VE/edit"),
-                menu_item(icon="folder", display="Meeting Minutes 2016-2017", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERfkxJcEhDaURrcXRQRXU0bkwwUWUybG9fc3E4cG5vUkE3c3FZdTZhT3hldEE"),
-                menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/a/igbis.edu.my/document/d/1OffFa6BIcyNnva8w0iF9JS5vDAdAUbtKvqXAJEay6Lo/edit?usp=sharing")
+                menu_item(icon="folder", display="Teacher Timetables", url="https://docs.google.com/spreadsheets/d/1TdagsK1Ukcp11Z-_JvhGi1smXS0zePiMzVyLi3DJ_vY/edit#gid=791732971"),
+                menu_item(icon="folder", display="Class Timetables", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1m77dkYjRwxo4JUClMbHTvYRh4BEeRZKR-DBgIABKbCY"),
+                #menu_item(icon="folder", display="SS Duty Schedule (Semester 2)", url="https://docs.google.com/spreadsheets/d/1U2JOqkWma-qpWAIRQSN2gxz5i3HhFCuKh9TY-xzr_WQ/edit?ts=5909cc14#gid=697749873"),
+                #menu_item(icon="folder", display="Cover Semester Two", url="https://docs.google.com/spreadsheets/d/1cpZMc8ss_FMe_3-QDKJPdyFkddhoOPfM4zTj9Ff81VE/edit"),
+                menu_item(icon="folder", display="Meeting Minutes 2017-2018", url="https://drive.google.com/drive/folders/0By9YOJwliLtBOHVvNGJTeG9YSE0"),
+                #menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/a/igbis.edu.my/document/d/1OffFa6BIcyNnva8w0iF9JS5vDAdAUbtKvqXAJEay6Lo/edit?usp=sharing")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
