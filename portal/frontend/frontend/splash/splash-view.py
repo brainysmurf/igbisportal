@@ -69,21 +69,21 @@ counselor_button_students = button(name="Counselor", externalid=-9, size="", col
         menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form")         
     ]
     })
-counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="large", color="green", url="https://sites.google.com/a/igbis.edu.my/sst", icon="heart", id="", context_menu={
-    'items': [
-        menu_item(icon="globe", display="Student Services Site", url="https://sites.google.com/a/igbis.edu.my/sst"),
-        menu_item(icon="globe", display="Counselling Site", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/"),
-        menu_separator(),
-        menu_item(icon="globe", display="Behaviour Report Form", url="https://docs.google.com/a/igbis.edu.my/forms/d/1aTxoKnpGjuY9DcNJ7UlTJ6egsjG8-FMYTLpjvM1jdbY/viewform?c=0&w=1"),
-        menu_separator(),
-        menu_item(icon="globe", display="Make Appointment with Mr Chris (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
-        menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI"),
-        menu_item(icon="globe", display="Counselling Appointments Reference", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
-        menu_separator(),
-        menu_item(icon="globe", display="Wednesday Homework Support Sign-up", url="https://docs.google.com/a/igbis.edu.my/forms/d/1l9vqLOyKLTNlTZBWwEKU9VJT1aAm3ff0iye1QwCcZY8/viewform"),
-        menu_item(icon="globe", display="Wednesday Homework Support Reference List", url="https://docs.google.com/spreadsheets/d/1uqx-9-b9nsAWLME4qQcZm2g7tLTHqxOW3zVtEpdEvtw/edit#gid=1946619930")
-    ]
-    })
+counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="large", color="green", url="", icon="exclamation-triangle", id="") # , context_menu={
+#     'items': [
+#         menu_item(icon="globe", display="Student Services Site", url="https://sites.google.com/a/igbis.edu.my/sst"),
+#         menu_item(icon="globe", display="Counselling Site", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/"),
+#         menu_separator(),
+#         menu_item(icon="globe", display="Behaviour Report Form", url="https://docs.google.com/a/igbis.edu.my/forms/d/1aTxoKnpGjuY9DcNJ7UlTJ6egsjG8-FMYTLpjvM1jdbY/viewform?c=0&w=1"),
+#         menu_separator(),
+#         menu_item(icon="globe", display="Make Appointment with Mr Chris (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
+#         menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI"),
+#         menu_item(icon="globe", display="Counselling Appointments Reference", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
+#         menu_separator(),
+#         menu_item(icon="globe", display="Wednesday Homework Support Sign-up", url="https://docs.google.com/a/igbis.edu.my/forms/d/1l9vqLOyKLTNlTZBWwEKU9VJT1aAm3ff0iye1QwCcZY8/viewform"),
+#         menu_item(icon="globe", display="Wednesday Homework Support Reference List", url="https://docs.google.com/spreadsheets/d/1uqx-9-b9nsAWLME4qQcZm2g7tLTHqxOW3zVtEpdEvtw/edit#gid=1946619930")
+#     ]
+#     })
 counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="green", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Make Appointment with Mr Chris (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
