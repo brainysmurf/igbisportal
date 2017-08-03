@@ -69,7 +69,7 @@ counselor_button_students = button(name="Counselor", externalid=-9, size="", col
         menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form")         
     ]
     })
-counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="large", color="green", url="", icon="exclamation-triangle", id="") # , context_menu={
+counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="large", color="green", url="", icon="exclamation-triangle", id="", context_menu=None) # , context_menu={
 #     'items': [
 #         menu_item(icon="globe", display="Student Services Site", url="https://sites.google.com/a/igbis.edu.my/sst"),
 #         menu_item(icon="globe", display="Counselling Site", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/"),
