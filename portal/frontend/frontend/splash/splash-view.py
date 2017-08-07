@@ -408,6 +408,7 @@ def splash(request):
         button(name="Secondary&ensp;Procedures", externalid=-9, size="", color="peach", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
         context_menu={
         'items': [
+        	menu_item(icon="pencil", display="Behaviour Report Form", url="https://docs.google.com/a/igbis.edu.my/forms/d/1aTxoKnpGjuY9DcNJ7UlTJ6egsjG8-FMYTLpjvM1jdbY/viewform?c=0&w=1"),
             menu_item(icon="pencil", display="Absences / Cover", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/teacher-absences"),
             menu_item(icon="pencil", display='Professional Development Requests', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/professional-development"),
             menu_item(icon="pencil", display='Events at IGBIS', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/events"),
