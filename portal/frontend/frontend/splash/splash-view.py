@@ -77,7 +77,6 @@ counselor_button_not_students = button(name="Student Services & Counseling", ext
         menu_item(icon="globe", display="Behaviour Report Form", url="https://docs.google.com/a/igbis.edu.my/forms/d/1aTxoKnpGjuY9DcNJ7UlTJ6egsjG8-FMYTLpjvM1jdbY/viewform?c=0&w=1"),
         menu_separator(),
         menu_item(icon="globe", display="Make Appointment with Mr Chris (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
-        menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI"),
         menu_item(icon="globe", display="Counselling Appointments Reference", url="https://docs.google.com/document/d/1nB5BYvTw1hUIgoLyZbXGJhXqNuqIV3WhUCSIigtKOaY/edit"),
         menu_separator(),
         menu_item(icon="globe", display="Wednesday Homework Support Sign-up", url="https://docs.google.com/a/igbis.edu.my/forms/d/1l9vqLOyKLTNlTZBWwEKU9VJT1aAm3ff0iye1QwCcZY8/viewform"),
@@ -87,7 +86,6 @@ counselor_button_not_students = button(name="Student Services & Counseling", ext
 counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="green", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Make Appointment with Mr Chris (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
-        menu_item(icon="globe", display="Make Appointment with Mrs Davidson (9-12)", url="https://www.google.com/calendar/selfsched?sstoken=UUt3TjltOHZ1a0NhfGRlZmF1bHR8ODVjNGRlNjE3Nzk3NjhmNWVkMzA2MjgxODA2M2VmNDI")
     ]
     })
 parent_buttons = [
@@ -104,13 +102,12 @@ parent_buttons = [
                 #menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
                 menu_item(icon="globe", display="Fireflies", url="https://sites.google.com/a/igbis.edu.my/fireflies-16-17/"),
                 menu_item(icon="globe", display="Early Years", url="https://sites.google.com/a/igbis.edu.my/early-years-16-17/"),
-                menu_item(icon="globe", display="Kindergarten H", url="https://sites.google.com/a/igbis.edu.my/kgh/?pli=1"),
-                menu_item(icon="globe", display="Kindergarten N", url="https://sites.google.com/a/igbis.edu.my/igbis-kindergarten-n-1617/"),
+                menu_item(icon="globe", display="Kindergarten", url=""),
                 menu_item(icon="globe", display="Grade 1", url="https://sites.google.com/a/igbis.edu.my/grade-1-1617/"),
                 menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-2-2016-2017/"),
-                menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-3-2016-17/"),
-                menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/a/igbis.edu.my/g4-igbis1617/"),
-                menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/a/igbis.edu.my/grade-5m/"),
+                menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/igbis.edu.my/grade3/home"),
+                menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/igbis.edu.my/g4-igbis1718/home"),
+                menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/igbis.edu.my/grade5/home"),
                 menu_separator(),
                 menu_item(icon="globe", display="Single Subject Classes", url="https://sites.google.com/a/igbis.edu.my/single-subject-class-16-17/welcome"),
             ]
@@ -125,7 +122,12 @@ parent_buttons = [
     button(name="PVO", externalid=-9, size="", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu=None),
     button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
     button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", context_menu=None),
-
+    button(name="Help", externalid=-9, size="", color="pink", url="", icon="calendar", id="", context_menu={
+        ['items']: [
+            menu_item(icon="folder", display="How to login to your IGBIS parent account", url="https://docs.google.com/document/d/11fMisLpgNbcxokjzl8ObddjpbKMJIZ3V8gXIFYWTKNw/edit?usp=sharing"),
+            menu_item(icon="folder", display="How to forward your school email to an existing email address", url="https://docs.google.com/a/igbis.edu.my/document/d/1pj4A_Da3z7kdMRWBRJgtyLnnXSCZO_Ny4-uAgjJXf7I/edit?usp=sharing"),
+        ]
+    }),
 ]
 
 administration_buttons = [
