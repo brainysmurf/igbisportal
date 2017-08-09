@@ -124,7 +124,7 @@ parent_buttons = [
     button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
     button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", context_menu=None),
     button(name="Help", externalid=-9, size="", color="pink", url="", icon="calendar", id="", context_menu={
-        ['items']: [
+        'items': [
             menu_item(icon="folder", display="How to login to your IGBIS parent account", url="https://docs.google.com/document/d/11fMisLpgNbcxokjzl8ObddjpbKMJIZ3V8gXIFYWTKNw/edit?usp=sharing"),
             menu_item(icon="folder", display="How to forward your school email to an existing email address", url="https://docs.google.com/a/igbis.edu.my/document/d/1pj4A_Da3z7kdMRWBRJgtyLnnXSCZO_Ny4-uAgjJXf7I/edit?usp=sharing"),
         ]
