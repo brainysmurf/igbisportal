@@ -129,6 +129,7 @@ parent_buttons = [
             menu_item(icon="folder", display="How to forward your school email to an existing email address", url="https://docs.google.com/a/igbis.edu.my/document/d/1pj4A_Da3z7kdMRWBRJgtyLnnXSCZO_Ny4-uAgjJXf7I/edit?usp=sharing"),
         ]
     }),
+    cashless_button,
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
