@@ -63,7 +63,11 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
         }
     )
 
-cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu=None)
+cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu={
+    'items': [
+        menu_item(icon="globe", display="Help with Cashless System", url="https://drive.google.com/open?id=0BylFD10LdIUXbGtQcnlBVE92cmM"),
+    ]
+    })
 counselor_button_students = button(name="Counselor", externalid=-9, size="", color="green", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form")         
@@ -295,8 +299,8 @@ def splash(request):
                 menu_separator(),
                 menu_item(icon="folder", display="Teacher Timetables", url="https://docs.google.com/spreadsheets/d/1TdagsK1Ukcp11Z-_JvhGi1smXS0zePiMzVyLi3DJ_vY/edit#gid=791732971"),
                 menu_item(icon="folder", display="Class Timetables", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1m77dkYjRwxo4JUClMbHTvYRh4BEeRZKR-DBgIABKbCY"),
-                #menu_item(icon="folder", display="SS Duty Schedule (Semester 2)", url="https://docs.google.com/spreadsheets/d/1U2JOqkWma-qpWAIRQSN2gxz5i3HhFCuKh9TY-xzr_WQ/edit?ts=5909cc14#gid=697749873"),
-                #menu_item(icon="folder", display="Cover Semester Two", url="https://docs.google.com/spreadsheets/d/1cpZMc8ss_FMe_3-QDKJPdyFkddhoOPfM4zTj9Ff81VE/edit"),
+                menu_item(icon="folder", display="SS Duty Schedule", url="https://docs.google.com/spreadsheets/d/1BJuIgxmhFTnw7GfBxtKw0_msMQqitAQznmdXwLIMLuI/edit"),
+                menu_item(icon="folder", display="Cover Timetable", url="https://docs.google.com/spreadsheets/d/1y_6XbwiA32rQEWAsmpFo4fUi9iI_1P9NoKDuzUEWR94/"),
                 menu_item(icon="folder", display="Meeting Minutes", url="https://drive.google.com/drive/folders/0By9YOJwliLtBOHVvNGJTeG9YSE0"),
                 #menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/a/igbis.edu.my/document/d/1OffFa6BIcyNnva8w0iF9JS5vDAdAUbtKvqXAJEay6Lo/edit?usp=sharing")
             ]
