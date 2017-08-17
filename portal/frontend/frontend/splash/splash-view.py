@@ -106,7 +106,7 @@ parent_buttons = [
             'items': [
                 #menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
                 menu_item(icon="globe", display="Fireflies", url="https://sites.google.com/a/igbis.edu.my/fireflies-16-17/"),
-                menu_item(icon="globe", display="Early Years", url="https://sites.google.com/a/igbis.edu.my/early-years-16-17/"),
+                menu_item(icon="globe", display="Early Years", url="https://sites.google.com/igbis.edu.my/ey2017-2018"),
                 menu_item(icon="globe", display="Kindergarten", url=""),
                 menu_item(icon="globe", display="Grade 1", url="https://sites.google.com/a/igbis.edu.my/grade-1-1617/"),
                 menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-2-2016-2017/"),
