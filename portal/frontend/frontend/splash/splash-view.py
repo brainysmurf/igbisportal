@@ -65,7 +65,7 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
 
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
-        menu_item(icon="globe", display="Help with Cashless System", url="https://drive.google.com/open?id=0BylFD10LdIUXbGtQcnlBVE92cmM"),
+        menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://drive.google.com/open?id=0BylFD10LdIUXbGtQcnlBVE92cmM"),
     ]
     })
 counselor_button_students = button(name="Counselor", externalid=-9, size="", color="green", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
@@ -107,8 +107,8 @@ parent_buttons = [
                 #menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
                 menu_item(icon="globe", display="Fireflies", url="https://sites.google.com/a/igbis.edu.my/fireflies-16-17/"),
                 menu_item(icon="globe", display="Early Years", url="https://sites.google.com/igbis.edu.my/ey2017-2018"),
-                menu_item(icon="globe", display="Kindergarten", url=""),
-                menu_item(icon="globe", display="Grade 1", url="https://sites.google.com/a/igbis.edu.my/grade-1-1617/"),
+                menu_item(icon="globe", display="Kindergarten", url=" https://sites.google.com/igbis.edu.my/kindergarten-2017-2018/weekly-updates"),
+                menu_item(icon="globe", display="Grade 1", url=" https://sites.google.com/igbis.edu.my/grade1/home"),
                 menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-2-2016-2017/"),
                 menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/igbis.edu.my/grade3/home"),
                 menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/igbis.edu.my/g4-igbis1718/home"),
@@ -180,6 +180,7 @@ administration_buttons = [
     button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
     button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
     handbook_button,
+    cashless_button
 ]
 
 @view_config(route_name='updateButtons', renderer='json')
