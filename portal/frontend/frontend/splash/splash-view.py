@@ -24,7 +24,7 @@ menu_placeholder = lambda x: menu_item(url=x, display='placeholder', icon=None)
 
 stndrdbttns = [
     button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
-    button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+    button(name="<S></S>chool Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
         context_menu=None),
@@ -105,11 +105,11 @@ parent_buttons = [
     button(name="Classes", externalid=-9, size="", color="orange", url="", icon="star", id="", context_menu={
             'items': [
                 #menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
-                menu_item(icon="globe", display="Fireflies", url="https://sites.google.com/a/igbis.edu.my/fireflies-16-17/"),
+                menu_item(icon="globe", display="Fireflies", url="https://sites.google.com/igbis.edu.my/fireflies17/home "),
                 menu_item(icon="globe", display="Early Years", url="https://sites.google.com/igbis.edu.my/ey2017-2018"),
                 menu_item(icon="globe", display="Kindergarten", url=" https://sites.google.com/igbis.edu.my/kindergarten-2017-2018/weekly-updates"),
                 menu_item(icon="globe", display="Grade 1", url=" https://sites.google.com/igbis.edu.my/grade1/home"),
-                menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/a/igbis.edu.my/igbis-grade-2-2016-2017/"),
+                menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/igbis.edu.my/grade217-18/home"),
                 menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/igbis.edu.my/grade3/home"),
                 menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/igbis.edu.my/g4-igbis1718/home"),
                 menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/igbis.edu.my/grade5/home"),
@@ -134,6 +134,12 @@ parent_buttons = [
         ]
     }),
     cashless_button,
+    button(name="Parent University", externalid=-9, size="", color="aqua", url="", icon="university", id="https://drive.google.com/drive/folders/0B6wQr4eqP1FfNG1IVENHVkV5T2c", context_menu={
+        'items': [
+            menu_item(icon="folder", display="Session 1", url="https://drive.google.com/drive/folders/0B6wQr4eqP1FfX2JqbkNnYVhuWVU"),
+            menu_item(icon="folder", display="Session 2", url="https://drive.google.com/drive/folders/0B6wQr4eqP1FfdTBYYlRqZ2tJUkE"),
+        ]
+    }),
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
