@@ -236,7 +236,7 @@ def splash(request):
 
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
-        button(name="Activities", externalid=-9, size="large", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up", icon="rocket", id="", context_menu={
+        button(name="Activities", externalid=-9, size="large", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu={
                 'items': [
                     menu_item(icon="rocket", display="IGBIS Swimming", url="https://sites.google.com/a/igbis.edu.my/igbis-swimming/"),
                 ]
@@ -392,14 +392,8 @@ def splash(request):
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         bookings_button,
-        button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="rocket", display="Current Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/current-activities"),
-            menu_item(icon="rocket", display="IGBIS Swimming", url="https://sites.google.com/a/igbis.edu.my/igbis-swimming/"),
-            menu_item(icon="plus-circle", display="Sign-up", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up"),
-            menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
-        ]}),
+        button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
+        context_menu=None),
         emergency_button,
         cashless_button,
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
@@ -411,14 +405,8 @@ def splash(request):
         ibo_button,
 
         counselor_button_not_students,
-        button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", 
-        context_menu={
-        'items': [
-            menu_item(icon="rocket", display="Current Activities", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/current-activities"),
-            menu_item(icon="rocket", display="IGBIS Swimming", url="https://sites.google.com/a/igbis.edu.my/igbis-swimming/"),
-            menu_item(icon="plus-circle", display="Sign-up", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/sign-up"),
-            menu_item(icon="user", display="Staff", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/staff"),
-        ]}),
+        button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
+        context_menu=None),
 
         button(name="Secondary&ensp;Procedures", externalid=-9, size="", color="peach", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
         context_menu={
