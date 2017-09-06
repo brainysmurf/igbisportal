@@ -117,7 +117,7 @@ parent_buttons = [
                 menu_item(icon="globe", display="Single Subject Classes", url="https://sites.google.com/a/igbis.edu.my/single-subject-class-16-17/welcome"),
             ]
         }),
-    button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/a/igbis.edu.my/igbis-activities/", icon="rocket", id="", context_menu={
+    button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu={
             'items': [
                 menu_item(icon="rocket", display="IGBIS Swimming", url="https://sites.google.com/a/igbis.edu.my/igbis-swimming/"),
             ]
