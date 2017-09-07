@@ -35,13 +35,15 @@ stndrdbttns = [
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
+secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/secondarycamps/", icon="gittip", id="", context_menu=None)
+
 daily_notices_button = button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
     'items': [
         menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
         menu_separator(),
         menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
         menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
-    ]}),
+    ]})
 
 emergency_button = button(name="Emergency Contact", externalid=-9, size="", color="yellow", url="https://sites.google.com/a/igbis.edu.my/emergency-contact-information/", icon="phone-square", id="", context_menu=None)
 
@@ -134,12 +136,13 @@ parent_buttons = [
         ]
     }),
     cashless_button,
-    button(name="Parent University", externalid=-9, size="", color="aqua", url="", icon="university", id="https://drive.google.com/drive/folders/0B6wQr4eqP1FfNG1IVENHVkV5T2c", context_menu={
+    button(name="Parent University", externalid=-9, size="", color="aqua", url="", icon="graduation-cap", id="https://drive.google.com/drive/folders/0B6wQr4eqP1FfNG1IVENHVkV5T2c", context_menu={
         'items': [
             menu_item(icon="folder", display="Session 1", url="https://drive.google.com/drive/folders/0B6wQr4eqP1FfX2JqbkNnYVhuWVU"),
             menu_item(icon="folder", display="Session 2", url="https://drive.google.com/drive/folders/0B6wQr4eqP1FfdTBYYlRqZ2tJUkE"),
         ]
     }),
+    secondary_camps_button,
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
@@ -246,6 +249,7 @@ def splash(request):
         counselor_button_students,
         button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
         button(name="Help with Maths for Grade 6 and 7", externalid=-9, size="", color="cyan", url="https://docs.google.com/a/igbis.edu.my/forms/d/e/1FAIpQLSftPRE_wM4KbxPiK9jSFHqOrwkbU_fuSH-1StIZ9x_SdpYSJw/viewform?c=0&w=1", icon="info-circle", id="", context_menu=None),
+        secondary_camps_button,
     ])
 
     with DBSession() as session:
@@ -439,6 +443,7 @@ def splash(request):
             ],
             }),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
+        secondary_camps_button,
     ])
 
     buttons = OrderedDict()
