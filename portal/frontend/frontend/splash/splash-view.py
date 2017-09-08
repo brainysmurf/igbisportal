@@ -401,7 +401,11 @@ def splash(request):
         emergency_button,
         cashless_button,
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
-        ])
+        button(name="ES Behaviour Report", externalid=-9, size="", color="purple", url="", icon="bullhorn", id="", context_menu={
+        'items': [
+            menu_item(icon="thumb-tack", display="Submit Behaviour Report", url="https://goo.gl/forms/ZGX0fyDhSJLtaYz22"),
+            menu_item(icon="apple", display="View Behaviour Reports", url="https://sites.google.com/igbis.edu.my/esbehaviourreports/home")
+        ]}),
 
 
     sec_teacher_buttons.extend([
