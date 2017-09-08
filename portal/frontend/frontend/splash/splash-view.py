@@ -440,12 +440,10 @@ def splash(request):
         bookings_button,
         emergency_button,
         cashless_button,
-        button(name="Blogs", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="rss-square", id="",
-            context_menu={
-            'items': [
-                menu_placeholder('mb_blogs')
-            ],
-            }),
+        button(name="Blogs", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="rss-square", id="", context_menu={
+        'items': [
+            menu_placeholder('mb_blogs')
+        ]}),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
         secondary_camps_button,
     ])
