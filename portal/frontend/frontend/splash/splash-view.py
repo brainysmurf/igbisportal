@@ -338,8 +338,7 @@ def splash(request):
             menu_item(icon="plus-circle", display="Bulk Email Memberships", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-memberships"),
             menu_separator(),
             menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
-            menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
-
+            menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database"),
             menu_separator(),
             menu_item(icon="", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
             menu_item(icon="", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
