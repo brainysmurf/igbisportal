@@ -412,7 +412,6 @@ def splash(request):
         bookings_button,
         button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
         context_menu=None),
-        emergency_button,
         cashless_button,
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
         button(name="ES Behaviour Report", externalid=-9, size="", color="purple", url="", icon="bullhorn", id="", context_menu={
@@ -452,7 +451,6 @@ def splash(request):
         ]}),
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         bookings_button,
-        emergency_button,
         cashless_button,
         button(name="Blogs", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="rss-square", id="", context_menu={
         'items': [
