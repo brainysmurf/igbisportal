@@ -195,7 +195,8 @@ administration_buttons = [
     button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
     button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
     handbook_button,
-    cashless_button
+    cashless_button,
+    button(name="Admissions Information", externalid=-9, size="", color="aqua", url="https://sites.google.com/igbis.edu.my/infoforadmissions/home", icon="comment-o", id="", context_menu=None),
 ]
 
 @view_config(route_name='updateButtons', renderer='json')
