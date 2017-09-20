@@ -329,7 +329,7 @@ def splash(request):
             context_menu=None),
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
         handbook_button,
-        button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments-o", id="", 
+        button(name="Community Information", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/home", icon="comments-o", id="", 
         context_menu={
         'items': [
             menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/student-directory"),
