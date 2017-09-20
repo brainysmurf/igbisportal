@@ -129,12 +129,7 @@ parent_buttons = [
     button(name="PVO", externalid=-9, size="", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu=None),
     button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
     button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", context_menu=None),
-    button(name="Help", externalid=-9, size="", color="pink", url="", icon="calendar", id="", context_menu={
-        'items': [
-            menu_item(icon="folder", display="How to login to your IGBIS parent account", url="https://docs.google.com/document/d/11fMisLpgNbcxokjzl8ObddjpbKMJIZ3V8gXIFYWTKNw/edit?usp=sharing"),
-            menu_item(icon="folder", display="How to forward your school email to an existing email address", url="https://docs.google.com/a/igbis.edu.my/document/d/1pj4A_Da3z7kdMRWBRJgtyLnnXSCZO_Ny4-uAgjJXf7I/edit?usp=sharing"),
-        ]
-    }),
+    button(name="Help", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/parentpdpage/home", icon="calendar", id="", context_menu=None),
     cashless_button,
     button(name="Parent University", externalid=-9, size="", color="aqua", url="", icon="graduation-cap", id="https://drive.google.com/drive/folders/0B6wQr4eqP1FfNG1IVENHVkV5T2c", context_menu={
         'items': [
@@ -143,6 +138,12 @@ parent_buttons = [
         ]
     }),
     secondary_camps_button,
+    button(name="Community Information", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home", icon="comments-o", id="", context_menu={
+        'items': [
+            menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/communicationsforparents/student-directory"),
+            menu_item(icon="plus-circle", display="Bulk Email Memberships", url="https://sites.google.com/igbis.edu.my/communicationsforparents/bulk-email-memberships"),
+        ]}),
+
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
@@ -176,8 +177,13 @@ administration_buttons = [
             menu_item(icon="folder", display="SS Camps", url="https://docs.google.com/spreadsheets/d/1l4rF_xnyy3hjKOGftBaOfnACq-PIz2hgT2uIR_Jyd2g/edit#gid=798482198"),
         ]
         }),
-    button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
+    button(name="Community Information", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/home", icon="comments-o", id="", context_menu={
     'items': [
+        menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/student-directory"),
+        menu_item(icon="plus-circle", display="Medical Information", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/medical-info"),
+        menu_item(icon="plus-circle", display="Bulk Email Lists", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-lists"),
+        menu_item(icon="plus-circle", display="Bulk Email Memberships", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-memberships"),
+        menu_separator(),
         menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
         menu_separator(),
         menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
@@ -323,11 +329,17 @@ def splash(request):
             context_menu=None),
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
         handbook_button,
-        button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", 
+        button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments-o", id="", 
         context_menu={
         'items': [
-            menu_item(icon="", display="Communication Main Site", url="https://sites.google.com/a/igbis.edu.my/communications/"),
-            menu_item(icon="", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
+            menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/student-directory"),
+            menu_item(icon="plus-circle", display="Medical Information", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/medical-info"),
+            menu_item(icon="plus-circle", display="Bulk Email Lists", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-lists"),
+            menu_item(icon="plus-circle", display="Bulk Email Memberships", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-memberships"),
+            menu_separator(),
+            menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
+            menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
+
             menu_separator(),
             menu_item(icon="", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
             menu_item(icon="", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
@@ -371,9 +383,12 @@ def splash(request):
         button(name="Calendar", externalid=-9, size="", color="peach", url="https://sites.google.com/a/igbis.edu.my/igbis-calendar/", icon="calendar", id="", context_menu=None),
         handbook_button,
 
-        button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
+        button(name="Community Information", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/home", icon="comments-o", id="", context_menu={
             'items': [
-                menu_item(icon="venus-mars", display="Staff Information Sharing", url="https://sites.google.com/a/igbis.edu.my/staff/welcome"),
+                menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/student-directory"),
+                menu_item(icon="plus-circle", display="Medical Information", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/medical-info"),
+                menu_item(icon="plus-circle", display="Bulk Email Lists", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-lists"),
+                menu_item(icon="plus-circle", display="Bulk Email Memberships", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-memberships"),
                 menu_separator(),
                 menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
                 menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
