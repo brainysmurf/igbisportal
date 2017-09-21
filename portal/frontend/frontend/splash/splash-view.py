@@ -128,8 +128,9 @@ parent_buttons = [
     counselor_button_parents,
     button(name="PVO", externalid=-9, size="small", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu={
         'items': [
-            menu_item(icon="book", display="", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home"),
-            menu_item(icon="book", display="    ^-- class reps only", url=""),
+            menu_item(icon="book", display="Parents Volunteer Organization Main site", url="https://sites.google.com/igbis.edu.my/pvo"),
+            menu_separator(),
+            menu_item(icon="book", display="Community Information (Class Reps Only)", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home"),
         ]}),
     button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
     button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", context_menu=None),
