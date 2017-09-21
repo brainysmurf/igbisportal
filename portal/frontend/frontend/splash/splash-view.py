@@ -126,7 +126,11 @@ parent_buttons = [
         }),
     button(name="Parent Sports Field sign-ups", externalid=-9, size="", color="blue", url="https://docs.google.com/a/igbis.edu.my/forms/d/1Fj8ah4IuFn6PdE5a9XZfwzZ3ANJ9AdQo5-67ROwjCnU/viewform?c=0&w=1", icon="plus-circle", id="", context_menu=None),
     counselor_button_parents,
-    button(name="PVO", externalid=-9, size="", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu=None),
+    button(name="PVO", externalid=-9, size="small", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu={
+        'items': [
+            menu_item(icon="book", display="", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home"),
+            menu_item(icon="book", display="    ^-- class reps only", url=""),
+        ]}),
     button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
     button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", context_menu=None),
     button(name="Help", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/parentpdpage/home", icon="calendar", id="", context_menu=None),
@@ -138,12 +142,6 @@ parent_buttons = [
         ]
     }),
     secondary_camps_button,
-    button(name="Community Information", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home", icon="comments-o", id="", context_menu={
-        'items': [
-            menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/communicationsforparents/student-directory"),
-            menu_item(icon="plus-circle", display="Bulk Email Memberships", url="https://sites.google.com/igbis.edu.my/communicationsforparents/bulk-email-memberships"),
-        ]}),
-
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
