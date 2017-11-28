@@ -154,7 +154,7 @@ handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="r
             menu_item(icon="book", display="Policies", url="https://docs.google.com/a/igbis.edu.my/document/d/1805nPKwKb6kiUQm4JcqmMSvWnxv3beSyrQa208Ku110/"),
             menu_item(icon="book", display="Responsibilities of Teachers", url="https://docs.google.com/document/d/1W3e6q76oB8CVoToY5DUqyppK3iOzE2xGyllVQmofKLU/"),
             menu_item(icon="book", display="Elementary and Secondary Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/16q0RkQb2yNj4KCnSRrb9wxNZtP7MYV7ScrZjWuqMSyc/"),
-            menu_item(icon="book", display="Budget and Safety Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/15WKjGWttfUkgu8CGahS0QeAzs07dBpwOyMZuyq2c_8k/"),
+            menu_item(icon="book", display="Budget and Supply Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/15WKjGWttfUkgu8CGahS0QeAzs07dBpwOyMZuyq2c_8k/"),
             menu_item(icon="book", display="HR Policies and Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/1UDyWngXoTLRJLOp0zyXAH788vaEePJzBmkNjcHlnOpA/"),
             menu_item(icon="book", display="Admissions Policies and Procedures", url="https://docs.google.com/document/d/1wFcWSHdL_XsJpZlQNB5QE8iIKMyWLCt6CjMuKIdfbPk/"),
         ]
