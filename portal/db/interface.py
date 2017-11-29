@@ -202,10 +202,8 @@ class DatabaseSetterUpper(object):
 				gns.tutorial("Associating teachers with their enrolled classes")
 				with open(gns('{config.paths.jsons}/classes.json')) as _f:
 					this_json = json.load(_f)
-				if this_json['classes'] is None:
-					from IPython import embed;embed()
 				for clss in this_json['classes']:
-					for teacher in [t for t in clss.get('teachers') if t['show_on_reports']]:
+					for teacher in [t for t in clss.get('teachers')]:
 						teacher_id = teacher.get('teacher_id')
 						teacher_course.append(teacher_id, clss['id'])
 
