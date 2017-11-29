@@ -1039,6 +1039,7 @@ class Course(Base):
     grade = Column(String(255))
     uniq_id = Column(String(255), nullable=True, server_default=None)
     class_section = Column(String(10), nullable=True, server_default=None)
+    ##teachers = relationship('Advisor', secondary="Assignments", backref="classes")
 
     @hybrid_property
     def abbrev_name(self):

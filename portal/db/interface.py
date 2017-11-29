@@ -5,6 +5,7 @@ FIXME: Do not print to stdout
 
 from portal.db import Database, DBSession
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from portal.exceptions import DoesNotExist
 from sqlalchemy.exc import IntegrityError
 import gns
 import re, json, glob
@@ -14,6 +15,7 @@ from portal.db.UpdaterHelper import updater_helper
 import hashlib # so we can store unique IDs for busadmins
 
 import click
+
 
 class DatabaseSetterUpper(object):
 	"""
@@ -39,7 +41,6 @@ class DatabaseSetterUpper(object):
 			this_json = json.load(_f)
 
 			for student in this_json.get('students'):
-
 				student_student_id = student.get('custom_id')  # open applys stores student_id as custom_id
 				student_email = student.get('email')
 
@@ -55,6 +56,9 @@ class DatabaseSetterUpper(object):
 							db_student = session.query(self.db.table.Student).filter(self.db.table.Student.email==student_email).one()
 						except NoResultFound:
 							db_student = None
+					except MultipleResultsFound:
+						click.echo("More than one account with the same student id of {}".format(student_student_id))
+						continue
 
 					# FIXME: Why is db_student.status always None here?
 					if db_student and db_student.status != student.get('status'):
@@ -120,29 +124,14 @@ class DatabaseSetterUpper(object):
 
 			for gns.section in gns.config.managebac.sections.split(','):
 				path = gns('{config.paths.jsons}/{section}.json')
-				with open(path) as _f:
+				with open(path.replace('_', '-')) as _f:
 					this_json = json.load(_f)
 				gns.tutorial("Importing {} from file located at {}".format(gns.section, path), edit=(str(this_json), '.json'))
-				_map = dict(Classes="Course", Students="Student", Advisors="Advisor", Parents="Parent")
-				_map['Account Admins'] = "Advisor"   # count account admins as an advisor
-				if gns.section == "users":
-					# We need to process the advisors first, otherwise potentially we'll get foreign key constraint errors
-					# If we process student before advisor has been created
-					items = sorted(this_json[gns.section], key=lambda x: x.get('type'))
-				else:
-					items = this_json[gns.section]
+				_map = dict(classes="Course", students="Student", teachers="Advisor", parents="Parent", ib_groups="IBGroup")
+				_type = _map.get(gns.section)
 
+				items = this_json[gns.section]
 				for item in items:
-					_type = item.get('type', None)
-					_type = _map.get(_type, _type)
-					if not _type:
-						if gns.section == 'ib_groups':
-							_type = "IB_Group"
-						else:
-							_type = 'Course' if item.get('class_type') else None
-					if not _type:
-						raise Exception("Object is causing us trouble can't go on without resolving: 'item' doesn't have legit 'type'?")
-
 					if fake and _type in ["Student", "Advisor", "Parent"]:
 						f_name = "This should not work"
 						while len(f_name.split(" ")) != 2:
@@ -159,58 +148,40 @@ class DatabaseSetterUpper(object):
 					table_class = self.db.table_string_to_class(_type)
 					instance = table_class()
 					for item_key in item:
-						try:
-							# Set up the instance to have the expected values
-							setattr(instance, item_key, item[item_key])
-
-						except AttributeError:
-							#TODO: Make this part of the logger
-							click.echo(click.style("Warning, no attribute {} for {} detected".format(item_key, item), fg='red'))
-							if item[item_key] is None:
-								pass # doesn't seem to be happening								
-							else:
-								pass  # doesn't seem to be happening
-
+						value = item[item_key]
+						if gns.section == "classes" and item_key == 'teachers':
+							continue  # don't need to do this as this happens below...
+						setattr(instance, item_key, value)
 					# Don't go ahead unless a studentid has been given
 					if _type == "Student":
 						if hasattr(item, 'student_id') and not item['student_id'] is None:
 							click.echo(click.style("Warning, student_id not present for {}".format(item)))
 							continue
-
 					u.update_or_add(instance)
 
-			with u.collection(self.db.table.Student, self.db.table.Parent, 'parents', left_column='student_id') as stu_par:
+		with updater_helper() as u:
 
-				with open(gns('{config.paths.jsons}/users.json')) as _f:
+			with u.collection(self.db.table.Student, self.db.table.Parent, 'parents', left_column='id') as stu_par:
+
+				with open(gns('{config.paths.jsons}/students.json')) as _f:
 					this_json = json.load(_f)
 
 				gns.tutorial("Associating students with respective parents")
-				for user in this_json['users']:
-					_type = user.get('type')
-					if _type == "Students":
-						student_id = user.get('student_id')
-						if student_id:
-							for parent_id in user.get('parents_ids'):
-								# This will decide on that end whether or not to emit the sql or not
+				for student in this_json['students']:
+					student_id = student.get('id')
+					if student_id:
+						for parent_id in student.get('parent_ids'):
+							# This will decide on that end whether or not to emit the sql or not
+							try:
 								stu_par.append(student_id, parent_id)
-						else:
-							pass # Expected: There are loads of students without any student_id (either none or blank) that are in there for testing, etc
+							except NoResultFound:
+								print("Could not associate {} with {} what the heck?".format(student_id, parent_id))
+					else:
+						pass # Expected: There are loads of students without any student_id (either none or blank) that are in there for testing, etc
 
-			# TODO: OpenApply has the sibling information
-			# with u.collection(Student, Student, 'siblings', left_column='student_id', right_column='id') as stu_sib:
-
-			# 	with open(gns('{config.paths.jsons}/open_apply_users.json')) as _f:
-			# 		this_json = json.load(_f)
-
-			# 	self.default_logger("Setting up student-sibling relations on database from OpenApply")
-			# 	for user in this_json['students']:
-			# 		student_id = user.get('custom_id')	
-			# 		for sibling_id in user.get('sibling_ids'):
-			# 			stu_sib.append(student_id, parent_id)
-
-			with u.collection(self.db.table.Student, self.db.table.IBGroup, 'ib_groups', left_column='student_id') as stu_ibgroup:
+			with u.collection(self.db.table.Student, self.db.table.IBGroup, 'ib_groups', left_column='id') as stu_ibgroup:
 				gns.tutorial("Associating students with IB Groups")
-				with open(gns('{config.paths.jsons}/ib_groups.json')) as _f:
+				with open(gns('{config.paths.jsons}/ib-groups.json')) as _f:
 					this_json = json.load(_f)
 
 				for ib_group in this_json['ib_groups']:
@@ -219,27 +190,24 @@ class DatabaseSetterUpper(object):
 					gns.uri = gns.config.managebac.ib_groups_section_url.replace('/', '-')
 
 					# Two gns calls because uri has {id} in it
-					with open(gns(gns('{config.paths.jsons}/{uri}.json'))) as _f2:
+					with open(gns(gns('{config.paths.jsons}/{uri}.json')).replace("_", '-')) as _f2:
 						members_json = json.load(_f2)
-
-					for student_item in members_json['members']:
-						gns.student_id = student_item.get('student_id')
-						if not gns.student_id:
-							continue
-						stu_ibgroup.append(gns.student_id, gns.group_id)						
+					for gns.student_id in members_json['student_ids']:
+						try:
+							stu_ibgroup.append(gns.student_id, gns.group_id)
+						except DoesNotExist:
+							print("No student going by ID {}".format(gns.student_id))
 
 			with u.collection(self.db.table.Teacher, self.db.table.Course, 'classes') as teacher_course:
 				gns.tutorial("Associating teachers with their enrolled classes")
 				with open(gns('{config.paths.jsons}/classes.json')) as _f:
 					this_json = json.load(_f)
+				if this_json['classes'] is None:
+					from IPython import embed;embed()
 				for clss in this_json['classes']:
-					for teacher in clss.get('teacher'):
+					for teacher in [t for t in clss.get('teachers') if t['show_on_reports']]:
 						teacher_id = teacher.get('teacher_id')
-						course_id = clss.get('id')
-
-						if teacher_id and course_id:
-							# the helper will actually emit the sql if necessary
-							teacher_course.append(teacher_id, course_id)
+						teacher_course.append(teacher_id, clss['id'])
 
 			with u.collection(self.db.table.Student, self.db.table.Course, 'classes', left_column='student_id') as stu_course:
 

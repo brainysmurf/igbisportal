@@ -24,6 +24,9 @@ class DefaultDownloader():
     async def download(self, session):
         self.will_download(self.url)
         async with session.request(self.method, self.url, params=self.params) as response:
+            if response.status != 200:
+                print("status {} for url {}".format(response.status, self.url))
+                return []
             response_json = await response.json()
             self.did_download(self.url)
 
@@ -39,6 +42,7 @@ class DefaultDownloader():
 
     def did_download(self, url):
         pass
+
 
 class PagingDownloader(DefaultDownloader):
     """
@@ -79,6 +83,7 @@ class PagingDownloader(DefaultDownloader):
                 asyncio.ensure_future( self.write(self._json, self.path) ) #! await
             return self._json
 
+
 class DiscoveryDownloader(DefaultDownloader):
     """
     For use when information inside the response leads to another url
@@ -101,6 +106,9 @@ class DiscoveryDownloader(DefaultDownloader):
     async def download(self, session):
         self.will_download(self.url)
         async with session.request(self.method, self.url, params=self.params) as response:
+            if response.status != 200:
+                print('got status {} for url {}'.format(response.status, self.url))
+                return []
             response_json = await response.json()
             self.did_download(self.url)
 
@@ -119,6 +127,7 @@ class DiscoveryDownloader(DefaultDownloader):
         if self.path:
             asyncio.ensure_future( self.write(response_json, self.path) ) #! await
         return response_json
+
 
 class AsyncDownloaderHelper():
     """
