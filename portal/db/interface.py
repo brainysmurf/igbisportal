@@ -209,18 +209,18 @@ class DatabaseSetterUpper(object):
 						teacher_id = teacher.get('teacher_id')
 						teacher_course.append(teacher_id, clss['id'])
 
-			with u.collection(self.db.table.Student, self.db.table.Course, 'classes', left_column='student_id') as stu_course:
+			with u.collection(self.db.table.Student, self.db.table.Course, 'classes', left_column='id') as stu_course:
 
 				gns.tutorial("Associating students with enrolled classes")
-				for path in glob.glob(gns('{config.paths.jsons}/classes-*-members.json')):
+				for path in glob.glob(gns('{config.paths.jsons}/classes-*-students.json')):
 					with open(path) as _f:
 						this_json = json.load(_f)
 
 					with DBSession() as session:
-						course_id = int(re.match(gns('{config.paths.jsons}/classes-(\d+)-members.json'), path).group(1))
-						for course in this_json['members']:
+						course_id = int(re.match(gns('{config.paths.jsons}/classes-(\d+)-students.json'), path).group(1))
+						for course in this_json['students']:
 							# DEBUGGING
-							student_id = course.get('student_id')
+							student_id = course.get('id')
 							if not student_id:
 								pass # expected
 							else:
