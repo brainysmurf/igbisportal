@@ -218,28 +218,9 @@ class DatabaseSetterUpper(object):
 
 					with DBSession() as session:
 						course_id = int(re.match(gns('{config.paths.jsons}/classes-(\d+)-students.json'), path).group(1))
-						for course in this_json['students']:
+						for student_id in this_json['student_ids']:
 							# DEBUGGING
-							student_id = course.get('id')
-							if not student_id:
-								pass # expected
-							else:
-								successful = False
-								try:	
-									student = session.query(self.db.table.Student).filter(self.db.table.Student.student_id==student_id).one()
-									successful = True
-								except NoResultFound:
-									self.default_logger("Student {} not found".format(student_id))
-								except MultipleResultsFound:
-									if student_id is None:
-										print("student_id is None for course_id {}!".format(course_id))
-									else:
-										print("Found this student twice! {}".format(student_id))
-								if successful:							
-									try:
-										stu_course.append(str(student_id), course_id)
-									except NoResultFound:
-										gns.tutorial('course_id {} or student_id {} not found'.format(course_id, student_id), banner=False)
+							stu_course.append(student_id, course_id)
 
 		# Now let's look at open_apply and update status, but only if the student is already in there.
 		# We won't use the manager because this is more of a piece-meal thing
