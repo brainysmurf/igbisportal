@@ -72,7 +72,9 @@ cashless_button = button(name="Cashless", externalid=-9, size="", color="green",
     })
 counselor_button_students = button(name="Counselor", externalid=-9, size="", color="green", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
     'items': [
-        menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form")         
+        menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form"),
+        menu_separator(),
+        menu_item(icon="globe", display="Depression", url="https://sofeajohan020.wixsite.com/theadversary")         
     ]
     })
 counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="large", color="green", url="https://sites.google.com/igbis.edu.my/sst2017/home", icon="heart", id="", context_menu=None) # , context_menu={
