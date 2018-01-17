@@ -144,8 +144,7 @@ parent_buttons = [
             menu_item(icon="folder", display="Session 2", url="https://drive.google.com/drive/folders/0B6wQr4eqP1FfdTBYYlRqZ2tJUkE"),
         ]
     }),
-    secondary_camps_button,
-    button(name="IGBIS Haze Policy", externalid=-9, size="", color="green", url="https://docs.google.com/document/d/15jFcNV7IkGMqWp6P90CVF3jp-QNWcBLTOzP39eT7v4M/edit?ts=5a1f4a22", icon="soundcloud", id=""),
+    button(name="IGBIS Haze Policy", externalid=-9, size="", color="green", url="https://docs.google.com/document/d/15jFcNV7IkGMqWp6P90CVF3jp-QNWcBLTOzP39eT7v4M/edit?ts=5a1f4a22", icon="soundcloud", id="", context_menu=None),
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
@@ -257,7 +256,6 @@ def splash(request):
         counselor_button_students,
         button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
         button(name="Help with Maths for Grade 6 and 7", externalid=-9, size="", color="cyan", url="https://docs.google.com/a/igbis.edu.my/forms/d/e/1FAIpQLSftPRE_wM4KbxPiK9jSFHqOrwkbU_fuSH-1StIZ9x_SdpYSJw/viewform?c=0&w=1", icon="info-circle", id="", context_menu=None),
-        secondary_camps_button,
     ])
 
     with DBSession() as session:
@@ -456,7 +454,6 @@ def splash(request):
             menu_placeholder('mb_blogs')
         ]}),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
-        secondary_camps_button,
     ])
 
     buttons = OrderedDict()
