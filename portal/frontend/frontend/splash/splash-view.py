@@ -74,7 +74,7 @@ counselor_button_students = button(name="Counselor", externalid=-9, size="", col
     'items': [
         menu_item(icon="globe", display="Request an Appointment", url="https://docs.google.com/a/igbis.edu.my/forms/d/1wV6-UkFN1wB-wQvM_rtUZBGjGTXXipZ8WYHpNqeAI0c/viewform?usp=send_form"),
         menu_separator(),
-        menu_item(icon="globe", display="Depression", url="https://sofeajohan020.wixsite.com/theadversary")         
+        menu_item(icon="globe", display="Information about Depression", url="https://sofeajohan020.wixsite.com/theadversary")         
     ]
     })
 counselor_button_not_students = button(name="Student Services & Counseling", externalid=-9, size="large", color="green", url="https://sites.google.com/igbis.edu.my/sst2017/home", icon="heart", id="", context_menu=None) # , context_menu={
@@ -135,7 +135,13 @@ parent_buttons = [
             menu_item(icon="book", display="Community Information (Class Reps Only)", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home"),
         ]}),
     button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
-    button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", context_menu=None),
+    button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", 
+        context_menu={
+            'items': [
+                menu_item(icon="book", display="Upcoming Events", url="http://igbis.edu.my/news-events/upcoming-events/"),
+                menu_item(icon="book", display="Rotating Timetable", url="https://docs.google.com/spreadsheets/d/1n0-trNO0obLWSfnWA65sQzbQIXQEkYXBJPVK36OVwVg/edit#gid=0"),
+            ]
+        }),
     button(name="Help", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/parentpdpage/home", icon="calendar", id="", context_menu=None),
     cashless_button,
     button(name="Parent University", externalid=-9, size="", color="aqua", url="", icon="graduation-cap", id="https://drive.google.com/drive/folders/0B6wQr4eqP1FfNG1IVENHVkV5T2c", context_menu={
