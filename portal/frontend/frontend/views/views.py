@@ -589,7 +589,7 @@ def update_report_internal(request):
     mb_user = request.session.get('mb_user', None)
     if not mb_user:
         return HTTPForbidden()
-    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+    elif mb_user.type.startswith('Advisors') or mb_user.type == 'Account Admins':
         # let them in
         pass
     else:
@@ -651,7 +651,7 @@ def student_enrollments_by_course_id(request):
     mb_user = request.session.get('mb_user', None)
     if not mb_user:
         return HTTPForbidden()
-    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+    elif mb_user.type.startswith('Advisors') or mb_user.type == 'Account Admins':
         # let them in
         pass
     else:
@@ -677,7 +677,7 @@ def lastupdated(request):
     mb_user = request.session.get('mb_user', None)
     if not mb_user:
         return HTTPForbidden()
-    elif mb_user.type.startswith('Advisor') or mb_user.type == 'Account Admins':
+    elif mb_user.type.startswith('Advisors') or mb_user.type == 'Account Admins':
         # let them in
         pass
     else:
