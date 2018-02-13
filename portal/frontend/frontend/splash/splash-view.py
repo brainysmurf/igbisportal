@@ -35,6 +35,16 @@ stndrdbttns = [
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
+emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="", color="aqua", url="", icon="warning", id="", context_menu={
+    'items': {
+        menu_item(icon="globe", display="Evacuation procedures — ES", url="https://docs.google.com/document/d/1rqCtEFrDTzSwkZLjzDvVpeD2_nZx67_fjl8vL-Fcwfs/edit"),
+        menu_item(icon="globe", display="Lockdown procedures — ES", url="https://docs.google.com/document/d/1jI1Yh7WboPJHxGeNjTeephEPSKlYGVzs-Gdg_6WTyy0/edit"),
+        menu_item(icon="globe", display="Evacuation procedures — SS", url="https://docs.google.com/document/d/1PQ5z2awRnUo5cE4ysv_mdki-DG9WuUoAQzDam_3JY_k/edit"),
+        menu_item(icon="globe", display="Lockdown procedures — SS", url="https://docs.google.com/document/d/1eDSpZEEp7WpQA_YzwolHJq_uHr9USSTLfiV-4asG7is/edit"),
+        menu_item(icon="globe", display="Emergency protocols Manual", url="https://docs.google.com/document/d/1-UTe_G3m-OaI7xag1v41LWKgMUcBD8HdsuWt06m6Tb8/edit?ts=5a818d32"),
+    }
+})
+
 secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/secondarycamps/", icon="gittip", id="", context_menu=None)
 
 daily_notices_button = button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
@@ -203,6 +213,7 @@ administration_buttons = [
     handbook_button,
     cashless_button,
     button(name="Admissions Information", externalid=-9, size="", color="aqua", url="https://sites.google.com/igbis.edu.my/infoforadmissions/home", icon="comment-o", id="", context_menu=None),
+    emergency_procedures,
 ]
 
 @view_config(route_name='updateButtons', renderer='json')
@@ -396,7 +407,7 @@ def splash(request):
                 menu_item(icon="calendar-check-o", display="Today's Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/"),
                 menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
             ]}),
-        button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
+        button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
     ]
 
     elem_teacher_buttons.extend([
@@ -422,6 +433,7 @@ def splash(request):
             menu_item(icon="thumb-tack", display="Submit Behaviour Report", url="https://goo.gl/forms/ZGX0fyDhSJLtaYz22"),
             menu_item(icon="apple", display="View Behaviour Reports", url="https://sites.google.com/igbis.edu.my/esbehaviourreports/home")
         ]}),
+        emergency_procedures,
     ])
 
     sec_teacher_buttons.extend([
@@ -460,6 +472,7 @@ def splash(request):
             menu_placeholder('mb_blogs')
         ]}),
         button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
+        emergency_procedures
     ])
 
     buttons = OrderedDict()
