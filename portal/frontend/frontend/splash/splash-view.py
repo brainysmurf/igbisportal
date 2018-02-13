@@ -35,7 +35,7 @@ stndrdbttns = [
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
-emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="", color="aqua", url="", icon="warning", id="", context_menu={
+emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="", color="beige", url="", icon="warning", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Evacuation procedures — ES", url="https://docs.google.com/document/d/1rqCtEFrDTzSwkZLjzDvVpeD2_nZx67_fjl8vL-Fcwfs/edit"),
         menu_item(icon="globe", display="Lockdown procedures — ES", url="https://docs.google.com/document/d/1jI1Yh7WboPJHxGeNjTeephEPSKlYGVzs-Gdg_6WTyy0/edit"),
