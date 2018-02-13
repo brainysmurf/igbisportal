@@ -36,13 +36,13 @@ stndrdbttns = [
 ]
 
 emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="", color="aqua", url="", icon="warning", id="", context_menu={
-    'items': {
+    'items': [
         menu_item(icon="globe", display="Evacuation procedures — ES", url="https://docs.google.com/document/d/1rqCtEFrDTzSwkZLjzDvVpeD2_nZx67_fjl8vL-Fcwfs/edit"),
         menu_item(icon="globe", display="Lockdown procedures — ES", url="https://docs.google.com/document/d/1jI1Yh7WboPJHxGeNjTeephEPSKlYGVzs-Gdg_6WTyy0/edit"),
         menu_item(icon="globe", display="Evacuation procedures — SS", url="https://docs.google.com/document/d/1PQ5z2awRnUo5cE4ysv_mdki-DG9WuUoAQzDam_3JY_k/edit"),
         menu_item(icon="globe", display="Lockdown procedures — SS", url="https://docs.google.com/document/d/1eDSpZEEp7WpQA_YzwolHJq_uHr9USSTLfiV-4asG7is/edit"),
         menu_item(icon="globe", display="Emergency protocols Manual", url="https://docs.google.com/document/d/1-UTe_G3m-OaI7xag1v41LWKgMUcBD8HdsuWt06m6Tb8/edit?ts=5a818d32"),
-    }
+    ]
 })
 
 secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/secondarycamps/", icon="gittip", id="", context_menu=None)
