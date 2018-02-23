@@ -101,18 +101,21 @@ class DatabaseSetterUpper(object):
 							# and last is everything after that
 							first = handle.split(".")[0].title()
 							last = "".join(handle.split(".")[1:]).title()
+					else:
+						first = 'Account'
+						last = handle.title()
 
-						if fake:
-							f_name = "This should not work"
-							while len(f_name.split(" ")) != 2:
-								f_name = fake.name()
-							first, last = f_name.split(" ")
+					if fake:
+						f_name = "This should not work"
+						while len(f_name.split(" ")) != 2:
+							f_name = fake.name()
+						first, last = f_name.split(" ")
 
-						# This gets a usable unique ID integer to use for IDs
-						# very unlikely to produce collisions
-						id_ = int(hashlib.md5(handle.encode('utf-8')).hexdigest()[:12], 16)
-						gns.tutorial("Generated unique ID to use for id_: {}".format(id_), banner=False)
-						busadmins.append(self.db.table.BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
+					# This gets a usable unique ID integer to use for IDs
+					# very unlikely to produce collisions
+					id_ = int(hashlib.md5(handle.encode('utf-8')).hexdigest()[:12], 16)
+					gns.tutorial("Generated unique ID to use for id_: {}".format(id_), banner=False)
+					busadmins.append(self.db.table.BusAdmin(id=id_, first_name=first, last_name=last, type="BusAdmin", email=user_email))
 
 		with updater_helper() as u:
 
