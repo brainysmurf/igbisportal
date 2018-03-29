@@ -126,17 +126,23 @@ def destiny(obj, dontput):
 
 @sync.command()
 @click.option('--download/--dontdownload', default=True, help='default is --download')
+@click.option('--only_openapply', is_flag=True, default=False, help="OpenApply only")
 @click.option('--setupdb/--dontsetupdb', default=True, help='default is --setupdb')
 @click.option('--fake', is_flag=True, default=False, help='Replace downloaded with fake names')
 @click.pass_obj
-def managebac(obj, download, setupdb, fake):
+def managebac_openapply(obj, download, only_openapply, setupdb, fake):
     """
     Downloads data from ManageBac APIs, and updates database
     """
     if download:
-        dl()
+        from portal.db.api.interface import AsyncAPIDownloader
+        go = AsyncAPIDownloader(only_openapply)
+        go.download()
+
     if setupdb:
-        db_setup(fake)
+        from portal.db.interface import DatabaseSetterUpper
+        go = DatabaseSetterUpper()
+        go.setup_database(fake)
 
 
 @sync.command()
