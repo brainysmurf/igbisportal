@@ -133,7 +133,7 @@ class AsyncAPIDownloader(AsyncDownloaderHelper):
     Downloads all the user, classes, ib_groups information provided by ManageBac/OpenApply APIs
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, openapply_only, *args, **kwargs):
         """
         Sets up the downloaders, using the class structure
         """
@@ -152,6 +152,7 @@ class AsyncAPIDownloader(AsyncDownloaderHelper):
         ]
         gns.tutorial(self.__doc__, edit=(urls_to_traverse, '.pretty'), banner=True)
 
+
         # These appear in order of how long it takes to download, each
         self.add_downloader(
             OpenApplyPaging, 
@@ -160,44 +161,46 @@ class AsyncAPIDownloader(AsyncDownloaderHelper):
             path=PathURLHelper.build_json_entrypoint_path("open_apply_users")
         )
 
-        self.add_downloader( 
-            MBSectionDiscovery, 
-            'classes',              # section
-            'classes/{id}/students', # url after api/   
-            urls_to_traverse[4], 
-            params=dict(auth_token=mb_api_token), 
-            path=PathURLHelper.build_json_entrypoint_path('classes')
-        )
 
-        self.add_downloader( 
-            MBSectionDiscovery, 
-            'ib-groups',            # section
-            'ib-groups/{id}/students',  # url after api/
-            urls_to_traverse[3], 
-            params=dict(auth_token=mb_api_token), 
-            path=PathURLHelper.build_json_entrypoint_path('ib-groups')
-        )
+        if not openapply_only:
+            self.add_downloader( 
+                MBSectionDiscovery, 
+                'classes',              # section
+                'classes/{id}/students', # url after api/   
+                urls_to_traverse[4], 
+                params=dict(auth_token=mb_api_token), 
+                path=PathURLHelper.build_json_entrypoint_path('classes')
+            )
 
-        self.add_downloader( 
-            MBPaging,
-            urls_to_traverse[0], 
-            params=dict(auth_token=mb_api_token),
-            path=PathURLHelper.build_json_entrypoint_path('students')
-        )
+            self.add_downloader( 
+                MBSectionDiscovery, 
+                'ib-groups',            # section
+                'ib-groups/{id}/students',  # url after api/
+                urls_to_traverse[3], 
+                params=dict(auth_token=mb_api_token), 
+                path=PathURLHelper.build_json_entrypoint_path('ib-groups')
+            )
 
-        self.add_downloader( 
-            MBPaging,
-            urls_to_traverse[1], 
-            params=dict(auth_token=mb_api_token),
-            path=PathURLHelper.build_json_entrypoint_path('parents')
-        )
+            self.add_downloader( 
+                MBPaging,
+                urls_to_traverse[0], 
+                params=dict(auth_token=mb_api_token),
+                path=PathURLHelper.build_json_entrypoint_path('students')
+            )
 
-        self.add_downloader( 
-            MBPaging,
-            urls_to_traverse[2], 
-            params=dict(auth_token=mb_api_token),
-            path=PathURLHelper.build_json_entrypoint_path('teachers')
-        )
+            self.add_downloader( 
+                MBPaging,
+                urls_to_traverse[1], 
+                params=dict(auth_token=mb_api_token),
+                path=PathURLHelper.build_json_entrypoint_path('parents')
+            )
+
+            self.add_downloader( 
+                MBPaging,
+                urls_to_traverse[2], 
+                params=dict(auth_token=mb_api_token),
+                path=PathURLHelper.build_json_entrypoint_path('teachers')
+            )
 
 
 if __name__ == "__main__":

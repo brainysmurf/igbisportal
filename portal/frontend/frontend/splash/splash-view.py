@@ -307,9 +307,8 @@ def splash(request):
             context_menu={
             'items': [
                 menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
-                menu_item(icon="calendar-o", display="Calendar", url="https://igbis.managebac.com/home"),
-                menu_item(icon="file-text-o", display="EE", url="https://igbis.managebac.com/dashboard/projects?type=ee"),
-                menu_placeholder('mb_classes')
+                menu_separator,
+                menu_item(icon="calendar-o", display="Assessment Data", url="https://sites.google.com/igbis.edu.my/assessment")
             ],
             }),
         button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
