@@ -307,7 +307,7 @@ def splash(request):
             context_menu={
             'items': [
                 menu_item(icon="user", display="HR Attendance", url="https://igbis.managebac.com/dashboard/attendance"),
-                menu_separator,
+                menu_separator(),
                 menu_item(icon="calendar-o", display="Assessment Data", url="https://sites.google.com/igbis.edu.my/assessment")
             ],
             }),
