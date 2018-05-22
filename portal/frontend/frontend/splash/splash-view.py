@@ -331,12 +331,13 @@ def splash(request):
                 menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc"),
                 menu_item(icon="folder", display="MYP Subject Overviews", url="https://docs.google.com/spreadsheets/d/19DVirR29E8KTmsSri73udVPBltES6j5xnpTUj2E-ZUc/"),
                 menu_separator(),
-                menu_item(icon="folder", display="Teacher Timetables", url="https://docs.google.com/spreadsheets/d/1TdagsK1Ukcp11Z-_JvhGi1smXS0zePiMzVyLi3DJ_vY/edit#gid=791732971"),
+                menu_item(icon="folder", display="Teacher Timetables", url="https://docs.google.com/spreadsheets/d/1TdagsK1Ukcp11Z-_JvhGi1smXS0zePiMzVyLi3DJ_vY/edit"),
                 menu_item(icon="folder", display="Class Timetables", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1m77dkYjRwxo4JUClMbHTvYRh4BEeRZKR-DBgIABKbCY"),
-                menu_item(icon="folder", display="SS Duty Schedule", url="https://docs.google.com/spreadsheets/d/1BJuIgxmhFTnw7GfBxtKw0_msMQqitAQznmdXwLIMLuI/edit"),
-                menu_item(icon="folder", display="Cover Timetable", url="https://docs.google.com/spreadsheets/d/1y_6XbwiA32rQEWAsmpFo4fUi9iI_1P9NoKDuzUEWR94/"),
+                menu_item(icon="folder", display="SS Duty Schedule", url="https://docs.google.com/spreadsheets/d/1IswIh31tS0I4tZXz3MSAcwnlDWC4m8dB9uuiOCB4Ccs/edit"),
+                menu_item(icon="folder", display="Cover Timetable", url="https://docs.google.com/spreadsheets/d/1qPoKl9PefqRQ1NTtMyT-XjWl40DT_zIxDR1qav9RMRM/edit"),
                 menu_item(icon="folder", display="Meeting Minutes", url="https://drive.google.com/drive/folders/0By9YOJwliLtBOHVvNGJTeG9YSE0"),
-                menu_item(icon="folder", display="Reporting Guidelines Semester 1", url="https://docs.google.com/document/d/1EULwP1a2CbgU-m9q_28tbaR79dCM8xVxhWHbxOHcPbw/edit?ts=5a0bd646")
+                menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/document/d/1TtMaISuhQTd-MwO8eWYvfky0mQNuWK3Ui7LwmmMOanU"),
+                menu_item(icon="folder", display="Houses", url="https://drive.google.com/open?id=1R45RGP0k5v75tzmw-6MwWQMnw61bT60GjvnqSbSRdac")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
