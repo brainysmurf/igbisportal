@@ -176,6 +176,8 @@ handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="r
             menu_item(icon="book", display="Budget and Supply Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/15WKjGWttfUkgu8CGahS0QeAzs07dBpwOyMZuyq2c_8k/"),
             menu_item(icon="book", display="HR Policies and Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/1UDyWngXoTLRJLOp0zyXAH788vaEePJzBmkNjcHlnOpA/"),
             menu_item(icon="book", display="Admissions Policies and Procedures", url="https://docs.google.com/document/d/1wFcWSHdL_XsJpZlQNB5QE8iIKMyWLCt6CjMuKIdfbPk/"),
+            menu_item(icon="book", display="School Policies", url="https://docs.google.com/document/d/1KvWIKahoSgcvfSNbnBuMqqFb6uB96PW5Fx7BqfptXvo"),
+            menu_item(icon="book", display="Business Team Policies & Procedures", url="https://docs.google.com/document/d/1AYeVY1UZ970zwuh9fEwu5f7hcXdej--TyMw4PemDnHM"),
         ]
     })
 
