@@ -170,12 +170,10 @@ handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="r
             menu_item(icon="book", display="Overview", url="https://docs.google.com/document/d/1dzZfzYOrWeOrpiw2ZFQAUL3th3VNFO1HbS7PvF3ECvQ/"),
             menu_item(icon="book", display="Organisation", url="https://docs.google.com/document/d/1ak57-lHwVvVLGKQdKKBVhWwFtbN_lE19ErRb9CkLTEE/"),
             menu_item(icon="book", display="Health and Safety", url="https://docs.google.com/document/d/1CttoZfwCbNW8fEQoAjzYj1cTQAxb3dRSxQ_KP2Py56I/"),
-            menu_item(icon="book", display="Policies", url="https://docs.google.com/a/igbis.edu.my/document/d/1805nPKwKb6kiUQm4JcqmMSvWnxv3beSyrQa208Ku110/"),
             menu_item(icon="book", display="Responsibilities of Teachers", url="https://docs.google.com/document/d/1W3e6q76oB8CVoToY5DUqyppK3iOzE2xGyllVQmofKLU/"),
             menu_item(icon="book", display="Elementary and Secondary Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/16q0RkQb2yNj4KCnSRrb9wxNZtP7MYV7ScrZjWuqMSyc/"),
             menu_item(icon="book", display="Budget and Supply Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/15WKjGWttfUkgu8CGahS0QeAzs07dBpwOyMZuyq2c_8k/"),
             menu_item(icon="book", display="HR Policies and Procedures", url="https://docs.google.com/a/igbis.edu.my/document/d/1UDyWngXoTLRJLOp0zyXAH788vaEePJzBmkNjcHlnOpA/"),
-            menu_item(icon="book", display="Admissions Policies and Procedures", url="https://docs.google.com/document/d/1wFcWSHdL_XsJpZlQNB5QE8iIKMyWLCt6CjMuKIdfbPk/"),
             menu_item(icon="book", display="School Policies", url="https://docs.google.com/document/d/1KvWIKahoSgcvfSNbnBuMqqFb6uB96PW5Fx7BqfptXvo"),
             menu_item(icon="book", display="Business Team Policies & Procedures", url="https://docs.google.com/document/d/1AYeVY1UZ970zwuh9fEwu5f7hcXdej--TyMw4PemDnHM"),
         ]
