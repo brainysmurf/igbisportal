@@ -455,7 +455,7 @@ def splash(request):
             menu_item(icon="pencil", display='Students - Late arrival & Leaving early', url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal/late-students"),
         ]}),
 
-        button(name="OCC", externalid=-9, size="", color="beige", url="https://internationalbaccalaureate.force.com/ibportal/IBPortalLogin", icon="gear", id="", context_menu=None),
+        button(name="My IB", externalid=-9, size="", color="beige", url="https://internationalbaccalaureate.force.com/ibportal/IBPortalLogin", icon="sign-in", id="", context_menu=None),
         button(name="IT Integration", externalid=-9, size="", color="yellow", url="https://sites.google.com/igbis.edu.my/digitalliteracy", icon="arrows", id="", context_menu={
         'items': [
             menu_item(icon="thumb-tack", display="Book Geoff", url="https://geoffreyderry.youcanbook.me/"),
