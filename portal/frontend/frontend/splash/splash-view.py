@@ -132,11 +132,7 @@ parent_buttons = [
                 menu_item(icon="globe", display="Single Subject Classes", url="https://sites.google.com/a/igbis.edu.my/single-subject-class-16-17/welcome"),
             ]
         }),
-    button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu={
-            'items': [
-                menu_item(icon="rocket", display="IGBIS Swimming", url="https://sites.google.com/a/igbis.edu.my/igbis-swimming/"),
-            ]
-        }),
+    button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
     button(name="Parent Sports Field sign-ups", externalid=-9, size="", color="blue", url="https://docs.google.com/a/igbis.edu.my/forms/d/1Fj8ah4IuFn6PdE5a9XZfwzZ3ANJ9AdQo5-67ROwjCnU/viewform?c=0&w=1", icon="plus-circle", id="", context_menu=None),
     counselor_button_parents,
     button(name="PVO", externalid=-9, size="", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu={
@@ -263,11 +259,7 @@ def splash(request):
 
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
-        button(name="Activities", externalid=-9, size="large", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu={
-                'items': [
-                    menu_item(icon="rocket", display="IGBIS Swimming", url="https://sites.google.com/a/igbis.edu.my/igbis-swimming/"),
-                ]
-            }),
+        button(name="Activities", externalid=-9, size="large", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
         counselor_button_students,
@@ -289,7 +281,7 @@ def splash(request):
                     homeroom_teachers[grade].append(item.email)
 
     homeroom_items = [
-        menu_item(icon="", display="Welfare Program", url="https://docs.google.com/document/d/1WeGO0RGizDMQ8gz-S-xtBT2xKdFc3AzPBH55agBw9Q0"),
+        menu_item(icon="", display="Welfare Program", url="https://docs.google.com/document/d/1WqiKyyaEQs-FXILfmyFwERiK1KgUfaYpAVWk5MyAu4s/edit"),
         menu_item(icon="", display="Secondary HR Notices", url="https://sites.google.com/igbis.edu.my/secondary-school"),
     ]
     for grade in sorted(homeroom_teachers):
