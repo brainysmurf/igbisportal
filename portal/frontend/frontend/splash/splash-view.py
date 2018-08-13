@@ -43,6 +43,7 @@ emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="
         menu_item(icon="globe", display="Lockdown procedures — SS", url="https://docs.google.com/document/d/1eDSpZEEp7WpQA_YzwolHJq_uHr9USSTLfiV-4asG7is/edit"),
         menu_item(icon="globe", display="Lockdown attendance form", url="https://docs.google.com/a/igbis.edu.my/forms/d/e/1FAIpQLSfUA0oJPUnf3OCnjjzos8ybHIcJut3ZlkvDfFmC3NuRcWfk-A/viewform?c=0&w=1"),
         menu_item(icon="globe", display="Emergency protocols Manual", url="https://docs.google.com/document/d/1-UTe_G3m-OaI7xag1v41LWKgMUcBD8HdsuWt06m6Tb8/edit?ts=5a818d32"),
+        menu_item(icon="globe", display="Incident Report", url="https://docs.google.com/document/d/1WYqUn--ZIJ-Vq_dBYyjfzUawdJJM5T0ApaIL75irhY8/edit"),
     ]
 })
 
