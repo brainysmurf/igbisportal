@@ -194,7 +194,7 @@ administration_buttons = [
     'items': [
         menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/student-directory"),
         menu_item(icon="plus-circle", display="Medical Information", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/medical-info"),
-        menu_item(icon="plus-circle", display="Bulk Email Lists", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-emails-lists"),
+        menu_item(icon="plus-circle", display="Bulk Email App", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-app"),
         menu_separator(),
         menu_item(icon="plus-circle", display="Add a Daily Notice", url="https://docs.google.com/a/igbis.edu.my/forms/d/1ni0lu4mzVFzHW8PxWyap8iUEYFjOjEi_z_ZjEDJaS-s/viewform"),
         menu_separator(),
