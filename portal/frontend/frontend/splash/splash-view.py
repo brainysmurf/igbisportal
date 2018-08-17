@@ -147,7 +147,7 @@ parent_buttons = [
         context_menu={
             'items': [
                 menu_item(icon="book", display="Upcoming Events", url="http://igbis.edu.my/news-events/upcoming-events/"),
-                menu_item(icon="book", display="Rotating Timetable", url="https://docs.google.com/spreadsheets/d/1Hp9dhbwsEvuFqq9BLdzfnDAfgUeT1t8oG4cgwthoeX0/"),
+                menu_item(icon="book", display="Rotating Timetable", url="https://docs.google.com/spreadsheets/d/1xzM6vgBV4_Bv0ZCD2IeNYfk95R_-wwl7FOlciMisF5Y"),
                 menu_item(icon="book", display="Import My Timetable", url="https://docs.google.com/document/d/10vtZDIKfgRPsOjXSg21XKRAALD3Qs8o7Yy3VKogI8DY/edit#heading=h.q6jcd88fou46")
             ]
         }),
