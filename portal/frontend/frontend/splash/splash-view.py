@@ -148,6 +148,7 @@ parent_buttons = [
             'items': [
                 menu_item(icon="book", display="Upcoming Events", url="http://igbis.edu.my/news-events/upcoming-events/"),
                 menu_item(icon="book", display="Rotating Timetable", url="https://docs.google.com/spreadsheets/d/1n0-trNO0obLWSfnWA65sQzbQIXQEkYXBJPVK36OVwVg/edit#gid=0"),
+                menu_item(icon="book", display="Import My Timetable", url="https://docs.google.com/document/d/10vtZDIKfgRPsOjXSg21XKRAALD3Qs8o7Yy3VKogI8DY/edit#heading=h.q6jcd88fou46")
             ]
         }),
     button(name="Help", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/parentpdpage/home", icon="calendar", id="", context_menu=None),
@@ -182,7 +183,8 @@ administration_buttons = [
         context_menu={
         'items': [
             menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
-            menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
+            menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERMzM2M0ZJbzJzT1U"),
+            menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
             menu_separator(),
             menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
             menu_item(icon="folder", display="CIS/NEASC Accreditation", url="https://drive.google.com/drive/folders/0By9YOJwliLtBM0FxRHFEVWVEcVk"),
@@ -313,8 +315,8 @@ def splash(request):
             context_menu={
             'items': [
                 menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
-                menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
-                menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
+                menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERMzM2M0ZJbzJzT1U"),
+                menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
                 menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
                 menu_item(icon="folder", display="CIS/NEASC Accreditation", url="https://drive.google.com/drive/folders/0By9YOJwliLtBM0FxRHFEVWVEcVk"),
@@ -375,7 +377,7 @@ def splash(request):
             'items': [
                 menu_item(icon="folder", display="Whole School", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERMjMtbFUwcWhPUTA"),
                 menu_item(icon="folder", display="Elementary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERQXRSaVJRS0RrZFk"),
-                menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/#folders/0B4dUGjcMMMERR1gwQUNDbVA0ZzA/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
+                menu_item(icon="folder", display="Secondary", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERZ0RDRkhzWk5vdWs"),
                 menu_separator(),
                 menu_item(icon="folder", display="Staff Handbook", url="https://drive.google.com/drive/folders/0B0Hfis2hp8mHfi02cGNQY0E1T09IMk1JLWo2WWtkMUNCbEFzaks3aXFKUzlSSGU3eUQwMWc"),
                 menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
