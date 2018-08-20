@@ -37,6 +37,8 @@ stndrdbttns = [
 
 emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="", color="beige", url="", icon="warning", id="", context_menu={
     'items': [
+        menu_item(icon="globe", display="HR Telephone Ext List", url="https://docs.google.com/spreadsheets/d/1Uxec8eAbExMY3Esn54j9TATDV7DcNGYIHJH9g8T42Gs/edit"),
+        menu_separator(),
         menu_item(icon="globe", display="Evacuation procedures — ES", url="https://docs.google.com/document/d/1rqCtEFrDTzSwkZLjzDvVpeD2_nZx67_fjl8vL-Fcwfs/edit"),
         menu_item(icon="globe", display="Lockdown procedures — ES", url="https://docs.google.com/document/d/1jI1Yh7WboPJHxGeNjTeephEPSKlYGVzs-Gdg_6WTyy0/edit"),
         menu_item(icon="globe", display="Evacuation procedures — SS", url="https://docs.google.com/document/d/1PQ5z2awRnUo5cE4ysv_mdki-DG9WuUoAQzDam_3JY_k/edit"),
