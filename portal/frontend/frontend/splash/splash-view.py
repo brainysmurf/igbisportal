@@ -106,11 +106,8 @@ counselor_button_not_students = button(name="Student Services & Counseling", ext
 #         menu_item(icon="globe", display="Wednesday Homework Support Reference List", url="https://docs.google.com/spreadsheets/d/1uqx-9-b9nsAWLME4qQcZm2g7tLTHqxOW3zVtEpdEvtw/edit#gid=1946619930")
 #     ]
 #     })
-counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="green", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
-    'items': [
-        menu_item(icon="globe", display="Make Appointment with Mr Chris (EY-8)", url="https://www.google.com/calendar/selfsched?sstoken=UUozUVhiTGtmemhQfGRlZmF1bHR8OTFlZTUyMTEwNzRkMDUyYjIzMGUwOTNjMDAwYmNmN2U"),
-    ]
-    })
+counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="green", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu=None)
+
 parent_buttons = [
     button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
     button(name="School Email", externalid=-9, size="", color="green", url="https://gmail.com", icon="envelope", id="", 
