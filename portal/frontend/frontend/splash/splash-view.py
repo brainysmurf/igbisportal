@@ -81,7 +81,7 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
 
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
-        menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://drive.google.com/open?id=0BylFD10LdIUXbGtQcnlBVE92cmM"),
+        menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://drive.google.com/file/d/1d64Z4jjAl1_pKeaFjEJVTV7FD6ePXnW9"),
     ]
     })
 counselor_button_students = button(name="Counselor", externalid=-9, size="", color="green", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
