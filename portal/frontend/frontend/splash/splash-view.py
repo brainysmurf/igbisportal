@@ -24,7 +24,7 @@ menu_placeholder = lambda x: menu_item(url=x, display='placeholder', icon=None)
 
 stndrdbttns = [
     button(name="ManageBac", externalid=-9, size="large", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
-    button(name="<S></S>chool Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
+    button(name="School Email", externalid=-9, size="", color="blue", url="https://gmail.com", icon="envelope", id="", 
         context_menu=None),
     button(name="Google Drive", externalid=-9, size="large", color="cyan", url="https://drive.google.com", icon="files-o", id="", 
         context_menu=None),
@@ -81,6 +81,7 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
 
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
+        menu_item(icon="globe", display="Main / Top up", url="http://cashless.igbis.edu.my/"),
         menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://drive.google.com/file/d/1d64Z4jjAl1_pKeaFjEJVTV7FD6ePXnW9"),
     ]
     })
@@ -134,7 +135,6 @@ parent_buttons = [
         }),
     button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
     button(name="Parent Sports Field sign-ups", externalid=-9, size="", color="blue", url="https://docs.google.com/a/igbis.edu.my/forms/d/1Fj8ah4IuFn6PdE5a9XZfwzZ3ANJ9AdQo5-67ROwjCnU/viewform?c=0&w=1", icon="plus-circle", id="", context_menu=None),
-    counselor_button_parents,
     button(name="PVO", externalid=-9, size="", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu={
         'items': [
             menu_item(icon="book", display="Parents Volunteer Organization main site", url="https://sites.google.com/igbis.edu.my/pvo"),
@@ -325,12 +325,12 @@ def splash(request):
                 menu_item(icon="folder", display="MYP Guides", url="https://drive.google.com/drive/folders/0B4dUGjcMMMERNWMtOU02U0ZkdHc"),
                 menu_item(icon="folder", display="MYP Subject Overviews", url="https://docs.google.com/spreadsheets/d/19DVirR29E8KTmsSri73udVPBltES6j5xnpTUj2E-ZUc/"),
                 menu_separator(),
-                menu_item(icon="folder", display="Teacher Timetables", url="https://docs.google.com/spreadsheets/d/1TdagsK1Ukcp11Z-_JvhGi1smXS0zePiMzVyLi3DJ_vY/edit"),
-                menu_item(icon="folder", display="Class Timetables", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1m77dkYjRwxo4JUClMbHTvYRh4BEeRZKR-DBgIABKbCY"),
-                menu_item(icon="folder", display="SS Duty Schedule", url="https://docs.google.com/spreadsheets/d/1IswIh31tS0I4tZXz3MSAcwnlDWC4m8dB9uuiOCB4Ccs/edit"),
-                menu_item(icon="folder", display="Cover Timetable", url="https://docs.google.com/spreadsheets/d/1qPoKl9PefqRQ1NTtMyT-XjWl40DT_zIxDR1qav9RMRM/edit"),
+                menu_item(icon="folder", display="Teacher Timetables", url="https://docs.google.com/spreadsheets/d/1Hp1lJkDCEVzRl_BpozWq_wpBW-1DnUPUm_qy4h6qGks/edit"),
+                #menu_item(icon="folder", display="Class Timetables", url="https://docs.google.com/a/igbis.edu.my/spreadsheets/d/1m77dkYjRwxo4JUClMbHTvYRh4BEeRZKR-DBgIABKbCY"),
+                menu_item(icon="folder", display="SS Duty Schedule", url="https://docs.google.com/spreadsheets/d/1t6wvDQpiweS9y1wVlFNaZ3N3_2-oMqXbUjrQfP9rQ_8/edit"),
+                menu_item(icon="folder", display="Cover Timetable", url="https://docs.google.com/spreadsheets/d/1axTR4lSSjntAvKqd7xeLcvIcTNTKPp7eCgwqSLjCGTA/edit"),
                 menu_item(icon="folder", display="Meeting Minutes", url="https://drive.google.com/drive/folders/0By9YOJwliLtBOHVvNGJTeG9YSE0"),
-                menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/document/d/1TtMaISuhQTd-MwO8eWYvfky0mQNuWK3Ui7LwmmMOanU"),
+                #menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/document/d/1TtMaISuhQTd-MwO8eWYvfky0mQNuWK3Ui7LwmmMOanU"),
                 menu_item(icon="folder", display="Houses", url="https://drive.google.com/open?id=1R45RGP0k5v75tzmw-6MwWQMnw61bT60GjvnqSbSRdac")
             ]
             }),
