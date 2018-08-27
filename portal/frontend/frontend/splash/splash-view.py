@@ -121,27 +121,23 @@ parent_buttons = [
     button(name="Classes", externalid=-9, size="", color="orange", url="", icon="star", id="", context_menu={
             'items': [
                 #menu_item(icon="globe", display="Early Years K", url="https://sites.google.com/a/igbis.edu.my/eyk/"),
-                menu_item(icon="globe", display="Fireflies", url="https://sites.google.com/igbis.edu.my/fireflies17/home "),
-                menu_item(icon="globe", display="Early Years", url="https://sites.google.com/igbis.edu.my/ey2017-2018"),
-                menu_item(icon="globe", display="Kindergarten", url=" https://sites.google.com/igbis.edu.my/kindergarten-2017-2018/weekly-updates"),
-                menu_item(icon="globe", display="Grade 1", url=" https://sites.google.com/igbis.edu.my/grade1/home"),
-                menu_item(icon="globe", display="Grade 2", url="https://sites.google.com/igbis.edu.my/grade217-18/home"),
-                menu_item(icon="globe", display="Grade 3", url="https://sites.google.com/igbis.edu.my/grade3/home"),
-                menu_item(icon="globe", display="Grade 4", url="https://sites.google.com/igbis.edu.my/g4-igbis1718/home"),
-                menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/igbis.edu.my/grade5/home"),
-                menu_separator(),
-                menu_item(icon="globe", display="Single Subject Classes", url="https://sites.google.com/a/igbis.edu.my/single-subject-class-16-17/welcome"),
+                menu_item(icon="globe", display="Fireflies", url="https://blog.seesaw.me/firefliesigbis"),
+                menu_item(icon="globe", display="Early Years", url="https://blog.seesaw.me/earlyyearsigbis"),
+                menu_item(icon="globe", display="Kindergarten", url="https://blog.seesaw.me/kindergartenigbis"),
+                menu_item(icon="globe", display="Grade 1", url="https://blog.seesaw.me/grade1igbis"),
+                menu_item(icon="globe", display="Grade 2", url="https://blog.seesaw.me/grade2igbis"),
+                menu_item(icon="globe", display="Grade 3", url="https://blog.seesaw.me/grade3igbis"),
+                menu_item(icon="globe", display="Grade 4", url="https://blog.seesaw.me/grade4igbis"),
+                menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/igbis.edu.my/grade5/home")
             ]
         }),
     button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
-    button(name="Parent Sports Field sign-ups", externalid=-9, size="", color="blue", url="https://docs.google.com/a/igbis.edu.my/forms/d/1Fj8ah4IuFn6PdE5a9XZfwzZ3ANJ9AdQo5-67ROwjCnU/viewform?c=0&w=1", icon="plus-circle", id="", context_menu=None),
     button(name="PVO", externalid=-9, size="", color="grey", url="https://sites.google.com/igbis.edu.my/pvo", icon="child", id="", context_menu={
         'items': [
             menu_item(icon="book", display="Parents Volunteer Organization main site", url="https://sites.google.com/igbis.edu.my/pvo"),
             menu_separator(),
             menu_item(icon="book", display="Community Information (Class Reps Only)", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home"),
         ]}),
-    button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
     button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", 
         context_menu={
             'items': [
@@ -266,7 +262,6 @@ def splash(request):
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
         counselor_button_students,
-        button(name="Secondary HR Notices", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/secondary-school", icon="info-circle", id="", context_menu=None),
         button(name="Help with Maths for Grade 6 and 7", externalid=-9, size="", color="cyan", url="https://docs.google.com/a/igbis.edu.my/forms/d/e/1FAIpQLSftPRE_wM4KbxPiK9jSFHqOrwkbU_fuSH-1StIZ9x_SdpYSJw/viewform?c=0&w=1", icon="info-circle", id="", context_menu=None),
     ])
 
@@ -285,7 +280,6 @@ def splash(request):
 
     homeroom_items = [
         menu_item(icon="", display="Welfare Program", url="https://docs.google.com/document/d/1WqiKyyaEQs-FXILfmyFwERiK1KgUfaYpAVWk5MyAu4s/edit"),
-        menu_item(icon="", display="Secondary HR Notices", url="https://sites.google.com/igbis.edu.my/secondary-school"),
     ]
     for grade in sorted(homeroom_teachers):
         these_teachers = homeroom_teachers[grade]
