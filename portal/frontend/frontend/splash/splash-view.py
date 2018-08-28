@@ -184,7 +184,7 @@ administration_buttons = [
             menu_separator(),
             menu_item(icon="folder", display="Policies & Procedures", url="https://drive.google.com/open?id=0B_el10BYGhjLfkd1NmZHa3ZCdUxaRlVTSDVEdjVraHh2S053WEFjZFRSeHdzNldpRmNIZFk"),
             menu_item(icon="folder", display="CIS/NEASC Accreditation", url="https://drive.google.com/drive/folders/0By9YOJwliLtBM0FxRHFEVWVEcVk"),
-            menu_item(icon="folder", display="Insurance Forms", url="https://drive.google.com/drive/folders/1Nz7s1LLuuZ8VIrjK7mQlojnsxeK0OHrn")
+            menu_item(icon="folder", display="Insurance Forms", url="https://drive.google.com/drive/folders/1Nz7s1LLuuZ8VIrjK7mQlojnsxeK0OHrn"),
             menu_separator(),
             menu_item(icon="folder", display="Instrumental Music Academy", url="https://docs.google.com/spreadsheets/d/1pqdrV3uaHChzrcUEC-6UMwZOrrdyQH_PaVyr4OuXu90/edit#gid=0"),
             menu_item(icon="folder", display="SS Camps", url="https://docs.google.com/spreadsheets/d/1l4rF_xnyy3hjKOGftBaOfnACq-PIz2hgT2uIR_Jyd2g/edit#gid=798482198"),
