@@ -31,7 +31,6 @@ stndrdbttns = [
     button(name="Google Plus", externalid=-9, size="", color="green", url="https://plus.google.com/", icon="google-plus", id="", context_menu=None),
     button(name="Library", externalid=-9, size="large", color="yellow", url="https://igbis.follettdestiny.com", icon="university", id="", 
         context_menu=None),
-    button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
     button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None)
 ]
 
@@ -258,7 +257,7 @@ def splash(request):
 
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
-        button(name="Activities", externalid=-9, size="large", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
+        button(name="Activities & Athletics", externalid=-9, size="large", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
         counselor_button_students,
@@ -325,7 +324,6 @@ def splash(request):
                 menu_item(icon="folder", display="Cover Timetable", url="https://docs.google.com/spreadsheets/d/1axTR4lSSjntAvKqd7xeLcvIcTNTKPp7eCgwqSLjCGTA/edit"),
                 menu_item(icon="folder", display="Meeting Minutes", url="https://drive.google.com/drive/folders/0By9YOJwliLtBOHVvNGJTeG9YSE0"),
                 #menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/document/d/1TtMaISuhQTd-MwO8eWYvfky0mQNuWK3Ui7LwmmMOanU"),
-                menu_item(icon="folder", display="Houses", url="https://drive.google.com/open?id=1R45RGP0k5v75tzmw-6MwWQMnw61bT60GjvnqSbSRdac")
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
@@ -348,6 +346,7 @@ def splash(request):
             menu_placeholder('mb_grade_teachers')
         ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
+        button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
     ]
 
     elem_teacher_buttons = [
@@ -395,6 +394,7 @@ def splash(request):
                 menu_item(icon="search", display="Search Notices", url="https://sites.google.com/a/igbis.edu.my/igbis-daily-notices/notices-database")
             ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
+        button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
     ]
 
     elem_teacher_buttons.extend([
@@ -411,10 +411,9 @@ def splash(request):
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         bookings_button,
-        button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
+        button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
         context_menu=None),
         cashless_button,
-        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
         button(name="ES Behaviour Report", externalid=-9, size="", color="purple", url="", icon="bullhorn", id="", context_menu={
         'items': [
             menu_item(icon="thumb-tack", display="Submit Behaviour Report", url="https://goo.gl/forms/ZGX0fyDhSJLtaYz22"),
@@ -428,7 +427,7 @@ def splash(request):
         ibo_button,
 
         counselor_button_not_students,
-        button(name="Activities", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
+        button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
         context_menu=None),
 
         button(name="Secondary&ensp;Procedures", externalid=-9, size="", color="peach", icon="trophy", url="https://sites.google.com/a/igbis.edu.my/igbis-ssprincipal", id="", 
@@ -451,11 +450,6 @@ def splash(request):
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
         bookings_button,
         cashless_button,
-        button(name="Blogs", externalid=-9, size="", color="orange", url="https://igbis.managebac.com", icon="rss-square", id="", context_menu={
-        'items': [
-            menu_placeholder('mb_blogs')
-        ]}),
-        button(name="YouTube", externalid=-9, size="", color="aqua", url="http://youtube.com", icon="youtube", id="", context_menu=None),
         emergency_procedures
     ])
 
