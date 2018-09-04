@@ -48,7 +48,7 @@ emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="
     ]
 })
 
-secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/secondarycamps/", icon="gittip", id="", context_menu=None)
+secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/camps/home", icon="gittip", id="", context_menu=None)
 
 daily_notices_button = button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
     'items': [
@@ -156,6 +156,7 @@ parent_buttons = [
     button(name="IGBIS Haze Policy", externalid=-9, size="", color="green", url="https://docs.google.com/document/d/15jFcNV7IkGMqWp6P90CVF3jp-QNWcBLTOzP39eT7v4M/edit?ts=5a1f4a22", icon="soundcloud", id="", context_menu=None),
     button(name="Cafeteria Services", externalid=-9, size="", color="green", url="http://igbis.edu.my/school-life/cafeteria-services/", icon="spoon", id="", context_menu=None),
     button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
+    secondary_camps_button
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
@@ -265,7 +266,7 @@ def splash(request):
         counselor_button_students,
         button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
         button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
-        #button(name="Help with Maths for Grade 6 and 7", externalid=-9, size="", color="cyan", url="https://docs.google.com/a/igbis.edu.my/forms/d/e/1FAIpQLSftPRE_wM4KbxPiK9jSFHqOrwkbU_fuSH-1StIZ9x_SdpYSJw/viewform?c=0&w=1", icon="info-circle", id="", context_menu=None),
+        secondary_camps_button
     ])
 
     with DBSession() as session:
