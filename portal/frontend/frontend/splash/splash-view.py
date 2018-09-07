@@ -81,7 +81,7 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Main / Top up", url="http://cashless.igbis.edu.my/"),
-        menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://drive.google.com/file/d/1d64Z4jjAl1_pKeaFjEJVTV7FD6ePXnW9"),
+        menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://docs.google.com/document/d/1oJ8eKaQfCfIUyezaElMJ5c_udlsUky1IP_TcmsLco2E"),
     ]
     })
 counselor_button_students = button(name="Counselor", externalid=-9, size="", color="green", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
@@ -127,7 +127,7 @@ parent_buttons = [
                 menu_item(icon="globe", display="Grade 2", url="https://blog.seesaw.me/grade2igbis"),
                 menu_item(icon="globe", display="Grade 3", url="https://blog.seesaw.me/grade3igbis"),
                 menu_item(icon="globe", display="Grade 4", url="https://blog.seesaw.me/grade4igbis"),
-                menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/igbis.edu.my/grade5/home")
+                menu_item(icon="globe", display="Grade 5", url="https://blog.seesaw.me/grade5igbis")
             ]
         }),
     button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
