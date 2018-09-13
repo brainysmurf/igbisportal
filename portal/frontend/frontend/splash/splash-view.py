@@ -156,6 +156,7 @@ parent_buttons = [
     button(name="IGBIS Haze Policy", externalid=-9, size="", color="green", url="https://docs.google.com/document/d/15jFcNV7IkGMqWp6P90CVF3jp-QNWcBLTOzP39eT7v4M/edit?ts=5a1f4a22", icon="soundcloud", id="", context_menu=None),
     button(name="Cafeteria Services", externalid=-9, size="", color="green", url="http://igbis.edu.my/school-life/cafeteria-services/", icon="spoon", id="", context_menu=None),
     button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
+    button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
