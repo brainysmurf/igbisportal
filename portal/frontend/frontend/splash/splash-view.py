@@ -48,7 +48,7 @@ emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="
     ]
 })
 
-secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/secondarycamps/", icon="gittip", id="", context_menu=None)
+secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/camps/home", icon="gittip", id="", context_menu=None)
 
 daily_notices_button = button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
     'items': [
@@ -81,7 +81,7 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Main / Top up", url="http://cashless.igbis.edu.my/"),
-        menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://drive.google.com/file/d/1d64Z4jjAl1_pKeaFjEJVTV7FD6ePXnW9"),
+        menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://docs.google.com/document/d/1oJ8eKaQfCfIUyezaElMJ5c_udlsUky1IP_TcmsLco2E"),
     ]
     })
 counselor_button_students = button(name="Counselor", externalid=-9, size="", color="green", url=" https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu={
@@ -127,7 +127,7 @@ parent_buttons = [
                 menu_item(icon="globe", display="Grade 2", url="https://blog.seesaw.me/grade2igbis"),
                 menu_item(icon="globe", display="Grade 3", url="https://blog.seesaw.me/grade3igbis"),
                 menu_item(icon="globe", display="Grade 4", url="https://blog.seesaw.me/grade4igbis"),
-                menu_item(icon="globe", display="Grade 5", url="https://sites.google.com/igbis.edu.my/grade5/home")
+                menu_item(icon="globe", display="Grade 5", url="https://blog.seesaw.me/grade5igbis")
             ]
         }),
     button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
@@ -157,6 +157,7 @@ parent_buttons = [
     button(name="Cafeteria Services", externalid=-9, size="", color="green", url="http://igbis.edu.my/school-life/cafeteria-services/", icon="spoon", id="", context_menu=None),
     button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
     button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
+    secondary_camps_button
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
@@ -266,7 +267,7 @@ def splash(request):
         counselor_button_students,
         button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
         button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
-        #button(name="Help with Maths for Grade 6 and 7", externalid=-9, size="", color="cyan", url="https://docs.google.com/a/igbis.edu.my/forms/d/e/1FAIpQLSftPRE_wM4KbxPiK9jSFHqOrwkbU_fuSH-1StIZ9x_SdpYSJw/viewform?c=0&w=1", icon="info-circle", id="", context_menu=None),
+        secondary_camps_button
     ])
 
     with DBSession() as session:
