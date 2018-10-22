@@ -331,7 +331,7 @@ def splash(request):
                 menu_item(icon="folder", display="SS Duty Schedule", url="https://docs.google.com/spreadsheets/d/1t6wvDQpiweS9y1wVlFNaZ3N3_2-oMqXbUjrQfP9rQ_8/edit"),
                 menu_item(icon="folder", display="Cover Timetable", url="https://docs.google.com/spreadsheets/d/1axTR4lSSjntAvKqd7xeLcvIcTNTKPp7eCgwqSLjCGTA/edit"),
                 menu_item(icon="folder", display="Meeting Minutes", url="https://drive.google.com/drive/folders/0By9YOJwliLtBOHVvNGJTeG9YSE0"),
-                #menu_item(icon="folder", display="Reporting Guidelines Semester 2", url="https://docs.google.com/document/d/1TtMaISuhQTd-MwO8eWYvfky0mQNuWK3Ui7LwmmMOanU"),
+                menu_item(icon="folder", display="Reporting Guidelines Semester 1", url="https://docs.google.com/document/d/10f0X0QbC2-buxR9_t8z-X8iWKLe4BPltbjQQ-rCMPrs/edit"),
             ]
             }),
         button(name="Homeroom", externalid=-9, size="", color="beige", url="notsure", icon="cube", id="", 
