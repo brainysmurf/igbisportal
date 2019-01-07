@@ -137,10 +137,10 @@ parent_buttons = [
             menu_separator(),
             menu_item(icon="book", display="Community Information (Class Reps Only)", url="https://sites.google.com/igbis.edu.my/communicationsforparents/home"),
         ]}),
-    button(name="Calendar", externalid=-9, size="", color="peach", url="http://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", 
+    button(name="Calendar", externalid=-9, size="", color="peach", url="https://igbis.edu.my/news-events/upcoming-events/", icon="calendar", id="", 
         context_menu={
             'items': [
-                menu_item(icon="book", display="Upcoming Events", url="http://igbis.edu.my/news-events/upcoming-events/"),
+                menu_item(icon="book", display="Upcoming Events", url="https://igbis.edu.my/news-events/upcoming-events/"),
                 menu_item(icon="book", display="Rotating Timetable", url="https://docs.google.com/spreadsheets/d/1xzM6vgBV4_Bv0ZCD2IeNYfk95R_-wwl7FOlciMisF5Y"),
                 menu_item(icon="book", display="Import My Timetable", url="https://docs.google.com/document/d/10vtZDIKfgRPsOjXSg21XKRAALD3Qs8o7Yy3VKogI8DY/edit#heading=h.q6jcd88fou46")
             ]
@@ -154,7 +154,7 @@ parent_buttons = [
         ]
     }),
     button(name="IGBIS Haze Policy", externalid=-9, size="", color="green", url="https://docs.google.com/document/d/15jFcNV7IkGMqWp6P90CVF3jp-QNWcBLTOzP39eT7v4M/edit?ts=5a1f4a22", icon="soundcloud", id="", context_menu=None),
-    button(name="Cafeteria Services", externalid=-9, size="", color="green", url="http://igbis.edu.my/school-life/cafeteria-services/", icon="spoon", id="", context_menu=None),
+    button(name="Food Services", externalid=-9, size="", color="green", url="https://igbis.edu.my/community/food-services/", icon="spoon", id="", context_menu=None),
     button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
     button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
     secondary_camps_button
