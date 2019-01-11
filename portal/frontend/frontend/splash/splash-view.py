@@ -67,20 +67,20 @@ bookings_button = button(name="Events &amp;&nbsp; Bookings Spaces", externalid=-
         menu_item(icon="globe", display="Bookable Spaces", url="https://sites.google.com/a/igbis.edu.my/bookings/")
     ]
     })
-ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="http://www.ibo.org/", icon="globe", id="", 
+ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="https://www.ibo.org/", icon="globe", id="", 
         context_menu={
         'items': [
-            menu_item(icon="globe", display="PD Events & Workshops", url="http://www.ibo.org/en/professional-development/find-events-and-workshops/"),
+            menu_item(icon="globe", display="PD Events & Workshops", url="https://www.ibo.org/en/professional-development/find-events-and-workshops/"),
             menu_item(icon="globe", display="IB Answers", url="https://ibanswers.ibo.org/"),
             menu_item(icon="globe", display="IB Store", url="https://store.ibo.org/"),
-            menu_item(icon="globe", display="IB Blogs", url="http://blogs.ibo.org/")
+            menu_item(icon="globe", display="IB Blogs", url="https://blogs.ibo.org/")
         ],
         }
     )
 
-cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="http://cashless.igbis.edu.my/", icon="money", id="", context_menu={
+cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="https://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
-        menu_item(icon="globe", display="Main / Top up", url="http://cashless.igbis.edu.my/"),
+        menu_item(icon="globe", display="Main / Top up", url="https://cashless.igbis.edu.my/"),
         menu_item(icon="globe", display="IGBIS Cashless Manual", url="https://docs.google.com/document/d/1oJ8eKaQfCfIUyezaElMJ5c_udlsUky1IP_TcmsLco2E"),
     ]
     })
@@ -262,7 +262,7 @@ def splash(request):
     student_buttons = stndrdbttns[:]
     student_buttons.extend([
         button(name="Activities & Athletics", externalid=-9, size="large", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", context_menu=None),
-        button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
+        button(name="BrainPop", externalid=-9, size="", color="beige", url="https://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         button(name="Photo Sharing", externalid=-9, size="", color="blue", url="https://sites.google.com/a/igbis.edu.my/elem-photo-sharing/", icon="picture-o", id="", context_menu=None),
         counselor_button_students,
         button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
@@ -417,7 +417,7 @@ def splash(request):
             menu_item(icon="apple", display="IT Committee", url="https://sites.google.com/igbis.edu.my/itcommittee"),
         ]}),
         button(name="Help Desk: IT&nbsp;&amp;&nbsp;Facilities", externalid=-9, size="", color="red", url="http://rodmus.igbis.local/", icon="exclamation-circle", id="", context_menu=None),
-        button(name="BrainPop", externalid=-9, size="", color="beige", url="http://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
+        button(name="BrainPop", externalid=-9, size="", color="beige", url="https://www.brainpop.com/user/loginDo.weml?user=igbisbrainpop&password=2014igbis", icon="film", id="", context_menu=None),
         bookings_button,
         button(name="Activities & Athletics", externalid=-9, size="", color="pink", url="https://sites.google.com/igbis.edu.my/athleticsactivities", icon="rocket", id="", 
         context_menu=None),
