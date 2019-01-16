@@ -49,6 +49,7 @@ emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="
 })
 
 secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/camps/home", icon="gittip", id="", context_menu=None)
+box_of_books_button = button(name="Box of Books", externalid=-9, size="", color="aqua", url="https://igbis-school.boxofbooks.io/auth/page/signin", icon="dropbox", id="", context_menu=None)
 
 daily_notices_button = button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
     'items': [
@@ -358,6 +359,7 @@ def splash(request):
         ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
         button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
+        box_of_books_button
     ]
 
     elem_teacher_buttons = [
@@ -431,6 +433,7 @@ def splash(request):
             menu_item(icon="apple", display="View Behaviour Reports", url="https://sites.google.com/igbis.edu.my/esbehaviourreports/home")
         ]}),
         emergency_procedures,
+        box_of_books_button
     ])
 
     sec_teacher_buttons.extend([
