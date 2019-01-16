@@ -408,8 +408,6 @@ def splash(request):
             ]}),
         button(name="Music Academy", externalid=-9, size="", color="cyan", url="https://sites.google.com/a/igbis.edu.my/igbis-instrumental-music-academy/home?pli=1", icon="music", id="", context_menu=None),
         button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
-        box_of_books_button,
-        import_my_calendar_button
     ]
 
     elem_teacher_buttons.extend([
@@ -468,6 +466,7 @@ def splash(request):
         bookings_button,
         cashless_button,
         emergency_procedures,
+        box_of_books_button,
         import_my_calendar_button
     ])
 
