@@ -81,7 +81,7 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
     )
 
 managebac_info_button = button(name="ManageBac Info", externalid=-9, size="", color="peach", url="https://sites.google.com/igbis.edu.my/attendancereporter/home", icon="info-circle", id="", context_menu=None)
-ib_app_button = button(name="IGBIS Enrollment and Nationality", externalid=-9, size="", color="orange", icon="list-alt", id="", context_menu=None)
+ib_app_button = button(name="IGBIS Enrollment and Nationality", externalid=-9, size="", url="https://script.google.com/a/macros/igbis.edu.my/s/AKfycbyA_lbYY75Jc9PRwU4T0mdkdp7xdCyPcPsWXjYix33amJcVRnIiTMKxPZnperCDPc9e/exec", color="orange", icon="list-alt", id="", context_menu=None)
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="https://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Main / Top up", url="https://cashless.igbis.edu.my/"),
