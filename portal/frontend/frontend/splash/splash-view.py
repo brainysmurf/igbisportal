@@ -80,6 +80,8 @@ ibo_button = button(name="IBO", externalid=-9, size="", color="purple", url="htt
         }
     )
 
+managebac_info_button = button(name="ManageBac Info", externalid=-9, size="", color="peach", url="https://sites.google.com/igbis.edu.my/attendancereporter/home", icon="info-circle", id="", context_menu=None)
+ib_app_button = button(name="IGBIS Enrollment and Nationality", externalid=-9, size="", color="orange", icon="list-alt", id="", context_menu=None)
 cashless_button = button(name="Cashless", externalid=-9, size="", color="green", url="https://cashless.igbis.edu.my/", icon="money", id="", context_menu={
     'items': [
         menu_item(icon="globe", display="Main / Top up", url="https://cashless.igbis.edu.my/"),
@@ -109,6 +111,7 @@ counselor_button_not_students = button(name="Student Services & Counseling", ext
 #     ]
 #     })
 counselor_button_parents = button(name="Counseling", externalid=-9, size="", color="green", url="https://sites.google.com/a/igbis.edu.my/counsellingigbis/", icon="heart", id="", context_menu=None)
+
 
 parent_buttons = [
     button(name="ManageBac", externalid=-9, size="", color="red", url="https://igbis.managebac.com", icon="fire", id="", context_menu=None),
@@ -214,6 +217,7 @@ administration_buttons = [
     cashless_button,
     button(name="Admissions Information", externalid=-9, size="", color="aqua", url="https://sites.google.com/igbis.edu.my/infoforadmissions/home", icon="comment-o", id="", context_menu=None),
     emergency_procedures,
+    ib_app_button
 ]
 
 @view_config(route_name='updateButtons', renderer='json')
@@ -434,7 +438,9 @@ def splash(request):
         ]}),
         emergency_procedures,
         box_of_books_button,
-        import_my_calendar_button
+        import_my_calendar_button,
+        managebac_info_button,
+		ib_app_button
     ])
 
     sec_teacher_buttons.extend([
@@ -467,7 +473,9 @@ def splash(request):
         cashless_button,
         emergency_procedures,
         box_of_books_button,
-        import_my_calendar_button
+        import_my_calendar_button,
+        managebac_info_button,
+		ib_app_button
     ])
 
     buttons = OrderedDict()
