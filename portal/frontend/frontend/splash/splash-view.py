@@ -51,6 +51,7 @@ emergency_procedures = button(name="Emergency Procedures", externalid=-9, size="
 secondary_camps_button = button(name="Secondary Camps", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/camps/home", icon="gittip", id="", context_menu=None)
 box_of_books_button = button(name="Box of Books", externalid=-9, size="", color="aqua", url="https://igbis-school.boxofbooks.io/auth/page/signin", icon="dropbox", id="", context_menu=None)
 import_my_calendar_button = button(name="Import My Calendar", externalid=-9, size="", color="green", url="https://docs.google.com/document/d/10vtZDIKfgRPsOjXSg21XKRAALD3Qs8o7Yy3VKogI8DY/edit#heading=h.q6jcd88fou46", icon="calendar", id="", context_menu=None)
+personal_project = button(name="Personal Project", externalid=-9, size="", color="yellow", url="https://sites.google.com/igbis.edu.my/personalproject1718/home?authuser=0", icon="calendar", id="", context_menu=None)
 
 daily_notices_button = button(name="Communications", externalid=-9, size="large", color="aqua", url="https://sites.google.com/a/igbis.edu.my/communications/", icon="comments", id="", context_menu={
     'items': [
@@ -162,7 +163,8 @@ parent_buttons = [
     button(name="Food Services", externalid=-9, size="", color="green", url="https://igbis.edu.my/community/food-services/", icon="spoon", id="", context_menu=None),
     button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
     button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
-    secondary_camps_button
+    secondary_camps_button,
+    personal_project
 ]
 
 handbook_button = button(name="Staff Handbook", externalid=-9, size="", color="red", url="https://drive.google.com/drive/folders/0By9YOJwliLtBQm43NHBqd0FKM28", icon="book", id="",
@@ -277,7 +279,7 @@ def splash(request):
         button(name="EOSMun19", externalid=-9, size="", id="", color="yellow", url="https://eosmun19.wixsite.com/2019-eosmun", icon="renren", context_menu=None),
         button(name="Abstract Reality by Marvin", externalid=-9, size="", id="", color="grey", url="https://www.kongregate.com/games/marvinch/abstract-reality", icon="gamepad", context_menu=None),
         button(name="Feedback on Abstract Reality", externalid=-9, size="", id="", color="blue", url="https://docs.google.com/forms/d/e/1FAIpQLSfa5v4EzzJzhxnvQGKqHx1EeZ0K3bYdWHOrfYjIkwfPZrI7cg/viewform", icon="list-ul", context_menu=None),
-
+        personal_project
     ])
 
     with DBSession() as session:
@@ -475,7 +477,8 @@ def splash(request):
         box_of_books_button,
         import_my_calendar_button,
         managebac_info_button,
-		ib_app_button
+		ib_app_button,
+        personal_project
     ])
 
     buttons = OrderedDict()
