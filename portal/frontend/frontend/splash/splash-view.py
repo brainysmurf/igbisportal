@@ -275,7 +275,7 @@ def splash(request):
         counselor_button_students,
         button(name="Houses", externalid=-9, size="", color="orange", url="https://sites.google.com/igbis.edu.my/igbhouses/home", icon="home", id="", context_menu=None),
         button(name="DP Programme", externalid=-9, size="", color="", url="https://sites.google.com/igbis.edu.my/diplomaprogramme", icon="graduation-cap", id="", context_menu=None),
-        button(name="Student-led Event Proposal", externalid=-9, size="", id="", color="cyan", url="https://docs.google.com/document/d/1PbyENnoX_sCImyLippTdrk364b3NoKgbxKf01jCJjjU/copy", icon="calendar", context_menu=None),
+        button(name="Student-led Event Proposal", externalid=-9, size="", id="", color="cyan", url="https://docs.google.com/document/d/1pmf8gUoFNAdCi6Uu_x5G0AZa1Ny6wP7z8muMXvLQ3io/copy", icon="calendar", context_menu=None),
         button(name="SPACPOL", externalid=-9, size="", id="", color="blue", url="https://goo.gl/forms/MuwkFFGjqHZ4TDvR2", icon="list-ul", context_menu=None),
         button(name="EOSMun19", externalid=-9, size="", id="", color="yellow", url="https://eosmun19.wixsite.com/2019-eosmun", icon="renren", context_menu=None),
         button(name="Abstract Reality by Marvin", externalid=-9, size="", id="", color="grey", url="https://www.kongregate.com/games/marvinch/abstract-reality", icon="gamepad", context_menu=None),
