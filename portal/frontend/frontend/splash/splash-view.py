@@ -278,7 +278,7 @@ def splash(request):
         button(name="Student-led Event Proposal", externalid=-9, size="", id="", color="cyan", url="https://docs.google.com/document/d/1PbyENnoX_sCImyLippTdrk364b3NoKgbxKf01jCJjjU/copy", icon="calendar", context_menu=None),
         button(name="SPACPOL", externalid=-9, size="", id="", color="blue", url="https://goo.gl/forms/MuwkFFGjqHZ4TDvR2", icon="list-ul", context_menu=None),
         button(name="EOSMun19", externalid=-9, size="", id="", color="yellow", url="https://eosmun19.wixsite.com/2019-eosmun", icon="renren", context_menu=None),
-        button(name="Abstract Reality by Marvin", externalid=-9, size="", id="", color="grey", url="https://www.kongregate.com/games/marvinch/abstract-reality", icon="gamepad", context_menu=None)
+        button(name="Abstract Reality by Marvin", externalid=-9, size="", id="", color="grey", url="https://www.kongregate.com/games/marvinch/abstract-reality", icon="gamepad", context_menu=None),
         personal_project
     ])
 
