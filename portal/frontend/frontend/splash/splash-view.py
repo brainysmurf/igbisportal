@@ -414,7 +414,7 @@ def splash(request):
 
         button(name="Community Information", externalid=-9, size="large", color="aqua", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/home", icon="comments-o", id="", context_menu={
             'items': [
-                menu_item(icon="plus-circle", display="Student Directory", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/student-directory"),
+                menu_item(icon="plus-circle", display="Student Directory", url="https://script.google.com/a/macros/igbis.edu.my/s/AKfycbyA_lbYY75Jc9PRwU4T0mdkdp7xdCyPcPsWXjYix33amJcVRnIiTMKxPZnperCDPc9e/exec#Directory/"),
                 menu_item(icon="plus-circle", display="Medical Information", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/medical-info"),
                 menu_item(icon="plus-circle", display="Bulk Email App", url="https://sites.google.com/igbis.edu.my/oambdatamanagement/bulk-email-app"),
                 menu_separator(),
